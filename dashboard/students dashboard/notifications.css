@@ -1,0 +1,129 @@
+/* Notification Bell Styles */
+.notification {
+    position: relative;
+    cursor: pointer;
+}
+
+.notification .num {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--light);
+    background: var(--red);
+    color: var(--light);
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Notification Dropdown Styles */
+.notification-dropdown {
+    animation: slideDown 0.3s ease-out;
+}
+
+.notification-item {
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+    background: var(--light-hover) !important;
+    border-left-color: var(--blue);
+}
+
+.notification-item.unread {
+    border-left-color: var(--blue);
+}
+
+.message-preview, .message-full {
+    transition: all 0.3s ease;
+}
+
+.message-full {
+    background: var(--light-hover);
+    border-left: 4px solid var(--blue);
+    margin: 5px 0;
+    padding: 10px !important;
+}
+
+/* Notification Popup Styles */
+.notification-popup {
+    animation: slideIn 0.3s ease-out;
+    max-width: 300px;
+    border-left: 4px solid var(--blue);
+}
+
+/* Animation Keyframes */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Types of notifications */
+.notification-item[data-type="success"] {
+    border-left-color: var(--success);
+}
+
+.notification-item[data-type="warning"] {
+    border-left-color: var(--warning);
+}
+
+.notification-item[data-type="error"] {
+    border-left-color: var(--red);
+}
+
+.notification-item[data-type="info"] {
+    border-left-color: var(--blue);
+}
+
+/* Clear All Button Hover */
+.clear-all:hover {
+    color: var(--red);
+}
+
+/* Scrollbar Styling */
+.notification-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-dropdown::-webkit-scrollbar-track {
+    background: var(--light);
+}
+
+.notification-dropdown::-webkit-scrollbar-thumb {
+    background: var(--grey);
+    border-radius: 3px;
+}

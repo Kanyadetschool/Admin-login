@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Login</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <div class="form-wrapper">
+                <div class="form-side">
+
+                    <div class="header" >
+                        <img src="./img/logo.png" alt=""  class="logo">
+                        <!-- Replace problematic SVG with simpler version -->
+    
+                        <h2>Admins Portal</h2>
+                        
+                    </div>
+                    <p class="form-description">Kanyadet comprehensive School</p> <br>
+                    <hr>
+                    <h2>Sign In</h2>
+                    
+                    <form id="loginForm" class="login-form">
+                        <div class="input-group">
+                            <div class="input-field">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input type="email" id="email" placeholder="Email" required>
+                            </div>
+                            <div class="input-field">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="password" placeholder="Password" required>
+                                <i class="fa-solid fa-eye toggle-password"></i>
+                            </div>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar"></div>
+                            <div class="strength-label"></div>
+                        </div>
+                        <div class="remember-forgot">
+                            <label><input type="checkbox" checked > Remember me</label>
+                        </div>
+                        <div class="form-footer"> 
+                            
+                            <button type="submit" class="submit-btn">
+                                <span><i class="fa-solid fa-use"></i> Login</span>
+                                <div class="spinner"></div>
+                            </button>
+                            <div id="installButtonContainer">
+                                <button class="btn" id="installButton">Install App </button>
+                              </div>
+                              <div id="thankYouMessage" style="display: none;">
+                                Thank you for installing the app!
+                              </div>
+                              <button id="shareButton" style="display: none;" class="Terms"><i class="fa-solid fa-share"></i> Share App</button> <!-- Share button initially hidden -->
+                            
+                        </div>
+
+                        <div class="date-container">
+                            <div id="day" class="day"></div>
+                            <div id="dated" class="dated"></div>
+                            <div id="time" class="dated"></div>
+                          </div>
+                  <footer>Administrators  Portal | Kanyadet school | ICT Dep | &copy; 2025</footer> 
+                        
+                    
+                        
+                        
+                        
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <!-- Update script loading -->
+     <script src="./js/install.js" ></script>
+    <script src="./js/service-worker.js"></script>
+    <script  type="module" src="./js/firebaseConfig.js"></script>
+    <script  type="module" src="./js/authService.js"></script>
+    <script  type="module" src="./js/script.js"></script>
+
+    <!-- Brevo Conversations {literal} -->
+    <script>
+        (function(d, w, c) {
+            w.BrevoConversationsID = '66d8988f9c10cd75760b654f';
+            w[c] = w[c] || function() {
+                (w[c].q = w[c].q || []).push(arguments);
+            };
+            var s = d.createElement('script');
+            s.async = true;
+            s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+            if (d.head) d.head.appendChild(s);
+        })(document, window, 'BrevoConversations');
+      </script>
+      <!-- /Brevo Conversations {/literal} -->
+    
+</body>
+</html>
