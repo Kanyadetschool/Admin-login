@@ -2,15 +2,11 @@ var mainApp = {};
 (function() {
     var mainContainer = document.getElementById("main_container");
 
-    var logout = async function() {
-        try {
-            await secureCleanup();
-            await firebase.auth().signOut();
+    var logout = function() {
+        firebase.auth().signOut().then(function() {
             window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
-        } catch (error) {
-            console.error('Logout error:', error);
-            window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
-        }
+        }, function() {});
+        
     };
 
     var init = function() {
@@ -31,43 +27,23 @@ var mainApp = {};
         var timer;
         var warningTimer;
         var sessionStartTime;
-        const IDLE_TIMEOUT = 360000;      // 6 minutes idle timeout
-        const ABSOLUTE_TIMEOUT = 1200000;  // 20 minutes absolute session length
-        const WARNING_BEFORE_LOGOUT = 30000; // 30 seconds warning
-        const SESSION_CHECK_INTERVAL = 10000; // Check every 10 seconds
-
-        // Session storage key for cross-tab communication
-        const LAST_ACTIVITY_KEY = 'lastActivityTime';
-        const SESSION_ID_KEY = 'sessionId';
-
-        function updateLastActivity() {
-            const timestamp = Date.now();
-            localStorage.setItem(LAST_ACTIVITY_KEY, timestamp.toString());
-            sessionStartTime = parseInt(localStorage.getItem('sessionStartTime')) || timestamp;
-        }
-
-        function initializeSession() {
-            if (!localStorage.getItem('sessionStartTime')) {
-                localStorage.setItem('sessionStartTime', Date.now().toString());
-            }
-            if (!localStorage.getItem(SESSION_ID_KEY)) {
-                localStorage.setItem(SESSION_ID_KEY, Math.random().toString(36).substring(2));
-            }
-            updateLastActivity();
-        }
+        const IDLE_TIMEOUT = 900000; // 15 minutes idle timeout (standard practice)
+        const ABSOLUTE_TIMEOUT = 1800000; // 30 minutes absolute session length
+        const WARNING_BEFORE_LOGOUT = 60000; // 60 seconds warning (more user-friendly)
 
         function resetTimer() {
             clearTimeout(timer);
             clearTimeout(warningTimer);
-            updateLastActivity();
             
             const sessionAge = Date.now() - sessionStartTime;
             
+            // Check absolute timeout first
             if (sessionAge >= ABSOLUTE_TIMEOUT) {
                 logout();
                 return;
             }
 
+            // Handle idle timeout
             const timeUntilWarning = Math.min(
                 IDLE_TIMEOUT - WARNING_BEFORE_LOGOUT,
                 ABSOLUTE_TIMEOUT - sessionAge - WARNING_BEFORE_LOGOUT
@@ -75,23 +51,16 @@ var mainApp = {};
 
             if (timeUntilWarning > 0) {
                 timer = setTimeout(showWarning, timeUntilWarning);
+            } else {
+                showWarning();
             }
         }
 
         function showWarning() {
-            var countdown = 30;
-            const lastActivity = parseInt(localStorage.getItem(LAST_ACTIVITY_KEY));
-            const idleTime = Date.now() - lastActivity;
-
-            // If user was active in another tab, reset timer instead of showing warning
-            if (idleTime < IDLE_TIMEOUT - WARNING_BEFORE_LOGOUT) {
-                resetTimer();
-                return;
-            }
-
+            var countdown = 60;
             Swal.fire({
                 title: 'Session Expiring Soon',
-                html: `Your session will expire in <strong id="countdown">${countdown}</strong> seconds.<br>Would you like to continue working?`,
+                html: `For security reasons, your session will expire in <strong id="countdown">${countdown}</strong> seconds.<br>Would you like to continue working?`,
                 icon: 'warning',
                 timer: WARNING_BEFORE_LOGOUT,
                 timerProgressBar: true,
@@ -99,13 +68,14 @@ var mainApp = {};
                 confirmButtonText: 'Yes, Continue Session',
                 cancelButtonText: 'Logout Now',
                 allowOutsideClick: false,
-                allowEscapeKey: false
+                allowEscapeKey: false,
+                willClose: () => {
+                    clearTimeout(warningTimer);
+                }
             }).then((result) => {
-                if (result.isConfirmed) {
-                    updateLastActivity();
+                const sessionAge = Date.now() - sessionStartTime;
+                if (result.isConfirmed && sessionAge < ABSOLUTE_TIMEOUT) {
                     resetTimer();
-                    // Broadcast session continuation to other tabs
-                    localStorage.setItem('sessionContinued', Date.now().toString());
                 } else {
                     logout();
                 }
@@ -125,47 +95,23 @@ var mainApp = {};
         }
 
         function setupInactivityListener() {
-            initializeSession();
+            sessionStartTime = Date.now();
             resetTimer();
             
+            // Throttled event listeners to prevent excessive resets
             const throttledReset = throttle(resetTimer, 1000);
             
-            // Activity events
-            ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 
-             'click', 'focus'].forEach(event => {
+            ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(event => {
                 window.addEventListener(event, throttledReset, { passive: true });
             });
 
-            // Handle tab visibility changes
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden) {
-                    const lastActivity = parseInt(localStorage.getItem(LAST_ACTIVITY_KEY));
-                    const idleTime = Date.now() - lastActivity;
-                    if (idleTime < IDLE_TIMEOUT) {
-                        resetTimer();
-                    }
-                }
-            });
-
-            // Listen for session updates from other tabs
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'sessionContinued') {
-                    resetTimer();
-                }
-            });
-
-            // Regular session checks
+            // Check session periodically
             setInterval(() => {
-                const lastActivity = parseInt(localStorage.getItem(LAST_ACTIVITY_KEY));
-                const idleTime = Date.now() - lastActivity;
-                
-                if (idleTime >= IDLE_TIMEOUT && !document.querySelector('.swal2-container')) {
-                    showWarning();
+                const sessionAge = Date.now() - sessionStartTime;
+                if (sessionAge >= ABSOLUTE_TIMEOUT) {
+                    logout();
                 }
-            }, SESSION_CHECK_INTERVAL);
-
-            // Clean up on page unload
-            window.addEventListener('beforeunload', secureCleanup);
+            }, 60000); // Check every minute
         }
 
         // Throttle function to limit how often resetTimer is called
@@ -184,9 +130,7 @@ var mainApp = {};
 
         return {
             reset: resetTimer,
-            setup: setupInactivityListener,
-            forceLogout: logout,
-            updateActivity: updateLastActivity
+            setup: setupInactivityListener
         };
     }();
 
