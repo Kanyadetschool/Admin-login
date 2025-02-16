@@ -153,7 +153,7 @@ scale: 0.8;
 .submit-btn:active{
 scale: 0.8;
 }
-.submit-btn, .btn {
+.submit-btn, .btn, #shareButton {
     width: 150px;
     padding: 15px;
     margin: 5px;
