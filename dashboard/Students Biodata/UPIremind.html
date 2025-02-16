@@ -10,6 +10,11 @@
 
 </head>
 <body>
+    <div class="container">
+
+		<div id="main_container" style="display:none;"></div>  
+
+
 <div class="logoContainer">
     <img src="../images/newlogo.png" class="logoimg" alt="">
 </div>
@@ -23,11 +28,17 @@
         <div class="righthambergersubdivs">  <a href="../Knec assessments/index.html" target="_blank" > <i class="fab fa-twitter"></i> Knec Assessment</a></div>
         <div class="righthambergersubdivs">  <a href="../KPSEA AND KJSEA/index.html" target="_blank" > <i class="fab fa-whatsapp"></i> KJSEA & KPSEA</a></div>
         <div class="righthambergersubdivs">  <a href="../Capture scores/Grade 9/Grade 9 Captures.html" target="_blank" > <i class="fab fa-whatsapp"></i> Capture Scores</a></div>
+        <div><button class="nav-text-style" onclick="mainApp.logout()">Logout</button></div>
 
         </div>
 
     
         <script type="module"  src="./js/UPIremind.js"></script> 
+        <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-auth.js"></script>
+        <script src="https://admin-kanyadet.web.app/js/GoogleAuthfireBase.js"></script>
+        <script src="https://admin-kanyadet.web.app/js/GoogleAuthmain.js"></script>
 
+</div> 
 </body>
 </html>

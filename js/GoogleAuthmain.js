@@ -26,59 +26,106 @@ var mainApp = {};
     var inactivityTime = function() {
         var timer;
         var warningTimer;
+        var sessionStartTime;
+        const IDLE_TIMEOUT = 900000; // 15 minutes idle timeout (standard practice)
+        const ABSOLUTE_TIMEOUT = 1800000; // 30 minutes absolute session length
+        const WARNING_BEFORE_LOGOUT = 60000; // 60 seconds warning (more user-friendly)
 
-        // Function to reset the timer
         function resetTimer() {
             clearTimeout(timer);
             clearTimeout(warningTimer);
-           // timer = setTimeout(showWarning, 86400000); // 24 hours (86,400,000 milliseconds)
+            
+            const sessionAge = Date.now() - sessionStartTime;
+            
+            // Check absolute timeout first
+            if (sessionAge >= ABSOLUTE_TIMEOUT) {
+                logout();
+                return;
+            }
 
-         timer = setTimeout(showWarning, 3000); // 4.5 minutes (270,000 milliseconds)
+            // Handle idle timeout
+            const timeUntilWarning = Math.min(
+                IDLE_TIMEOUT - WARNING_BEFORE_LOGOUT,
+                ABSOLUTE_TIMEOUT - sessionAge - WARNING_BEFORE_LOGOUT
+            );
+
+            if (timeUntilWarning > 0) {
+                timer = setTimeout(showWarning, timeUntilWarning);
+            } else {
+                showWarning();
+            }
         }
 
-        // Function to show the warning
         function showWarning() {
-            var countdown = 30;
+            var countdown = 60;
             Swal.fire({
-                title: 'Inactivity Warning',
-                html: `You will be logged out in <strong id="countdown">${countdown}</strong> seconds due to inactivity.`,
+                title: 'Session Expiring Soon',
+                html: `For security reasons, your session will expire in <strong id="countdown">${countdown}</strong> seconds.<br>Would you like to continue working?`,
                 icon: 'warning',
-                timer: 30000,
-                showCancelButton: true,
-                confirmButtonText: 'Stay Logged In',
-                cancelButtonText: 'Log Out Now',
+                timer: WARNING_BEFORE_LOGOUT,
                 timerProgressBar: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Continue Session',
+                cancelButtonText: 'Logout Now',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
                 willClose: () => {
                     clearTimeout(warningTimer);
                 }
             }).then((result) => {
-                if (result.isConfirmed) {
-                    resetTimer(); // User wants to stay logged in
+                const sessionAge = Date.now() - sessionStartTime;
+                if (result.isConfirmed && sessionAge < ABSOLUTE_TIMEOUT) {
+                    resetTimer();
                 } else {
-                    logout(); // User wants to log out immediately or did not respond in time
+                    logout();
                 }
             });
 
-            // Update the countdown every second
-            var interval = setInterval(() => {
+            const countdownInterval = setInterval(() => {
                 countdown--;
-                if (countdown >= 0) {
-                    document.getElementById('countdown').textContent = countdown;
+                const element = document.getElementById('countdown');
+                if (element && countdown >= 0) {
+                    element.textContent = countdown;
                 } else {
-                    clearInterval(interval);
+                    clearInterval(countdownInterval);
                 }
             }, 1000);
 
-            warningTimer = setTimeout(logout, 30000); // Auto logout after 30 seconds
+            warningTimer = setTimeout(logout, WARNING_BEFORE_LOGOUT);
         }
 
-        // Set up event listeners for various user activities
         function setupInactivityListener() {
-            window.addEventListener('mousemove', resetTimer);
-            window.addEventListener('keydown', resetTimer);
-            window.addEventListener('scroll', resetTimer);
-            window.addEventListener('touchstart', resetTimer);
-            window.addEventListener('click', resetTimer);
+            sessionStartTime = Date.now();
+            resetTimer();
+            
+            // Throttled event listeners to prevent excessive resets
+            const throttledReset = throttle(resetTimer, 1000);
+            
+            ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(event => {
+                window.addEventListener(event, throttledReset, { passive: true });
+            });
+
+            // Check session periodically
+            setInterval(() => {
+                const sessionAge = Date.now() - sessionStartTime;
+                if (sessionAge >= ABSOLUTE_TIMEOUT) {
+                    logout();
+                }
+            }, 60000); // Check every minute
+        }
+
+        // Throttle function to limit how often resetTimer is called
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
         }
 
         return {
