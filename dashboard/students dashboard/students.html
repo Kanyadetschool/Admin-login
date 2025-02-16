@@ -6,9 +6,12 @@
 
 	<!-- Boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+	 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+	 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+   
 	<!-- My CSS -->
 	<link rel="stylesheet" href="style.css">
-	<link rel="stylesheet" href="advanced-analytics.css">
 
 	<title>Kanyadet</title>
     <style>
@@ -43,6 +46,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+	<div class="container">
+
+
+	<div id="main_container" style="display:none;"></div>   
 
 
 	<!-- SIDEBAR -->
@@ -56,19 +63,19 @@
 		</a>
 		<ul class="side-menu top">
             
+			
 			<li class="active">
-				<a href="../Students Biodata/index.html" target="_blank">
-					<i class='bx bxs-search' ></i>
-					<span class="text">Search</span>
-				</a>
-			</li>
-			<li class="">
 				<a href="#">
                     <i class='bx bxs-shopping-bag-alt' ></i>
 					<span class="text">Print</span>
 				</a>
 			</li>
-
+			<li>
+				<a href="../Students Biodata/index.html" target="_blank">
+					<i class='bx bxs-search' ></i>
+					<span class="text">Search</span>
+				</a>
+			</li>
 			
 			<li>
 				<a href="#">
@@ -157,8 +164,15 @@
 	
 
 	<script type="module" src="./js/script.js"></script>
-	<script src="./js/notification.js"></script><script src="websocket.js"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-auth.js"></script>
+        <script src="https://admin-kanyadet.web.app/js/GoogleAuthfireBase.js"></script>
+        <script src="https://admin-kanyadet.web.app/js/GoogleAuthmain.js"></script>
+
 	
+
+</div>
 </body>
 
 </html></html>

@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showSuccess(`Welcome back, ${displayName}!`);
         
         setTimeout(() => {
-            window.location.href = './dashboard/index.html';
+            window.location.href = '../index.html';
         }, 1500);
     }
 

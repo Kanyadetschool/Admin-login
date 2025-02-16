@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "approvedUsers": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('approvedUsers').child(auth.token.email).child('role').val() === 'admin'"
+    }
+  }
+}

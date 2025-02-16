@@ -1,12 +1,11 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyBuyQzOEh5Wg6W-C_p2c7M7V1T9wr3TlwU",
-    authDomain: "kanyadet-school.firebaseapp.com",
-    databaseURL: "https://kanyadet-school-default-rtdb.firebaseio.com",
-    projectId: "kanyadet-school",
-    storageBucket: "kanyadet-school.appspot.com",
-    messagingSenderId: "224031504744",
-    appId: "1:224031504744:web:8e71e83269abf49ecdfedd",
-    measurementId: "G-8F80E3SNG5"
+    apiKey: "AIzaSyDuoaOZvCSZp_d2eTfUjBIZtoIFEKysgJ8",
+    authDomain: "admin-kanyadet.firebaseapp.com",
+    projectId: "admin-kanyadet",
+    storageBucket: "admin-kanyadet.firebasestorage.app",
+    messagingSenderId: "920056467446",
+    appId: "1:920056467446:web:eb416e8125a21463b501d7",
+    measurementId: "G-GL27FQHVPY"
 };
 
 // Initialize Firebase

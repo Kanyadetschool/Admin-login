@@ -153,7 +153,7 @@ scale: 0.8;
 .submit-btn:active{
 scale: 0.8;
 }
-.submit-btn, .btn ,#shareButton{
+.submit-btn, .btn {
     width: 150px;
     padding: 15px;
     margin: 5px;
@@ -444,4 +444,28 @@ scale: 0.8;
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+
+.separator span {
+    padding: 0 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.auth-methods {
+    width: 100%;
 }
