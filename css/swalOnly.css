@@ -39,6 +39,7 @@
       border: 2px solid lavender;
       box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
+      z-index: 999999 !important;
   }
   
      .swal2-popup{
