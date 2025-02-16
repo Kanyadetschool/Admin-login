@@ -6,7 +6,6 @@ var mainApp = {};
         firebase.auth().signOut().then(function() {
             window.location.replace("GoogleAuthlogin.html");
         }, function() {});
-        
     };
 
     var init = function() {
@@ -31,9 +30,7 @@ var mainApp = {};
         function resetTimer() {
             clearTimeout(timer);
             clearTimeout(warningTimer);
-           // timer = setTimeout(showWarning, 86400000); // 24 hours (86,400,000 milliseconds)
-
-         timer = setTimeout(showWarning, 60000); // 4.5 minutes (270,000 milliseconds)
+            timer = setTimeout(showWarning, 60000); // 1 minute (60,000 milliseconds)
         }
 
         // Function to show the warning
@@ -63,7 +60,10 @@ var mainApp = {};
             var interval = setInterval(() => {
                 countdown--;
                 if (countdown >= 0) {
-                    Swal.getContent().querySelector('strong').textContent = countdown;
+                    const content = Swal.getHtmlContainer();
+                    if (content) {
+                        content.querySelector('strong').textContent = countdown;
+                    }
                 } else {
                     clearInterval(interval);
                 }
