@@ -60,7 +60,7 @@ body {
 	width: 280px;
 	height: 100%;
 	background: var(--light);
-	/* z-index: 2000; */
+	z-index: 2000;
 	font-family: var(--lato);
 	transition: .3s ease;
 	overflow-x: hidden;
@@ -83,7 +83,7 @@ body {
 	top: 0;
 	left: 0;
 	background: var(--light);
-	/* z-index: 500; */
+	z-index: 500;
 	padding-bottom: 20px;
 	box-sizing: content-box;
 }
@@ -116,7 +116,7 @@ body {
 	top: -40px;
 	right: 0;
 	box-shadow: 20px 20px 0 var(--grey);
-	/* z-index: -1; */
+	z-index: -1;
 }
 #sidebar .side-menu li.active::after {
 	content: '';
@@ -127,7 +127,7 @@ body {
 	bottom: -40px;
 	right: 0;
 	box-shadow: 20px -20px 0 var(--grey);
-	/* z-index: -1; */
+	z-index: -1;
 }
 #sidebar .side-menu li a {
 	width: 100%;
@@ -192,7 +192,7 @@ body {
 	position: sticky;
 	top: 0;
 	left: 0;
-	/* z-index: 1000; */
+	z-index: 1000;
 }
 #content nav::before {
 	content: '';

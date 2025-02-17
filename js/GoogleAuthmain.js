@@ -1,195 +1,154 @@
-var mainApp = {};
-(function() {
-    var mainContainer = document.getElementById("main_container");
+// Initialize Firebase (only once)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+(function () {
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyDuoaOZvCSZp_d2eTfUjBIZtoIFEKysgJ8",
+        authDomain: "admin-kanyadet.firebaseapp.com",
+        projectId: "admin-kanyadet",
+        storageBucket: "admin-kanyadet.firebasestorage.app",
+        messagingSenderId: "920056467446",
+        appId: "1:920056467446:web:eb416e8125a21463b501d7",
+        measurementId: "G-GL27FQHVPY"
+    };
+
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    // Set persistence to LOCAL to persist authentication across page reloads
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+            console.log("Persistence set to LOCAL");
+        })
+        .catch((error) => {
+            console.error("Error setting persistence:", error);
+        });
+
+    // Token expiration related constants (for example, 6 hours = 21600000 milliseconds)
     const TOKEN_LIFETIME = 21600000; // 6 hours in milliseconds
     const WARNING_BEFORE_EXPIRY = 300000; // 5 minutes in milliseconds
+
     let tokenExpiryTimer;
     let warningTimer;
+
+    // Track session start time (when the user first logged in)
     let sessionStartTime;
-    let lastActivityTime;
 
     // Store session info in localStorage
     const SESSION_STORAGE_KEY = 'userSessionInfo';
 
-    var logout = function() {
-        // Clear session storage before logout
+    // Function to log out the user
+    const logout = function () {
+        // Clear session info from localStorage
         localStorage.removeItem(SESSION_STORAGE_KEY);
-        firebase.auth().signOut().then(function() {
-            window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
-        }, function() {});
+
+        // Sign out the user
+        auth.signOut()
+            .then(() => {
+                console.log("User signed out successfully");
+                // Redirect to login page after successful logout
+                window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
+            })
+            .catch((error) => {
+                console.error("Logout error:", error);
+            });
     };
 
-    // Track concurrent sessions
-    function checkConcurrentSessions(user) {
-        const currentSessionId = generateSessionId();
-        const sessionInfo = {
-            sessionId: currentSessionId,
-            lastActive: Date.now(),
-            userAgent: navigator.userAgent,
-            startTime: Date.now()
-        };
-        
-        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionInfo));
-
-        // Store session info in Firebase to track concurrent sessions
-        const sessionRef = firebase.database().ref(`sessions/${user.uid}/${currentSessionId}`);
-        sessionRef.set(sessionInfo);
-        sessionRef.onDisconnect().remove();
-
-        // Check for other active sessions
-        firebase.database().ref(`sessions/${user.uid}`).on('value', (snapshot) => {
-            const sessions = snapshot.val() || {};
-            const activeSessions = Object.values(sessions).filter(session => 
-                Date.now() - session.lastActive < 60000 && session.sessionId !== currentSessionId
-            );
-
-            if (activeSessions.length > 0) {
-                showConcurrentSessionWarning(activeSessions);
-            }
-        });
-    }
-
-    // Generate unique session ID
-    function generateSessionId() {
-        return Math.random().toString(36).substring(2) + Date.now().toString(36);
-    }
-
-    // Show warning for concurrent sessions
-    function showConcurrentSessionWarning(activeSessions) {
-        const sessionList = activeSessions.map(session => 
-            `Browser: ${getBrowserInfo(session.userAgent)}<br>Started: ${new Date(session.startTime).toLocaleString()}`
-        ).join('<br><br>');
-
-        Swal.fire({
-            title: 'Multiple Active Sessions Detected',
-            html: `Other active sessions found:<br><br>${sessionList}`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Keep This Session',
-            cancelButtonText: 'Logout'
-        }).then((result) => {
-            if (!result.isConfirmed) {
-                logout();
-            }
-        });
-    }
-
-    // Get browser info from user agent
-    function getBrowserInfo(userAgent) {
-        const ua = userAgent.toLowerCase();
-        if (ua.includes('firefox')) return 'Firefox';
-        if (ua.includes('chrome')) return 'Chrome';
-        if (ua.includes('safari')) return 'Safari';
-        if (ua.includes('edge')) return 'Edge';
-        return 'Unknown Browser';
-    }
-
-    // Show security notification on page reload
-    function showSecurityNotification() {
-        const lastActivity = localStorage.getItem(SESSION_STORAGE_KEY) ? 
-            JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY)).lastActive : null;
-        
-        const timeSinceLastActivity = lastActivity ? 
-            Math.floor((Date.now() - lastActivity) / 60000) : null;
-
-        Swal.fire({
-            title: 'Security Notice',
-            html: `This page has been reloaded.<br><br>` +
-                  `${timeSinceLastActivity ? `Time since last activity: ${timeSinceLastActivity} minutes<br>` : ''}` +
-                  `Current browser: ${getBrowserInfo(navigator.userAgent)}<br>` +
-                  `Please ensure you're in a secure environment.`,
-            icon: 'info',
-            confirmButtonText: 'Understood'
-        });
-    }
-
-    // Show warning before token expiration
-    function showExpiryWarning() {
-        var countdown = 300; // 5 minutes in seconds
-        const sessionInfo = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || '{}');
-        const sessionDuration = Math.floor((Date.now() - sessionInfo.startTime) / 60000);
-
-        Swal.fire({
-            title: 'Session Expiring Soon',
-            html: `Your session will expire in <strong id="countdown">${countdown}</strong> seconds.<br>` +
-                  `Session duration: ${sessionDuration} minutes<br>` +
-                  `You will need to log in again after expiration.`,
-            icon: 'warning',
-            timer: WARNING_BEFORE_EXPIRY,
-            timerProgressBar: true,
-            showCancelButton: true,
-            confirmButtonText: 'Understood',
-            cancelButtonText: 'Logout Now',
-            allowOutsideClick: false,
-            allowEscapeKey: false
-        }).then((result) => {
-            if (!result.isConfirmed) {
-                logout();
-            }
-        });
-
-        const countdownInterval = setInterval(() => {
-            countdown--;
-            const element = document.getElementById('countdown');
-            if (element && countdown >= 0) {
-                element.textContent = countdown;
-            } else {
-                clearInterval(countdownInterval);
-            }
-        }, 1000);
-    }
-
-    // Update session info periodically
-    function updateSessionInfo() {
+    // Function to update session info in localStorage and Firebase
+    const updateSessionInfo = (user) => {
         const sessionInfo = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || '{}');
         sessionInfo.lastActive = Date.now();
+        sessionInfo.sessionId = sessionInfo.sessionId || generateSessionId();
         localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionInfo));
 
-        // Update Firebase session info
-        const user = firebase.auth().currentUser;
-        if (user && sessionInfo.sessionId) {
-            firebase.database().ref(`sessions/${user.uid}/${sessionInfo.sessionId}/lastActive`)
-                .set(Date.now());
+        if (user) {
+            // Update session info in Firebase Database
+            const dbRef = ref(database, `sessions/${user.uid}/${sessionInfo.sessionId}`);
+            set(dbRef, {
+                lastActive: Date.now(),
+                userAgent: navigator.userAgent,
+                startTime: sessionInfo.startTime || Date.now(),
+            });
         }
-    }
-
-    // Set up token expiration timer
-    function setupTokenExpiration() {
-        clearTimeout(tokenExpiryTimer);
-        clearTimeout(warningTimer);
-
-        // Set timer for warning
-        warningTimer = setTimeout(showExpiryWarning, TOKEN_LIFETIME - WARNING_BEFORE_EXPIRY);
-        
-        // Set timer for logout
-        tokenExpiryTimer = setTimeout(logout, TOKEN_LIFETIME);
-
-        // Set up periodic session info updates
-        setInterval(updateSessionInfo, 60000); // Update every minute
-    }
-
-    var init = function() {
-        // Show security notification on page reload
-        if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-            showSecurityNotification();
-        }
-
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
-                console.log("stay");
-                mainContainer.style.display = "";
-                sessionStartTime = Date.now();
-                lastActivityTime = Date.now();
-                setupTokenExpiration();
-                checkConcurrentSessions(user);
-            } else {
-                mainContainer.style.display = "none";
-                window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
-            }
-        });
     };
 
-    init();
+    // Generate a unique session ID
+    const generateSessionId = () => {
+        return Math.random().toString(36).substring(2) + Date.now().toString(36);
+    };
 
-    mainApp.logout = logout;
+    // Function to handle session expiration and token warning
+    const handleTokenExpiration = () => {
+        const countdownElement = document.getElementById('countdown');
+        let countdown = Math.floor(TOKEN_LIFETIME / 1000); // Convert to seconds
+
+        // Show warning before expiration
+        const showExpiryWarning = () => {
+            const sessionInfo = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || '{}');
+            const sessionDuration = Math.floor((Date.now() - sessionInfo.startTime) / 60000); // in minutes
+
+            Swal.fire({
+                title: 'Session Expiring Soon',
+                html: `Your session will expire in <strong id="countdown">${countdown}</strong> seconds.<br>` +
+                    `Session duration: ${sessionDuration} minutes.<br>` +
+                    `You will need to log in again after expiration.`,
+                icon: 'warning',
+                timer: WARNING_BEFORE_EXPIRY,
+                timerProgressBar: true,
+                showCancelButton: true,
+                confirmButtonText: 'Understood',
+                cancelButtonText: 'Logout Now',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            }).then((result) => {
+                if (!result.isConfirmed) {
+                    logout(); // If the user clicks "Logout Now"
+                }
+            });
+
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdownElement && countdown >= 0) {
+                    countdownElement.textContent = countdown;
+                } else {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        };
+
+        // Set a timer to show the warning before expiration
+        warningTimer = setTimeout(showExpiryWarning, TOKEN_LIFETIME - WARNING_BEFORE_EXPIRY);
+
+        // Set a timer to logout the user when the session expires
+        tokenExpiryTimer = setTimeout(logout, TOKEN_LIFETIME);
+    };
+
+    // Auth state change listener to detect when the user logs in or out
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            console.log("User is signed in:", user);
+            sessionStartTime = Date.now();
+            updateSessionInfo(user); // Update session info in localStorage and Firebase
+
+            // Set token expiration timers
+            handleTokenExpiration();
+
+            // Periodically update session info every minute
+            setInterval(() => updateSessionInfo(user), 60000); // Update session every minute
+        } else {
+            console.log("User is signed out");
+            window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
+        }
+    });
+
+    // Expose the logout function to the global mainApp object so it can be accessed from the HTML
+    window.mainApp = {
+        logout: logout
+    };
+
 })();
