@@ -6,14 +6,22 @@
 	<!-- Boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<link href="https://fonts.googleapis.com/css2?family=Jersey+20+Charted&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-auth.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+	 <!-- Add Firebase SDK -->
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-app-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-auth-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-app-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-auth-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
+	 <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+	   <!-- Add Firebase SDK -->
+
+
 	<!-- My CSS -->
-	<link rel="stylesheet" href="./dashboard/css/style.css">
+	<link rel="stylesheet" href="./css/dashboard style.css">
 	<link rel="stylesheet" href="./css/swalOnly.css">
 	<title>Kanyadet</title>
 </head>
@@ -45,7 +53,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="./dashboard/students dashboard/students.html" target="_blank"  >
+				<a href="./students dashboard/students.html" target="_blank"  >
 					<i class='bx bxs-shopping-bag-alt' ></i>
 					<span class="text">Students</span>
 				</a>
@@ -72,7 +80,7 @@
 			</li>
 
 			<li>
-				<a href="./dashboard/Contacts/index.html" target="_blank">
+				<a href="./Contacts/index.html" target="_blank">
 					<i class='bx bxs-group' ></i>
 					<span class="text">Teachers Contacts</span>
 				</a>
@@ -145,11 +153,17 @@
 						<h3 id="admissionsCounter">0</h3>
 						<p>New Admissions</p>
 					</span>
-				</li>
-				
+
+					
+				      </li>
+					  <a href="./students dashboard/students.html" target="_blank">
 						<div id="studentCounter"></div>
-				
-				<li>
+					 </a>
+					  
+					  <li>
+
+				    	
+
 					<i class='bx bxs-user' ></i>
 					<span class="text">
 						<h3 id="transferredCounter">0</h3>
@@ -253,10 +267,8 @@
 	<!-- CONTENT -->
 	<script src="https://admin-kanyadet.web.app/js/GoogleAuthfireBase.js"></script>
     <script src="https://admin-kanyadet.web.app/js/GoogleAuthmain.js"></script>
-	<script src="https://admin-kanyadet.web.app/js/UpdateTabs.js"></script>
-
-	<script  src="./dashboard/js/script.js"></script>
-    <script type="module" src="./dashboard/students dashboard/js/allan.js"></script>
+    <script  src="./js/dashboard script.js"></script>
+    <script type="module" src="./students dashboard/js/Counter.js"></script>
 
 </div>
 </body>

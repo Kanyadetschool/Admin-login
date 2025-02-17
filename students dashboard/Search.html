@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kanyadet school</title>
+    
+    <link rel="stylesheet" href="./css/swalOnly.css" />
+    <link rel="stylesheet" href="./css/Mainstyle.css" />
+    <link rel="stylesheet" href="./css/whatsapp.css" />
+    <link rel="stylesheet" href="./css/FilteringNames.css">
+    <link rel="stylesheet" href="./css/loader.css"> 
+    <link rel="shortcut icon" href="./img/email.png" type="image/x-icon">
+    <link rel="shortcut icon" href="./img/phone.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> 
+    
+    <!-- Add Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+      <!-- Add Firebase SDK -->
+	 
+    
+  
+  </head>
+  <body>
+
+
+
+    <div class="loading">
+      <div  class="animate__animated animate__zoomInRight" ></div> <br>
+      <div>
+       <svg viewBox="25 25 50 50">
+           <circle r="20" cy="50" cx="50"></circle>
+         </svg>
+       </div>
+       </div> 
+
+
+
+
+
+
+    <div class="container">
+      <div id="main_container" style="display:none;"></div>   
+
+
+      <span class="big-circle"></span>
+      <div class="form">
+
+        <div class="contact-info">
+          <h3 class="title"><b>🕸️Kanyadet School Students Biodata  Portal  </b></h3>
+        
+
+            <div class="righthamberger">
+            <div class="pullhambeger"></div>
+            <div class="righthambergersubdivs">  <a href="https://kanyadet-school.web.app/" target="_blank"><i class="fas fa-home"></i> Home</a></div>
+            <div class="righthambergersubdivs">  <a href="../KPSEA AND KJSEA/index.html" target="_blank"><i class="fas fa-book"></i> School Results</a></div>
+            <div class="righthambergersubdivs">  <a href="../KPSEA AND KJSEA/index.html" target="_blank"><i class="fas fa-pen"></i> KPSEA & KJSEA</a></div>
+            <div class="righthambergersubdivs">  <a href="https://kanyadet-school.web.app/Downloads/index.html" target="_blank"><i class="fas fa-bank"></i> Knec Assessments</a></div>
+            <div class="righthambergersubdivs">  <a href=""><i class="fas fa-truck"></i>Capture Scores</a></div>
+            <div class="righthambergersubdivs">  <a href="./UPIremind.html" target="_blank"><i class="fas fa-truck"></i> Pending UPI</a></div>
+            </div>
+            
+            <p class="text"><b>>></b> <b>Section A: Student Information</b>
+           <input type="search" name="" id="search"   oninput="onSearch()" placeholder="🔍   Search....Christian name"   onclick="(this)" autocomplete="off" >
+          </p>
+          <!-- Embedded HTML Structure for Student List -->
+
+<b><p id="counter" class="counter"></p></b>
+<div class="studentsNames">
+
+  <ul id="studentList" class="student-list">
+      <!-- This will be populated dynamically by JavaScript -->
+  </ul>
+  <div id="scrollIndicator" class="scroll-indicator">
+      <i class="fa-solid fa-circle-arrow-down"></i>
+  </div>
+ 
+</div>
+<div class="loaderSpin" ></div>
+
+ <div class="info">
+        <div class="information" id="displayforlongclassnames">
+              <div class="sub" >
+                <label for=""><i class="fas fa-user"></i> <b>Student's Photo </b></label>
+                <div id="learnerImages" class="mypic"></div> <!-- New div for learner images --> 
+                <img src="./img/newlogo.png" class="logo" alt="">
+                
+
+           
+             </div>
+             
+          
+             <div class="sub" >
+                    
+              <label for=""><i class="fas fa-user"></i> Status</label>
+              <input type="text" class="input"  id="Status"  name="Status" disabled>
+           </div>
+
+           <div class="sub">
+            <label for=""> <i class="fas fa-message"></i> Year Of Graduation:</label>
+            <input type="text" name="YearOfGraduation" id="Class Teacher"   class="input" disabled >
+        </div>
+             
+
+            <div class="sub" id="StudentStatus">
+           <label for=""><i class="fas fa-user"></i> Current Grade </label>
+                     <input type="text" class="input" id="CurentGrad" name="CurentGrade" disabled> 
+                 
+                   <a href="./Pdf/2023-KCPE-Timetable-04.05.pdf"></a>
+            </div>
+            
+
+             <div class="sub" >
+              
+                 <label for=""><i class="fas fa-user"></i> Disability</label>
+                 <input type="text" class="input" placeholder="" name="Disability" disabled>
+              </div>
+
+              <div class="sub">
+                <label for=""> <i class="fas fa-user"></i> Date of Birth:</label>
+                <input type="text" name="DateOfBirth" id="Phone Number" class="input"  disabled  >
+                </div>
+
+              
+
+
+                  <div class="paginationDesktopNext" id=""> <a href="https://kanyadet-school.web.app/">Home</a></div>
+         
+      </div>
+            
+</div>
+
+
+          <div class="social-media">
+            <p>🕸️Connect with us :</p>
+            <div class="social-icons">
+              <a href="https://wa.me/254769106047" target="_blank">
+                <i class="fab fa-whatsapp"> </i>
+
+              
+              <a href="#">
+                <i class="fab fa-twitter"></i>
+              
+              <a href="#">
+                <i class="fab fa-instagram"></i>
+              
+              <a href="#">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+            </div>
+            
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <span class="circle one"></span>
+          <span class="circle two"></span>
+
+          <form action="https://formspree.io/f/xzbldbzy" method="POST"   enctype="multipart/form-data" autocomplete="on">
+           <div class="paginationDesktop"> Page 1 0f 3</div>
+            <div class="hideSubtitlesOnAndroid">
+              <p class="text"  style="text-align: center;" >
+                <h3 class="title" id="Section A:" ><b> 🕸️Section A: Student information continuation</b></h3>
+                <p class="text" style="text-align: center;"><b>>></b> <b>Section A: Student Information</b></p>
+  
+               </p>
+  
+            </div>
+            <div class="information" id="displayforlongclassnames">
+
+             
+
+                  
+            <div class="sub">
+              <label for=""><i class="fas fa-lock"></i> Assessment N0:</label>
+              <input type="text" name="Assessment Number" id="Assessment Number" class="input" disabled >
+          </div>
+
+          <div class="sub">
+              <label for=""><i class="fas fa-lock"></i> U.P.I Number:</label>
+              <input type="text" name="U.P.I" id="UPI Number" class="input"  disabled >
+              </div>
+              <div class="sub">
+                  <label for=""><i class="fas fa-lock"></i> Admission  No </label>
+                  <input type="text"  name="Admission No" class="input"disabled>
+                  </div>
+          
+              <div class="sub">
+              <label for=""><i class="fas fa-calendar"></i>  Date of Admission  </label>
+              <input type="text" class="input"  name="DateOfAdm" disabled>
+          </div>
+
+          <div class="sub">
+            <label for=""><i class="fas fa-school" target="_blank"></i>  Admission Class  </label>
+            <input type="text" class="input"  name="Admission Class" disabled>
+        </div>
+
+        <div class="sub">
+            <label for=""><i class="fas fa-school" target="_blank"></i> Gender</label>
+            <input type="text" name="Gender" id="Gender" class="input" disabled >
+        </div>
+
+        
+                
+       
+
+          
+          
+
+    </div>
+
+     
+          
+
+
+           
+
+
+           
+            
+           
+            
+  
+          </form>
+      <div class="paginationDesktopNextRight" id=""> <a href="#sectionB">Next ➡️</a></div>
+      <div class="paginationDesktopNextHome" > <a href="https://kanyadet-school.web.app/">Home</a></div>
+
+
+        </div>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+    <div class="container" id="sectionB" >
+      <span class="big-circle2"></span>
+      <div class="form" id="sectionB">
+
+        <div class="contact-info">
+          <h3 class="title" style="text-align: left;"><b> 🕸️Section B: Student Information </b></h3>
+          <img src="./img/newlogo.png" class="logo" alt="">
+        <div class="paginationAndroids"> Page 2 0f 3</div>
+
+          
+
+          <div class="info">
+            <div class="information" id="displayforlongclassnames">
+
+              <div class="sub">
+                <label for=""> <i class="fas fa-phone"></i>  Phone Number: </label>
+                <input type="tel" name="Phone Number:" class="input"  disabled >
+                </div>
+
+              <div class="sub">
+                <label for=""> <i class="fas fa-message"></i> School Email:👣 </label>
+                <input type="email" name="Official Email:" id="email"  class="input" disabled >
+            </div>
+             
+              <div class="sub">
+                <label for=""> <i class="fas fa-message"></i> Class Teacher:👣 </label>
+                <input type="text" name="Class Teacher:" id="Class Teacher"  class="input" disabled >
+            </div>
+
+            <div class="sub">
+              <label for=""><i class="fas fa-lock"></i> Student Entry No </label>
+              <input type="text"  name="EntryNo" class="input"disabled>
+              </div>
+            </div>
+
+          
+
+            <h3 class="title" style="text-align: left;"><b> 🕸️Parent/Guardian Information </b></h3>
+
+            <div class="information" id="displayforlongclassnames">
+                     
+
+              <div class="sub">
+                <label for=""><i class="fas fa-user"></i> Father's Name:</label>
+                <input type="text" name="Fathers Name" id="Fathers Name" class="input"  disabled >
+  
+            </div>
+         
+                     
+                        <div class="sub">
+                            <label for=""><i class="fas fa-phone"></i> PhoneNumber </label>
+                            <input type="text" name="Fathers PhoneNumber" class="input"  disabled >
+                            
+                        </div>
+                     
+                     
+                       
+
+                        <div class="paginationDesktopNext" id=""> <a href="#section: C">Next ➡️</a></div>
+                     
+         
+          </div>
+          </div>
+
+          <div class="social-media">
+            <p>🕸️Connect with us :</p>
+            <div class="social-icons">
+              <a href="https://wa.me/254769106047" target="_blank">
+                <i class="fab fa-whatsapp"> </i>
+
+              
+              <a href="#">
+                <i class="fab fa-twitter"></i>
+              
+              <a href="#">
+                <i class="fab fa-instagram"></i>
+              
+              <a href="#">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <span class="circle one"></span>
+          <span class="circle two"></span>
+
+          <form action="https://formspree.io/f/xzbldbzy" method="POST"   enctype="multipart/form-data" autocomplete="on">
+            <div class="paginationDesktop"> Page 2 0f 3</div>
+          <div class="hideSubtitlesOnAndroid">  <h3 class="title"  ><b> 🕸️Parent / Guardian Information continuation</b></h3></div>
+            <div class="information" id="displayforlongclassnames">
+               
+              <div class="sub">
+                <label for=""><i class="fas fa-user"></i> Mother's Name:</label>
+                <input type="text" name="Mothers Name" id="Mothers Name" class="input"  disabled >
+
+            </div>
+                     
+    
+           
+              <div class="sub">
+                  <label for=""><i class="fas fa-phone"></i> PhoneNumber </label>
+                  <input type="text" name="Mothers PhoneNumber" class="input"  disabled >
+                  
+              </div>
+
+          
+
+</div>
+
+
+            <div class="sub">   <link rel="stylesheet" href="css/fontawesome.css" />
+            <label for=""><i class="fas fa-house"></i> Other Siblings</label>
+            <textarea name="Siblings" class="input" id="siblings" disabled ></textarea>
+            </div>
+
+
+            
+            
+           
+           
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+    <div class="container" id="section: C">
+      <span class="big-circle"></span>
+      <div class="form" id="sectionC">
+
+        <div class="contact-info">
+          <h3 class="title" style="text-align: left;"><b> 🕸️Section C: Downloads  </b></h3>
+          <img src="./img/newlogo.png" class="logo" alt="">
+          <div class="paginationAndroids"> Page 3 0f 3</div>
+          <div class="paginationDesktopNext" id=""> <a href="../KPSEA AND KJSEA/index.html" title="Go to KPSEA & KJSEA Reports portal" target="_blank">#KPSEA & KJSEA Reports</a></div>
+
+
+          <div class="info">
+            <div class="information" id="displayforlongclassnames">
+
+              
+
+              <div class="sub">
+                <label for=""> <i class="fas fa-phone"></i>  Student Photo: </label>
+                <div id="fileDownload4" class="input"> Student image</div>
+                </div>
+
+              <div class="sub">
+                <label for=""> <i class="fas fa-message"></i> KPSEA Report: </label>
+              <div id="fileDownload1" class="input">Knec Report</div>
+            </div>
+             
+              <div class="sub">
+                <label for=""> <i class="fas fa-message"></i> Leaving certificate: </label>
+              <div id="fileDownload2" class="input">Leaving certificate</div>
+            </div>
+
+            <div class="sub">
+              <label for=""><i class="fas fa-user"></i> Performance Archive</label>
+              <div id="fileDownload3" class="input">Archive</div>
+
+          </div>
+
+          </div>
+
+          
+
+
+          </div>
+
+          <div class="social-media">
+            <p>🕸️Connect with us :</p>
+            <div class="social-icons">
+              <a href="https://wa.me/254769106047" target="_blank">
+                <i class="fab fa-whatsapp"> </i>
+
+              
+              <a href="#">
+                <i class="fab fa-twitter"></i>
+              
+              <a href="#">
+                <i class="fab fa-instagram"></i>
+              
+              <a href="#">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <span class="circle one"></span>
+          <span class="circle two"></span>
+
+          <form action="https://formspree.io/f/xzbldbzy" method="POST"   enctype="multipart/form-data" autocomplete="on">
+            <div class="paginationDesktop"> Page 3 0f 3</div>
+            <h3 class="title" ><b> 🕸️Directly Contact Developer</b></h3>
+            <div class="information" id="displayforlongclassnames">
+         
+                     
+    
+           
+              <div class="sub">
+                  <label for=""><i class="fas fa-phone"></i> PhoneNumber 1 </label>
+                <a href="tel:+254112934576">  <input type="text" name="Mothers PhoneNumber" class="input"  value="+254112934576"  ></a>
+                  
+              </div>
+              <div class="sub">
+                  <label for=""><i class="fab fa-whatsapp"></i> whatsapp </label>
+                <button class="btn" id="contactSupport">
+                  <i class="fab fa-whatsapp"></i> 
+                   initialize
+                  <span class="loader" id="loader"></span>
+                </button>
+                
+                  
+              </div>
+
+          
+
+</div>
+
+            <div class="sub">   <link rel="stylesheet" href="css/fontawesome.css" />
+            <label for=""><i class="fas fa-house"></i> Mailto:</label>
+           <a href="mailto:geofreyonyango167@gmail.co"> <textarea name="Siblings" class="input" placeholder="geofreyonyango167@gmail.com"  ></textarea></a href="maolto:">
+            </div>
+
+
+           
+            
+           
+           
+         <div class="submitcont">
+              <input type="submit" value="🕸️" class="btn" />
+              <input type="submit" value="🕸️" class="btn" />
+              <input type="submit" value="🕸️" class="btn" />
+         </div>
+          </form>
+
+          
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+         <!-- Brevo Conversations {literal} -->
+         <script>
+          (function(d, w, c) {
+              w.BrevoConversationsID = '66d8988f9c10cd75760b654f';
+              w[c] = w[c] || function() {
+                  (w[c].q = w[c].q || []).push(arguments);
+              };
+              var s = d.createElement('script');
+              s.async = true;
+              s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+              if (d.head) d.head.appendChild(s);
+          })(document, window, 'BrevoConversations');
+        </script>
+        <!-- /Brevo Conversations {/literal} -->
+  
+
+        <script type="module" src="./js/Main.js"></script> 
+        <script type="module" src="./js/whatsapp.js"></script> 
+        <script type="module" src="./js/FilteringNames.js"></script> 
+        <script src="./js/Best page loader.js"></script> 
+        <script src="https://admin-kanyadet.web.app/js/GoogleAuthfireBase.js"></script>
+        <script src="https://admin-kanyadet.web.app/js/GoogleAuthmain.js"></script>
+
+    <!-- <script type="module" src="./js/inspect.js"></script>  -->
+    <!-- <script src="./js/PageVerrification.js"></script>  -->
+
+  </body>
+</html>
