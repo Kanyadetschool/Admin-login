@@ -49,6 +49,5 @@ if (document.getElementById('firebaseui-auth-container')) {
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         // User is signed in
-        window.location.href = 'index.html';
     }
 });

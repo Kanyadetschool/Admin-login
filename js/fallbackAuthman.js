@@ -1,93 +1,89 @@
+var mainApp = {};
+(function() {
+    var mainContainer = document.getElementById("main_container");
+    const TOKEN_LIFETIME = 21600000; // 6 hours in milliseconds
+    const WARNING_BEFORE_EXPIRY = 300000; // 5 minutes in milliseconds
+    let tokenExpiryTimer;
+    let warningTimer;
 
-
-    // Initialize Firebase (if not already initialized)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-
-(function () {
-    // Firebase config
-    const firebaseConfig = {
-        apiKey: "AIzaSyDuoaOZvCSZp_d2eTfUjBIZtoIFEKysgJ8",
-        authDomain: "admin-kanyadet.firebaseapp.com",
-        projectId: "admin-kanyadet",
-        storageBucket: "admin-kanyadet.firebasestorage.app",
-        messagingSenderId: "920056467446",
-        appId: "1:920056467446:web:eb416e8125a21463b501d7",
-        measurementId: "G-GL27FQHVPY"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const database = getDatabase(app);
-
-    // Set persistence to LOCAL to persist authentication across page loads
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-            console.log("Persistence set to LOCAL");
-        })
-        .catch((error) => {
-            console.error("Error setting persistence:", error);
-        });
-
-    // Function to handle user logout
-    const logout = function () {
-        // Remove session info from localStorage
-        localStorage.removeItem('userSessionInfo');
-
-        // Clear persistence to force user to log in again
-        auth.setPersistence(firebase.auth.Auth.Persistence.NONE)
-            .then(() => {
-                // Sign out the user
-                return auth.signOut();
-            })
-            .then(() => {
-                console.log("User signed out successfully");
-                // Redirect to login page after successful logout
-                window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
-            })
-            .catch((error) => {
-                console.error("Logout error:", error);
-            });
-    };
-
-    // Handle auth state changes
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            console.log("User is signed in:", user);
-            // Display the main container or handle authenticated state
-            document.getElementById('main_container').style.display = "";
-            // Optionally, update session info in Firebase
-            updateSessionInfo(user);
-        } else {
-            console.log("User is signed out");
-            // Redirect to login page if not signed in
-            document.getElementById('main_container').style.display = "none";
+    var logout = function() {
+        firebase.auth().signOut().then(function() {
             window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
+        }, function() {});
+    };
+
+    // Show security notification on page reload
+    function showSecurityNotification() {
+        Swal.fire({
+            title: 'Security Notice',
+            text: 'This page has been reloaded. Please ensure you\'re in a secure environment.',
+            icon: 'info',
+            confirmButtonText: 'Understood'
+        });
+    }
+
+    // Show warning before token expiration
+    function showExpiryWarning() {
+        var countdown = 300; // 5 minutes in seconds
+        Swal.fire({
+            title: 'Session Expiring Soon',
+            html: `Your session will expire in <strong id="countdown">${countdown}</strong> seconds.<br>You will need to log in again after expiration.`,
+            icon: 'warning',
+            timer: WARNING_BEFORE_EXPIRY,
+            timerProgressBar: true,
+            showCancelButton: true,
+            confirmButtonText: 'Understood',
+            cancelButtonText: 'Logout Now',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                logout();
+            }
+        });
+
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            const element = document.getElementById('countdown');
+            if (element && countdown >= 0) {
+                element.textContent = countdown;
+            } else {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+    }
+
+    // Set up token expiration timer
+    function setupTokenExpiration() {
+        clearTimeout(tokenExpiryTimer);
+        clearTimeout(warningTimer);
+
+        // Set timer for warning
+        warningTimer = setTimeout(showExpiryWarning, TOKEN_LIFETIME - WARNING_BEFORE_EXPIRY);
+        
+        // Set timer for logout
+        tokenExpiryTimer = setTimeout(logout, TOKEN_LIFETIME);
+    }
+
+    var init = function() {
+        // Show security notification on page reload
+        if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+            showSecurityNotification();
         }
-    });
 
-    // Function to update session information in Firebase
-    const updateSessionInfo = (user) => {
-        const sessionInfo = JSON.parse(localStorage.getItem('userSessionInfo') || '{}');
-        sessionInfo.lastActive = Date.now();
-        sessionInfo.sessionId = sessionInfo.sessionId || generateSessionId();
-        localStorage.setItem('userSessionInfo', JSON.stringify(sessionInfo));
-
-        const dbRef = ref(database, 'sessions/' + user.uid);
-        set(dbRef, {
-            lastActive: Date.now(),
-            userAgent: navigator.userAgent,
-            startTime: sessionInfo.startTime || Date.now(),
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                console.log("stay");
+                mainContainer.style.display = "";
+                setupTokenExpiration(); // Start token expiration timer
+            } else {
+                mainContainer.style.display = "none";
+                window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
+            }
         });
     };
 
-    // Generate a unique session ID
-    const generateSessionId = () => {
-        return Math.random().toString(36).substring(2) + Date.now().toString(36);
-    };
+    init();
 
-    // Example: Binding the logout function to a button click (adjust as needed)
-    document.getElementById("logout_button").addEventListener("click", logout);
-
+    mainApp.logout = logout;
 })();
