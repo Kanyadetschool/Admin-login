@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Other meta tags and CSS -->
+    
+    <!-- Firebase SDK - Use only one version -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <!-- Firebase config must load before other scripts -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Initialize Firebase Authentication -->
+    <script>
+        // Initialize Firebase immediately when config loads
+        firebase.initializeApp(firebaseConfig);
+        
+        // Check authentication state before showing content
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainContainer = document.getElementById('main_container');
+            
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    // User is signed in
+                    mainContainer.style.display = "block";
+                    // Initialize your page-specific functionality here
+                } else {
+                    // No user is signed in, redirect to login
+                    window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
+                }
+            });
+        });
+    </script>
+
+    <!-- Rest of your head content -->
+</head>
+<body>
+    <div class="container">
+        <div id="main_container" style="display:none;">
+            <!-- Your page content here -->
+        </div>
+    </div>
+    
+    <!-- Rest of your body content -->
+</body>
+</html>

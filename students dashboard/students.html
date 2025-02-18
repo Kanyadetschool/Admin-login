@@ -6,44 +6,27 @@
 
 	<!-- Boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-	<script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
-	 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+	
+	 <!-- Add Firebase SDK --><!-- Firebase SDK - Use only one version -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+	   <!-- Add Firebase SDK -->
 	 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-   
+	 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<!-- My CSS -->
 	<link rel="stylesheet" href="./style.css">
+	<link rel="stylesheet" href="./css/swalOnly.css">
 	<a href="./Search Biodata/js/"></a>
 
 	<title>Kanyadet</title>
-    <style>
-        .filter-container select {
-            padding: 5px 10px;
-            margin-right: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            background: white;
-            cursor: pointer;
-        }
-        
-        .filter-container select:hover {
-            border-color: #3C91E6;
-        }
-        
-        .head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-    </style>
-    <!-- Firebase Scripts - Add these before other scripts -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <!-- Firebase config must load before notification.js -->
     <script src="firebase-config.js"></script>
 	<link rel="stylesheet" href="notifications.css">
     <!-- Load notification system after Firebase is initialized -->
-    <script src="notification.js"></script>
+    <script src="zz"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
@@ -90,10 +73,10 @@
 		<ul class="side-menu">
 			
 			<li>
-				<a href="https://kanyadet-school.web.app/GoogleAuthlogin.html" class="logout">
+				
 					<i class='bx bxs-log-out-circle' ></i>
-					<span class="text">Logout</span>
-				</a>
+					<span class="text"  onclick="mainApp.logout()">Logout</span>
+				
 			</li>
 		</ul>
 	</section>
@@ -165,11 +148,10 @@
 	
 
 	<script type="module" src="script.js"></script>
-
-	<script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase-auth.js"></script>
-        <script src="https://admin-kanyadet.web.app/js/GoogleAuthfireBase.js"></script>
-        <script  src="https://admin-kanyadet.web.app/js/GoogleAuthmain.js"></script>
+	
+	<script  src="https://admin-kanyadet.web.app/js/GoogleAuthmain.js"></script>
+	
+        
         
 
 
