@@ -6,10 +6,28 @@ var mainApp = {};
     let tokenExpiryTimer;
     let warningTimer;
 
+    // Listen for storage events to sync logout across tabs
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'logout-event') {
+            // Perform logout in other tabs without redirect
+            firebase.auth().signOut().then(function() {
+                window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
+            }).catch(function(error) {
+                console.error("Logout error:", error);
+            });
+        }
+    });
+
     var logout = function() {
+        // Trigger logout event for other tabs
+        localStorage.setItem('logout-event', Date.now().toString());
+        
+        // Perform logout in current tab
         firebase.auth().signOut().then(function() {
             window.location.replace("https://admin-kanyadet.web.app/GoogleAuthlogin.html");
-        }, function() {});
+        }, function(error) {
+            console.error("Logout error:", error);
+        });
     };
 
     // Show security notification on every page load
@@ -19,13 +37,13 @@ var mainApp = {};
             text: 'Please ensure you\'re in a secure environment before proceeding.',
             icon: 'info',
             timer: 5000,
-            TimerProgressBar: true,
+            timerProgressBar: true,
             confirmButtonText: 'Understood',
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    didOpen: () => {
-        Swal.showLoading(); // Show loading indicator
-    }
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
         });
     }
 

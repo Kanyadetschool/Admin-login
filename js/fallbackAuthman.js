@@ -12,13 +12,20 @@ var mainApp = {};
         }, function() {});
     };
 
-    // Show security notification on page reload
+    // Show security notification on every page load
     function showSecurityNotification() {
         Swal.fire({
             title: 'Security Notice',
-            text: 'This page has been reloaded. Please ensure you\'re in a secure environment.',
+            text: 'Please ensure you\'re in a secure environment before proceeding.',
             icon: 'info',
-            confirmButtonText: 'Understood'
+            timer: 5000,
+            TimerProgressBar: true,
+            confirmButtonText: 'Understood',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+        Swal.showLoading(); // Show loading indicator
+    }
         });
     }
 
@@ -66,10 +73,8 @@ var mainApp = {};
     }
 
     var init = function() {
-        // Show security notification on page reload
-        if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-            showSecurityNotification();
-        }
+        // Show security notification on every page load
+        showSecurityNotification();
 
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
