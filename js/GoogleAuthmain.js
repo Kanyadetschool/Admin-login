@@ -36,7 +36,7 @@ var mainApp = {};
             title: 'Security Notice',
             text: 'Please ensure you\'re in a secure environment before proceeding.',
             icon: 'info',
-            timer: 5000,
+            timer: 100,
             timerProgressBar: true,
             confirmButtonText: 'Understood',
             allowOutsideClick: false,

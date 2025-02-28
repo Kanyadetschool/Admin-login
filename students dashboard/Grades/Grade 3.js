@@ -7,7 +7,7 @@ export const Grade3 = [
     AdmissionNo: "",
     AssessmentNumber: "",
     EntryNo: "",
-    Gender: "",
+    Gender: "Male",
     classfilteringbyGender: "",
     classfilteringCode: "",
     Disability: "",

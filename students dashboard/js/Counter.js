@@ -19,12 +19,15 @@ function updateTotalStudents() {
        Grade7,
        Grade8, 
        Grade9];
+    
+    // Filter out transferred students
+    const activeStudents = grades.map(grade => grade.filter(student => student.Status?.toLowerCase() !== 'transferred')).flat();
        
-    const totalStudents = grades.reduce((total, grade) => total + grade.length, 0);
+    const totalStudents = activeStudents.length;
     
     // Get gender counts
-    const maleStudents = grades.flat().filter(student => student.Gender?.includes('Male')).length;
-    const femaleStudents = grades.flat().filter(student => student.Gender?.includes('Female')).length;
+    const maleStudents = activeStudents.filter(student => student.Gender?.includes('Male')).length;
+    const femaleStudents = activeStudents.filter(student => student.Gender?.includes('Female')).length;
 
     // Update the counter element
     const counterElement = document.getElementById('studentCounter');
@@ -32,8 +35,10 @@ function updateTotalStudents() {
         counterElement.innerHTML = `
             <div class="counter-box">
                 <div class="total-count">
-                    <span class="count">${totalStudents}</span>
-                    <span class="label">Total Students Registered</span>
+                    <span class="count">
+                    <i class='bx bxs-calendar-check' ></i>
+                    ${totalStudents}</span>
+                    <span class="label">Total active Students Registered</span>
                 </div>
                 <div class="gender-counts">
                     <div class="male-count">
@@ -140,7 +145,7 @@ function updateTotalStudents() {
                 }
             }
         `;
-        document.head.appendChild(styles);
+        document.head.appendChild(styles); 
     }
 }
 
@@ -155,10 +160,220 @@ function updateTransferredCount() {
     }
 }
 
+// Function to display transferred students details
+function showTransferredStudentsDetails() {
+    const grades = [Grade1, Grade2, Grade3, Grade4, Grade5, Grade6, Grade7, Grade8, Grade9];
+    let transferredStudents = grades.flat()
+        .filter(student => student.Status === 'Transferred')
+        .map(student => ({
+            Name: student.StudentFullName || 'N/A',
+            UPI: student.UPI === '🕸️' ? 'N/A' : student.UPI,
+            AssessmentNumber: student.AssessmentNumber || 'N/A',
+            CurrentGrade: student.CurentGrade || 'N/A',
+            DateOfTransfer: student.DateOfTransfer || 'N/A',
+            AdmissionNumber: student.AdmissionNo || 'N/A',
+            FathersPhoneNumber: student.FathersPhoneNumber || 'N/A',
+            MothersName: student.MothersName || 'N/A',
+            SchoolTransferedTo: student.SchoolTransferedTo || 'N/A',
+            ReasonForTransfer: student.ReasonForTransfer || 'N/A',
+            FileUrl1: student.FileUrl1 || '../img/Students.jpg' // Default image if FileUrl1 is missing
+        }));
+    
+    if (transferredStudents.length === 0) {
+        Swal.fire({
+            title: 'No Transferred Students',
+            text: 'There are currently no transferred students in the records.',
+            icon: 'info'
+        });
+        return;
+    }
+
+    // Sorting functionality
+    transferredStudents.sort((a, b) => {
+        const dateA = new Date(a.DateOfTransfer);
+        const dateB = new Date(b.DateOfTransfer);
+        if (dateA < dateB) return -1;
+        if (dateA > dateB) return 1;
+        
+        // If dates are equal, sort by grade
+        const gradeA = parseInt(a.CurrentGrade.replace('Grade ', ''));
+        const gradeB = parseInt(b.CurrentGrade.replace('Grade ', ''));
+        return gradeA - gradeB;
+    });
+
+    let tableContent = `
+        <input type="text" id="searchTransferredStudents" placeholder="Search by Name, Grade, Assessment No, or UPI" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        <table class="transferred-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>UPI Number</th>
+                    <th>Assessment No.</th>
+                    <th>Grade</th>
+                    <th>Transfer Date</th>
+                    <th>Admission No.</th>
+                    <th>Father's Phone</th>
+                    <th>Mother's Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${transferredStudents.map(student => `
+                    <tr data-student='${JSON.stringify(student)}'>
+                        <td>${student.Name}</td>
+                        <td>${student.UPI}</td>
+                        <td>${student.AssessmentNumber}</td>
+                        <td>${student.CurrentGrade}</td>
+                        <td>${student.DateOfTransfer}</td>
+                        <td>${student.AdmissionNumber}</td>
+                        <td>${student.FathersPhoneNumber}</td>
+                        <td>${student.MothersName}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+
+    Swal.fire({
+        title: 'Transferred Students',
+        html: tableContent,
+        width: '100%',
+        customClass: {
+            popup: 'transferred-popup',
+        },
+        showConfirmButton: false,
+        didOpen: () => {
+            const tableRows = document.querySelectorAll('.transferred-table tbody tr');
+
+            // Debounce function
+            function debounce(func, delay) {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), delay);
+                }
+            }
+
+            // Function to highlight search terms
+            function highlightSearchTerms(text, searchTerm) {
+                if (!searchTerm) return text;
+                const regex = new RegExp(searchTerm, 'gi');
+                return text.replace(regex, match => `<span style="background-color: yellow;">${match}</span>`);
+            }
+
+            // Add search functionality
+            const searchInput = document.getElementById('searchTransferredStudents');
+            const handleSearch = debounce(() => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredRows = Array.from(tableRows).filter(row => {
+                    const studentData = JSON.parse(row.dataset.student);
+                    return (
+                        studentData.Name.toLowerCase().includes(searchTerm) ||
+                        studentData.CurrentGrade.toLowerCase().includes(searchTerm) ||
+                        studentData.AssessmentNumber.toLowerCase().includes(searchTerm) ||
+                        studentData.  DateOfTransfer.toLowerCase().includes(searchTerm)||
+                        studentData.UPI.toLowerCase().includes(searchTerm)
+                    );
+                });
+
+                // Hide or show rows based on search term
+                tableRows.forEach(row => {
+                    const studentData = JSON.parse(row.dataset.student);
+                    let isMatch = filteredRows.includes(row);
+
+                    row.innerHTML = `
+                        <td>${highlightSearchTerms(studentData.Name, searchTerm)}</td>
+                        <td>${highlightSearchTerms(studentData.UPI, searchTerm)}</td>
+                        <td>${highlightSearchTerms(studentData.AssessmentNumber, searchTerm)}</td>
+                        <td>${highlightSearchTerms(studentData.CurrentGrade, searchTerm)}</td>
+                        <td>${highlightSearchTerms(studentData.DateOfTransfer, searchTerm)}</td>
+                        <td>${highlightSearchTerms(studentData.AdmissionNumber, searchTerm)}</td>
+                        <td>${highlightSearchTerms(studentData.FathersPhoneNumber, searchTerm)}</td>
+                        <td>${highlightSearchTerms(studentData.MothersName, searchTerm)}</td>
+                    `;
+
+                    row.style.display = isMatch ? '' : 'none';
+                });
+            }, 300); // 300ms delay
+
+            searchInput.addEventListener('keyup', handleSearch);
+
+            tableRows.forEach(row => {
+                row.addEventListener('click', () => {
+                    const studentData = JSON.parse(row.dataset.student);
+                    Swal.fire({
+                        title: studentData.Name,
+                        imageAlt: 'Student Image',
+                        width: '400px',
+                        html: `
+                            <img src="${studentData.FileUrl1}" alt="Student Image 1" style="width: 150px; height: 150px; border-radius: 10px; object-fit: cover; margin-bottom: 10px;">
+                            ${studentData.FileUrl2 ? `<img src="${studentData.FileUrl2}" alt="Student Image 2" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">` : ''}
+                            <p><strong>Reason for Transfer:</strong> ${studentData.ReasonForTransfer}</p>
+                            <p><strong>School Transferred To:</strong> ${studentData.SchoolTransferedTo}</p>
+                            <p><strong>Father's Phone:</strong> ${studentData.FathersPhoneNumber}</p>
+                            <p><strong>Mother's Name:</strong> ${studentData.MothersName}</p>
+                        `
+                    });
+                });
+            });
+        }
+    });
+}
+
 // Initial update
 document.addEventListener('DOMContentLoaded', () => {
     updateTotalStudents();
     updateTransferredCount();
+    
+    const transferredCounterElement = document.getElementById('transferredCounter').parentElement.parentElement;
+    transferredCounterElement.addEventListener('click', showTransferredStudentsDetails);
+    
+    // Add styles for the transferred students popup
+    const styles = document.createElement('style');
+    styles.textContent = `
+        .transferred-popup {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .transferred-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .transferred-table th,
+        .transferred-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .transferred-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        
+        .transferred-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .transferred-table tbody tr { /* Add this */
+            border-bottom: 1px solid #ddd;
+        }
+        
+        @media (max-width: 768px) {
+            .transferred-table {
+                font-size: 14px;
+            }
+            
+            .transferred-table th,
+            .transferred-table td {
+                padding: 8px;
+            }
+        }
+    `;
+    document.head.appendChild(styles);
 });
 
 // Export functions

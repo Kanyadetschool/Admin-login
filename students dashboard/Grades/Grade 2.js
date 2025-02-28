@@ -2,12 +2,13 @@
 export const Grade2 = [
   {
     CurentGrade: "Grade 2",
-    StudentFullName: "",
+    StudentFullName: "OPONDO ALLAN OKOTH",
      Status:"Transferred",
+     ReasonForTransfer: "koqkq",
     AdmissionNo: "",
     AssessmentNumber: "",
     EntryNo: "",
-    Gender: "",
+    Gender: "Male",
     classfilteringbyGender: "",
     classfilteringCode: "",
     Disability: "",
@@ -18,15 +19,16 @@ export const Grade2 = [
     PhoneNumber: "🕸️",
     StudentSchoolEmail: "🕸️",
     ClassTeacher: "🕸️",
-    FathersName: "🕸️",
-    FathersPhoneNumber: "🕸️",
+    FathersName: "07xxxxxx",
+    FathersPhoneNumber: "07xxxxxx",
     MothersName: "🕸️",
     MothersPhoneNumber: "🕸️",
+    DateOfTransfer: "4/5/2025",
     Siblings: "No1:Tom allan \n No2: Joy amalia",
-    FileUrl1: "",
+    FileUrl1: "../img/Students.jpg",
     FileUrl2: "",
     FileUrl3: "🕸️",
-    FileUrl4: "../img/Students.jpg",
+    FileUrl4: "",
   },
   {
     CurentGrade: "Grade 2",
@@ -35,7 +37,7 @@ export const Grade2 = [
     AdmissionNo: "",
     AssessmentNumber: "",
     EntryNo: "",
-    Gender: "",
+    Gender: "Male",
     classfilteringbyGender: "",
     classfilteringCode: "",
     Disability: "",
@@ -54,11 +56,10 @@ export const Grade2 = [
     FileUrl1: "",
     FileUrl2: "",
     FileUrl3: "🕸️",
-    FileUrl4: "../img/Students.jpg",
+    FileUrl4: "",
   },
    
     // Add more default data objects as needed
   ];
-  
-   
-  
+
+
