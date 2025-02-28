@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Animation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="l-vue-loading__wrapper loading-fullscreen l-vue-fullscreen">
+        <div class="l-vue-loading__container">
+            <div class="loading-image-wrapper">
+                <p class="l-vue-loading__text">Loading...</p>
+                <div class="spinner-wrapper" style="display: none;">
+                    <picture>
+                        <source srcset="loading.webp" type="image/webp">
+                        <img src="loading.gif" alt="loading" class="l-vue-loading__icon">
+                    </picture>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="loader.js"></script>
+</body>
+</html>

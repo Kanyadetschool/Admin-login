@@ -6,6 +6,7 @@
     <title>Advanced Login</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./loader/loader.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Jersey+20+Charted&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/4.8.2/firebase.js"></script>
@@ -15,6 +16,23 @@
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
 </head><script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <body>
+
+    <div class="l-vue-loading__wrapper loading-fullscreen l-vue-fullscreen">
+        <div class="l-vue-loading__container">
+            <div class="loading-image-wrapper">
+                <p class="l-vue-loading__text">Loading...</p>
+                <div class="spinner-wrapper" style="display: none;">
+                    <picture>
+                        <source srcset="images/loading.webp" type="image/webp">
+                        <img src="images/loading.gif" alt="loading" class="l-vue-loading__icon">
+                    </picture>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
     <div class="container">
         <div class="form-box">
             <div class="form-wrapper">
@@ -63,7 +81,7 @@
                                 </button>
                                 
                                 <div id="installButtonContainer">
-                                    <button class="btn" id="installButton">  <i class="fa-solid fa-share"></i> Install App </button>
+                                    <button class="btn" id="installButton">  <i class="fa-solid fa-share"></i> Install</button>
                                   </div>
                                   <div id="thankYouMessage" style="display: none;">
                                     Thank you for installing the app!
@@ -104,6 +122,7 @@
     <script  type="module" src="./js/firebaseConfig.js"></script>
     <script  type="module" src="./js/authService.js"></script>
     <script  type="module" src="./js/script.js"></script>
+    <script  type="module" src="loader/loader.js"></script>
 
     
     
