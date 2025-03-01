@@ -338,28 +338,88 @@ document.addEventListener('DOMContentLoaded', () => {
         
         .transferred-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-top: 20px;
+            min-width: 800px;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
         .transferred-table th,
         .transferred-table td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #e3e8f0;
+            border-right: 1px solid #e3e8f0;
+            white-space: nowrap;
+        }
+
+        .transferred-table th:last-child,
+        .transferred-table td:last-child {
+            border-right: none;
         }
         
         .transferred-table th {
-            background-color: #f5f5f5;
+            background-color: #f8fafc;
             font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border-top: 1px solid rgb(240, 227, 227);
+            border-bottom: 2px solid #cbd5e1;
+            color: #475569;
         }
         
         .transferred-table tr:hover {
-            background-color: #f9f9f9;
+            background-color: #f1f5f9;
+            transition: background-color 0.2s ease;
         }
 
-        .transferred-table tbody tr { /* Add this */
-            border-bottom: 1px solid #ddd;
+        .transferred-table tbody tr {
+            border-bottom: 1px solid #e3e8f0;
+        }
+
+        .transferred-table tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .transferred-table tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        .transferred-table tbody tr:last-child td {
+            border-bottom: 2px solid #e3e8f0;
+        }
+
+        /* Highlight first column for better readability */
+        .transferred-table td:first-child {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        /* Add subtle transition effects */
+        .transferred-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .transferred-table tbody tr:hover td {
+            background-color: #e2e8f0;
+            color: #000000;
+        }
+
+        /* Rest of existing styles... */
+        .swal2-html-container {
+            overflow-x: auto !important;
+            margin: 0 !important;
+            padding: 10px !important;
+        }
+        
+        #searchTransferredStudents {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background: white;
         }
         
         @media (max-width: 768px) {
@@ -370,6 +430,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .transferred-table th,
             .transferred-table td {
                 padding: 8px;
+            }
+
+            .swal2-popup {
+                margin: 0 !important;
+                padding: 10px !important;
+                width: 100% !important;
             }
         }
     `;
