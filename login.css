@@ -427,10 +427,12 @@ select{
   border: none;
   background-color: transparent;
   color: #fff;
+  font-weight: 600
 
 }
 option{
   background-color: black;
+  width: 100%;
 }
 ::placeholder {
   color: #fff;
@@ -548,7 +550,11 @@ video{
 .image {
   width: 100%;
   transition: transform 1.1s ease-in-out;
-  transition-delay: 0.4s;
+  transition-delay: 0.4s;}
+.log3{
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .panel {
@@ -1384,6 +1390,13 @@ margin-top: 18px;
 @media (max-width: 570px) {
   form {
     padding: 0 1.5rem;
+  }
+
+  .log3{
+width: 40%;
+top: 30px;
+right: -10px;
+
   }
   .toast{
     position: absolute;

@@ -28,7 +28,7 @@
             if (choiceResult.outcome === 'accepted') {
               console.log('User accepted the install prompt');
               // Hide the install button and show thank you message
-              document.getElementById('installButtonContainer').style.display = 'none';
+              document.getElementById('installButton').style.display = 'none';
               document.getElementById('thankYouMessage').style.display = 'block';
               document.getElementById('shareButton').style.display = 'block'; // Show share button after installation
             } else {
