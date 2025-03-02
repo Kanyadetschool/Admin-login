@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /login.html
+Allow: /dashboard/
+Allow: /students-dashboard/
+Allow: /Contacts/
+Allow: /resources/
+Disallow: /private/
+Disallow: /js/
+Disallow: /css/config/
+
+Sitemap: https://admin-kanyadet.web.app/sitemap.xml
+
+# Crawl-delay: 10

@@ -1,8 +1,5 @@
 {
   "projects": {
-    "default": "admin-kanyadet",
-    "deploy": "admin-kanyadet"
-  },
-  "targets": {},
-  "etags": {}
+    "default": "kanyadet-school-admin"
+  }
 }

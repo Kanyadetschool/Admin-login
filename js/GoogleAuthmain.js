@@ -11,7 +11,7 @@ var mainApp = {};
         if (e.key === 'logout-event') {
             // Perform logout in other tabs without redirect
             firebase.auth().signOut().then(function() {
-                window.location.replace("https://admin-kanyadet.web.app/login.html");
+                window.location.replace("https://kanyadet-school-admin.web.app/login.html");
             }).catch(function(error) {
                 console.error("Logout error:", error);
             });
@@ -24,7 +24,7 @@ var mainApp = {};
         
         // Perform logout in current tab
         firebase.auth().signOut().then(function() {
-            window.location.replace("https://admin-kanyadet.web.app/login.html");
+            window.location.replace("https://kanyadet-school-admin.web.app/login.html");
         }, function(error) {
             console.error("Logout error:", error);
         });
@@ -101,7 +101,7 @@ var mainApp = {};
                 setupTokenExpiration(); // Start token expiration timer
             } else {
                 mainContainer.style.display = "none";
-                window.location.replace("https://admin-kanyadet.web.app/login.html");
+                window.location.replace("https://kanyadet-school-admin.web.app/login.html");
             }
         });
     };
