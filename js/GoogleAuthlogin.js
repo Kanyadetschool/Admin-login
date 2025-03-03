@@ -1,6 +1,13 @@
-// Add notification constants at the top
 const NOTIFICATION_TIMEOUT = 5000; // 5 seconds in milliseconds
 const NOTIFICATION_VOLUME = 0.5;   // 50% volume
+
+// Separate notification handler that doesn't affect auth state
+function handleNotification(notification, timeoutId) {
+    notification.onclick = function() {
+        clearTimeout(timeoutId);
+        notification.close();
+    };
+}
 
 function showNotification(title, message) {
     console.log('Attempting to show notification:', title, message);
@@ -16,8 +23,7 @@ function showNotification(title, message) {
 
     // Check if the browser supports notifications
     if (!("Notification" in window)) {
-        const tempAlert = alert(message);
-        setTimeout(() => tempAlert.close(), NOTIFICATION_TIMEOUT);
+        alert(message);
         return;
     }
 
@@ -28,27 +34,17 @@ function showNotification(title, message) {
             icon: '/img/logo.png',
             requireInteraction: false,
             vibrate: [200, 100, 200],
-            silent: false
+            silent: false,
+            tag: 'notification-' + Date.now() // Unique tag to prevent interference
         };
         
         try {
             const notification = new Notification(title, options);
-            const timeoutId = setTimeout(() => {
-                if (notification) {
-                    notification.close();
-                }
-            }, NOTIFICATION_TIMEOUT);
-
-            // Clear timeout if user clicks earlier
-            notification.onclick = function() {
-                clearTimeout(timeoutId);
-                window.focus();
-                notification.close();
-            };
+            const timeoutId = setTimeout(() => notification.close(), NOTIFICATION_TIMEOUT);
+            handleNotification(notification, timeoutId);
         } catch (e) {
             console.error('Notification creation failed:', e);
-            const tempAlert = alert(message);
-            setTimeout(() => tempAlert.close(), NOTIFICATION_TIMEOUT);
+            alert(message);
         }
     } else {
         // Handle permission request or denial
@@ -57,10 +53,22 @@ function showNotification(title, message) {
                 if (permission === "granted") {
                     showNotification(title, message);
                 } else {
-                    const tempAlert = alert(message);
-                    setTimeout(() => tempAlert.close(), NOTIFICATION_TIMEOUT);
+                    alert(message);
                 }
             });
+    }
+}
+
+// Add persistent auth state handling
+function persistAuthState(user) {
+    if (user) {
+        localStorage.setItem('authUser', JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            lastLogin: new Date().getTime()
+        }));
+    } else {
+        localStorage.removeItem('authUser');
     }
 }
 
@@ -102,8 +110,12 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         .then((userCredential) => {
             // Hide reset button on successful login
             resetBtn.style.display = 'none';
-            // Redirect to index.html on success
-            window.location.href = 'index.html';
+            // Persist auth state before redirect
+            persistAuthState(userCredential.user);
+            // Add small delay to ensure auth state is saved
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 500);
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -153,6 +165,13 @@ if (document.getElementById('firebaseui-auth-container')) {
 // Add auth state listener
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        // User is signed in
+        persistAuthState(user);
+    } else {
+        // Clear persisted state if logged out
+        localStorage.removeItem('authUser');
+        // Redirect to login if not on login page
+        if (!window.location.pathname.includes('login.html')) {
+            window.location.href = 'login.html';
+        }
     }
 });
