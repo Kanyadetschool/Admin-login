@@ -1,4 +1,4 @@
-const NOTIFICATION_TIMEOUT = 5000; // 5 seconds in milliseconds
+const NOTIFICATION_TIMEOUT = 10000; // 10 seconds in milliseconds
 const NOTIFICATION_VOLUME = 0.5;   // 50% volume
 
 // Separate notification handler that doesn't affect auth state
