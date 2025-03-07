@@ -135,9 +135,9 @@ document.querySelector('.order .head').appendChild(sortButton);
 
 // Initialize data from localStorage or use default data
 let students = JSON.parse(localStorage.getItem('students')) || [
-    { id: 1, name: 'John Doe', date: '01-10-2021', status: 'completed', img: 'img/people.png' },
-    { id: 2, name: 'Jane Smith', date: '01-10-2021', status: 'pending', img: 'img/people.png' },
-    { id: 3, name: 'Jane Smith', date: '01-10-2021', status: 'pending', img: 'img/people.png' },
+    { id: 1, name: 'Britney Awuor Angir', date: '01-10-2024', status: 'Grade 6', img: 'img/people.png' },
+    { id: 2, name: 'Stephen Thuo Okoth', date: '01-10-2021', status: 'pending', img: 'img/people.png' },
+    { id: 3, name: 'Fidel Castro', date: '01-10-2021', status: 'pending', img: 'img/people.png' },
 ];
 
 let transfers = JSON.parse(localStorage.getItem('transfers')) || [
@@ -164,9 +164,17 @@ const modalHTML = `
                 <input type="text" id="studentName" placeholder="Student Name" required style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                 <input type="date" id="admissionDate" required style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                 <select id="studentStatus" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
-                    <option value="process">Process</option>
+                    <option value="Grade 1">Grade</option>
+                    <option value="Grade 2">Grade</option>
+                    <option value="Grade 3">Grade</option>
+                    <option value="Grade 4">Grade</option>
+                    <option value="Grade 5">Grade</option>
+                    <option value="Grade 6">Grade</option>
+                    <option value="Grade 7">Grade</option>
+                    <option value="Grade 8">Grade</option>
+                    <option value="Grade 9">Grade</option>
+                    <option value="Grade 1">Grade</option>
+                   
                 </select>
                 <button type="submit" id="submitBtn" style="padding: 8px; background: #3C91E6; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Student</button>
             </form>

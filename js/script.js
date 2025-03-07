@@ -149,6 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset button state
     function resetButton() {
+        const resetBtn = document.getElementById('resetPasswordBtn');
+        if (resetBtn) {
+            resetBtn.style.display = 'block';
+        }
         submitBtn.querySelector('span').style.opacity = '1';
         submitBtn.querySelector('.spinner').style.display = 'none';
         submitBtn.disabled = false;

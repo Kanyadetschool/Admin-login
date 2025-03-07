@@ -1,4 +1,4 @@
-const NOTIFICATION_TIMEOUT = 10000; // 10 seconds in milliseconds
+const NOTIFICATION_TIMEOUT = 5000; // 5 seconds in milliseconds
 const NOTIFICATION_VOLUME = 0.5;   // 50% volume
 
 // Separate notification handler that doesn't affect auth state
@@ -100,42 +100,45 @@ var ui = new firebaseui.auth.AuthUI(firebase.auth());
 // Handle traditional email/password login
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    e.stopPropagation(); // Stop event bubbling
+    e.stopPropagation();
     
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const resetBtn = document.getElementById('resetPasswordBtn');
 
+    // Direct authentication attempt
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-            // Hide reset button on successful login
-            resetBtn.style.display = 'none';
-            // Persist auth state before redirect
-            persistAuthState(userCredential.user);
-            // Add small delay to ensure auth state is saved
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 500);
+            if (userCredential) {
+                resetBtn.style.display = 'none';
+                persistAuthState(userCredential.user);
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 500);
+            }
         })
         .catch((error) => {
             console.error('Error:', error);
-            // Show reset button on login failure
-            resetBtn.style.display = 'block';
-            
-            // Show appropriate error message
+            if (resetBtn) {
+                resetBtn.style.display = 'block';
+            }
+
             let errorMessage = '';
             switch(error.code) {
-                case 'auth/wrong-password':
-                    errorMessage = 'Incorrect password. Need to reset your password?';
-                    break;
                 case 'auth/user-not-found':
-                    errorMessage = 'No account found with this email.';
+                    alert('This email is not registered in the admin system. Please contact your administrator.');
+                    return;
+                case 'auth/wrong-password':
+                    errorMessage = 'Incorrect password. Please try again or reset your password.';
                     break;
                 case 'auth/invalid-email':
                     errorMessage = 'Please enter a valid email address.';
                     break;
+                case 'auth/invalid-login-credentials':
+                    errorMessage = 'Invalid login credentials.';
+                    break;
                 default:
-                    errorMessage = error.message;
+                    errorMessage = 'Authentication error. Please try again.';
             }
             
             showNotification('Login Failed', errorMessage);

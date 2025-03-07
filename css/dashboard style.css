@@ -476,11 +476,12 @@ body {
 #content main .table-data .order table tr td .status {
 	font-size: 10px;
 	padding: 6px 16px;
-	color: var(--light);
+	color: black;
 	border-radius: 20px;
-	font-weight: 700;
+	font-weight: bold;
+
 }
-#content main .table-data .order table tr td .status.Grade1 {
+#content main .table-data .order table tr td .status #Grade6 {
 	background: var(--blue);
 }
 #content main .table-data .order table tr td .status.Grade2 {
@@ -511,7 +512,7 @@ body {
 #content main .table-data .todo .todo-list li .bx {
 	cursor: pointer;
 }
-#content main .table-data .todo .todo-list li.completed {
+#content main .table-data .todo .todo-list li.Grade6{
 	border-left: 10px solid var(--blue);
 }
 #content main .table-data .todo .todo-list li.not-completed {
