@@ -1,0 +1,10 @@
+{
+    "name": "inventory-management",
+    "version": "1.0.0",
+    "dependencies": {
+        "ws": "^8.2.3"
+    },
+    "scripts": {
+        "start": "node server/wsServer.js"
+    }
+}

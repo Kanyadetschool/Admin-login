@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password | Kanyadet School Parents portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+20+Charted&display=swap" rel="stylesheet">
+    <style>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('./img/BackgroundUniversal.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: "Poppins", sans-serif;
+
+        }
+        h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .left-panel {
+            flex: 1;
+            padding: 40px;
+            /* background: linear-gradient(45deg, #182c59, #ff1cac); */
+            color: rgb(6, 3, 3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .left-panel img {
+            width: 150px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 40px;
+            background: white;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            color: #182c59;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #182c59;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #182c59;
+            outline: none;
+            box-shadow: 0 0 10px rgba(24, 44, 89, 0.2);
+        }
+
+        button {
+            background: linear-gradient(90deg, #182c59, #ff1cac);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #ff1cac, #182c59);
+            transform: translateY(-2px);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .back-to-login {
+            margin-top: 20px;
+            color: #182c59;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'Jersey 20 Charted', Arial, sans-serif;
+
+        }
+
+        .back-to-login:hover {
+            color: #ff1cac;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                margin: 1rem;
+            }
+            .left-panel {
+                padding: 20px;
+            }
+            .left-panel img {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <img src="./img/logo.png  " alt="School Logo" class="logo">
+            <h2>Kanyadet School</h2>
+            <h4>Parents Portal</h4>
+            <p>Enter your email to receive password reset instructions</p>
+        </div>
+        <div class="right-panel">
+            <h1>Reset Password</h1>
+            <div id="resetForm">
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Enter your email address" required>
+                </div>
+                <button onclick="sendResetEmail()">
+                    <i class="fas fa-paper-plane"></i> Send Reset Link
+                </button>
+                <p id="message" class="message"></p>
+                <a href="login.html" class="back-to-login">
+                    <i class="fas fa-arrow-left"></i> Back to Login
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Firebase scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+            authDomain: "kanyadet-school-admin.firebaseapp.com",
+            projectId: "kanyadet-school-admin",
+            storageBucket: "kanyadet-school-admin.appspot.com",
+            messagingSenderId: "409708360032",
+            appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+        };
+
+        // Initialize Firebase directly in this page
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.sendResetEmail = async function() {
+            const email = document.getElementById('email').value;
+            const messageEl = document.getElementById('message');
+            const button = document.querySelector('button');
+            
+            if (!email) {
+                messageEl.textContent = 'Please enter your email address';
+                messageEl.className = 'message error';
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Sending...';
+            messageEl.textContent = 'Processing request...';
+
+            try {
+                // Basic email validation
+                if (!email.includes('@')) {
+                    throw new Error('Please enter a valid email address');
+                }
+
+                await sendPasswordResetEmail(auth, email);
+                
+                console.log('Reset email sent successfully to:', email); // Debug log
+                messageEl.textContent = 'Reset link sent! Check your email inbox and spam folder.';
+                messageEl.className = 'message success';
+                document.getElementById('email').value = '';
+                
+            } catch (error) {
+                console.error('Reset error:', error); // Debug log
+                let errorMessage = 'An error occurred. ';
+                
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'No account found with this email address.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Please enter a valid email address.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many attempts. Please try again later.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                
+                messageEl.textContent = errorMessage;
+                messageEl.className = 'message error';
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Send password reset email';
+            }
+        }
+    </script>
+</body>
+</html>
