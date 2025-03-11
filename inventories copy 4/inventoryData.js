@@ -96,33 +96,18 @@ const DataStore = {
                 name: 'accountsData',
                 tableId: 'accountsTable',
                 columns: [
-                    { 
-                        data: null,
-                        render: function(data) {
-                            return data.accountId || '';  // Use accountId consistently
-                        }
-                    },
+                    { data: 'accountId' },
                     { data: 'accountName' },
                     { data: 'category' },
-                    { 
-                        data: 'balance',
-                        render: data => `$${parseFloat(data).toLocaleString()}`
-                    },
-                    { 
-                        data: 'lastTransaction',  // Changed from lastUpdated to lastTransaction
-                        defaultContent: '-'  // Provide default content if missing
-                    },
-                    { 
-                        data: 'status',
-                        render: data => `<span class="badge bg-${data === 'Active' ? 'success' : 'warning'}">${data || 'Unknown'}</span>`
-                    },
+                    { data: 'balance', render: data => `$${parseFloat(data).toLocaleString()}` },
+                    { data: 'lastTransaction' },
+                    { data: 'status', render: data => `<span class="badge bg-${data === 'Active' ? 'success' : 'warning'}">${data}</span>` },
                     {
                         data: null,
                         render: data => `
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-info" onclick="viewTransactions('${data.accountId}')">View</button>
                                 <button class="btn btn-primary" onclick="editAccount('${data.accountId}')">Edit</button>
-                                <button class="btn btn-danger" onclick="deleteAccount('${data.accountId}')">Delete</button>
                             </div>`
                     }
                 ]
@@ -206,13 +191,15 @@ const DataStore = {
                 name: 'transferredStudents',
                 tableId: 'transferredStudentsTable',
                 columns: [
-                    { data: 'studentId' },
-                    { data: 'name' },
-                    { data: 'previousClass' },
-                    { data: 'newSchool' },
-                    { data: 'transferDate' },
-                    { data: 'reason' },
-                    { data: 'status' },
+                    { data: 'studentId', name: 'studentId' },
+                    { data: 'upiNo', name: 'upiNo', defaultContent: '' },  // Add defaultContent
+                    { data: 'assessmentNo', name: 'assessmentNo', defaultContent: '' },  // Add defaultContent
+                    { data: 'name', name: 'name' },
+                    { data: 'previousClass', name: 'previousClass' },
+                    { data: 'newSchool', name: 'newSchool' },
+                    { data: 'transferDate', name: 'transferDate' },
+                    { data: 'reason', name: 'reason' },
+                    { data: 'status', name: 'status' },
                     {
                         data: null,
                         render: function(data) {
@@ -300,6 +287,8 @@ const DataStore = {
                                 return {
                                     ...baseItem,
                                     studentId: item.studentId || '',
+                                    upiNo: item.upiNo || '',  // Ensure upiNo exists
+                                    assessmentNo: item.assessmentNo || '',  // Ensure assessmentNo exists
                                     previousClass: item.previousClass || '',
                                     newSchool: item.newSchool || '',
                                     transferDate: item.transferDate || '',
@@ -309,12 +298,12 @@ const DataStore = {
                             case 'accountsData':
                                 return {
                                     ...baseItem,
-                                    accountId: item.accountId || item.id || '',  // Ensure accountId is primary identifier
+                                    accountId: item.accountId || item.id || '',
                                     accountName: item.accountName || '',
                                     category: item.category || '',
                                     balance: parseFloat(item.balance) || 0,
                                     status: item.status || 'Active',
-                                    lastTransaction: item.lastTransaction || item.lastUpdated || new Date().toISOString().split('T')[0]
+                                    lastTransaction: item.lastTransaction || ''
                                 };
                             default:
                                 return baseItem;
@@ -357,8 +346,27 @@ const DataStore = {
                         retrieve: true,
                         language: {
                             processing: "Loading data...",
-                            emptyTable: "No data available"
-                        }
+                            emptyTable: "No data available",
+                            zeroRecords: "No matching records found",
+                            search: "Search all columns:"
+                        },
+                        // Add search configuration
+                        search: {
+                            smart: true,
+                            regex: true,
+                            caseInsensitive: true
+                        },
+                        // Enable individual column searching
+                        searchCols: table.columns.map(() => ({ search: '' })),
+                        // Initialize with no search
+                        searchDelay: 350,
+                        // Add order configuration
+                        order: [[0, 'asc']],
+                        // Enable all columns searchable by default
+                        columnDefs: [{
+                            targets: '_all',
+                            searchable: true
+                        }]
                     });
 
                     // Restore original visibility state
@@ -411,29 +419,52 @@ const DataStore = {
 
     async addRecord(type, record) {
         try {
-            if (type === 'accountsData') {
-                record = {
-                    id: record.id || `ACC${Date.now()}`,
-                    accountId: record.id || `ACC${Date.now()}`,
-                    accountName: record.accountName || '',
-                    category: record.category || 'Operating',
-                    balance: parseFloat(record.balance) || 0,
-                    status: record.status || 'Active',
-                    lastTransaction: record.lastTransaction || new Date().toISOString().split('T')[0],
-                    description: record.description || '',
-                    createdAt: new Date().toISOString(),
-                };
+            const snapshot = await get(this.refs[type]);
+            const records = snapshot.val() || {};
+            
+            // Generate unique ID based on record type
+            let recordKey;
+            switch(type) {
+                case 'transferredStudents':
+                    recordKey = record.studentId;
+                    break;
+                case 'accountsData':
+                    recordKey = record.accountId;
+                    break;
+                case 'teachersInventory':
+                    recordKey = record.id || `T${Date.now()}`;
+                    break;
+                case 'facilitiesData':
+                    recordKey = record.id || `FAC${Date.now()}`;
+                    break;
+                case 'maintenanceData':
+                    recordKey = record.id || `MNT${Date.now()}`;
+                    break;
+                case 'inventoryData':
+                    recordKey = record.id || `INV${Date.now()}`;
+                    break;
+                default:
+                    recordKey = record.id || `REC${Date.now()}`;
             }
-
-            const newRef = push(this.refs[type]);
+            
+            // Set the record with its unique key
+            const newRef = ref(this.db, `${type}/${recordKey}`);
+            
+            // Ensure required fields exist
+            record.id = record.id || recordKey;
+            record.lastUpdated = new Date().toISOString().split('T')[0];
+            
             await set(newRef, record);
             
-            // Refresh the table after adding
-            if (this.tables[type]) {
-                this.tables[type].ajax.reload();
+            // Force table refresh
+            const table = this.tables[type];
+            if (table) {
+                const newSnapshot = await get(this.refs[type]);
+                const newData = Object.values(newSnapshot.val() || {});
+                table.clear().rows.add(newData).draw();
             }
             
-            return { success: true, id: record.id };
+            return { success: true, id: recordKey };
         } catch (error) {
             console.error('Error adding record:', error);
             return { success: false, error: error.message };
@@ -480,15 +511,11 @@ const DataStore = {
         try {
             const snapshot = await get(this.refs[type]);
             const records = snapshot.val() || {};
-            let recordKey;
-
-            if (type === 'accountsData') {
-                recordKey = Object.keys(records).find(key => 
-                    records[key].accountId === id || records[key].id === id
-                );
-            } else {
-                recordKey = Object.keys(records).find(key => records[key].id === id);
-            }
+            const recordKey = Object.keys(records).find(key => 
+                records[key].id === id || 
+                records[key].accountId === id || 
+                records[key].studentId === id  // Add this line to check studentId
+            );
             
             if (recordKey) {
                 await set(ref(this.db, `${type}/${recordKey}`), null);

@@ -1852,13 +1852,6 @@ function generateAccountForm() {
                     <div class="modal-body">
                         <form id="recordForm">
                             <div class="mb-3">
-                                <label>Account ID</label>
-                                <input type="text" class="form-control" name="id" required 
-                                    pattern="[A-Za-z0-9-_]+" 
-                                    title="Only letters, numbers, hyphens and underscores allowed"
-                                    placeholder="Enter unique ID">
-                            </div>
-                            <div class="mb-3">
                                 <label>Account Name</label>
                                 <input type="text" class="form-control" name="accountName" required>
                             </div>
@@ -1882,16 +1875,7 @@ function generateAccountForm() {
                                     <option value="Frozen">Frozen</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label>Last Transaction Date</label>
-                                <input type="date" class="form-control" name="lastTransaction" 
-                                    value="${new Date().toISOString().split('T')[0]}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Description</label>
-                                <textarea class="form-control" name="description" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save Account</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </form>
                     </div>
                 </div>

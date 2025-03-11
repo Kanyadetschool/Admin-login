@@ -96,33 +96,18 @@ const DataStore = {
                 name: 'accountsData',
                 tableId: 'accountsTable',
                 columns: [
-                    { 
-                        data: null,
-                        render: function(data) {
-                            return data.accountId || '';  // Use accountId consistently
-                        }
-                    },
+                    { data: 'accountId' },
                     { data: 'accountName' },
                     { data: 'category' },
-                    { 
-                        data: 'balance',
-                        render: data => `$${parseFloat(data).toLocaleString()}`
-                    },
-                    { 
-                        data: 'lastTransaction',  // Changed from lastUpdated to lastTransaction
-                        defaultContent: '-'  // Provide default content if missing
-                    },
-                    { 
-                        data: 'status',
-                        render: data => `<span class="badge bg-${data === 'Active' ? 'success' : 'warning'}">${data || 'Unknown'}</span>`
-                    },
+                    { data: 'balance', render: data => `$${parseFloat(data).toLocaleString()}` },
+                    { data: 'lastTransaction' },
+                    { data: 'status', render: data => `<span class="badge bg-${data === 'Active' ? 'success' : 'warning'}">${data}</span>` },
                     {
                         data: null,
                         render: data => `
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-info" onclick="viewTransactions('${data.accountId}')">View</button>
                                 <button class="btn btn-primary" onclick="editAccount('${data.accountId}')">Edit</button>
-                                <button class="btn btn-danger" onclick="deleteAccount('${data.accountId}')">Delete</button>
                             </div>`
                     }
                 ]
@@ -201,37 +186,6 @@ const DataStore = {
                         }
                     }
                 ]
-            },
-            {
-                name: 'transferredStudents',
-                tableId: 'transferredStudentsTable',
-                columns: [
-                    { data: 'studentId' },
-                    { data: 'name' },
-                    { data: 'previousClass' },
-                    { data: 'newSchool' },
-                    { data: 'transferDate' },
-                    { data: 'reason' },
-                    { data: 'status' },
-                    {
-                        data: null,
-                        render: function(data) {
-                            return `
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-info" onclick="viewTransferDetails('${data.studentId}')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-primary" onclick="editTransfer('${data.studentId}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-danger" onclick="deleteTransfer('${data.studentId}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            `;
-                        }
-                    }
-                ]
             }
         ];
 
@@ -244,87 +198,9 @@ const DataStore = {
             // Load all data first in parallel
             const dataLoads = tables.map(async table => {
                 const snapshot = await get(this.refs[table.name]);
-                const rawData = snapshot.val() || {};
-                
-                // Validate and transform data
-                const validData = Object.values(rawData)
-                    .filter(item => item && typeof item === 'object')
-                    .map(item => {
-                        // Ensure all required properties exist for each table type
-                        const baseItem = {
-                            id: item.id || '',
-                            name: item.name || '',
-                            lastUpdated: item.lastUpdated || new Date().toISOString().split('T')[0]
-                        };
-
-                        switch(table.name) {
-                            case 'inventoryData':
-                                return {
-                                    ...baseItem,
-                                    category: item.category || '',
-                                    quantity: parseInt(item.quantity) || 0,
-                                    status: item.status || 'unknown',
-                                    location: item.location || '',
-                                    value: parseFloat(item.value) || 0
-                                };
-                            case 'teachersInventory':
-                                return {
-                                    ...baseItem,
-                                    teacherName: item.teacherName || '',
-                                    department: item.department || '',
-                                    itemName: item.itemName || '',
-                                    status: item.status || 'Pending',
-                                    assignedDate: item.assignedDate || '',
-                                    returnDate: item.returnDate || ''
-                                };
-                            case 'maintenanceData':
-                                return {
-                                    ...baseItem,
-                                    date: item.date || '',
-                                    itemName: item.itemName || '',
-                                    type: item.type || '',
-                                    description: item.description || '',
-                                    cost: parseFloat(item.cost) || 0,
-                                    status: item.status || 'Pending'
-                                };
-                            case 'facilitiesData':
-                                return {
-                                    ...baseItem,
-                                    location: item.location || '',
-                                    status: item.status || 'Unknown',
-                                    lastMaintenance: item.lastMaintenance || '',
-                                    nextMaintenance: item.nextMaintenance || '',
-                                    condition: item.condition || 'Unknown'
-                                };
-                            case 'transferredStudents':
-                                return {
-                                    ...baseItem,
-                                    studentId: item.studentId || '',
-                                    previousClass: item.previousClass || '',
-                                    newSchool: item.newSchool || '',
-                                    transferDate: item.transferDate || '',
-                                    reason: item.reason || '',
-                                    status: item.status || 'Pending'
-                                };
-                            case 'accountsData':
-                                return {
-                                    ...baseItem,
-                                    accountId: item.accountId || item.id || '',  // Ensure accountId is primary identifier
-                                    accountName: item.accountName || '',
-                                    category: item.category || '',
-                                    balance: parseFloat(item.balance) || 0,
-                                    status: item.status || 'Active',
-                                    lastTransaction: item.lastTransaction || item.lastUpdated || new Date().toISOString().split('T')[0]
-                                };
-                            default:
-                                return baseItem;
-                        }
-                    })
-                    .filter(item => item.id); // Remove invalid items
-
-                window[table.name] = validData;
-                console.log(`Loaded ${validData.length} records for ${table.name}`);
-                return { table, data: validData };
+                const data = snapshot.val() || {};
+                window[table.name] = Object.values(data);
+                return { table, data: window[table.name] };
             });
 
             const loadedData = await Promise.all(dataLoads);
@@ -411,28 +287,21 @@ const DataStore = {
 
     async addRecord(type, record) {
         try {
-            if (type === 'accountsData') {
-                record = {
-                    id: record.id || `ACC${Date.now()}`,
-                    accountId: record.id || `ACC${Date.now()}`,
-                    accountName: record.accountName || '',
-                    category: record.category || 'Operating',
-                    balance: parseFloat(record.balance) || 0,
-                    status: record.status || 'Active',
-                    lastTransaction: record.lastTransaction || new Date().toISOString().split('T')[0],
-                    description: record.description || '',
-                    createdAt: new Date().toISOString(),
-                };
+            if (!record.id) {
+                throw new Error('ID is required for new records');
+            }
+            
+            // Check if ID already exists
+            const snapshot = await get(this.refs[type]);
+            const records = snapshot.val() || {};
+            if (Object.values(records).some(r => r.id === record.id)) {
+                throw new Error('ID already exists');
             }
 
             const newRef = push(this.refs[type]);
+            record.lastUpdated = new Date().toISOString().split('T')[0];
+            
             await set(newRef, record);
-            
-            // Refresh the table after adding
-            if (this.tables[type]) {
-                this.tables[type].ajax.reload();
-            }
-            
             return { success: true, id: record.id };
         } catch (error) {
             console.error('Error adding record:', error);
@@ -480,15 +349,7 @@ const DataStore = {
         try {
             const snapshot = await get(this.refs[type]);
             const records = snapshot.val() || {};
-            let recordKey;
-
-            if (type === 'accountsData') {
-                recordKey = Object.keys(records).find(key => 
-                    records[key].accountId === id || records[key].id === id
-                );
-            } else {
-                recordKey = Object.keys(records).find(key => records[key].id === id);
-            }
+            const recordKey = Object.keys(records).find(key => records[key].id === id);
             
             if (recordKey) {
                 await set(ref(this.db, `${type}/${recordKey}`), null);

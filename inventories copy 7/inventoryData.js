@@ -411,28 +411,21 @@ const DataStore = {
 
     async addRecord(type, record) {
         try {
-            if (type === 'accountsData') {
-                record = {
-                    id: record.id || `ACC${Date.now()}`,
-                    accountId: record.id || `ACC${Date.now()}`,
-                    accountName: record.accountName || '',
-                    category: record.category || 'Operating',
-                    balance: parseFloat(record.balance) || 0,
-                    status: record.status || 'Active',
-                    lastTransaction: record.lastTransaction || new Date().toISOString().split('T')[0],
-                    description: record.description || '',
-                    createdAt: new Date().toISOString(),
-                };
+            if (!record.id) {
+                throw new Error('ID is required for new records');
+            }
+            
+            // Check if ID already exists
+            const snapshot = await get(this.refs[type]);
+            const records = snapshot.val() || {};
+            if (Object.values(records).some(r => r.id === record.id)) {
+                throw new Error('ID already exists');
             }
 
             const newRef = push(this.refs[type]);
+            record.lastUpdated = new Date().toISOString().split('T')[0];
+            
             await set(newRef, record);
-            
-            // Refresh the table after adding
-            if (this.tables[type]) {
-                this.tables[type].ajax.reload();
-            }
-            
             return { success: true, id: record.id };
         } catch (error) {
             console.error('Error adding record:', error);
@@ -480,15 +473,7 @@ const DataStore = {
         try {
             const snapshot = await get(this.refs[type]);
             const records = snapshot.val() || {};
-            let recordKey;
-
-            if (type === 'accountsData') {
-                recordKey = Object.keys(records).find(key => 
-                    records[key].accountId === id || records[key].id === id
-                );
-            } else {
-                recordKey = Object.keys(records).find(key => records[key].id === id);
-            }
+            const recordKey = Object.keys(records).find(key => records[key].id === id);
             
             if (recordKey) {
                 await set(ref(this.db, `${type}/${recordKey}`), null);

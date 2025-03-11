@@ -134,8 +134,8 @@ function initializeTables() {
             { 
                 data: 'balance',
                 render: function(data) {
-                    const colorClass = parseFloat(data) >= 0 ? 'text-success' : 'text-danger';
-                    return `<span class="${colorClass}">$${Math.abs(parseFloat(data)).toLocaleString()}</span>`;
+                    const colorClass = data >= 0 ? 'text-success' : 'text-danger';
+                    return `<span class="${colorClass}">$${Math.abs(data).toLocaleString()}</span>`;
                 }
             },
             { data: 'lastTransaction' },
@@ -152,7 +152,6 @@ function initializeTables() {
             },
             {
                 data: null,
-                orderable: false,
                 render: function(data) {
                     return `
                         <div class="btn-group btn-group-sm">
@@ -162,16 +161,25 @@ function initializeTables() {
                             <button class="btn btn-primary" onclick="editAccount('${data.accountId}')" title="Edit Account">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-danger" onclick="deleteAccount('${data.accountId}')" title="Delete Account">
-                                <i class="fas fa-trash"></i>
+                            <button class="btn btn-warning" onclick="toggleAccountStatus('${data.accountId}')" title="Toggle Status">
+                                <i class="fas fa-power-off"></i>
                             </button>
                         </div>
                     `;
                 }
             }
         ],
-        order: [[1, 'asc']],
-        responsive: true
+        initComplete: function () {
+            // Apply search to each column
+            this.api().columns().every(function () {
+                let column = this;
+                $('input, select', this.header()).on('keyup change', function () {
+                    if (column.search() !== this.value) {
+                        column.search(this.value).draw();
+                    }
+                });
+            });
+        }
     });
 
     // Initialize recent transactions table
@@ -378,62 +386,30 @@ function validateEquipmentData(data) {
 }
 
 function setupEventListeners() {
-    // Update search functionality for all search boxes and column filters
-    $('.search-box, .column-filter').each(function() {
-        const $this = $(this);
-        const tableId = $this.closest('.tab-pane').find('table').attr('id');
-        const table = $(`#${tableId}`).DataTable();
-        const isColumnFilter = $this.hasClass('column-filter');
-        const columnIndex = isColumnFilter ? $this.closest('th').index() : null;
-        
-        let searchTimeout;
-        
-        $this.on('keyup change', function() {
-            clearTimeout(searchTimeout);
-            const value = this.value;
-            
-            searchTimeout = setTimeout(() => {
-                if (isColumnFilter) {
-                    // Column-specific search
-                    table.column(columnIndex).search(value).draw();
-                } else {
-                    // Global search across all columns
-                    table.search(value).draw();
-                }
-            }, 300);
-        });
+    // Remove old search box listener
+    $('.search-box').on('keyup', function() {
+        const activeTabId = $('.nav-tabs .active').attr('href').substring(1);
+        const table = $(`#${activeTabId}Table`).DataTable();
+        table.search(this.value).draw();
     });
 
-    // Add special handling for status filters
-    $('#transferStatusFilter').on('change', function() {
-        const table = $('#transferredStudentsTable').DataTable();
-        table.column(6).search(this.value).draw(); // 6 is the status column index
+    // Add notice for read-only actions
+    const readOnlyNotice = () => {
+        alert('This is a read-only demonstration. Data modifications are not permitted.');
+    };
+
+    // Handle all "Add New" buttons
+    document.querySelectorAll('.btn-primary').forEach(btn => {
+        if (btn.textContent.includes('Add')) {
+            btn.addEventListener('click', readOnlyNotice);
+        }
     });
 
-    // Clear filters button for each table
-    $('.tab-pane').each(function() {
-        const $tabPane = $(this);
-        const tableId = $tabPane.find('table').attr('id');
-        const $clearButton = $('<button>')
-            .addClass('btn btn-outline-secondary ms-2')
-            .html('<i class="fas fa-times"></i> Clear Filters')
-            .on('click', function() {
-                const table = $(`#${tableId}`).DataTable();
-                
-                // Clear all search boxes in this tab
-                $tabPane.find('.search-box, .column-filter').val('');
-                
-                // Clear all column filters
-                table.columns().search('');
-                
-                // Clear global search
-                table.search('');
-                
-                // Redraw the table
-                table.draw();
-            });
-        
-        $tabPane.find('.search-box').after($clearButton);
+    // Handle Income/Expense buttons
+    document.querySelectorAll('.btn-success, .btn-danger').forEach(btn => {
+        if (btn.textContent.includes('Income') || btn.textContent.includes('Expense')) {
+            btn.addEventListener('click', readOnlyNotice);
+        }
     });
 
     // Add tab change handler
@@ -461,50 +437,9 @@ function setupEventListeners() {
     });
 
     // Add new account button handler
-    document.querySelector('#addNewAccount')?.addEventListener('click', () => {
+    document.querySelector('#addNewAccount').addEventListener('click', () => {
         addNewRecord('accountsData');
     });
-
-    // Add global add button handler
-    const globalAddButton = document.getElementById('globalAddButton');
-    globalAddButton.addEventListener('click', () => {
-        // Get active tab ID
-        const activeTab = document.querySelector('.tab-pane.active');
-        if (!activeTab) return;
-
-        const tabId = activeTab.id;
-        const typeMap = {
-            'equipment': 'inventoryData',
-            'teachers': 'teachersInventory',
-            'accounts': 'accountsData',
-            'supplies': 'suppliesData',
-            'facilities': 'facilitiesData',
-            'maintenance': 'maintenanceData',
-            'transferredStudents': 'transferredStudents'
-        };
-
-        const recordType = typeMap[tabId];
-        if (recordType) {
-            if (recordType === 'transferredStudents') {
-                addNewTransfer();
-            } else {
-                addNewRecord(recordType);
-            }
-        }
-    });
-
-    // Update button visibility based on active tab
-    $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
-        const targetId = e.target.getAttribute('href').substring(1);
-        const globalAddButton = document.getElementById('globalAddButton');
-        
-        // Hide button for tabs that don't need it
-        const hideButtonForTabs = ['reports']; // Add any tabs that shouldn't show the add button
-        globalAddButton.style.display = hideButtonForTabs.includes(targetId) ? 'none' : 'block';
-    });
-
-    // Make sure this is added to window object
-    window.deleteAccount = deleteAccount;
 }
 
 // Add new handler functions
@@ -1852,19 +1787,12 @@ function generateAccountForm() {
                     <div class="modal-body">
                         <form id="recordForm">
                             <div class="mb-3">
-                                <label>Account ID</label>
-                                <input type="text" class="form-control" name="id" required 
-                                    pattern="[A-Za-z0-9-_]+" 
-                                    title="Only letters, numbers, hyphens and underscores allowed"
-                                    placeholder="Enter unique ID">
-                            </div>
-                            <div class="mb-3">
                                 <label>Account Name</label>
                                 <input type="text" class="form-control" name="accountName" required>
                             </div>
                             <div class="mb-3">
                                 <label>Category</label>
-                                <select class="form-control" name="category" required>
+                                <select class="form-control" name="category">
                                     <option value="Operating">Operating</option>
                                     <option value="Restricted">Restricted</option>
                                     <option value="Special Purpose">Special Purpose</option>
@@ -1876,22 +1804,13 @@ function generateAccountForm() {
                             </div>
                             <div class="mb-3">
                                 <label>Status</label>
-                                <select class="form-control" name="status" required>
+                                <select class="form-control" name="status">
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
                                     <option value="Frozen">Frozen</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label>Last Transaction Date</label>
-                                <input type="date" class="form-control" name="lastTransaction" 
-                                    value="${new Date().toISOString().split('T')[0]}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Description</label>
-                                <textarea class="form-control" name="description" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save Account</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </form>
                     </div>
                 </div>
@@ -2038,6 +1957,16 @@ function addNewTransfer() {
                                 <input type="text" class="form-control" name="studentId" required>
                             </div>
                             <div class="mb-3">
+                                <label>UPI Number</label>
+                                <input type="text" class="form-control" name="upiNo" required 
+                                       pattern="[A-Za-z0-9]+" title="Only letters and numbers allowed">
+                            </div>
+                            <div class="mb-3">
+                                <label>Assessment Number</label>
+                                <input type="text" class="form-control" name="assessmentNo" required
+                                       >
+                            </div>
+                            <div class="mb-3">
                                 <label>Name</label>
                                 <input type="text" class="form-control" name="name" required>
                             </div>
@@ -2129,6 +2058,16 @@ function editTransfer(studentId) {
                                 <input type="text" class="form-control" name="name" value="${transfer.name}" required>
                             </div>
                             <div class="mb-3">
+                                <label>UPI Number</label>
+                                <input type="text" class="form-control" name="upiNo" value="${transfer.upiNo}" required 
+                                       pattern="[A-Za-z0-9]+" title="Only letters and numbers allowed">
+                            </div>
+                            <div class="mb-3">
+                                <label>Assessment Number</label>
+                                <input type="text" class="form-control" name="assessmentNo" value="${transfer.assessmentNo}" required
+                                       pattern="[0-9]+" title="Only numbers allowed">
+                            </div>
+                            <div class="mb-3">
                                 <label>Previous Class</label>
                                 <input type="text" class="form-control" name="previousClass" value="${transfer.previousClass}" required>
                             </div>
@@ -2216,6 +2155,10 @@ function viewTransferDetails(studentId) {
                         <dl class="row">
                             <dt class="col-sm-4">Student ID:</dt>
                             <dd class="col-sm-8">${transfer.studentId}</dd>
+                            <dt class="col-sm-4">UPI Number:</dt>
+                            <dd class="col-sm-8">${transfer.upiNo || 'Not provided'}</dd>
+                            <dt class="col-sm-4">Assessment Number:</dt>
+                            <dd class="col-sm-8">${transfer.assessmentNo || 'Not provided'}</dd>
                             <dt class="col-sm-4">Name:</dt>
                             <dd class="col-sm-8">${transfer.name}</dd>
                             <dt class="col-sm-4">Previous Class:</dt>
@@ -2250,118 +2193,5 @@ function viewTransferDetails(studentId) {
     const modal = new bootstrap.Modal(document.querySelector('#viewTransferModal'));
     modal.show();
 }
-
-function deleteAccount(accountId) {
-    if (confirm('Are you sure you want to delete this account?')) {
-        DataStore.deleteRecord('accountsData', accountId)
-            .then(result => {
-                if (result.success) {
-                    alert('Account deleted successfully');
-                    // Refresh the table
-                    const accountsTable = $('#accountsTable').DataTable();
-                    const data = accountsData.filter(a => a.accountId !== accountId);
-                    accountsTable.clear().rows.add(data).draw();
-                } else {
-                    alert(`Failed to delete account: ${result.error}`);
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting account:', error);
-                alert(`Error: ${error.message}`);
-            });
-    }
-}
-
-// ...existing code...
-
-function showAccountForm() {
-    const modalContent = `
-        <div class="modal fade" id="addAccountModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add New Account</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="addAccountForm">
-                            <div class="mb-3">
-                                <label class="form-label">Account ID</label>
-                                <input type="text" class="form-control" name="accountId" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Account Name</label>
-                                <input type="text" class="form-control" name="accountName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Category</label>
-                                <select class="form-control" name="category" required>
-                                    <option value="Operating">Operating</option>
-                                    <option value="Restricted">Restricted</option>
-                                    <option value="Special Purpose">Special Purpose</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Initial Balance</label>
-                                <input type="number" step="0.01" class="form-control" name="balance" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Status</label>
-                                <select class="form-control" name="status" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                    <option value="Frozen">Frozen</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save Account</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Remove existing modal if any
-    document.querySelector('#addAccountModal')?.remove();
-    
-    // Add new modal to document
-    document.body.insertAdjacentHTML('beforeend', modalContent);
-    
-    // Initialize the modal
-    const modal = new bootstrap.Modal(document.querySelector('#addAccountModal'));
-    modal.show();
-
-    // Handle form submission
-    document.querySelector('#addAccountForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const record = Object.fromEntries(formData.entries());
-        
-        try {
-            // Add required fields
-            record.id = record.accountId;
-            record.lastTransaction = new Date().toISOString().split('T')[0];
-            
-            const result = await DataStore.addRecord('accountsData', record);
-            if (result.success) {
-                modal.hide();
-                alert('Account added successfully');
-                // Refresh the accounts table
-                const table = $('#accountsTable').DataTable();
-                table.ajax.reload();
-            } else {
-                alert('Failed to add account: ' + result.error);
-            }
-        } catch (error) {
-            console.error('Error adding account:', error);
-            alert('Error adding account: ' + error.message);
-        }
-    });
-}
-
-// Make sure showAccountForm is available globally
-window.showAccountForm = showAccountForm;
-
-// ...existing code...
 
 

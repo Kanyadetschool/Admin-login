@@ -111,33 +111,7 @@
         .filter-header {
             padding-bottom: 10px;
         }
-
-        /* Add this to your existing styles */
-        .global-fab {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--secondary-color);
-            color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .global-fab:hover {
-            transform: scale(1.1);
-            background: var(--primary-color);
-        }
-
-        .global-fab i {
-            font-size: 24px;
-        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <!-- ==================== Dashboard Header ==================== -->
@@ -175,7 +149,7 @@
                                 <a class="nav-link" data-bs-toggle="tab" href="#maintenance">Maintenance</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#transferredStudents">Transferred Students</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#reports">Reports</a>
                             </li>
                         </ul>
 
@@ -265,8 +239,8 @@
                                             <button class="btn btn-outline-primary btn-sm" id="exportAccounts">
                                                 <i class="fas fa-download"></i> Export
                                             </button>
-                                            <button class="btn btn-primary" onclick="handleAction('addNewRecord', 'accountsData')">
-                                                <i class="fas fa-plus"></i> Add New Item
+                                            <button class="btn btn-primary btn-sm" id="addNewAccount">
+                                                <i class="fas fa-plus"></i> New Account
                                             </button>
                                         </div>
                                     </div>
@@ -426,51 +400,22 @@
                                 </div>
                             </div>
 
-                            <!-- Transferred Students Tab -->
-                            <div class="tab-pane fade" id="transferredStudents">
+                            <!-- Reports Tab -->
+                            <div class="tab-pane fade" id="reports">
                                 <div class="d-flex justify-content-between mb-3">
-                                    <div class="d-flex gap-2">
-                                        <input type="text" class="search-box" placeholder="Search transferred students...">
-                                        <select class="form-select" id="transferStatusFilter" style="width: 150px;">
-                                            <option value="">All Status</option>
-                                            <option value="Completed">Completed</option>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Cancelled">Cancelled</option>
-                                        </select>
-                                    </div>
-                                    <button class="btn btn-primary" onclick="handleAction('addNewTransfer')">
-                                        <i class="fas fa-plus"></i> New Transfer
-                                    </button>
+                                    <input type="text" class="search-box" placeholder="Search reports...">
+                                    <button class="btn btn-primary">Generate New Report</button>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-hover" id="transferredStudentsTable">
+                                    <table class="table table-hover" id="reportsTable">
                                         <thead>
                                             <tr>
-                                                <th>Student ID</th>
+                                                <th>ID</th>
                                                 <th>Name</th>
-                                                <th>Previous Class</th>
-                                                <th>New School</th>
-                                                <th>Transfer Date</th>
-                                                <th>Reason</th>
+                                                <th>Type</th>
+                                                <th>Date</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
-                                            </tr>
-                                            <tr class="filter-header">
-                                                <th><input type="text" class="column-filter" placeholder="Filter ID"></th>
-                                                <th><input type="text" class="column-filter" placeholder="Filter Name"></th>
-                                                <th><input type="text" class="column-filter" placeholder="Filter Class"></th>
-                                                <th><input type="text" class="column-filter" placeholder="Filter School"></th>
-                                                <th><input type="text" class="column-filter" placeholder="Filter Date"></th>
-                                                <th><input type="text" class="column-filter" placeholder="Filter Reason"></th>
-                                                <th>
-                                                    <select class="column-filter">
-                                                        <option value="">All Status</option>
-                                                        <option value="Completed">Completed</option>
-                                                        <option value="Pending">Pending</option>
-                                                        <option value="Cancelled">Cancelled</option>
-                                                    </select>
-                                                </th>
-                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -510,11 +455,6 @@
     <!-- Application Scripts -->
     <script type="module" src="inventoryData.js"></script>
     <script type="module" src="inventoryUI.js"></script>
-
-    <!-- Add this just before the closing body tag -->
-    <button id="globalAddButton" class="btn global-fab" title="Add New Record">
-        <i class="fas fa-plus"></i>
-    </button>
 
 </body>
 </html>

@@ -19,34 +19,28 @@ function initializeTables() {
     const equipmentTable = safeInitDataTable('#inventoryTable', {
         data: window.inventoryData || [], // Fix: use window.inventoryData
         columns: [
-            { data: 'id', name: 'id' },
-            { data: 'name', name: 'name' },
-            { data: 'category', name: 'category' },
-            { data: 'quantity', name: 'quantity' },
+            { data: 'id' },
+            { data: 'name' },
+            { data: 'category' },
+            { data: 'quantity' },
             { 
                 data: 'status',
-                name: 'status',
                 render: function(data, type, row) {
-                    if (!data) return '';  // Handle null/undefined
                     const statusClass = data === 'low' ? 'status-low' : 'status-good';
                     return `<span class="status-indicator ${statusClass}"></span>${data}`;
                 }
             },
-            { data: 'location', name: 'location' },
-            { data: 'lastUpdated', name: 'lastUpdated' },
+            { data: 'location' },
+            { data: 'lastUpdated' },
             { 
                 data: 'value',
-                name: 'value',
                 render: function(data) {
-                    if (!data) return '$0';  // Handle null/undefined
-                    return `$${parseFloat(data).toLocaleString()}`;
+                    return `$${data.toLocaleString()}`;
                 }
             },
             {
                 data: null,
-                orderable: false,
                 render: function(data) {
-                    if (!data || !data.id) return '';  // Handle null/undefined
                     return `
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-primary" onclick="editEquipment('${data.id}')">
@@ -134,8 +128,8 @@ function initializeTables() {
             { 
                 data: 'balance',
                 render: function(data) {
-                    const colorClass = parseFloat(data) >= 0 ? 'text-success' : 'text-danger';
-                    return `<span class="${colorClass}">$${Math.abs(parseFloat(data)).toLocaleString()}</span>`;
+                    const colorClass = data >= 0 ? 'text-success' : 'text-danger';
+                    return `<span class="${colorClass}">$${Math.abs(data).toLocaleString()}</span>`;
                 }
             },
             { data: 'lastTransaction' },
@@ -152,7 +146,6 @@ function initializeTables() {
             },
             {
                 data: null,
-                orderable: false,
                 render: function(data) {
                     return `
                         <div class="btn-group btn-group-sm">
@@ -162,16 +155,25 @@ function initializeTables() {
                             <button class="btn btn-primary" onclick="editAccount('${data.accountId}')" title="Edit Account">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-danger" onclick="deleteAccount('${data.accountId}')" title="Delete Account">
-                                <i class="fas fa-trash"></i>
+                            <button class="btn btn-warning" onclick="toggleAccountStatus('${data.accountId}')" title="Toggle Status">
+                                <i class="fas fa-power-off"></i>
                             </button>
                         </div>
                     `;
                 }
             }
         ],
-        order: [[1, 'asc']],
-        responsive: true
+        initComplete: function () {
+            // Apply search to each column
+            this.api().columns().every(function () {
+                let column = this;
+                $('input, select', this.header()).on('keyup change', function () {
+                    if (column.search() !== this.value) {
+                        column.search(this.value).draw();
+                    }
+                });
+            });
+        }
     });
 
     // Initialize recent transactions table
@@ -309,7 +311,7 @@ function initializeTables() {
     });
 
     // Initialize reports table
-    const reportsTable = safeInitDataTable('#reportsTable', {
+    safeInitDataTable('#reportsTable', {
         data: reportsData,
         columns: [
             { data: 'id' },
@@ -324,7 +326,7 @@ function initializeTables() {
                 }
             },
             {
-                data: null,
+                data: 'actions',
                 render: function(data, type, row) {
                     if (row.status === 'Generated') {
                         return `
@@ -332,24 +334,9 @@ function initializeTables() {
                                 <button class="btn btn-info" onclick="viewReport('${row.id}')">
                                     <i class="fas fa-eye"></i> View
                                 </button>
-                                <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
-                                    <i class="fas fa-download"></i> Export
+                                <button class="btn btn-secondary" onclick="downloadReport('${row.id}')">
+                                    <i class="fas fa-download"></i> Download
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" onclick="exportReport('${row.id}', 'pdf')">
-                                        <i class="fas fa-file-pdf"></i> PDF
-                                    </a></li>
-                                    <li><a class="dropdown-item" onclick="exportReport('${row.id}', 'excel')">
-                                        <i class="fas fa-file-excel"></i> Excel
-                                    </a></li>
-                                    <li><a class="dropdown-item" onclick="exportReport('${row.id}', 'word')">
-                                        <i class="fas fa-file-word"></i> Word
-                                    </a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" onclick="printReport('${row.id}')">
-                                        <i class="fas fa-print"></i> Print
-                                    </a></li>
-                                </ul>
                             </div>`;
                     } else {
                         return `
@@ -378,62 +365,30 @@ function validateEquipmentData(data) {
 }
 
 function setupEventListeners() {
-    // Update search functionality for all search boxes and column filters
-    $('.search-box, .column-filter').each(function() {
-        const $this = $(this);
-        const tableId = $this.closest('.tab-pane').find('table').attr('id');
-        const table = $(`#${tableId}`).DataTable();
-        const isColumnFilter = $this.hasClass('column-filter');
-        const columnIndex = isColumnFilter ? $this.closest('th').index() : null;
-        
-        let searchTimeout;
-        
-        $this.on('keyup change', function() {
-            clearTimeout(searchTimeout);
-            const value = this.value;
-            
-            searchTimeout = setTimeout(() => {
-                if (isColumnFilter) {
-                    // Column-specific search
-                    table.column(columnIndex).search(value).draw();
-                } else {
-                    // Global search across all columns
-                    table.search(value).draw();
-                }
-            }, 300);
-        });
+    // Remove old search box listener
+    $('.search-box').on('keyup', function() {
+        const activeTabId = $('.nav-tabs .active').attr('href').substring(1);
+        const table = $(`#${activeTabId}Table`).DataTable();
+        table.search(this.value).draw();
     });
 
-    // Add special handling for status filters
-    $('#transferStatusFilter').on('change', function() {
-        const table = $('#transferredStudentsTable').DataTable();
-        table.column(6).search(this.value).draw(); // 6 is the status column index
+    // Add notice for read-only actions
+    const readOnlyNotice = () => {
+        alert('This is a read-only demonstration. Data modifications are not permitted.');
+    };
+
+    // Handle all "Add New" buttons
+    document.querySelectorAll('.btn-primary').forEach(btn => {
+        if (btn.textContent.includes('Add')) {
+            btn.addEventListener('click', readOnlyNotice);
+        }
     });
 
-    // Clear filters button for each table
-    $('.tab-pane').each(function() {
-        const $tabPane = $(this);
-        const tableId = $tabPane.find('table').attr('id');
-        const $clearButton = $('<button>')
-            .addClass('btn btn-outline-secondary ms-2')
-            .html('<i class="fas fa-times"></i> Clear Filters')
-            .on('click', function() {
-                const table = $(`#${tableId}`).DataTable();
-                
-                // Clear all search boxes in this tab
-                $tabPane.find('.search-box, .column-filter').val('');
-                
-                // Clear all column filters
-                table.columns().search('');
-                
-                // Clear global search
-                table.search('');
-                
-                // Redraw the table
-                table.draw();
-            });
-        
-        $tabPane.find('.search-box').after($clearButton);
+    // Handle Income/Expense buttons
+    document.querySelectorAll('.btn-success, .btn-danger').forEach(btn => {
+        if (btn.textContent.includes('Income') || btn.textContent.includes('Expense')) {
+            btn.addEventListener('click', readOnlyNotice);
+        }
     });
 
     // Add tab change handler
@@ -461,50 +416,9 @@ function setupEventListeners() {
     });
 
     // Add new account button handler
-    document.querySelector('#addNewAccount')?.addEventListener('click', () => {
+    document.querySelector('#addNewAccount').addEventListener('click', () => {
         addNewRecord('accountsData');
     });
-
-    // Add global add button handler
-    const globalAddButton = document.getElementById('globalAddButton');
-    globalAddButton.addEventListener('click', () => {
-        // Get active tab ID
-        const activeTab = document.querySelector('.tab-pane.active');
-        if (!activeTab) return;
-
-        const tabId = activeTab.id;
-        const typeMap = {
-            'equipment': 'inventoryData',
-            'teachers': 'teachersInventory',
-            'accounts': 'accountsData',
-            'supplies': 'suppliesData',
-            'facilities': 'facilitiesData',
-            'maintenance': 'maintenanceData',
-            'transferredStudents': 'transferredStudents'
-        };
-
-        const recordType = typeMap[tabId];
-        if (recordType) {
-            if (recordType === 'transferredStudents') {
-                addNewTransfer();
-            } else {
-                addNewRecord(recordType);
-            }
-        }
-    });
-
-    // Update button visibility based on active tab
-    $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
-        const targetId = e.target.getAttribute('href').substring(1);
-        const globalAddButton = document.getElementById('globalAddButton');
-        
-        // Hide button for tabs that don't need it
-        const hideButtonForTabs = ['reports']; // Add any tabs that shouldn't show the add button
-        globalAddButton.style.display = hideButtonForTabs.includes(targetId) ? 'none' : 'block';
-    });
-
-    // Make sure this is added to window object
-    window.deleteAccount = deleteAccount;
 }
 
 // Add new handler functions
@@ -1337,32 +1251,23 @@ function viewReport(id) {
 
     const modalContent = `
         <div class="modal fade" id="reportModal">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">${report.name}</h5>
-                        <div class="btn-group ms-auto me-2">
-                            <button class="btn btn-outline-primary" onclick="exportReport('${report.id}', 'pdf')">
-                                <i class="fas fa-file-pdf"></i> PDF
-                            </button>
-                            <button class="btn btn-outline-success" onclick="exportReport('${report.id}', 'excel')">
-                                <i class="fas fa-file-excel"></i> Excel
-                            </button>
-                            <button class="btn btn-outline-info" onclick="exportReport('${report.id}', 'word')">
-                                <i class="fas fa-file-word"></i> Word
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="printReport('${report.id}')">
-                                <i class="fas fa-print"></i> Print
-                            </button>
-                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body" id="reportContent">
-                        <div class="text-center">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+                        Loading report...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="downloadReportPDF('${report.id}')">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -1375,101 +1280,26 @@ function viewReport(id) {
     const modal = new bootstrap.Modal(document.querySelector('#reportModal'));
     modal.show();
 
+    // Generate report content
     generateReport(id).then(content => {
         document.getElementById('reportContent').innerHTML = content;
     });
 }
 
-function exportReport(id, format) {
+function downloadReportPDF(id) {
     const report = window.reportsData.find(r => r.id === id);
     if (!report) return;
 
     const content = document.getElementById('reportContent');
-    const fileName = `${report.name}_${new Date().toISOString().split('T')[0]}`;
+    const opt = {
+        margin: 1,
+        filename: `${report.name}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
 
-    switch (format) {
-        case 'pdf':
-            const pdfOpts = {
-                margin: 1,
-                filename: `${fileName}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            html2pdf().set(pdfOpts).from(content).save();
-            break;
-
-        case 'excel':
-            const ws = XLSX.utils.table_to_sheet(content.querySelector('table'));
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, report.name);
-            XLSX.writeFile(wb, `${fileName}.xlsx`);
-            break;
-
-        case 'word':
-            const htmlContent = content.innerHTML;
-            const blob = new Blob([`
-                <html>
-                    <head>
-                        <meta charset='utf-8'>
-                        <title>${report.name}</title>
-                        <style>
-                            table { border-collapse: collapse; width: 100%; }
-                            th, td { border: 1px solid black; padding: 8px; }
-                            th { background-color: #f5f5f5; }
-                        </style>
-                    </head>
-                    <body>
-                        ${htmlContent}
-                    </body>
-                </html>
-            `], { type: 'application/msword' });
-            const docUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = docUrl;
-            link.download = `${fileName}.doc`;
-            link.click();
-            URL.revokeObjectURL(docUrl);
-            break;
-    }
-}
-
-function printReport(id) {
-    const report = window.reportsData.find(r => r.id === id);
-    if (!report) return;
-
-    const content = document.getElementById('reportContent');
-    const printWindow = window.open('', '_blank');
-    
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>${report.name}</title>
-                <style>
-                    body { font-family: Arial, sans-serif; padding: 20px; }
-                    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    th { background-color: #f5f5f5; }
-                    .header { text-align: center; margin-bottom: 30px; }
-                    .footer { margin-top: 50px; text-align: center; font-size: 0.9em; }
-                    @media print {
-                        .no-print { display: none; }
-                        @page { margin: 2cm; }
-                    }
-                </style>
-            </head>
-            <body>
-                ${content.innerHTML}
-            </body>
-        </html>
-    `);
-    
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 250);
+    html2pdf().set(opt).from(content).save();
 }
 
 // ...existing code...
@@ -1852,19 +1682,12 @@ function generateAccountForm() {
                     <div class="modal-body">
                         <form id="recordForm">
                             <div class="mb-3">
-                                <label>Account ID</label>
-                                <input type="text" class="form-control" name="id" required 
-                                    pattern="[A-Za-z0-9-_]+" 
-                                    title="Only letters, numbers, hyphens and underscores allowed"
-                                    placeholder="Enter unique ID">
-                            </div>
-                            <div class="mb-3">
                                 <label>Account Name</label>
                                 <input type="text" class="form-control" name="accountName" required>
                             </div>
                             <div class="mb-3">
                                 <label>Category</label>
-                                <select class="form-control" name="category" required>
+                                <select class="form-control" name="category">
                                     <option value="Operating">Operating</option>
                                     <option value="Restricted">Restricted</option>
                                     <option value="Special Purpose">Special Purpose</option>
@@ -1876,22 +1699,13 @@ function generateAccountForm() {
                             </div>
                             <div class="mb-3">
                                 <label>Status</label>
-                                <select class="form-control" name="status" required>
+                                <select class="form-control" name="status">
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
                                     <option value="Frozen">Frozen</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label>Last Transaction Date</label>
-                                <input type="date" class="form-control" name="lastTransaction" 
-                                    value="${new Date().toISOString().split('T')[0]}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Description</label>
-                                <textarea class="form-control" name="description" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save Account</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </form>
                     </div>
                 </div>
@@ -2021,347 +1835,3 @@ function initializeUI() {
     initializeTables();
     setupEventListeners();
 }
-
-function addNewTransfer() {
-    const modalContent = `
-        <div class="modal fade" id="addTransferModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add New Transfer Student</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="transferForm">
-                            <div class="mb-3">
-                                <label>Student ID</label>
-                                <input type="text" class="form-control" name="studentId" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Name</label>
-                                <input type="text" class="form-control" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Previous Class</label>
-                                <input type="text" class="form-control" name="previousClass" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>New School</label>
-                                <input type="text" class="form-control" name="newSchool" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Transfer Date</label>
-                                <input type="date" class="form-control" name="transferDate" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Reason</label>
-                                <textarea class="form-control" name="reason" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label>Status</label>
-                                <select class="form-control" name="status">
-                                    <option value="Pending">Pending</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.querySelector('#addTransferModal')?.remove();
-    document.body.insertAdjacentHTML('beforeend', modalContent);
-    
-    const modal = new bootstrap.Modal(document.querySelector('#addTransferModal'));
-    modal.show();
-
-    document.getElementById('transferForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const transfer = Object.fromEntries(formData.entries());
-        
-        try {
-            await DataStore.addRecord('transferredStudents', {
-                ...transfer,
-                createdAt: new Date().toISOString()
-            });
-            modal.hide();
-            alert('Transfer record added successfully');
-        } catch (error) {
-            alert('Error adding transfer: ' + error.message);
-        }
-    });
-}
-
-// Add these to the global assignments
-Object.assign(window, {
-    // ...existing code...
-    addNewTransfer,
-    viewTransferDetails,
-    editTransfer,
-    deleteTransfer
-});
-
-function editTransfer(studentId) {
-    const transfer = window.transferredStudents?.find(t => t.studentId === studentId);
-    if (!transfer) {
-        alert('Transfer record not found');
-        return;
-    }
-
-    const modalContent = `
-        <div class="modal fade" id="editTransferModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Transfer Record</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="editTransferForm">
-                            <input type="hidden" name="studentId" value="${transfer.studentId}">
-                            <div class="mb-3">
-                                <label>Name</label>
-                                <input type="text" class="form-control" name="name" value="${transfer.name}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Previous Class</label>
-                                <input type="text" class="form-control" name="previousClass" value="${transfer.previousClass}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>New School</label>
-                                <input type="text" class="form-control" name="newSchool" value="${transfer.newSchool}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Transfer Date</label>
-                                <input type="date" class="form-control" name="transferDate" value="${transfer.transferDate}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Reason</label>
-                                <textarea class="form-control" name="reason" required>${transfer.reason}</textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label>Status</label>
-                                <select class="form-control" name="status">
-                                    <option value="Pending" ${transfer.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                                    <option value="Completed" ${transfer.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                                    <option value="Cancelled" ${transfer.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.querySelector('#editTransferModal')?.remove();
-    document.body.insertAdjacentHTML('beforeend', modalContent);
-    
-    const modal = new bootstrap.Modal(document.querySelector('#editTransferModal'));
-    modal.show();
-
-    document.getElementById('editTransferForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const updates = Object.fromEntries(formData.entries());
-        
-        try {
-            await DataStore.updateRecord('transferredStudents', updates.studentId, updates);
-            modal.hide();
-            alert('Transfer record updated successfully');
-        } catch (error) {
-            alert('Error updating transfer: ' + error.message);
-        }
-    });
-}
-
-function deleteTransfer(studentId) {
-    if (confirm('Are you sure you want to delete this transfer record?')) {
-        DataStore.deleteRecord('transferredStudents', studentId)
-            .then(result => {
-                if (result.success) {
-                    alert('Transfer record deleted successfully');
-                } else {
-                    alert(`Failed to delete transfer record: ${result.error}`);
-                }
-            })
-            .catch(error => {
-                alert(`Error: ${error.message}`);
-            });
-    }
-}
-
-function viewTransferDetails(studentId) {
-    const transfer = window.transferredStudents?.find(t => t.studentId === studentId);
-    if (!transfer) {
-        alert('Transfer record not found');
-        return;
-    }
-
-    const modalContent = `
-        <div class="modal fade" id="viewTransferModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Transfer Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <dl class="row">
-                            <dt class="col-sm-4">Student ID:</dt>
-                            <dd class="col-sm-8">${transfer.studentId}</dd>
-                            <dt class="col-sm-4">Name:</dt>
-                            <dd class="col-sm-8">${transfer.name}</dd>
-                            <dt class="col-sm-4">Previous Class:</dt>
-                            <dd class="col-sm-8">${transfer.previousClass}</dd>
-                            <dt class="col-sm-4">New School:</dt>
-                            <dd class="col-sm-8">${transfer.newSchool}</dd>
-                            <dt class="col-sm-4">Transfer Date:</dt>
-                            <dd class="col-sm-8">${transfer.transferDate}</dd>
-                            <dt class="col-sm-4">Reason:</dt>
-                            <dd class="col-sm-8">${transfer.reason}</dd>
-                            <dt class="col-sm-4">Status:</dt>
-                            <dd class="col-sm-8">
-                                <span class="badge bg-${transfer.status === 'Completed' ? 'success' : 
-                                                      transfer.status === 'Pending' ? 'warning' : 'danger'}">
-                                    ${transfer.status}
-                                </span>
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="editTransfer('${transfer.studentId}')">Edit</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.querySelector('#viewTransferModal')?.remove();
-    document.body.insertAdjacentHTML('beforeend', modalContent);
-    
-    const modal = new bootstrap.Modal(document.querySelector('#viewTransferModal'));
-    modal.show();
-}
-
-function deleteAccount(accountId) {
-    if (confirm('Are you sure you want to delete this account?')) {
-        DataStore.deleteRecord('accountsData', accountId)
-            .then(result => {
-                if (result.success) {
-                    alert('Account deleted successfully');
-                    // Refresh the table
-                    const accountsTable = $('#accountsTable').DataTable();
-                    const data = accountsData.filter(a => a.accountId !== accountId);
-                    accountsTable.clear().rows.add(data).draw();
-                } else {
-                    alert(`Failed to delete account: ${result.error}`);
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting account:', error);
-                alert(`Error: ${error.message}`);
-            });
-    }
-}
-
-// ...existing code...
-
-function showAccountForm() {
-    const modalContent = `
-        <div class="modal fade" id="addAccountModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add New Account</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="addAccountForm">
-                            <div class="mb-3">
-                                <label class="form-label">Account ID</label>
-                                <input type="text" class="form-control" name="accountId" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Account Name</label>
-                                <input type="text" class="form-control" name="accountName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Category</label>
-                                <select class="form-control" name="category" required>
-                                    <option value="Operating">Operating</option>
-                                    <option value="Restricted">Restricted</option>
-                                    <option value="Special Purpose">Special Purpose</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Initial Balance</label>
-                                <input type="number" step="0.01" class="form-control" name="balance" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Status</label>
-                                <select class="form-control" name="status" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                    <option value="Frozen">Frozen</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save Account</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Remove existing modal if any
-    document.querySelector('#addAccountModal')?.remove();
-    
-    // Add new modal to document
-    document.body.insertAdjacentHTML('beforeend', modalContent);
-    
-    // Initialize the modal
-    const modal = new bootstrap.Modal(document.querySelector('#addAccountModal'));
-    modal.show();
-
-    // Handle form submission
-    document.querySelector('#addAccountForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const record = Object.fromEntries(formData.entries());
-        
-        try {
-            // Add required fields
-            record.id = record.accountId;
-            record.lastTransaction = new Date().toISOString().split('T')[0];
-            
-            const result = await DataStore.addRecord('accountsData', record);
-            if (result.success) {
-                modal.hide();
-                alert('Account added successfully');
-                // Refresh the accounts table
-                const table = $('#accountsTable').DataTable();
-                table.ajax.reload();
-            } else {
-                alert('Failed to add account: ' + result.error);
-            }
-        } catch (error) {
-            console.error('Error adding account:', error);
-            alert('Error adding account: ' + error.message);
-        }
-    });
-}
-
-// Make sure showAccountForm is available globally
-window.showAccountForm = showAccountForm;
-
-// ...existing code...
-
-
