@@ -139,8 +139,8 @@
         /* Global Report Button */
         #globalReportButton {
             position: fixed;
-            bottom: 30px;
-            left: 30px;
+            top: 100px;
+            right: 30px;
             z-index: 1000;
             width: 60px;
             height: 60px;
@@ -158,6 +158,24 @@
 
         #globalReportButton i {
             font-size: 24px;
+        }
+
+        .filter-header input, .filter-header select {
+            width: 100%;
+            padding: 4px;
+            margin: 2px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .filter-header select {
+            background-color: white;
+        }
+
+        thead tr.filter-header th {
+            padding: 8px 4px;
+            background-color: #f8f9fa;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -189,9 +207,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#accounts">Accounts</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#supplies">Supplies</a>
-                            </li>
+                           
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#facilities">Facilities</a>
                             </li>
@@ -336,31 +352,6 @@
                               
                             </div>
 
-                            <!-- Supplies Tab -->
-                            <div class="tab-pane fade" id="supplies">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <button class="btn btn-primary" onclick="handleAction('addNewRecord', 'suppliesData')">
-                                        <i class="fas fa-plus"></i> Add New Supply
-                                    </button>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-hover" id="suppliesTable">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Name</th>
-                                                <th>Category</th>
-                                                <th>Quantity</th>
-                                                <th>Status</th>
-                                                <th>Location</th>
-                                                <th>Last Updated</th>
-                                                <th>Value</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
-                            </div>
 
                             <!-- Facilities Tab -->
                             <div class="tab-pane fade" id="facilities">
@@ -381,6 +372,30 @@
                                                 <th>Next Maintenance</th>
                                                 <th>Condition</th>
                                                 <th>Actions</th>
+                                            </tr>
+                                            <tr class="filter-header">
+                                                <th><input type="text" placeholder="Filter ID"></th>
+                                                <th><input type="text" placeholder="Filter Name"></th>
+                                                <th><input type="text" placeholder="Filter Location"></th>
+                                                <th>
+                                                    <select>
+                                                        <option value="">All Status</option>
+                                                        <option value="Operational">Operational</option>
+                                                        <option value="Maintenance Required">Maintenance Required</option>
+                                                    </select>
+                                                </th>
+                                                <th><input type="text" placeholder="Filter Date"></th>
+                                                <th><input type="text" placeholder="Filter Date"></th>
+                                                <th>
+                                                    <select>
+                                                        <option value="">All Conditions</option>
+                                                        <option value="Excellent">Excellent</option>
+                                                        <option value="Good">Good</option>
+                                                        <option value="Fair">Fair</option>
+                                                        <option value="Poor">Poor</option>
+                                                    </select>
+                                                </th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
