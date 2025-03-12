@@ -135,30 +135,6 @@
         .global-fab i {
             font-size: 24px;
         }
-
-        /* Global Report Button */
-        #globalReportButton {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            z-index: 1000;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--secondary-color);
-            color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        #globalReportButton:hover {
-            transform: scale(1.1);
-            background: var(--primary-color);
-        }
-
-        #globalReportButton i {
-            font-size: 24px;
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
@@ -482,16 +458,33 @@
             const fn = window[action];
             if (typeof fn === 'function') {
                 fn(...args);
-            } else {title="Generate Report">
+            } else {
                 console.error(`Function ${action} not found`);
             }
         };
     </script>
-    <button id="globalReportButton" class="btn global-fab" onclick="generateTableReport()" title="Generate Report">
-        <i class="fas fa-file-alt"></i>
+    
+    <!-- Application Scripts -->
+    <script type="module" src="inventoryData.js"></script>
+    <script type="module" src="inventoryUI.js"></script>
+
+    <!-- Add this initialization script -->
+    <script>
+        // Ensure deleteAccount function is globally available
+        window.handleAction = window.handleAction || function(action, ...args) {
+            const fn = window[action];
+            if (typeof fn === 'function') {
+                fn(...args);
+            } else {
+                console.error(`Function ${action} not found:`, action);
+            }
+        };
+    </script>
+
+    <!-- Add this just before the closing body tag -->
+    <button id="globalAddButton" class="btn global-fab" title="Add New Record">
+        <i class="fas fa-plus"></i>
     </button>
-     <script type="module" src="inventoryUI.js"></script> 
-     <script type="module" src="inventoryData.js"></script>    
 
 </body>
 </html>
