@@ -57,7 +57,35 @@ function initializeTables() {
 
     // Initialize equipment table
     const equipmentTable = safeInitDataTable('#inventoryTable', {
-        data: window.inventoryData || [], // Fix: use window.inventoryData
+        data: function() {
+            try {
+                // Ensure data exists and is valid
+                if (!window.inventoryData) {
+                    console.warn('No inventory data available');
+                    return [];
+                }
+                
+                // Validate data structure
+                if (!Array.isArray(window.inventoryData)) {
+                    console.error('Invalid inventory data format');
+                    return [];
+                }
+                
+                return window.inventoryData.map(item => ({
+                    id: item.id || '',
+                    name: item.name || '',
+                    category: item.category || '',
+                    quantity: parseInt(item.quantity) || 0,
+                    status: item.status || 'unknown',
+                    location: item.location || '',
+                    lastUpdated: item.lastUpdated || '',
+                    value: parseFloat(item.value) || 0
+                }));
+            } catch (error) {
+                console.error('Error processing inventory data:', error);
+                return [];
+            }
+        }(),
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name' },
@@ -68,7 +96,7 @@ function initializeTables() {
                 name: 'status',
                 render: function(data, type, row) {
                     if (!data) return '';  // Handle null/undefined
-                    const statusClass = data === 'low' ? 'status-low' : 'status-good';
+                    const statusClass = data === 'Faulty' ? 'status-Faulty' : 'status-good';
                     return `<span class="status-indicator ${statusClass}"></span>${data}`;
                 }
             },
@@ -140,7 +168,7 @@ function initializeTables() {
             { 
                 data: 'status',
                 render: function(data) {
-                    const statusClass = data === 'Active' ? 'status-good' : 'status-low';
+                    const statusClass = data === 'Active' ? 'status-good' : 'status-Faulty';
                     return `<span class="status-indicator ${statusClass}"></span>${data}`;
                 }
             },
@@ -1218,7 +1246,7 @@ function generateInventoryForm() {
                                 <label class="form-label">Item ID</label>
                                 <input type="text" class="form-control" name="id" required 
                                     pattern="[A-Za-z0-9-_]+" 
-                                    title="Only letters, numbers, hyphens and underscores allowed"
+                                    title="Only letters, numbers, hyphens and underscores alFaultyed"
                                     placeholder="Enter unique ID">
                             </div>
                             <div class="mb-3">
@@ -1236,6 +1264,13 @@ function generateInventoryForm() {
                             <div class="mb-3">
                                 <label class="form-label">Quantity</label>
                                 <input type="number" class="form-control" name="quantity" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-control" name="status" required>
+                                    <option value="good">Good</option>
+                                    <option value="Faulty">Faulty</option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Location</label>
@@ -1298,7 +1333,7 @@ function editEquipment(id) {
                                 <label>Status</label>
                                 <select class="form-control" name="status">
                                     <option value="good" ${equipment.status === 'good' ? 'selected' : ''}>Good</option>
-                                    <option value="low" ${equipment.status === 'low' ? 'selected' : ''}>Low</option>
+                                    <option value="Faulty" ${equipment.status === 'Faulty' ? 'selected' : ''}>Faulty</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -1895,7 +1930,7 @@ function generateAccountForm() {
                                 <label>Account ID</label>
                                 <input type="text" class="form-control" name="id" required 
                                     pattern="[A-Za-z0-9-_]+" 
-                                    title="Only letters, numbers, hyphens and underscores allowed"
+                                    title="Only letters, numbers, hyphens and underscores alFaultyed"
                                     placeholder="Enter unique ID">
                             </div>
                             <div class="mb-3">
@@ -2442,7 +2477,7 @@ function generateTableReport() {
             <div class="school-info">
                 <img src="../images/logo.png" alt="School Logo" class="school-logo">
                 <div class="school-details">
-                    <h1>Kanyadet Pri & Junior School</h1>
+                    <h1>KANYADET PRI & JUNIOR SCHOOL</h1>
                     <p>45 - 40139 Akala, City: Kisumu, State: Kenya</p>
                     <p>Phone: (555) 123-4567 | Email: kanyadetpri@gmail.com</p>
                     <p>https://kanyadet-school-portal.web.app/</p>

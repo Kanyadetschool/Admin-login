@@ -454,103 +454,240 @@ window.printStudentData = function(student) {
         minute: '2-digit'
     });
 
+    // Generate QR code for student data
+    const qrCodeData = `${student.StudentFullName}-${student.UPI}`;
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrCodeData)}`;
+
+    const styles = `
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css');
+
+        :root {
+            --primary-color: #2e374b;
+            --accent-color: #3C91E6;
+            --text-color: #333;
+            --border-color: #e9ecef;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: white;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        .letterhead {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .school-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .school-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .student-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #181e2b 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 4px solid rgba(255,255,255,0.2);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .qr-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border-color);
+            text-align: center;
+            color: #6c757d;
+            page-break-inside: avoid;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            page-break-inside: avoid;
+        }
+
+        .signature-box {
+            text-align: center;
+            flex: 1;
+            max-width: 200px;
+            border-top: 2px solid var(--border-color);
+            padding-top: 10px;
+            margin: 0 20px;
+        }
+
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+            .no-print { display: none; }
+            .student-header { -webkit-print-color-adjust: exact; }
+        }
+    `;
+
+    // Convert student data to table rows
+    const dataRows = Object.entries(student)
+        .filter(([key, value]) => 
+            !key.startsWith('FileUrl') && 
+            value && 
+            value.toString().trim() !== '' &&
+            value !== '🕸️'
+        )
+        .map(([key, value]) => `
+            <tr>
+                <th>${key.replace(/([A-Z])/g, ' $1').trim()}</th>
+                <td>${value}</td>
+            </tr>
+        `).join('');
+
     printWindow.document.write(`
         <html>
             <head>
-                <title>Student Information - ${student.StudentFullName}</title>
-                <style>
-                    body { 
-                        font-family: Arial, sans-serif; 
-                        padding: 20px;
-                        /* Add padding at bottom to prevent footer overlap */
-                        padding-bottom: 100px; 
-                    }
-                    .header { display: flex; gap: 20px; margin-bottom: 30px; }
-                    .profile-img { width: 150px; height: 150px; object-fit: cover; border-radius: 10px; }
-                    .student-info { flex-grow: 1; }
-                    .data-grid { 
-                        display: grid; 
-                        grid-template-columns: repeat(2, 1fr); 
-                        gap: 20px;
-                        /* Ensure grid doesn't overlap with footer */
-                        margin-bottom: 80px;
-                    }
-                    .data-item { margin-bottom: 15px; }
-                    .data-item h3 { color: #666; margin: 0 0 5px 0; }
-                    .data-item p { margin: 0; color: #333; }
-                    .footer {
-                        position: fixed;
-                        bottom: 0;
-                        left: 0;
-                        right: 0;
-                        padding: 15px 20px;
-                        background: #f5f5f5;
-                        border-top: 1px solid #ddd;
-                        text-align: center;
-                        font-size: 12px;
-                        color: #666;
-                        /* Ensure footer stays on top */
-                        z-index: 1000;
-                    }
-                    @media print {
-                        .no-print { display: none; }
-                        button { display: none; }
-                        /* Maintain footer background in print */
-                        .footer { 
-                            position: fixed; 
-                            bottom: 0; 
-                            background: #f5f5f5;
-                            border-top: 1px solid #ddd;
-                        }
-                        /* Add page break control */
-                        .data-grid {
-                            page-break-inside: avoid;
-                        }
-                        /* Ensure content doesn't overlap footer when printing */
-                        @page {
-                            margin-bottom: 50px;
-                        }
-                    }
-                </style>
+                <title>${student.StudentFullName} - Student Record</title>
+                <style>${styles}</style>
             </head>
             <body>
-                <div class="header">
-                    <img src="${profileImage}" alt="Student Profile" class="profile-img">
-                    <div class="student-info">
-                        <h1 style="margin: 0 0 10px 0;">${student.StudentFullName || 'N/A'}</h1>
-                        <p style="margin: 0; font-size: 1.1em;">
-                            ${student.CurentGrade || 'N/A'} | 
-                            ${student.Gender || 'N/A'} | 
-                            UPI: ${student.UPI || 'N/A'}
-                        </p>
+                <div class="container">
+                    <div class="letterhead">
+                        <div class="school-info">
+                            <img src="./img/logo.png" alt="School Logo" class="school-logo">
+                            <div>
+                                <h2 style="margin: 0;">Kanyadet School</h2>
+                                <p style="margin: 5px 0; color: #666;">Student Information Record</p>
+                            </div>
+                        </div>
+                        <div style="text-align: right; color: #666;">
+                            <p style="margin: 0;">Generated on</p>
+                            <strong>${currentDate}</strong>
+                        </div>
+                    </div>
+
+                    <div class="student-header">
+                        <img src="${profileImage}" alt="Student Profile" class="profile-img">
+                        <div>
+                            <h1 style="margin: 0; font-size: 2em;">${student.StudentFullName || 'N/A'}</h1>
+                            <div style="display: flex; gap: 20px; margin-top: 10px;">
+                                <span><i class='bx bxs-graduation'></i> ${student.CurentGrade || 'N/A'}</span>
+                                <span><i class='bx bxs-user'></i> ${student.Gender || 'N/A'}</span>
+                                <span><i class='bx bxs-id-card'></i> ${student.UPI || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <img src="${qrCodeUrl}" alt="Student QR Code" style="width: 100px; height: 100px;">
+                    </div>
+
+                    <table class="data-table">
+                        <tbody>${dataRows}</tbody>
+                    </table>
+
+                    <div class="signature-section">
+                        <div class="signature-box">
+                            <p>Class Teacher</p>
+                            <div style="height: 40px;"></div>
+                            <p>Name: _________________</p>
+                        </div>
+                        <div class="signature-box">
+                            <p>Principal</p>
+                            <div style="height: 40px;"></div>
+                            <p>Name: _________________</p>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        <img src="./img/logo.png" alt="School Logo" style="height: 40px; margin-bottom: 10px;">
+                        <p><strong>Kanyadet School</strong></p>
+                        <p>https://kanyadet-school.web.app/</p>
+                        <div class="qr-section" style="justify-content: center;">
+                            <img src="${qrCodeUrl}" alt="QR Code" style="width: 60px; height: 60px;">
+                            <p style="margin: 0; font-size: 0.9em;">Scan to verify student record</p>
+                        </div>
                     </div>
                 </div>
-                <div class="data-grid">
-                    ${Object.entries(student)
-                        .filter(([key, value]) => 
-                            value && 
-                            value !== '🕸️' && 
-                            !key.startsWith('FileUrl') // Exclude FileUrl fields
-                        )
-                        .map(([key, value]) => `
-                            <div class="data-item">
-                                <h3>${key.replace(/([A-Z])/g, ' $1').trim()}</h3>
-                                <p>${value}</p>
-                            </div>
-                        `).join('')}
-                </div>
-                <div class="footer">
-                    <strong>Kanyadet School</strong><br>
-                    
-                    <strong>https://kanyadet-school.web.app/</strong><br>
 
-                    Generated on ${currentDate}
-                </div>
                 <button onclick="window.print()" class="no-print" 
-                        style="position: fixed; bottom: 120px; right: 20px; 
-                               background: #3C91E6; color: white; border: none;
-                               padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-                    Print
+                        style="position: fixed; bottom: 20px; right: 20px; 
+                               background: var(--primary-color); color: white; 
+                               border: none; padding: 12px 24px; border-radius: 8px; 
+                               cursor: pointer; display: flex; align-items: center;
+                               gap: 8px; font-family: 'Inter', sans-serif;
+                               box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <i class='bx bxs-printer'></i>
+                    Print Document
                 </button>
             </body>
         </html>
@@ -1331,3 +1468,111 @@ document.addEventListener('DOMContentLoaded', () => {
         tableContainer.addEventListener('scroll', handleScroll, { passive: true });
     }
 });
+
+// Add the new function to generate the analytics report
+function generateAnalyticsReport(data) {
+    const printWindow = window.open('', '', 'width=800,height=600');
+    const currentDate = new Date().toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const tableStyles = `
+        table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        th, td { 
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th { 
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        tr:nth-child(even) { 
+            background-color: #f9f9f9;
+        }
+        @media print {
+            .no-print { display: none; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; }
+            thead { display: table-header-group; }
+        }
+    `;
+
+    const studentsTable = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Grade</th>
+                    <th>Gender</th>
+                    <th>UPI</th>
+                    <th>Entry No</th>
+                    <th>Date of Admission</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${allStudents.map(student => `
+                    <tr>
+                        <td>${student.StudentFullName || 'N/A'}</td>
+                        <td>${student.CurentGrade || 'N/A'}</td>
+                        <td>${student.Gender || 'N/A'}</td>
+                        <td>${student.UPI || 'N/A'}</td>
+                        <td>${student.EntryNo || 'N/A'}</td>
+                        <td>${student.DateOfAdm || 'N/A'}</td>
+                        <td>${student.Status || 'N/A'}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Student Analytics Report</title>
+                <style>${tableStyles}</style>
+            </head>
+            <body>
+                <div style="margin: 20px;">
+                    <h1 style="text-align: center;">Student Analytics Report</h1>
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <strong>Kanyadet School</strong><br>
+                        Generated on ${currentDate}
+                    </div>
+                    
+                    <h2>Summary Statistics</h2>
+                    <p>Total Students: ${allStudents.length}</p>
+                    <p>Male Students: ${allStudents.filter(s => s.Gender === 'Male').length}</p>
+                    <p>Female Students: ${allStudents.filter(s => s.Gender === 'Female').length}</p>
+                    
+                    <h2>Student Records</h2>
+                    ${studentsTable}
+                    
+                    <div class="footer" style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                        <p>End of Report</p>
+                        <p>https://kanyadet-school.web.app/</p>
+                    </div>
+                </div>
+                <button onclick="window.print()" class="no-print" 
+                        style="position: fixed; bottom: 20px; right: 20px; 
+                               padding: 10px 20px; background: #3C91E6; 
+                               color: white; border: none; border-radius: 5px; 
+                               cursor: pointer;">
+                    Print Report
+                </button>
+            </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
