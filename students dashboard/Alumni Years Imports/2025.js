@@ -1,0 +1,5 @@
+		// GRADE 9 STUDENTS 2025																																									
+		export const Year2025 = [																																									
+																																											
+			{	CurentGrade: "Grade 9",	AssessmentNumber:	"A000011219" ,	UPI: 	"  ",	StudentFullName:	"OKOTH VIVIAN ACHIENG",	 FileUrl1: "./img/GRADE 9/OKOTH VIVIAN ACHIENG.jpg	",	Gender: 	"Female"	,	EntryNo: "	431938390	" ,	DateOfBirth: "	2009	",	Disability:"	None	" ,	Status:"Active",	AdmissionNo: "	01	/54" ,	classfilteringbyGender: "#F09" ,	classfilteringCode: "##09",	YearOfGraduation:"2025",	DateOfAdm: "2016",	AdmissionClass: "Grade 1",	PhoneNumber: "N/A",	StudentSchoolEmail: "N/A",	ClassTeacher: "Mr Wyclife Owino ",	FathersName: " Pending update",	FathersPhoneNumber: "07XXXXXXXXXXX",	 MothersName: "   ",	MothersPhoneNumber: "07XXXXXX-XXXXXX",	Siblings: "No1:Tom allan \n No2: Joy amalia" ,	FileUrl2: "../Pdf/KJSEA",	FileUrl3: "🕸️",	FileUrl4: "./img/Result Slips",	},
+        ]

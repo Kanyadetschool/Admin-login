@@ -82,7 +82,7 @@ switchMode.addEventListener('change', function () {
 
 // Enhanced dark mode switch handler
 switchMode.addEventListener('change', function () {
-    const headers = document.querySelectorAll('.order .head, .order table thead');
+    const headers = document.querySelectorAll('.order .head, .order table thead .');
     const headerCells = document.querySelectorAll('.order table thead th');
     
     if (this.checked) {
@@ -141,9 +141,9 @@ let students = JSON.parse(localStorage.getItem('students')) || [
 ];
 
 let transfers = JSON.parse(localStorage.getItem('transfers')) || [
-    { id: 1, name: 'Mary Achieng', grade: 'Grade 3', completed: true },
-    { id: 2, name: 'John Alan', grade: 'Grade 6', completed: true },
-    { id: 3, name: 'Peter Oloo', grade: 'Grade 4', completed: false },
+    { id: 1, name: 'Entry of new Administrator HOI ', grade: 'Mr Aggrey Ajwang Term II 2025 ', completed: true },
+    { id: 2, name: 'Ball games competitions for ', grade: 'Term 2 2025', completed: true },
+    { id: 3, name: 'upcomings for', grade: 'Term 3', completed: false },
 ];
 
 // Sorting state

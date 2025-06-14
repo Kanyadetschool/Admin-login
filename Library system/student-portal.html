@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Textbook Management System</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+   <link rel="stylesheet" href="./css/students.css">
+   
+
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card p-4">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-book-half fs-1 text-primary"></i>
+                            <h2 class="mt-2">Student Portal</h2>
+                        </div>
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label class="form-label">Assessment Number</label>
+                                <input type="text" id="assessmentNo" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Grade</label>
+                                <select id="grade" class="form-select" required>
+                                    <option value="">Select Grade</option>
+                                    <option value="Grade 1">Grade 1</option>
+                                    <option value="Grade 2">Grade 2</option>
+                                    <option value="Grade 3">Grade 3</option>
+                                    <option value="Grade 4">Grade 4</option>
+                                    <option value="Grade 5">Grade 5</option>
+                                    <option value="Grade 6">Grade 6</option>
+                                    <option value="Grade 7">Grade 7</option>
+                                    <option value="Grade 8">Grade 8</option>
+                                    <option value="Grade 9">Grade 9</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Dashboard - Initially Hidden -->
+    <div id="dashboardContent" class="d-none">
+        <!-- Move the navbar and container here -->
+        <nav class="student-navbar">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <i class="bi bi-book-half nav-logo"></i>
+                    <span class="nav-brand">Student Portal</span>
+                    <div class="nav-links">
+                        <button class="nav-link active" data-view="dashboard">
+                            <i class="bi bi-speedometer2"></i>
+                            Dashboard
+                        </button>
+                        <button class="nav-link" data-view="activeBooks">
+                            <i class="bi bi-book"></i>
+                            Active Books
+                        </button>
+                        <button class="nav-link" data-view="messages">
+                            <i class="bi bi-chat-dots"></i>
+                            Messages
+                            <span id="unreadCount" class="badge bg-danger rounded-pill"></span>
+                        </button>
+                        <button class="nav-link" data-view="history">
+                            <i class="bi bi-clock-history"></i>
+                            History
+                        </button>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <div class="student-info">
+                        <div class="student-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="student-details">
+                            <span id="studentName" class="student-name">Student Name</span>
+                            <small id="studentGrade" class="student-grade">Grade</small>
+                        </div>
+                    </div>
+                    <button id="logoutBtn" class="nav-logout-btn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container py-4 mt-5">
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view-container active">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="stat-card text-center p-3 rounded shadow-sm bg-white">
+                                    <i class="bi bi-book fs-1 text-primary mb-2"></i>
+                                    <h3 id="totalBooks">0</h3>
+                                    <p class="text-muted mb-0">Total Books</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card text-center p-3 rounded shadow-sm bg-white">
+                                    <i class="bi bi-book-half fs-1 text-success mb-2"></i>
+                                    <h3 id="activeBooks">0</h3>
+                                    <p class="text-muted mb-0">Active Books</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card text-center p-3 rounded shadow-sm bg-white">
+                                    <i class="bi bi-exclamation-triangle fs-1 text-warning mb-2"></i>
+                                    <h3 id="overdueBooks">0</h3>
+                                    <p class="text-muted mb-0">Overdue Books</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card text-center p-3 rounded shadow-sm bg-white">
+                                    <i class="bi bi-x-circle fs-1 text-danger mb-2"></i>
+                                    <h3 id="lostBooks">0</h3>
+                                    <p class="text-muted mb-0">Lost Books</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card h-100 p-3 rounded shadow-sm bg-white" id="borrowingStats">
+                            <!-- Borrowing statistics will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                <div id="booksContainer" class="row">
+                    <!-- Current books will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Active Books View -->
+            <div id="activeBooksView" class="view-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Active Books</h4>
+                    <div class="input-group" style="max-width: 300px;">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search books...">
+                    </div>
+                </div>
+                <div id="activeBooks" class="row">
+                    <!-- Active books will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Messages View -->
+            <div id="messagesView" class="view-container">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Messages from Librarian</h5>
+                            <div class="d-flex gap-2 align-items-center">
+                                <span id="unreadMessagesCount" class="badge bg-danger rounded-pill"></span>
+                                <button class="btn btn-primary btn-sm" onclick="studentPortal.showNewMessageDialog()">
+                                    <i class="bi bi-chat-dots me-1"></i>New Message
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="messagesContainer" class="messages-container">
+                            <!-- Messages will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="historyView" class="view-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Borrowing History</h4>
+                    <div class="input-group" style="max-width: 300px;">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search history...">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table bg-white rounded shadow-sm">
+                        <thead>
+                            <tr>
+                                <th>Book Title</th>
+                                <th>Issue Date</th>
+                                <th>Return Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- History will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="./js/firebaseConfig.js"></script>
+    <script src="./js/bookCovers.js"></script>
+    <script src="./js/student-portal.js"></script>
+</body>
+</html>

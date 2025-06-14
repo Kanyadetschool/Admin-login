@@ -24,9 +24,13 @@ export const getAllStudents = () => {
     ];
     
     // Sort students alphabetically by name
-    return allStudents.sort((a, b) => 
-        a.StudentFullName.localeCompare(b.StudentFullName)
-    );
+    allStudents.sort((a, b) => {
+        // Ensure both `a` and `b` are defined and have the property being compared
+        if (!a || !b || !a.StudentFullName || !b.StudentFullName) return 0; // Handle undefined or null values
+        return a.StudentFullName.localeCompare(b.StudentFullName);
+    });
+
+    return allStudents;
 };
 
 // Export selectStudent function

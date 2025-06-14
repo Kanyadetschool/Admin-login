@@ -1,62 +1,16 @@
-const NOTIFICATION_TIMEOUT = 5000; // 5 seconds in milliseconds
-const NOTIFICATION_VOLUME = 0.5;   // 50% volume
-
-// Separate notification handler that doesn't affect auth state
-function handleNotification(notification, timeoutId) {
-    notification.onclick = function() {
-        clearTimeout(timeoutId);
-        notification.close();
-    };
-}
 
 function showNotification(title, message) {
-    console.log('Attempting to show notification:', title, message);
-
-    // Play notification sound
-    try {
-        const audio = new Audio('../audio/notification.mp3');
-        audio.volume = NOTIFICATION_VOLUME;
-        audio.play().catch(e => console.log('Audio play failed:', e));
-    } catch (e) {
-        console.error('Audio error:', e);
-    }
-
-    // Check if the browser supports notifications
-    if (!("Notification" in window)) {
-        alert(message);
-        return;
-    }
-
-    // Check if permission is already granted
-    if (Notification.permission === "granted") {
-        const options = {
-            body: message,
-            icon: '/img/logo.png',
-            requireInteraction: false,
-            vibrate: [200, 100, 200],
-            silent: false,
-            tag: 'notification-' + Date.now() // Unique tag to prevent interference
-        };
-        
-        try {
-            const notification = new Notification(title, options);
-            const timeoutId = setTimeout(() => notification.close(), NOTIFICATION_TIMEOUT);
-            handleNotification(notification, timeoutId);
-        } catch (e) {
-            console.error('Notification creation failed:', e);
-            alert(message);
-        }
-    } else {
-        // Handle permission request or denial
-        Notification.requestPermission()
-            .then(permission => {
-                if (permission === "granted") {
-                    showNotification(title, message);
-                } else {
-                    alert(message);
-                }
-            });
-    }
+    console.log('Showing Toastify notification:', title, message);
+    
+    Toastify({
+        text: `${title}\n${message}`,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: title.toLowerCase().includes('error') || title.toLowerCase().includes('failed') ? "#ff6b6b" : "#51cf66",
+        stopOnFocus: true,
+        onClick: function(){}
+    }).showToast();
 }
 
 // Add persistent auth state handling

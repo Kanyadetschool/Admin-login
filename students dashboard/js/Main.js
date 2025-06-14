@@ -1,23 +1,23 @@
 // Import statements remain the same
-// Import all the grade data modules (e.g., Grade3, Grade4, etc.)
-//import { Grade1 } from '../Grades/Grade 1.js';
-//import { Grade2 } from '../Grades/Grade 2.js';
-//import { Grade3 } from '../Grades/Grade 3.js';
-//import { Grade4 } from '../Grades/Grade 4.js';
-//import { Grade5 } from '../Grades/Grade 5.js';
-//import { Grade6 } from '../Grades/Grade 6.js';
-//import { Grade7 } from '../Grades/Grade 7.js';
+//Import all the grade data modules (e.g., Grade3, Grade4, etc.)
+import { Grade1 } from '../Grades/Grade 1.js';
+import { Grade2 } from '../Grades/Grade 2.js';
+import { Grade3 } from '../Grades/Grade 3.js';
+import { Grade4 } from '../Grades/Grade 4.js';
+import { Grade5 } from '../Grades/Grade 5.js';
+import { Grade6 } from '../Grades/Grade 6.js';
+import { Grade7 } from '../Grades/Grade 7.js';
 import { Grade8 } from '../Grades/Grade 8.js';
 import { Grade9 } from '../Grades/Grade 9.js';
 
 const grades = {
- //Grade1,
- //Grade2,
- //Grade3,
- //Grade4,
- //Grade5,
- //Grade6,
- //Grade7,
+ Grade1,
+ Grade2,
+ Grade3,
+ Grade4,
+ Grade5,
+ Grade6,
+ Grade7,
  Grade8,
   Grade9,
 };
@@ -106,9 +106,9 @@ function populateForm(data) {
     }
   }
 
-  // Display learner images (FileUrl4)
+  // Display learner images (File1Url4)
   const learnerImageContainer = document.getElementById('learnerImages');
-  const learnerImageUrl = data.FileUrl4;
+  const learnerImageUrl = data.FileUrl1;
   if (learnerImageUrl) {
     const img = document.createElement('img');
     img.src = learnerImageUrl;

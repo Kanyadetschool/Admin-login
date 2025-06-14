@@ -86,16 +86,16 @@
 
 .day {
   font-weight: bold;
-   color: rgb(0, 0, 0);
+   color: #060b3b;
 }
 
 .dated {
   font-weight: bold;
   font-size: 18px;
-  color: rgb(0, 0, 0);
+  color: #060b3b;
 }
 .time{
-  color: rgb(0, 0, 0);
+  color: #060b3b;
   font-weight: bold;
 }
 
@@ -118,7 +118,7 @@ select {
 .loader2 {
   display: block;
   --height-of-loader2: 4px;
-  --loader2-color:  rgb(0, 0, 0);
+  --loader2-color:  #060b3b;
   width: 150px;
   height: var(--height-of-loader2);
   border-radius: 30px;
@@ -189,13 +189,13 @@ select {
 
 /* Styling for success and access denied messages */
 .success {
-  color: rgb(0, 0, 0);
+  color: #060b3b;
 background-image: url(./img/Background.png);
  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .access-denied {
-  color: rgb(0, 0, 0);
+  color: #060b3b;
 background-image: url(./img/Background.png);
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
    
@@ -214,7 +214,7 @@ background-image: url(./img/Background.png);
   border: transparent;
   padding: 10px;
   border-radius: 10px;
-  background-image: linear-gradient(-45deg,   rgb(0, 0, 0) 0%,  rgb(0, 0, 0) 100%);
+  background-image: linear-gradient(-45deg,   #060b3b 0%,  #060b3b 100%);
 }
 .sendingOrbutton .btn{
  
@@ -250,12 +250,12 @@ border: 5px solid rgb(216, 36, 189);
 }
 
 .social-icon:hover{
-  background-color:  rgb(0, 0, 0);
+  background-color:  #060b3b;
 
 
 }
 .fab{
-  color:   rgb(0, 0, 0);
+  color:   #060b3b;
 }
 
 .forms-container {
@@ -318,7 +318,7 @@ a{
  color: #fff;
 }
 .mdl-button.firebaseui-idp-google{
-  background-color: rgb(0, 0, 0);
+  background-color: #060b3b;
   color: #ffff;
   border: 4px solid lavender;
   border-radius: 20px;
@@ -326,7 +326,7 @@ a{
   height: 49px;
 }
 .mdl-button.firebaseui-idp-twitter{
-  background-color:rgb(0, 0, 0);
+  background-color:#060b3b;
   color: #ffff;
   border: 4px solid lavender;
   border-radius: 20px;
@@ -334,7 +334,7 @@ a{
   height: 49px;
 }
 .mdl-button.firebaseui-idp-facebook{
-  background-color:rgb(0, 0, 0);
+  background-color:#060b3b;
   color: #ffff;
   border: 4px solid lavender;
   border-radius: 20px;
@@ -351,12 +351,12 @@ span.firebaseui-idp-text.firebaseui-idp-text-long{
   border: 4px solid lavender;
   border-radius: 20px;
   height: 49px;
-  background-color:rgb(0, 0, 0);
+  background-color:#060b3b;
   max-width: 310px;
 }
 .mdl-button.firebaseui-idp-phone{
   border: 4px solid lavender;
-  background-color:rgb(0, 0, 0);
+  background-color:#060b3b;
   border-radius: 20px;
   max-width: 310px;
   height: 49px;
@@ -374,7 +374,7 @@ form.sign-in-form {
 
 .title {
   font-size: 2.2rem;
-  color: rgb(0, 0, 0);
+  color: #060b3b;
 }
 
 .input-field {
@@ -383,7 +383,7 @@ form.sign-in-form {
   width: 100%;
     color: #ffffff;
     font-family: Roboto, Helvetica, Arial, sans-serif;
-    background-color:  rgb(0, 0, 0);
+    background-color:  #060b3b;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
   height: 55px;
   margin: 2px;
@@ -478,7 +478,7 @@ textarea::placeholder{
 
 .btn {
   width: 150px;
-  background-color:  rgb(0, 0, 0);
+  background-color:  #060b3b;
   height: 49px;
   border-radius: 49px;
   color: #fff;
@@ -541,7 +541,7 @@ video{
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image: linear-gradient(-45deg,  #000000 0%,   #063b0f 100%);
+  background-image: linear-gradient(-45deg,  #060b3b 0%,   #060b3b 100%);
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 6;
@@ -584,7 +584,7 @@ video{
   
 }
 .teachers{
-  background-color:  rgb(0, 0, 0);
+  background-color:  #060b3b;
   border-radius: 20px;
   color: #ffff;
   padding: 20px;
@@ -698,7 +698,7 @@ marquee{
   width: 45px;
   height: 45px;
   border-radius: 50% 50% 50% 0%;
-  background-color:   rgb(0, 0, 0);
+  background-color:   #060b3b;
   display: inline-block;
   margin-left: -25px;
   z-index: 5;
@@ -708,7 +708,7 @@ marquee{
   width: 65px;
   height: 65px;
   border-radius: 50% 50% 0% 50%;
-  background-color:  rgb(0, 0, 0);
+  background-color:  #060b3b;
   display: inline-block;
   z-index: 5;
 }
@@ -717,7 +717,7 @@ marquee{
   width: 50px;
   height: 50px;
   border-radius: 50% 50% 50% 0%;
-  background-color: rgb(0, 0, 0);
+  background-color: #060b3b;
   display: inline-block;
   margin-left: -20px;
   z-index: 5;
@@ -727,7 +727,7 @@ marquee{
   width: 30px;
   height: 30px;
   border-radius: 50% 50% 0% 50%;
-  background-color:  rgb(0, 0, 0);
+  background-color:  #060b3b;
   display: inline-block;
   z-index: 5;
 }
@@ -813,8 +813,8 @@ marquee{
 /* ///////////////////////////////////////////////////////////////// */
 
 .typewriter {
-  --blue: rgb(0, 0, 0);
-  --blue-dark: rgb(0, 0, 0);
+  --blue: #060b3b;
+  --blue-dark: #060b3b;
   --key: #fff;
   --paper: #EEF0FD;
   --text: #D3D4EC;
@@ -864,7 +864,7 @@ marquee{
 margin-top: 18px;
 }
 .Capture-Scores{
-  background-color:rgb(0, 0, 0);
+  background-color:#060b3b;
   color: #ffff;
   border: 4px solid lavender;
   border-radius: 20px;
@@ -889,7 +889,7 @@ margin-top: 18px;
 }
 .submit-btn,.Install{
   text-decoration: none;
-  background-color: rgb(0, 0, 0);
+  background-color: #060b3b;
   border-radius: 40px;
   border: 6px solid lavender;
   color: #fff;
@@ -1438,9 +1438,9 @@ right: -10px;
 /* sersching  starts//////////////////////////////////// */
 #wifi-loader2 {
   --background: #62abff;
-  --front-color: rgb(0, 0, 0);
+  --front-color: #060b3b;
   --back-color: #dee0ea;
-  --text-color: rgb(0, 0, 0);
+  --text-color: #060b3b;
   width: 174px;
   height: 64px;
   border-radius: 50px;

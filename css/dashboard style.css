@@ -50,7 +50,16 @@ body {
 .logo{
 	width: 40px;
 }
+.counter-box, #content main .box-info li,#content main .box-info li .text p {
+	color: rgb(0, 133, 126) !important;
+}
+#content main .box-info li:hover{
+	background-color: rgb(203, 201, 201);
 
+}
+.counter-box:hover{
+	background-color: rgb(203, 203, 201);
+}
 
 /* SIDEBAR */
 #sidebar {
@@ -374,6 +383,8 @@ body {
 	display: flex;
 	align-items: center;
 	grid-gap: 24px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
 }
 #content main .box-info li .bx {
 	width: 80px;
@@ -404,9 +415,7 @@ body {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-#content main .box-info li .text p {
-	color: var(--dark);	
-}
+
 
 
 

@@ -175,28 +175,28 @@ window.addEventListener('resize', updateSortButtonSize);
 document.querySelector('.order .head').appendChild(sortButton);
 
 // Import statements and grade data
-import { Grade1 } from './Grades/Grade 1.js';
-import { Grade2 } from './Grades/Grade 2.js';
-import { Grade3 } from './Grades/Grade 3.js';
+// import { Grade1 } from './Grades/Grade 1.js';
+// import { Grade2 } from './Grades/Grade 2.js';
+// import { Grade3 } from './Grades/Grade 3.js';
+import { Grade9 } from './Grades/Grade 9.js';
 import { Grade4 } from './Grades/Grade 4.js';
 import { Grade5 } from './Grades/Grade 5.js';
 import { Grade6 } from './Grades/Grade 6.js';
 import { Grade7 } from './Grades/Grade 7.js';
 import { Grade8 } from './Grades/Grade 8.js';
-import { Grade9 } from './Grades/Grade 9.js';
 import { updateTotalStudents } from './js/Counter.js';
 
 // Combine all grades data
 const grades = {
-    Grade1,
-    Grade2,
-    Grade3,
+    // Grade1,
+    // Grade2,
+    // Grade3,
+    Grade9,
     Grade4,
     Grade5,
     Grade6,
     Grade7,
     Grade8,
-    Grade9
 };
 
 // Create allStudents array from imported data
@@ -466,7 +466,7 @@ window.printStudentData = function(student) {
             --primary-color: #2e374b;
             --accent-color: #3C91E6;
             --text-color: #333;
-            --border-color: #e9ecef;
+            --border-color:rgb(4, 17, 30);
         }
 
         body { 
@@ -540,6 +540,7 @@ window.printStudentData = function(student) {
         .data-table th {
             background: #f8f9fa;
             padding: 12px 16px;
+            text-align:left;
             font-weight: 600;
             color: var(--primary-color);
             text-transform: uppercase;
@@ -740,13 +741,13 @@ function renderStudentData(studentsToRender = allStudents) {
                     <img src="${studentImage}" alt="Student" style="width: 36px; height: 36px; border-radius: 50%;">
                     <p>${student.StudentFullName || 'N/A'}</p>
                 </td>
-                <td>${student.DateOfAdm || 'N/A'}</td>
                 <td>${student.AssessmentNumber || 'N/A'}</td>
-                <td><span class="status ${student.Status?.toLowerCase() || ''}">${student.UPI || 'N/A'}</span></td>
+                <td>${student.UPI || 'N/A'}</td>
                 <td>${student.EntryNo || 'N/A'}</td>
                 <td>${student.Gender || 'N/A'}</td>
                 <td>${student.MothersPhoneNumber || 'N/A'}</td>
                 <td>${student.CurentGrade || 'N/A'}</td>
+                <td>${student.DateOfAdm || 'N/A'}</td>
                 <td>${student.Status || 'N/A'}</td>
             `;
             
@@ -773,7 +774,8 @@ function filterMultipleCriteria(searchTerm) {
             gender: student.Gender,
             classCode: student.Status,
             classGender: student.DateOfAdm,
-            currentGrade: student.CurentGrade
+            currentGrade: student.CurentGrade,
+
         };
 
         return terms.every(term => {

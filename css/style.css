@@ -271,7 +271,7 @@ scale: 0.8;
     margin: 10px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 368px) {
     .form-wrapper {
         flex-direction: column;
 

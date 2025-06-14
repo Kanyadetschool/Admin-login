@@ -96,7 +96,7 @@ function initializeTables() {
                 name: 'status',
                 render: function(data, type, row) {
                     if (!data) return '';  // Handle null/undefined
-                    const statusClass = data === 'Faulty' ? 'status-Faulty' : 'status-good';
+                    const statusClass = data === 'low' ? 'status-low' : 'status-good';
                     return `<span class="status-indicator ${statusClass}"></span>${data}`;
                 }
             },
@@ -168,7 +168,7 @@ function initializeTables() {
             { 
                 data: 'status',
                 render: function(data) {
-                    const statusClass = data === 'Active' ? 'status-good' : 'status-Faulty';
+                    const statusClass = data === 'Active' ? 'status-good' : 'status-low';
                     return `<span class="status-indicator ${statusClass}"></span>${data}`;
                 }
             },
@@ -1246,7 +1246,7 @@ function generateInventoryForm() {
                                 <label class="form-label">Item ID</label>
                                 <input type="text" class="form-control" name="id" required 
                                     pattern="[A-Za-z0-9-_]+" 
-                                    title="Only letters, numbers, hyphens and underscores alFaultyed"
+                                    title="Only letters, numbers, hyphens and underscores allowed"
                                     placeholder="Enter unique ID">
                             </div>
                             <div class="mb-3">
@@ -1269,7 +1269,7 @@ function generateInventoryForm() {
                                 <label class="form-label">Status</label>
                                 <select class="form-control" name="status" required>
                                     <option value="good">Good</option>
-                                    <option value="Faulty">Faulty</option>
+                                    <option value="low">low</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -1333,7 +1333,7 @@ function editEquipment(id) {
                                 <label>Status</label>
                                 <select class="form-control" name="status">
                                     <option value="good" ${equipment.status === 'good' ? 'selected' : ''}>Good</option>
-                                    <option value="Faulty" ${equipment.status === 'Faulty' ? 'selected' : ''}>Faulty</option>
+                                    <option value="low" ${equipment.status === 'low' ? 'selected' : ''}>low</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -1930,7 +1930,7 @@ function generateAccountForm() {
                                 <label>Account ID</label>
                                 <input type="text" class="form-control" name="id" required 
                                     pattern="[A-Za-z0-9-_]+" 
-                                    title="Only letters, numbers, hyphens and underscores alFaultyed"
+                                    title="Only letters, numbers, hyphens and underscores allowed"
                                     placeholder="Enter unique ID">
                             </div>
                             <div class="mb-3">
