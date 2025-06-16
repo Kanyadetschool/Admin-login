@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event delegation for dynamically added images
   document.body.addEventListener('click', (event) => {
-    if (event.target.matches('img.student-image')) {
+    if (event.target.matches('img')) {
       console.log(`[DEBUG] image-popup-dynamic.js: Image clicked: ${event.target.src}`);
       try {
         Swal.fire({

@@ -81,6 +81,12 @@ body {
     text-overflow: ellipsis;
     max-width: 150px; /* Adjust based on content */
 }
+td.warning{
+    background-color: #eecbc9;
+    color: #d83d0d;
+    border-radius: 10px;
+    
+}
 
 .table-wrapper th {
     background-color: #f2f2f2;

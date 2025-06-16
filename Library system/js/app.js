@@ -787,6 +787,8 @@ class StudentManager {
 
             <h3>👨‍⚕️${student.name}</h3>
             <p>Assessment No: ${student.assessmentNo || 'Not assigned'}</p>
+            <p>Entry no: ${student.EntryNo|| 'Not assigned'}</p>
+            <p>Home contact: ${student.FathersPhoneNumber|| 'Not assigned'}</p>
             <p>UPI No: ${student.upi || 'Not assigned'}</p>
             <p>Status: <span class="badge ${student.hasActiveBooks ? 'bg-primary' : 'bg-secondary'}">
                 ${student.hasActiveBooks ? 'Has Active Books' : 'No Active Books'}
@@ -1863,7 +1865,7 @@ class ReportManager {
 
         const printContent = `
             <div class="header">
-                <img src="https://via.placeholder.com/100" alt="Kanyadet Logo" class="logo">
+                <img src="../images/logo.png" alt="Kanyadet Logo" class="logo">
                 <h1>Kanyadet Primary and Junior Secondary</h1>
                 <h2>${reportTitle}${selectedGrade && selectedGrade !== 'all' ? ` - Grade ${selectedGrade}` : ''}</h2>
                 <p>Date: ${currentDate}</p>
