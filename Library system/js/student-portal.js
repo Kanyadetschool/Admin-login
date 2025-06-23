@@ -1,28 +1,24 @@
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 class StudentPortal {
     constructor() {
-        // Initialize elements
         this.loginPage = document.getElementById('loginPage');
         this.loginForm = document.getElementById('loginForm');
         this.dashboardContent = document.getElementById('dashboardContent');
         this.logoutBtn = document.getElementById('logoutBtn');
         this.studentData = null;
-        this.bookListeners = []; // Track active listeners
+        this.bookListeners = [];
+        this.messageListener = null;
 
-        // Check if elements exist
         if (!this.loginPage || !this.loginForm || !this.dashboardContent || !this.logoutBtn) {
             console.error('Required elements not found');
             return;
         }
 
-        // Initially hide dashboard and show login
         this.loginPage.classList.remove('d-none');
         this.dashboardContent.classList.add('d-none');
 
-        // Add view handling
         this.currentView = 'dashboard';
         this.views = ['dashboard', 'activeBooks', 'messages', 'history'];
         
@@ -30,11 +26,9 @@ class StudentPortal {
     }
 
     setupEventListeners() {
-        // Basic event listeners that don't require studentData
         this.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
         this.logoutBtn.addEventListener('click', () => this.handleLogout());
 
-        // Add navigation event listeners
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 const view = e.currentTarget.dataset.view;
@@ -44,9 +38,12 @@ class StudentPortal {
     }
 
     setupMessageListener() {
-        // Only set up message listener after successful login
+        if (this.messageListener) {
+            db.ref('messages').off('value', this.messageListener);
+        }
+
         if (this.studentData?.id) {
-            db.ref('issues')
+            this.messageListener = db.ref('messages')
                 .orderByChild('studentId')
                 .equalTo(this.studentData.id)
                 .on('value', () => {
@@ -56,27 +53,23 @@ class StudentPortal {
     }
 
     setupRealtimeListeners() {
-        // Clean up any existing listeners
         this.removeRealtimeListeners();
 
         if (!this.studentData?.id) return;
 
-        // Listen for changes in issuance status
         const issuanceListener = db.ref('issuance')
             .orderByChild('studentId')
             .equalTo(this.studentData.id)
             .on('value', (snapshot) => {
-                this.loadStudentData(); // Refresh the books display
+                this.loadStudentData();
             });
 
-        // Listen for changes in books data
         const booksListener = db.ref('books').on('value', (snapshot) => {
             if (this.currentView === 'dashboard' || this.currentView === 'activeBooks') {
-                this.loadStudentData(); // Refresh the books display
+                this.loadStudentData();
             }
         });
 
-        // Store listeners for cleanup
         this.bookListeners = [
             { ref: 'issuance', listener: issuanceListener },
             { ref: 'books', listener: booksListener }
@@ -84,12 +77,15 @@ class StudentPortal {
     }
 
     removeRealtimeListeners() {
-        // Clean up listeners when logging out or switching users
         if (this.bookListeners) {
             this.bookListeners.forEach(({ ref, listener }) => {
                 db.ref(ref).off('value', listener);
             });
             this.bookListeners = [];
+        }
+        if (this.messageListener) {
+            db.ref('messages').off('value', this.messageListener);
+            this.messageListener = null;
         }
     }
 
@@ -105,7 +101,6 @@ class StudentPortal {
             infoUpiNo: document.getElementById('infoUpiNo')
         };
 
-        // Update elements that exist
         Object.entries(elements).forEach(([key, element]) => {
             if (element) {
                 switch(key) {
@@ -126,13 +121,14 @@ class StudentPortal {
                 }
             }
         });
-    }    async handleLogin(e) {
+    }
+
+    async handleLogin(e) {
         e.preventDefault();
         const assessmentNo = document.getElementById('assessmentNo').value;
         const grade = document.getElementById('grade').value;
 
         try {
-            // Clean up any existing listeners
             this.removeRealtimeListeners();
             
             const snapshot = await db.ref('students')
@@ -142,12 +138,11 @@ class StudentPortal {
 
             if (snapshot.exists()) {
                 const studentData = Object.values(snapshot.val())[0];
-                const studentId = Object.keys(snapshot.val())[0];                if (studentData.grade === grade) {
+                const studentId = Object.keys(snapshot.val())[0];
+                if (studentData.grade === grade) {
                     this.studentData = { ...studentData, id: studentId };
-                    // Set up message and realtime listeners after successful login
                     this.setupMessageListener();
                     this.setupRealtimeListeners();
-                    // Show dashboard after listeners are set up
                     this.showDashboard();
                 } else {
                     alert('Invalid grade for this assessment number');
@@ -166,21 +161,15 @@ class StudentPortal {
         this.loginPage.classList.remove('d-none');
         this.dashboardContent.classList.add('d-none');
         this.loginForm.reset();
-        this.removeRealtimeListeners(); // Clean up listeners on logout
+        this.removeRealtimeListeners();
     }
 
     showDashboard() {
-        // Hide login and show dashboard
         this.loginPage.classList.add('d-none');
         this.dashboardContent.classList.remove('d-none');
         
-        // Update student info
         this.updateStudentInfo();
-        
-        // Load student data
         this.loadStudentData();
-        
-        // Load messages
         this.loadMessages();
     }
 
@@ -218,13 +207,11 @@ class StudentPortal {
                     stats.lost++;
                 } else if (issuance.status === 'returned') {
                     stats.returned++;
-                    // Calculate if returned on time
                     const returnDate = new Date(issuance.returnDate);
                     const actualReturn = new Date(issuance.actualReturnDate);
                     if (actualReturn <= returnDate) {
                         stats.onTimeReturns++;
                     }
-                    // Calculate total borrowing days
                     const issueDate = new Date(issuance.issueDate);
                     stats.totalDays += Math.ceil((actualReturn - issueDate) / (1000 * 60 * 60 * 24));
                 }
@@ -232,10 +219,8 @@ class StudentPortal {
                 bookPromises.push(this.loadBookDetails(issuance, childSnapshot.key));
             });
 
-            // Update statistics
             this.updateStatistics(stats);
 
-            // Load and display books
             const bookCards = await Promise.all(bookPromises);
             document.getElementById('booksContainer').innerHTML = bookCards.join('');
 
@@ -250,7 +235,6 @@ class StudentPortal {
         document.getElementById('overdueBooks').textContent = stats.overdue;
         document.getElementById('lostBooks').textContent = stats.lost;
         
-        // Add new statistics displays
         const avgBorrowDays = stats.returned ? Math.round(stats.totalDays / stats.returned) : 0;
         const returnRate = stats.returned ? Math.round((stats.onTimeReturns / stats.returned) * 100) : 0;
 
@@ -264,17 +248,15 @@ class StudentPortal {
                 <h4>${returnRate}%</h4>
             </div>
         `;
-    }    async loadBookDetails(issuance, issuanceId) {
+    }
+
+    async loadBookDetails(issuance, issuanceId) {
         try {
             if (!issuance || !issuanceId) {
                 console.error('Invalid issuance data:', { issuance, issuanceId });
                 return '';
             }
 
-            // Ensure we have the latest book data
-            const bookRef = db.ref(`books/${issuance.bookId}`);
-
-            // Get book details
             const bookSnapshot = await db.ref(`books/${issuance.bookId}`).once('value');
             const book = bookSnapshot.val() || {
                 title: 'Unknown Book',
@@ -300,14 +282,13 @@ class StudentPortal {
             const daysUntilDue = Math.ceil((returnDate - currentDate) / (1000 * 60 * 60 * 24));
             const daysDisplay = daysUntilDue > 0 ? `${daysUntilDue} days remaining` : `${Math.abs(daysUntilDue)} days overdue`;
 
-            // Get book cover URL using BookCoverManager
             const coverUrl = BookCoverManager.getBookCover(issuance.bookId);
 
             return `
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card book-card h-100 border-0 shadow-sm">
                         <div class="book-cover-container">
-                            <img src="${coverUrl}" class="card-img-top book-cover"alt="${book.title}"
+                            <img src="${coverUrl}" class="card-img-top book-cover" alt="${book.title}"
                                  onerror="this.onerror=null; this.src='covers/default-book.png';">
                             <span class="badge ${statusBadges[status] || 'bg-secondary'} status-badge">${status.toUpperCase()}</span>
                         </div>
@@ -372,7 +353,7 @@ class StudentPortal {
                             ${status === 'active' ? `
                                 <div class="mt-3">
                                     <button class="btn btn-sm btn-outline-primary" 
-                                            onclick="studentPortal.reportIssue('${issuanceId}', '${book.title}')">
+                                            onclick="studentPortal.reportIssue('${issuanceId}', '${book.title.replace(/'/g, "\\'")}')">
                                         <i class="bi bi-flag me-1"></i>Report Issue
                                     </button>
                                 </div>
@@ -381,7 +362,6 @@ class StudentPortal {
                     </div>
                 </div>
             `;
-            
         } catch (error) {
             console.error('Error loading book details:', error);
             return `
@@ -399,19 +379,23 @@ class StudentPortal {
     }
 
     async reportIssue(issuanceId, bookTitle) {
-        const issueType = await this.showIssueDialog(bookTitle);
+        const { issueType, description } = await this.showIssueDialog(bookTitle);
         if (!issueType) return;
 
         try {
-            await db.ref('issues').push({
+            await db.ref('messages').push({
                 issuanceId,
                 studentId: this.studentData.id,
-                bookTitle,
-                type: issueType,
+                bookTitle: bookTitle,
+                type: 'issue',
+                subject: issueType,
+                description: description || '',
                 status: 'pending',
                 timestamp: Date.now(),
                 studentName: this.studentData.name,
-                studentGrade: this.studentData.grade
+                studentGrade: this.studentData.grade,
+                readByStudent: true,
+                readByLibrarian: false
             });
 
             alert('Issue reported successfully. The librarian will review it.');
@@ -463,13 +447,14 @@ class StudentPortal {
 
             document.getElementById('submitIssue').onclick = () => {
                 const issueType = document.getElementById('issueType').value;
+                const description = document.getElementById('issueDescription').value.trim();
                 if (!issueType) {
                     alert('Please select an issue type');
                     return;
                 }
                 modalElement.hide();
                 document.getElementById('issueModal').remove();
-                resolve(issueType);
+                resolve({ issueType, description });
             };
 
             document.getElementById('issueModal').addEventListener('hidden.bs.modal', () => {
@@ -481,9 +466,8 @@ class StudentPortal {
 
     async loadMessages() {
         try {
-            // Get all issues related to this student
-            const issuesRef = db.ref('issues').orderByChild('studentId').equalTo(this.studentData.id);
-            const snapshot = await issuesRef.once('value');
+            const messagesRef = db.ref('messages').orderByChild('studentId').equalTo(this.studentData.id);
+            const snapshot = await messagesRef.once('value');
             
             const messagesContainer = document.getElementById('messagesContainer');
             const unreadCount = document.getElementById('unreadMessagesCount');
@@ -496,42 +480,50 @@ class StudentPortal {
             }
 
             messagesContainer.innerHTML = '';
-            const issues = [];
+            const messages = [];
             
             snapshot.forEach(child => {
-                issues.push({
+                messages.push({
                     id: child.key,
                     ...child.val()
                 });
             });
 
-            // Sort by timestamp, newest first
-            issues.sort((a, b) => b.timestamp - a.timestamp);
+            messages.sort((a, b) => b.timestamp - a.timestamp);
 
-            for (const issue of issues) {
-                const threadSnapshot = await db.ref(`message_threads/${issue.id}`).once('value');
-                const messages = threadSnapshot.val() || {};
-                const lastMessage = Object.values(messages).sort((a, b) => b.timestamp - a.timestamp)[0];
+            for (const message of messages) {
+                const threadSnapshot = await db.ref(`message_threads/${message.id}`).once('value');
+                const threadMessages = threadSnapshot.val() || {};
+                const lastMessage = Object.values(threadMessages).sort((a, b) => b.timestamp - a.timestamp)[0];
 
-                if (!issue.readByStudent) {
+                if (!message.readByStudent) {
                     unreadMessages++;
                 }
 
                 const div = document.createElement('div');
-                div.className = `message-item ${!issue.readByStudent ? 'unread' : ''}`;
+                div.className = `message-item ${!message.readByStudent ? 'unread' : ''}`;
                 div.innerHTML = `
                     <div class="message-header">
-                        <h6 class="mb-0">Issue: ${issue.message}</h6>
-                        <span class="badge ${issue.status === 'pending' ? 'bg-warning' : 'bg-success'}">
-                            ${issue.status}
+                        <h6 class="mb-0">${message.type === 'issue' ? 'Issue' : 'Message'}: ${message.subject}</h6>
+                        <span class="badge ${message.status === 'pending' ? 'bg-warning' : 'bg-success'}">
+                            ${message.status}
                         </span>
                     </div>
                     <div class="message-content">
-                        <p class="mb-1"><strong>Type:</strong> ${issue.subject}</p>
-                        ${issue.description ? `<p class="mb-1">${issue.description}</p>` : ''}
+                        <p class="mb-1"><strong>Type:</strong> ${message.type}</p>
+                        ${message.description || message.message ? `<p class="mb-1">${message.description || message.message}</p>` : ''}
+                        ${message.attachments ? `
+                            <div class="attachments mt-2">
+                                ${Object.values(message.attachments).map(attachment => `
+                                    <a href="${attachment.url}" target="_blank" class="attachment-link">
+                                        <i class="bi bi-paperclip me-1"></i>${attachment.name}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        ` : ''}
                     </div>
                     <div class="message-footer">
-                        <span>Reported: ${new Date(issue.timestamp).toLocaleString()}</span>
+                        <span>${message.type === 'issue' ? 'Reported' : 'Sent'}: ${new Date(message.timestamp).toLocaleString()}</span>
                         ${lastMessage ? `
                             <span class="text-primary">
                                 Last reply: ${new Date(lastMessage.timestamp).toLocaleString()}
@@ -540,7 +532,7 @@ class StudentPortal {
                     </div>
                     ${threadSnapshot.exists() ? `
                         <div class="chat-thread">
-                            ${Object.values(messages).map(msg => `
+                            ${Object.values(threadMessages).map(msg => `
                                 <div class="chat-message ${msg.sender === 'admin' ? 'librarian' : 'student'}">
                                     <div class="chat-content">${msg.content}</div>
                                     <small class="text-muted">
@@ -553,11 +545,10 @@ class StudentPortal {
                     ` : ''}
                 `;
 
-                div.addEventListener('click', () => this.markMessageAsRead(issue.id));
+                div.addEventListener('click', () => this.markMessageAsRead(message.id));
                 messagesContainer.appendChild(div);
             }
 
-            // Update unread count
             if (unreadMessages > 0) {
                 unreadCount.textContent = unreadMessages;
                 unreadCount.style.display = 'inline-block';
@@ -572,12 +563,12 @@ class StudentPortal {
         }
     }
 
-    async markMessageAsRead(issueId) {
+    async markMessageAsRead(messageId) {
         try {
-            await db.ref(`issues/${issueId}`).update({
+            await db.ref(`messages/${messageId}`).update({
                 readByStudent: true
             });
-            this.loadMessages(); // Refresh messages
+            this.loadMessages();
         } catch (error) {
             console.error('Error marking message as read:', error);
         }
@@ -586,12 +577,10 @@ class StudentPortal {
     switchView(viewName) {
         if (!this.views.includes(viewName)) return;
 
-        // Update nav links
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.toggle('active', link.dataset.view === viewName);
         });
 
-        // Update view containers
         this.views.forEach(view => {
             const container = document.querySelector(`#${view}View`);
             if (container) {
@@ -601,7 +590,6 @@ class StudentPortal {
 
         this.currentView = viewName;
 
-        // Load view-specific content
         switch(viewName) {
             case 'activeBooks':
                 this.loadActiveBooks();
@@ -686,7 +674,7 @@ class StudentPortal {
     }
 
     validateFile(file) {
-        const maxSize = 5 * 1024 * 1024; // 5MB
+        const maxSize = 5 * 1024 * 1024;
         const allowedTypes = [
             'image/jpeg',
             'image/png',
@@ -756,7 +744,6 @@ class StudentPortal {
         document.body.appendChild(modal);
         const modalElement = new bootstrap.Modal(document.getElementById('newMessageModal'));
         
-        // Setup file preview
         const attachmentsInput = document.getElementById('messageAttachments');
         const previewContainer = document.getElementById('attachmentsPreview');
         
@@ -782,13 +769,12 @@ class StudentPortal {
                     previewContainer.appendChild(preview);
                 } catch (error) {
                     alert(error.message);
-                    e.target.value = ''; // Clear the input
+                    e.target.value = '';
                     return;
                 }
             });
         });
 
-        // Handle message submission
         document.getElementById('submitMessage').onclick = async () => {
             const subject = document.getElementById('messageSubject').value;
             const type = document.getElementById('messageType').value;
@@ -801,7 +787,6 @@ class StudentPortal {
             }
 
             try {
-                // Show loading state
                 const submitBtn = document.getElementById('submitMessage');
                 const originalText = submitBtn.innerHTML;
                 submitBtn.disabled = true;
@@ -811,7 +796,7 @@ class StudentPortal {
                 if (files.length > 0) {
                     for (let i = 0; i < files.length; i++) {
                         try {
-                            this.validateFile(files[i]); // Validate each file
+                            this.validateFile(files[i]);
                             const fileData = await this.handleFileUpload(files[i]);
                             attachments[fileData.path] = fileData;
                         } catch (error) {
@@ -824,13 +809,13 @@ class StudentPortal {
                     }
                 }
 
-                await db.ref('issues').push({
+                await db.ref('messages').push({
                     studentId: this.studentData.id,
                     studentName: this.studentData.name,
                     studentGrade: this.studentData.grade,
                     subject,
                     type,
-                    content,
+                    message: content,
                     attachments,
                     status: 'pending',
                     timestamp: Date.now(),
@@ -842,7 +827,7 @@ class StudentPortal {
                 modalInstance.hide();
                 document.getElementById('newMessageModal').remove();
                 alert('Message sent successfully');
-                this.loadMessages(); // Refresh messages list
+                this.loadMessages();
             } catch (error) {
                 console.error('Error sending message:', error);
                 alert('Error sending message. Please try again.');
@@ -860,23 +845,21 @@ class StudentPortal {
 
     async loadDashboard() {
         try {
-            if (!this.student) return;
+            if (!this.studentData) return;
 
-            // Load statistics
             const stats = await this.loadStudentStats();
             document.getElementById('totalBooks').textContent = stats.total || 0;
             document.getElementById('activeBooks').textContent = stats.active || 0;
             document.getElementById('overdueBooks').textContent = stats.overdue || 0;
             document.getElementById('lostBooks').textContent = stats.lost || 0;
 
-            // Load current books
             const booksContainer = document.getElementById('booksContainer');
-            booksContainer.innerHTML = ''; // Clear existing content
+            booksContainer.innerHTML = '';
 
             const issuanceRef = firebase.database().ref('issuance');
             const snapshot = await issuanceRef
                 .orderByChild('studentId')
-                .equalTo(this.student.id)
+                .equalTo(this.studentData.id)
                 .once('value');
 
             if (snapshot.exists()) {
@@ -888,7 +871,6 @@ class StudentPortal {
                     }
                 });
 
-                // Render active books
                 books.forEach(book => {
                     const dueDate = new Date(book.returnDate);
                     const isOverdue = dueDate < new Date();
@@ -910,7 +892,6 @@ class StudentPortal {
                 });
             }
 
-            // Update borrowing stats
             const borrowingStats = document.getElementById('borrowingStats');
             borrowingStats.innerHTML = `
                 <h6 class="mb-3">Borrowing Statistics</h6>
@@ -942,7 +923,7 @@ class StudentPortal {
             const issuanceRef = firebase.database().ref('issuance');
             const snapshot = await issuanceRef
                 .orderByChild('studentId')
-                .equalTo(this.student.id)
+                .equalTo(this.studentData.id)
                 .once('value');
 
             const stats = {
@@ -979,45 +960,8 @@ class StudentPortal {
             };
         }
     }
-
-    switchView(view) {
-        // Hide all views
-        document.querySelectorAll('.view-container').forEach(container => {
-            container.classList.remove('active');
-        });
-
-        // Show selected view
-        const selectedView = document.getElementById(`${view}View`);
-        if (selectedView) {
-            selectedView.classList.add('active');
-        }
-
-        // Update navigation
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.toggle('active', link.dataset.view === view);
-        });
-
-        // Load view content
-        switch (view) {
-            case 'dashboard':
-                this.loadDashboard();
-                break;
-            case 'activeBooks':
-                this.loadActiveBooks();
-                break;
-            case 'messages':
-                this.loadMessages();
-                break;
-            case 'history':
-                this.loadHistory();
-                break;
-        }
-
-        this.currentView = view;
-    }
 }
 
-// Initialize portal when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.studentPortal = new StudentPortal();
 });

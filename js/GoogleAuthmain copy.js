@@ -9,6 +9,7 @@ var mainApp = {};
     // Listen for storage events to sync logout across tabs
     window.addEventListener('storage', function(e) {
         if (e.key === 'logout-event') {
+            // Perform logout in other tabs without redirect
             firebase.auth().signOut().then(function() {
                 window.location.replace("https://kanyadet-school-admin.web.app/login.html");
             }).catch(function(error) {
@@ -18,7 +19,10 @@ var mainApp = {};
     });
 
     var logout = function() {
+        // Trigger logout event for other tabs
         localStorage.setItem('logout-event', Date.now().toString());
+        
+        // Perform logout in current tab
         firebase.auth().signOut().then(function() {
             window.location.replace("https://kanyadet-school-admin.web.app/login.html");
         }, function(error) {
@@ -26,7 +30,7 @@ var mainApp = {};
         });
     };
 
-    // Show security notification
+    // Show security notification on every page load
     function showSecurityNotification() {
         Swal.fire({
             title: 'Security Notice',
@@ -79,24 +83,24 @@ var mainApp = {};
         clearTimeout(tokenExpiryTimer);
         clearTimeout(warningTimer);
 
+        // Set timer for warning
         warningTimer = setTimeout(showExpiryWarning, TOKEN_LIFETIME - WARNING_BEFORE_EXPIRY);
+        
+        // Set timer for logout
         tokenExpiryTimer = setTimeout(logout, TOKEN_LIFETIME);
     }
 
     var init = function() {
+        // Show security notification on every page load
         showSecurityNotification();
 
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                console.log("Authenticated user detected");
-                // Override CSS body display: none to show content
-                document.body.style.display = 'block';
-                mainContainer.style.display = 'block';
-                setupTokenExpiration();
+                console.log("stay");
+                mainContainer.style.display = "";
+                setupTokenExpiration(); // Start token expiration timer
             } else {
-                // Keep content hidden and redirect
-                document.body.style.display = 'none';
-                mainContainer.style.display = 'none';
+                mainContainer.style.display = "none";
                 window.location.replace("https://kanyadet-school-admin.web.app/login.html");
             }
         });

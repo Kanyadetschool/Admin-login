@@ -1,6 +1,9 @@
 class MessageManager {
     constructor() {
+        // Add this line at the beginning of constructor
         this.db = firebase.database();
+        
+        // Initialize elements
         this.messagesList = document.getElementById('messagesList');
         this.messageThread = document.getElementById('messageThread');
         this.messageContent = document.getElementById('messageContent');
@@ -11,10 +14,10 @@ class MessageManager {
         this.messageInfo = document.getElementById('messageInfo');
         this.unreadCount = document.getElementById('unreadCount');
         this.currentMessageId = null;
-        this.allMessages = [];
-        this.messagesRef = firebase.database().ref('messages'); // Changed from 'issues' to 'messages'
+        this.allMessages = []; // Add this line
+        this.messagesRef = firebase.database().ref('issues');
         this.selectedMessages = new Set();
-
+        // Check if elements exist
         if (!this.messagesList || !this.messageThread || !this.unreadCount) {
             console.error('Required elements not found');
             return;
@@ -25,13 +28,17 @@ class MessageManager {
             filterButtons: document.querySelectorAll('.btn-group .btn')
         });
 
+        // Add realtime listeners
         this.setupRealtimeListeners();
         this.setupFilterButtons();
         this.setupBulkActions();
+        
+        // Initial load of all messages
         this.loadMessages('all');
     }
 
     setupRealtimeListeners() {
+        // Real-time updates for messages
         this.messagesRef.on('value', (snapshot) => {
             if (!snapshot.exists()) {
                 this.updateUnreadCount(0);
@@ -52,6 +59,7 @@ class MessageManager {
             this.loadMessages(this.currentFilter || 'all');
         });
 
+        // Add realtime listener for message threads
         if (this.messageThread) {
             this.messagesRef.on('child_changed', (snapshot) => {
                 const message = snapshot.val();
@@ -61,6 +69,7 @@ class MessageManager {
             });
         }
 
+        // Realtime status updates
         this.messagesRef.on('child_changed', (snapshot) => {
             const message = snapshot.val();
             const messageId = snapshot.key;
@@ -75,6 +84,7 @@ class MessageManager {
             }
         });
 
+        // Realtime deletion updates
         this.messagesRef.on('child_removed', (snapshot) => {
             const messageId = snapshot.key;
             const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
@@ -83,6 +93,7 @@ class MessageManager {
             }
         });
 
+        // Setup reply form listener with realtime updates
         if (this.replyForm) {
             this.replyForm.addEventListener('submit', (e) => this.handleReply(e));
         }
@@ -104,9 +115,16 @@ class MessageManager {
 
         filterButtons.forEach(button => {
             button.addEventListener('click', () => {
+                // Remove active class from all buttons
                 filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
                 button.classList.add('active');
+                
+                // Get filter value from data attribute
                 const filter = button.getAttribute('data-filter');
+                
+                // Apply filter
                 this.filterMessages(filter);
             });
         });
@@ -125,9 +143,11 @@ class MessageManager {
     async loadMessages(filter = 'all') {
         if (!this.messagesList) return;
 
+        // Show loading state
         this.messagesList.innerHTML = '<div class="text-center p-3"><div class="spinner-border text-primary"></div></div>';
         
         try {
+            // Debug log before filtering
             console.log('All messages before filtering:', this.allMessages);
 
             const messages = this.allMessages.filter(message => {
@@ -142,6 +162,7 @@ class MessageManager {
                 }
             }).sort((a, b) => b.timestamp - a.timestamp);
 
+            // Clear previous messages
             this.messagesList.innerHTML = '';
 
             if (messages.length === 0) {
@@ -153,7 +174,9 @@ class MessageManager {
                 return;
             }
 
+            // Render each message
             messages.forEach(message => {
+                // Debug log for each message being rendered
                 console.log('Rendering message:', message);
                 this.renderMessageItem(message, message.id);
             });
@@ -223,11 +246,17 @@ class MessageManager {
             </div>
         `;
 
+        // Add click handler for message content
         div.querySelector('.message-content').addEventListener('click', () => {
+            // Remove active class from all messages
             document.querySelectorAll('.message-item').forEach(item => {
                 item.classList.remove('active');
             });
+            
+            // Add active class to clicked message
             div.classList.add('active');
+            
+            // Show message details
             this.showMessageDetails(messageId);
         });
 
@@ -254,6 +283,7 @@ class MessageManager {
         const deleteButton = document.getElementById('deleteSelectedMessages');
         deleteButton.disabled = this.selectedMessages.size === 0;
 
+        // Update select all checkbox
         const selectAllCheckbox = document.getElementById('selectAllMessages');
         const allCheckboxes = document.querySelectorAll('.message-checkbox:not(#selectAllMessages)');
         selectAllCheckbox.checked = allCheckboxes.length > 0 && 
@@ -263,7 +293,7 @@ class MessageManager {
     async deleteMessage(messageId) {
         if (confirm('Are you sure you want to permanently delete this message?')) {
             try {
-                await firebase.database().ref(`messages/${messageId}`).remove();
+                await firebase.database().ref(`issues/${messageId}`).remove();
                 document.querySelector(`[data-message-id="${messageId}"]`).remove();
                 alert('Message deleted successfully');
             } catch (error) {
@@ -279,14 +309,14 @@ class MessageManager {
         if (confirm(`Are you sure you want to permanently delete ${this.selectedMessages.size} message(s)?`)) {
             try {
                 const promises = Array.from(this.selectedMessages).map(messageId => 
-                    firebase.database().ref(`messages/${messageId}`).remove()
+                    firebase.database().ref(`issues/${messageId}`).remove()
                 );
 
                 await Promise.all(promises);
                 this.selectedMessages.clear();
                 document.getElementById('selectAllMessages').checked = false;
                 document.getElementById('deleteSelectedMessages').disabled = true;
-                this.loadMessages(this.currentFilter);
+                this.loadMessages(this.currentFilter); // Refresh messages list
                 alert('Messages deleted successfully');
             } catch (error) {
                 console.error('Error deleting messages:', error);
@@ -298,11 +328,11 @@ class MessageManager {
     async deleteAllMessages() {
         if (confirm('Are you sure you want to permanently delete ALL messages? This action cannot be undone.')) {
             try {
-                const snapshot = await firebase.database().ref('messages').once('value');
+                const snapshot = await firebase.database().ref('issues').once('value');
                 const promises = [];
                 
                 snapshot.forEach(child => {
-                    promises.push(firebase.database().ref(`messages/${child.key}`).remove());
+                    promises.push(firebase.database().ref(`issues/${child.key}`).remove());
                 });
 
                 await Promise.all(promises);
@@ -319,19 +349,23 @@ class MessageManager {
         this.currentMessageId = messageId;
         const messageRef = this.messagesRef.child(messageId);
 
+        // Remove previous message listener if exists
         if (this.currentMessageRef) {
             this.currentMessageRef.off();
         }
 
         this.currentMessageRef = messageRef;
 
+        // Setup realtime listener for message details
         messageRef.on('value', (snapshot) => {
             const message = snapshot.val();
             if (!message) return;
 
+            // Update UI with more detailed information
             this.messageContent.classList.remove('d-none');
             this.messagePlaceholder.classList.add('d-none');
 
+            // Set appropriate title based on message type
             let title = '';
             if (message.type === 'issue') {
                 title = `Book Issue: ${message.bookTitle || 'No Book Title'}`;
@@ -342,9 +376,11 @@ class MessageManager {
             }
             this.messageTitle.textContent = title;
 
+            // Set status badge
             this.messageStatus.className = `badge ${message.status === 'pending' ? 'bg-warning' : 'bg-success'}`;
             this.messageStatus.textContent = message.status === 'pending' ? 'Pending' : 'Resolved';
 
+            // Set detailed sender information
             const senderInfo = [];
             if (message.sender === 'librarian') {
                 senderInfo.push('Sent by: Librarian');
@@ -357,8 +393,10 @@ class MessageManager {
             
             this.messageInfo.innerHTML = senderInfo.join(' | ');
 
+            // Load conversation thread with enhanced message content
             this.loadMessageThread(messageId, message);
 
+            // Mark as read if pending
             if (message.status === 'pending') {
                 messageRef.update({ read: true });
             }
@@ -377,6 +415,7 @@ class MessageManager {
         threadRef.on('value', (snapshot) => {
             this.messageThread.innerHTML = '';
             
+            // Show the initial message with detailed content and user icon
             const initialMessage = document.createElement('div');
             initialMessage.className = 'chat-message student';
             initialMessage.innerHTML = `
@@ -392,7 +431,7 @@ class MessageManager {
                                 ${originalMessage.description || 'No description provided'}
                             ` : `
                                 <strong>${originalMessage.subject || 'Message'}</strong><br>
-                                ${originalMessage.message || originalMessage.description || 'No content'}
+                                ${originalMessage.description || 'No content'}
                             `}
                             ${originalMessage.bookDetails ? `
                                 <div class="book-details mt-2">
@@ -410,12 +449,13 @@ class MessageManager {
             `;
             this.messageThread.appendChild(initialMessage);
 
+            // Show thread messages
             if (snapshot.exists()) {
                 const messages = [];
                 snapshot.forEach(child => {
                     messages.push(child.val());
                 });
-                messages.sort((a, b) => a.timestamp - a.timestamp);
+                messages.sort((a, b) => a.timestamp - b.timestamp);
 
                 messages.forEach(msg => {
                     const messageDiv = document.createElement('div');
@@ -441,6 +481,7 @@ class MessageManager {
                 });
             }
 
+            // Add chat styles if not already added
             if (!document.getElementById('chatStyles')) {
                 const style = document.createElement('style');
                 style.id = 'chatStyles';
@@ -516,6 +557,7 @@ class MessageManager {
                 document.head.appendChild(style);
             }
 
+            // Scroll to bottom
             this.messageThread.scrollTop = this.messageThread.scrollHeight;
         });
     }
@@ -529,6 +571,7 @@ class MessageManager {
         if (!content) return;
 
         try {
+            // Add reply to thread
             const threadRef = firebase.database().ref(`message_threads/${this.currentMessageId}`);
             await threadRef.push({
                 content,
@@ -536,6 +579,7 @@ class MessageManager {
                 timestamp: Date.now()
             });
 
+            // Update issue status
             await this.messagesRef.child(this.currentMessageId).update({
                 status: 'resolved',
                 resolvedAt: Date.now()
@@ -554,20 +598,24 @@ class MessageManager {
             const studentsWithActiveIssuance = new Map();
             const gradeGroups = new Map();
 
+            // First get all active issuances
             const issuanceSnapshot = await this.db.ref('issuance')
                 .orderByChild('status')
                 .equalTo('active')
                 .once('value');
 
+            // Get student IDs with active issuances
             issuanceSnapshot.forEach(child => {
                 const issuance = child.val();
                 studentsWithActiveIssuance.set(issuance.studentId, issuance);
             });
 
+            // Then get all students
             const studentsSnapshot = await this.db.ref('students')
                 .orderByChild('grade')
                 .once('value');
 
+            // Group only students with active issuances by grade
             studentsSnapshot.forEach(child => {
                 const student = { id: child.key, ...child.val() };
                 if (studentsWithActiveIssuance.has(student.id)) {
@@ -578,8 +626,10 @@ class MessageManager {
                 }
             });
 
+            // Sort grades
             const sortedGrades = Array.from(gradeGroups.keys()).sort();
 
+            // Update grade filter options to show count of students with active issuances
             gradeFilter.innerHTML = `
                 <option value="">Select Grade</option>
                 ${sortedGrades.map(grade => `
@@ -589,6 +639,7 @@ class MessageManager {
                 `).join('')}
             `;
 
+            // Function to render students list
             const renderStudents = (selectedGrade = '') => {
                 studentsList.innerHTML = '';
                 
@@ -622,32 +673,38 @@ class MessageManager {
                     `).join('')}
                 `;
 
+                // Auto-check all checkboxes for the selected grade
                 document.querySelectorAll('.student-item input[type="checkbox"]').forEach(cb => {
                     cb.checked = true;
                     cb.closest('.student-item')?.classList.add('active');
                 });
             };
 
+            // Initial render with empty selection
             renderStudents();
 
+            // Update grade selection handler
             gradeFilter.onchange = (e) => {
                 const selectedGrade = e.target.value;
                 renderStudents(selectedGrade);
                 
+                // Show/hide appropriate buttons
                 selectAllBtn.style.display = selectedGrade ? 'none' : 'inline-block';
                 selectGradeBtn.style.display = selectedGrade ? 'none' : 'inline-block';
                 gradeSelection.classList.remove('d-none');
             };
 
+            // Update select grade button
             selectGradeBtn.onclick = () => {
                 selectGradeBtn.classList.add('btn-primary');
                 selectGradeBtn.classList.remove('btn-outline-primary');
                 selectAllBtn.classList.add('btn-outline-primary');
                 selectAllBtn.classList.remove('btn-primary');
                 gradeSelection.classList.remove('d-none');
-                renderStudents('');
+                renderStudents(''); // Reset student list
             };
 
+            // Add these styles to the modal
             const style = document.createElement('style');
             style.textContent = `
                 .student-item {
@@ -677,6 +734,7 @@ class MessageManager {
             `;
             document.head.appendChild(style);
 
+            // Enhanced send functionality
             sendBtn.onclick = async () => {
                 const subject = document.getElementById('broadcastSubject').value.trim();
                 const message = document.getElementById('broadcastMessage').value.trim();
@@ -700,6 +758,7 @@ class MessageManager {
                     sendBtn.disabled = true;
                     sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
 
+                    // Create broadcast messages
                     const messages = selectedStudents.map(student => ({
                         studentId: student.id,
                         type: 'broadcast',
@@ -711,8 +770,9 @@ class MessageManager {
                         grade: student.grade
                     }));
 
+                    // Batch create messages
                     const batch = messages.map(msg => 
-                        this.db.ref('messages').push(msg) // Changed from 'issues' to 'messages'
+                        this.db.ref('issues').push(msg)
                     );
 
                     await Promise.all(batch);
@@ -805,6 +865,7 @@ class MessageManager {
             const modal = new bootstrap.Modal(modalElement);
             modal.show();
 
+            // Add grade change handler
             const gradeSelect = document.getElementById('messageGrade');
             const studentSelect = document.getElementById('messageStudent');
 
@@ -826,8 +887,10 @@ class MessageManager {
                         });
                     });
 
+                    // Sort students by name
                     students.sort((a, b) => a.name.localeCompare(b.name));
 
+                    // Populate student select
                     students.forEach(student => {
                         const option = document.createElement('option');
                         option.value = student.id;
@@ -841,6 +904,7 @@ class MessageManager {
                 }
             };
 
+            // Handle send button click
             document.getElementById('sendNewMessage').onclick = async () => {
                 const studentSelect = document.getElementById('messageStudent');
                 const selectedOption = studentSelect.selectedOptions[0];
@@ -854,7 +918,7 @@ class MessageManager {
                 }
 
                 try {
-                    await this.db.ref('messages').push({ // Changed from 'issues' to 'messages'
+                    await this.db.ref('issues').push({
                         type: 'message',
                         title: subject,
                         subject: subject,
@@ -899,6 +963,7 @@ class MessageManager {
         });
     }
 
+    // Cleanup method to remove listeners when needed
     cleanup() {
         if (this.currentThreadRef) {
             this.currentThreadRef.off();
@@ -910,9 +975,11 @@ class MessageManager {
     }
 }
 
+// Initialize message manager with cleanup
 document.addEventListener('DOMContentLoaded', () => {
     if (window.messageManager) {
         window.messageManager.cleanup();
     }
     window.messageManager = new MessageManager();
 });
+

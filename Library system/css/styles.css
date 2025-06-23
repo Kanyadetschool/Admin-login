@@ -21,6 +21,12 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
 }
+table th .search-input {
+    display: inline-block !important;
+    width: 100px; /* Adjust width as needed */
+    padding: 4px;
+    margin-left: 5px;
+}
 
 
 
@@ -262,8 +268,6 @@ header.mb-4{
 .nav-links li .badge {
     font-size: 0.75rem;
     min-width: 18px;
-    height: 18px;
-    padding: 0 6px;
     display: none;  /* Hidden by default */
 }
 
@@ -479,8 +483,9 @@ button {
     transition: background-color 0.2s;
 }
 /* Action Bar */
-.action-bar {
+.action-bar,.filters {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
