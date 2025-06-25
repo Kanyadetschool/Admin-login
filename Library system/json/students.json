@@ -1,5 +1,5 @@
-{							
-"Grade 4": [										
+					{							
+		"Grade 4": [										
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006437471",	"name": "AKATCH SAMUEL ODHIAMBO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"0431452166",	"DateOfBirth":"2014",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442086",	"name": "OUMA MARIA CAROL AKOTH",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Female",	"EntryNo":"0432207905",	"DateOfBirth":"2017",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442119",	"name": "WADE MARTINE OTIENO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"0431983390",	"DateOfBirth":"2012",	"Status":"Active"	},	
@@ -26,7 +26,6 @@
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442211",	"name": "OCHIENG AUSTINE OTIENO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"0432213273",	"DateOfBirth":"2015",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442216",	"name": "NYADENGE EVERLYNE ATIENO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Female",	"EntryNo":"04311182861",	"DateOfBirth":"2013",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442221",	"name": "JUKA MITCHELE ADHIAMBO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Female",	"EntryNo":"0432206605",	"DateOfBirth":"2015",	"Status":"Active"	},	
-{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442223",	"name": "JUKA,BARACK OBAMA",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"0431520502",	"DateOfBirth":"2015",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442226",	"name": "ARINDO MICHAEL OTIENO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"0432017504",	"DateOfBirth":"2017",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442243",	"name": "OYOMBA MARY ATIENO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Female",	"EntryNo":"0431963751",	"DateOfBirth":"2014",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006442250",	"name": "OTIENO RAPHAEL OMONDI",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"0432017548",	"DateOfBirth":"2015",	"Status":"Active"	},	
@@ -56,7 +55,11 @@
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006479291",	"name": "DANIEL OTIENO OKUMU",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"",	"DateOfBirth":"2019",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006479293",	"name": "VICTOR OTIENO OTIENO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"",	"DateOfBirth":"2017",	"Status":"Active"	},	
 {		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006578343",	"name": "JANE ELIZABETH",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Female",	"EntryNo":"000000000",	"DateOfBirth":"2016",	"Status":"Active"	},	
-{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006589213",	"name": "KIBORA JOYCE KAGEHA",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Female",	"EntryNo":"0792204886",	"DateOfBirth":"2015",	"Status":"Active"	},	
-{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006658253",	"name": "ODIWUOR BLESSINGS LENIS",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"0622111596",	"DateOfBirth":"2015",	"Status":"Active"	}	
+{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006658253",	"name": "ODIWUOR BLESSINGS LENIS",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"0622111596",	"DateOfBirth":"2015",	"Status":"Active"	},	
+{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006400001",	"name": "CLINTON OMONDI AINDO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"000000",	"DateOfBirth":"2015",	"Status":"Active"	},	
+{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B006400002",	"name": "SAMUEL ONYANGO OMONDI",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"000000000",	"DateOfBirth":"2015",	"Status":"Active"	},	
+{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B008120758",	"name": "NOAH OTIENO MBUYA",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Male",	"EntryNo":"000000000",	"DateOfBirth":"2015",	"Status":"Active"	},	
+{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B008120771",	"name": "GAEL GASHOMI OTIENO",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Female",	"EntryNo":"000000000",	"DateOfBirth":"2015",	"Status":"Active"	},	
+{		"CurentGrade": "Grade 4",	"upi":"BK001",	"assessmentNo":"B008120767",	"name": "JENIFFER ANYANGO OGUTU",	"FathersPhoneNumber": "07XXXXXXXXXXX",	"Gender":"Female",	"EntryNo":"000000000",	"DateOfBirth":"2015",	"Status":"Active"	}	
 		]										
 		}										

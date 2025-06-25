@@ -265,7 +265,7 @@ class BookManager {
         this.loadBooks();
     }
 
-     async showError(title, message) {
+    async showError(title, message) {
         alert(`${title}: ${message}`);
     }
 
@@ -279,6 +279,8 @@ class BookManager {
         categoryFilter.addEventListener('change', () => this.applyFilters());
         availabilityFilter.addEventListener('change', () => this.applyFilters());
         searchInput.addEventListener('input', () => this.handleSearch());
+        // Add listener for delete options button
+        document.getElementById('deleteOptionsBtn').addEventListener('click', () => this.showDeleteOptionsModal());
     }
 
     handleSearch() {
@@ -448,7 +450,7 @@ class BookManager {
                 
                 // Maintain existing values
                 bookData.available = currentData.available || currentData.quantity;
-                bookData.addedAt = currentData.addedAt || Date.now(); // Fallback to current timestamp
+                bookData.addedAt = currentData.addedAt || Date.now();
                 bookData.lost = currentData.lost || 0;
                 
                 await this.booksRef.child(bookId).update(bookData);
@@ -504,7 +506,6 @@ class BookManager {
                 <button onclick="bookManager.showBookModal('${bookId}')">Edit</button>
                 <button onclick="bookManager.deleteBook('${bookId}')">Delete</button>
                 <button onclick="bookManager.reportLost('${bookId}')" class="btn-warning">Report Lost</button>
-                <!-- <button onclick="dashboardFunctions.deleteBookCollection('${book.category}', '${bookId}')" class="btn-danger">Delete Collection</button>-->
             </div>
             </div>
         `;
@@ -535,7 +536,118 @@ class BookManager {
 
     async deleteBook(bookId) {
         if (confirm('Are you sure you want to delete this book?')) {
-            await this.booksRef.child(bookId).remove();
+            try {
+                await this.booksRef.child(bookId).remove();
+                await this.showSuccess('Success', 'Book deleted successfully');
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                await this.showError('Error', 'Failed to delete book');
+            }
+        }
+    }
+
+    async deleteBookCollection(category) {
+        if (confirm(`Are you sure you want to delete all books in the ${category} category? This action cannot be undone.`)) {
+            try {
+                const snapshot = await this.booksRef.once('value');
+                const updates = {};
+                
+                snapshot.forEach((childSnapshot) => {
+                    const book = childSnapshot.val();
+                    const bookId = childSnapshot.key;
+                    if (book.category === category) {
+                        updates[bookId] = null;
+                    }
+                });
+
+                await this.booksRef.update(updates);
+                await this.showSuccess('Success', `All books in ${category} category deleted successfully`);
+                this.loadBooks();
+            } catch (error) {
+                console.error('Error deleting collection:', error);
+                await this.showError('Error', `Failed to delete ${category} collection`);
+            }
+        }
+    }
+
+    async showDeleteOptionsModal() {
+        try {
+            const snapshot = await this.booksRef.once('value');
+            const books = [];
+            const categories = new Set();
+            snapshot.forEach((childSnapshot) => {
+                const book = childSnapshot.val();
+                const bookId = childSnapshot.key;
+                books.push({ id: bookId, title: book.title, category: book.category });
+                categories.add(book.category);
+            });
+
+            const modalHtml = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete Options</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Delete a Specific Book</label>
+                                <select id="deleteBookSelect" class="form-select">
+                                    <option value="">Select a Book</option>
+                                    ${books.map(book => `
+                                        <option value="${book.id}">${book.title} (ID: ${book.id})</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Delete an Entire Category</label>
+                                <select id="deleteCategorySelect" class="form-select">
+                                    <option value="">Select a Category</option>
+                                    ${Array.from(categories).map(category => `
+                                        <option value="${category}">${category}</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const deleteModal = document.getElementById('deleteModal') || document.createElement('div');
+            deleteModal.id = 'deleteModal';
+            deleteModal.className = 'modal fade';
+            deleteModal.innerHTML = modalHtml;
+            document.body.appendChild(deleteModal);
+
+            const modal = new bootstrap.Modal(deleteModal);
+            modal.show();
+
+            document.getElementById('confirmDelete').onclick = async () => {
+                const bookId = document.getElementById('deleteBookSelect').value;
+                const category = document.getElementById('deleteCategorySelect').value;
+
+                if (bookId && category) {
+                    await this.showError('Error', 'Please select either a book or a category, not both');
+                    return;
+                }
+
+                if (bookId) {
+                    await this.deleteBook(bookId);
+                } else if (category) {
+                    await this.deleteBookCollection(category);
+                } else {
+                    await this.showError('Error', 'Please select a book or category to delete');
+                }
+
+                modal.hide();
+            };
+        } catch (error) {
+            console.error('Error showing delete options modal:', error);
+            await this.showError('Error', 'Failed to load delete options');
         }
     }
 }
@@ -585,6 +697,20 @@ class StudentManager {
 
         if (Object.keys(updates).length > 0) {
             await this.studentsRef.update(updates);
+        }
+    }
+
+    async deleteAllStudents() {
+        if (confirm('Are you sure you want to delete ALL students? This action cannot be undone.')) {
+            try {
+                await this.studentsRef.remove();
+                this.studentsList.innerHTML = ''; // Clear the displayed list
+                this.allStudents.clear(); // Clear the local cache
+                alert('All students have been deleted successfully.');
+            } catch (error) {
+                console.error('Error deleting all students:', error);
+                alert('Failed to delete students. Please try again.');
+            }
         }
     }
 
@@ -1498,7 +1624,7 @@ class ReportManager {
     initializeDates() {
         const end = new Date();
         const start = new Date();
-        start.setDate(end.getDate() - 30);
+        start.setDate(start.getDate() - 30);
         
         this.endDate.value = end.toISOString().split('T')[0];
         this.startDate.value = start.toISOString().split('T')[0];
@@ -1523,14 +1649,12 @@ class ReportManager {
                 this.filterByStatus(e.target.value);
             }
         });
+        // Add click listener for return buttons
         this.reportTable.addEventListener('click', (e) => {
             if (e.target.classList.contains('return-btn')) {
                 const issuanceId = e.target.dataset.issuanceId;
                 const bookId = e.target.dataset.bookId;
                 this.handleBookReturn(issuanceId, bookId);
-            } else if (e.target.classList.contains('student-name')) {
-                const studentId = e.target.dataset.studentId;
-                this.showStudentRecoveryModal(studentId);
             }
         });
     }
@@ -1539,14 +1663,17 @@ class ReportManager {
         if (!confirm('Are you sure you want to return this book?')) return;
 
         try {
+            // Get issuance details
             const issuanceSnapshot = await db.ref(`issuance/${issuanceId}`).once('value');
             const issuance = issuanceSnapshot.val();
 
+            // Update issuance status
             await db.ref(`issuance/${issuanceId}`).update({
                 status: 'returned',
                 returnedAt: Date.now()
             });
 
+            // Update book availability
             const bookRef = db.ref(`books/${bookId}`);
             const bookSnapshot = await bookRef.once('value');
             const book = bookSnapshot.val();
@@ -1557,143 +1684,11 @@ class ReportManager {
             });
 
             alert('Book returned successfully');
+            // Refresh the current report
             await this.generateReport();
         } catch (error) {
             console.error('Error returning book:', error);
             alert('Failed to return book');
-        }
-    }
-
-    async showStudentRecoveryModal(studentId) {
-        const modalHtml = `
-            <div class="modal fade" id="studentRecoveryModal" tabindex="-1" aria-labelledby="studentRecoveryModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="studentRecoveryModalLabel">Book Recovery and Notes</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="studentRecoveryInfo" class="mb-3"></div>
-                            <div id="studentIssuancesTable" class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Book Title</th>
-                                            <th>Issue Date</th>
-                                            <th>Status</th>
-                                            <th>Recovery Status</th>
-                                            <th>Notes</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="studentIssuancesTableBody"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        let modalElement = document.getElementById('studentRecoveryModal');
-        if (modalElement) modalElement.remove();
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-        modalElement = document.getElementById('studentRecoveryModal');
-        const modal = new bootstrap.Modal(modalElement);
-
-        try {
-            const studentSnapshot = await db.ref(`students/${studentId}`).once('value');
-            const student = studentSnapshot.val();
-            if (!student) throw new Error('Student not found');
-
-            const issuanceSnapshot = await db.ref('issuance').orderByChild('studentId').equalTo(studentId).once('value');
-            const issuances = issuanceSnapshot.val() || {};
-
-            document.getElementById('studentRecoveryInfo').innerHTML = `
-                <h6>Student: ${student.name}</h6>
-                <p>Grade: ${student.grade || 'N/A'}</p>
-                <p>Assessment No: ${student.assessmentNo || 'N/A'}</p>
-            `;
-
-            const tableBody = document.getElementById('studentIssuancesTableBody');
-            let tableRows = '';
-            for (const [issuanceId, issuance] of Object.entries(issuances)) {
-                const bookSnapshot = await db.ref(`books/${issuance.bookId}`).once('value');
-                const book = bookSnapshot.val();
-                tableRows += `
-                    <tr>
-                        <td>${book?.title || 'N/A'}</td>
-                        <td>${issuance.issueDate}</td>
-                        <td class="${issuance.status === 'lost' ? 'text-warning' : ''}">${issuance.status}</td>
-                        <td>${issuance.recoveryStatus ? `Recovered (${issuance.recoveryMethod})` : 'Pending'}</td>
-                        <td>
-                            <textarea class="form-control issuance-notes" data-issuance-id="${issuanceId}" rows="2">${issuance.notes || ''}</textarea>
-                            <button class="btn btn-sm btn-primary save-notes-btn" data-issuance-id="${issuanceId}" style="margin-top: 5px;">Save Note</button>
-                        </td>
-                        <td>
-                            ${issuance.status === 'lost' && !issuance.recoveryStatus ? `
-                                <button class="btn btn-sm btn-warning recover-btn" 
-                                        data-issuance-id="${issuanceId}" 
-                                        data-book-id="${issuance.bookId}">
-                                    Record Recovery
-                                </button>
-                            ` : ''}
-                        </td>
-                    </tr>
-                `;
-            }
-
-            tableBody.innerHTML = tableRows || '<tr><td colspan="6" class="text-center">No issuances found.</td></tr>';
-
-            tableBody.onclick = async (e) => {
-                if (e.target.classList.contains('save-notes-btn')) {
-                    const issuanceId = e.target.dataset.issuanceId;
-                    const notes = tableBody.querySelector(`textarea[data-issuance-id="${issuanceId}"]`).value;
-                    try {
-                        await db.ref(`issuance/${issuanceId}`).update({
-                            notes: notes,
-                            updatedAt: Date.now()
-                        });
-                        alert('Notes saved successfully');
-                    } catch (error) {
-                        console.error('Error saving notes:', error);
-                        alert('Failed to save notes');
-                    }
-                } else if (e.target.classList.contains('recover-btn')) {
-                    const issuanceId = e.target.dataset.issuanceId;
-                    const bookId = e.target.dataset.bookId;
-                    try {
-                        await db.ref(`issuance/${issuanceId}`).update({
-                            recoveryStatus: 'recovered',
-                            recoveryMethod: 'manual',
-                            recoveryDate: Date.now()
-                        });
-                        const bookSnapshot = await db.ref(`books/${bookId}`).once('value');
-                        const book = bookSnapshot.val();
-                        await db.ref(`books/${bookId}`).update({
-                            lost: Math.max(0, (book.lost || 0) - 1),
-                            available: book.available + 1,
-                            updatedAt: Date.now()
-                        });
-                        alert('Book recovery recorded successfully');
-                        modal.hide();
-                        await this.generateReport();
-                    } catch (error) {
-                        console.error('Error recording recovery:', error);
-                        alert('Failed to record recovery');
-                    }
-                }
-            };
-
-            modal.show();
-        } catch (error) {
-            console.error('Error loading student recovery modal:', error);
-            document.getElementById('studentRecoveryInfo').innerHTML = '<p class="text-danger">Error loading student data.</p>';
-            modal.show();
         }
     }
 
@@ -1813,6 +1808,7 @@ class ReportManager {
             return direction * aValue.localeCompare(bValue, undefined, { numeric: true });
         });
 
+        // Reassign sequential numbers after sorting
         rows.forEach((row, index) => {
             const numberCell = row.cells[0];
             if (numberCell && numberCell.classList.contains('number-cell')) {
@@ -1823,33 +1819,26 @@ class ReportManager {
         tbody.innerHTML = '';
         rows.forEach(row => tbody.appendChild(row));
     }
-    
+
     printReport(selectedGrade = null) {
         const reportTitle = this.reportType.options[this.reportType.selectedIndex].text;
         const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         let tableContent = this.reportTable.querySelector('table').cloneNode(true);
         let statsContent = this.reportStats.innerHTML;
 
-        // Process student name cells to ensure names are visible in print
-        const studentNameCells = tableContent.querySelectorAll('.student-name');
-        studentNameCells.forEach(cell => {
-            const nameText = cell.querySelector('.student-name-text')?.textContent || cell.textContent || 'N/A';
-            const td = document.createElement('td');
-            td.textContent = nameText;
-            cell.parentElement.replaceChild(td, cell);
-        });
-
         if (selectedGrade && selectedGrade !== 'all') {
             const gradeColIndex = Array.from(tableContent.querySelector('thead tr').children)
                 .findIndex(th => th.textContent.trim() === 'Grade');
             
             if (gradeColIndex !== -1) {
+                // Filter table rows
                 const tbody = tableContent.querySelector('tbody');
                 const rows = Array.from(tbody.querySelectorAll('tr'));
                 const filteredRows = rows.filter(row => 
                     row.cells[gradeColIndex].textContent.trim() === selectedGrade
                 );
 
+                // Reassign sequential numbers for filtered rows
                 filteredRows.forEach((row, index) => {
                     const numberCell = row.cells[0];
                     if (numberCell && numberCell.classList.contains('number-cell')) {
@@ -1860,6 +1849,7 @@ class ReportManager {
                 tbody.innerHTML = '';
                 filteredRows.forEach(row => tbody.appendChild(row));
 
+                // Recalculate totals and averages for filtered data
                 const tfoot = tableContent.querySelector('tfoot');
                 if (tfoot) {
                     const totalsRow = tfoot.querySelector('.totals-row');
@@ -1969,6 +1959,7 @@ class ReportManager {
                     }
                 }
 
+                // Update stats for selected grade
                 if (this.reportType.value === 'studentActivity') {
                     const totalStudents = filteredRows.length;
                     const totalIssuances = filteredRows.reduce((sum, row) => sum + (parseInt(row.cells[3].textContent) || 0), 0);
@@ -2106,7 +2097,7 @@ class ReportManager {
                         th { background-color: #f2f2f2; }
                         .stat-card { display: inline-block; margin: 10px; padding: 10px; border: 1px solid #ddd; }
                         .warning { color: #ff4444; }
-                        .search-input, .delete-btn, .sort-select, .grade-filter, .status-filter, .return-btn, .student-name, .student-name-text { display: none; }
+                        .search-input, .delete-btn, .sort-select, .grade-filter, .status-filter, .return-btn { display: none; }
                         tfoot td { font-weight: bold; }
                         .totals-row { background-color: #e8f4f8; }
                         .averages-row { background-color: #f0f8e8; }
@@ -2120,1243 +2111,12 @@ class ReportManager {
         printWindow.print();
     }
 
-    async generateIssuanceHistoryReport(start, end) {
-        const snapshot = await db.ref('issuance').once('value');
-        const issuances = snapshot.val();
-        
-        let filteredIssuances = Object.values(issuances).filter(issuance => {
-            const issueDate = new Date(issuance.issueDate);
-            return issueDate >= start && issueDate <= end;
-        });
-
-        const totalIssuances = filteredIssuances.length;
-        const activeIssuances = filteredIssuances.filter(i => i.status === 'active').length;
-        const returnedIssuances = filteredIssuances.filter(i => i.status === 'returned').length;
-        const lostIssuances = filteredIssuances.filter(i => i.status === 'lost').length;
-
-        this.reportStats.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Total Issuances</h3>
-                    <p>${totalIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Active</h3>
-                    <p>${activeIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Returned</h3>
-                    <p>${returnedIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info warning">
-                    <h3>Lost</h3>
-                    <p>${lostIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Average Issuances per Student</h3>
-                    <p>${totalIssuances ? (totalIssuances / [...new Set(filteredIssuances.map(i => i.studentId))].length).toFixed(2) : 0}</p>
-                </div>
-            </div>
-        `;
-
-        const studentIds = [...new Set(filteredIssuances.map(issuance => issuance.studentId))];
-        const grades = new Set();
-        for (const studentId of studentIds) {
-            const student = (await db.ref(`students/${studentId}`).once('value')).val();
-            if (student?.grade) grades.add(student.grade);
-        }
-        const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
-
-        let tableRows = [];
-        let rowNumber = 1;
-        for (const [key, issuance] of Object.entries(issuances).filter(([_, iss]) => {
-            const issueDate = new Date(iss.issueDate);
-            return issueDate >= start && issueDate <= end;
-        })) {
-            const student = (await db.ref(`students/${issuance.studentId}`).once('value')).val();
-            const book = (await db.ref(`books/${issuance.bookId}`).once('value')).val();
-            tableRows.push(`
-                <tr>
-                    <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}"><span class="student-name-text">${student?.name || 'N/A'}</span></span></td>
-                    <td>${student?.grade || 'N/A'}</td>
-                    <td>${book?.title || 'N/A'}</td>
-                    <td>${issuance.isbn || 'ENG-009'}</td>
-                    <td>${issuance.issueDate}</td>
-                    <td>${issuance.returnDate}</td>
-                    <td class="${issuance.status === 'lost' ? 'warning' : ''}">${issuance.status}</td>
-                    <td>
-                        ${issuance.status === 'active' ? `
-                            <button class="return-btn" data-issuance-id="${key}" data-book-id="${issuance.bookId}">Return</button>
-                        ` : ''}
-                        <button onclick="deleteIssuance('${key}')" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            `);
-        }
-
-        const totalsRow = `
-            <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalIssuances} issuances</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        const averagesRow = `
-            <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        this.reportTable.innerHTML = `
-            <div class="table-wrapper">
-                <div class="sort-container">
-                    <label for="grade-filter">Filter by Grade: </label>
-                    <select id="grade-filter" class="grade-filter">
-                        <option value="all">All Grades</option>
-                        ${gradeOptions.map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                    <label for="status-filter">Filter by Status: </label>
-                    <select id="status-filter" class="status-filter">
-                        <option value="all">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="returned">Returned</option>
-                        <option value="lost">Lost</option>
-                    </select>
-                    <label for="sort-select">Sort by: </label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="grade-asc">Grade (Ascending)</option>
-                        <option value="grade-desc">Grade (Descending)</option>
-                    </select>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. <input type="text" class="search-input" placeholder="Search..." style="display: inline-block;"></th>
-                            <th>Student</th>
-                            <th>Grade</th>
-                            <th>Book</th>
-                            <th>Book No</th>
-                            <th>Issue Date</th>
-                            <th>Return Date</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot>${totalsRow}${averagesRow}</tfoot>
-                </table>
-            </div>
-        `;
-        window.deleteIssuance = async (issuanceId) => {
-            if (confirm('Are you sure you want to delete this issuance record?')) {
-                try {
-                    await db.ref(`issuance/${issuanceId}`).remove();
-                    alert('Issuance record deleted successfully');
-                    this.generateIssuanceHistoryReport(start, end);
-                } catch (error) {
-                    console.error('Error deleting issuance:', error);
-                    alert('Failed to delete issuance record');
-                }
-            }
-        };
-    }
-
-    async generateOverdueBooksReport() {
-        const currentDate = new Date();
-        const snapshot = await db.ref('issuance').once('value');
-        const issuances = snapshot.val();
-        
-        let overdueIssuances = Object.values(issuances).filter(issuance => {
-            const returnDate = new Date(issuance.returnDate);
-            return issuance.status === 'active' && returnDate < currentDate;
-        });
-
-        const totalOverdue = overdueIssuances.length;
-        let totalDaysOverdue = 0;
-        overdueIssuances.forEach(issuance => {
-            const daysOverdue = Math.floor((currentDate - new Date(issuance.returnDate)) / (1000 * 60 * 60 * 24));
-            totalDaysOverdue += daysOverdue;
-        });
-
-        this.reportStats.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Total Overdue</h3>
-                    <p>${totalOverdue}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Total Days Overdue</h3>
-                    <p>${totalDaysOverdue}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Average Days Overdue</h3>
-                    <p>${totalOverdue ? (totalDaysOverdue / totalOverdue).toFixed(2) : 0}</p>
-                </div>
-            </div>
-        `;
-
-        const studentIds = [...new Set(overdueIssuances.map(issuance => issuance.studentId))];
-        const grades = new Set();
-        for (const studentId of studentIds) {
-            const student = (await db.ref(`students/${studentId}`).once('value')).val();
-            if (student?.grade) grades.add(student.grade);
-        }
-        const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
-
-        let tableRows = [];
-        let rowNumber = 1;
-        for (const [key, issuance] of Object.entries(issuances).filter(([_, iss]) => {
-            const returnDate = new Date(iss.returnDate);
-            return iss.status === 'active' && returnDate < currentDate;
-        })) {
-            const student = (await db.ref(`students/${issuance.studentId}`).once('value')).val();
-            const book = (await db.ref(`books/${issuance.bookId}`).once('value')).val();
-            const daysOverdue = Math.floor((currentDate - new Date(issuance.returnDate)) / (1000 * 60 * 60 * 24));
-            tableRows.push(`
-                <tr>
-                    <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}"><span class="student-name-text">${student?.name || 'N/A'}</span></span></td>
-                    <td>${student?.grade || 'N/A'}</td>
-                    <td>${book?.title || 'N/A'}</td>
-                    <td>${issuance.isbn || 'ENG-009'}</td>
-                    <td>${issuance.issueDate}</td>
-                    <td>${issuance.returnDate}</td>
-                    <td>${daysOverdue} days</td>
-                    <td>
-                        <button class="return-btn" data-issuance-id="${key}" data-book-id="${issuance.bookId}">Return</button>
-                        <button onclick="deleteOverdueIssuance('${key}')" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            `);
-        }
-
-        const totalsRow = `
-            <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalDaysOverdue} days</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        const averagesRow = `
-            <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalOverdue ? (totalDaysOverdue / totalOverdue).toFixed(2) : 0} days</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        this.reportTable.innerHTML = `
-            <div class="table-wrapper">
-                <div class="sort-container">
-                    <label for="grade-filter">Filter by Grade: </label>
-                    <select id="grade-filter" class="grade-filter">
-                        <option value="all">All Grades</option>
-                        ${gradeOptions.map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                    <label for="sort-select">Sort by: </label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="grade-asc">Grade (Ascending)</option>
-                        <option value="grade-desc">Grade (Descending)</option>
-                    </select>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. <input type="text" class="search-input" placeholder="Search..." style="display: inline-block;"></th>
-                            <th>Student</th>
-                            <th>Grade</th>
-                            <th>Book</th>
-                            <th>Book No</th>
-                            <th>Issue Date</th>
-                            <th>Due Date</th>
-                            <th>Overdue By</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot>${totalsRow}${averagesRow}</tfoot>
-                </table>
-            </div>
-        `;
-
-        window.deleteOverdueIssuance = async (issuanceId) => {
-            if (confirm('Are you sure you want to delete this overdue issuance record?')) {
-                try {
-                    await db.ref(`issuance/${issuanceId}`).remove();
-                    alert('Overdue issuance record deleted successfully');
-                    this.generateOverdueBooksReport();
-                } catch (error) {
-                    console.error('Error deleting overdue issuance:', error);
-                    alert('Failed to delete overdue issuance record');
-                }
-            }
-        };
-    }
-
-    async generateLostBooksReport() {
-        const snapshot = await db.ref('issuance').once('value');
-        const issuances = snapshot.val();
-        
-        let lostIssuances = Object.values(issuances).filter(issuance => 
-            issuance.status === 'lost'
-        );
-
-        const totalLost = lostIssuances.length;
-
-        this.reportStats.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-info warning">
-                    <h3>Total Lost Books</h3>
-                    <p>${totalLost}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Average Lost Books per Student</h3>
-                    <p>${totalLost ? (totalLost / [...new Set(lostIssuances.map(i => i.studentId))].length).toFixed(2) : 0}</p>
-                </div>
-            </div>
-        `;
-
-        const studentIds = [...new Set(lostIssuances.map(issuance => issuance.studentId))];
-        const grades = new Set();
-        for (const studentId of studentIds) {
-            const student = (await db.ref(`students/${studentId}`).once('value')).val();
-            if (student?.grade) grades.add(student.grade);
-        }
-        const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
-
-        let tableRows = [];
-        let rowNumber = 1;
-        for (const [key, issuance] of Object.entries(issuances).filter(([_, iss]) => 
-            iss.status === 'lost'
-        )) {
-            const student = (await db.ref(`students/${issuance.studentId}`).once('value')).val();
-            const book = (await db.ref(`books/${issuance.bookId}`).once('value')).val();
-            tableRows.push(`
-                <tr>
-                    <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}"><span class="student-name-text">${student?.name || 'N/A'}</span></span></td>
-                    <td>${student?.grade || 'N/A'}</td>
-                    <td>${book?.title || 'N/A'}</td>
-                    <td>${issuance.isbn || 'ENG-009'}</td>
-                    <td>${issuance.issueDate}</td>
-                    <td>${issuance.returnDate}</td>
-                    <td>
-                        <button onclick="deleteLostIssuance('${key}')" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            `);
-        }
-
-        const totalsRow = `
-            <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        const averagesRow = `
-            <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        this.reportTable.innerHTML = `
-            <div class="table-wrapper">
-                <div class="sort-container">
-                    <label for="grade-filter">Filter by Grade: </label>
-                    <select id="grade-filter" class="grade-filter">
-                        <option value="all">All Grades</option>
-                        ${gradeOptions.map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                    <label for="sort-select">Sort by: </label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="grade-asc">Grade (Ascending)</option>
-                        <option value="grade-desc">Grade (Descending)</option>
-                    </select>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. <input type="text" class="search-input" placeholder="Search..." style="display: inline-block;"></th>
-                            <th>Student</th>
-                            <th>Grade</th>
-                            <th>Book</th>
-                            <th>Book No</th>
-                            <th>Issue Date</th>
-                            <th>Return Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot>${totalsRow}${averagesRow}</tfoot>
-                </table>
-            </div>
-        `;
-
-        window.deleteLostIssuance = async (issuanceId) => {
-            if (confirm('Are you sure you want to delete this lost book record?')) {
-                try {
-                    await db.ref(`issuance/${issuanceId}`).remove();
-                    alert('Lost book record deleted successfully');
-                    this.generateLostBooksReport();
-                } catch (error) {
-                    console.error('Error deleting lost issuance:', error);
-                    alert('Failed to delete lost book record');
-                }
-            }
-        };
-    }
-
-    async generateStudentActivityReport(start, end) {
-        const issuanceSnapshot = await db.ref('issuance').once('value');
-        const studentsSnapshot = await db.ref('students').once('value');
-        
-        const issuances = issuanceSnapshot.val();
-        const students = studentsSnapshot.val();
-        
-        let studentActivity = {};
-        
-        Object.entries(issuances).forEach(([key, issuance]) => {
-            const issueDate = new Date(issuance.issueDate);
-            if (issueDate >= start && issueDate <= end) {
-                if (!studentActivity[issuance.studentId]) {
-                    studentActivity[issuance.studentId] = {
-                        student: students[issuance.studentId],
-                        totalBooks: 0,
-                        active: 0,
-                        returned: 0,
-                        lost: 0,
-                        issuanceIds: []
-                    };
-                }
-                
-                studentActivity[issuance.studentId].totalBooks++;
-                studentActivity[issuance.studentId].issuanceIds.push(key);
-                switch(issuance.status) {
-                    case 'active':
-                        studentActivity[issuance.studentId].active++;
-                        break;
-                    case 'returned':
-                        studentActivity[issuance.studentId].returned++;
-                        break;
-                    case 'lost':
-                        studentActivity[issuance.studentId].lost++;
-                        break;
-                }
-            }
-        });
-
-        const totalStudents = Object.keys(studentActivity).length;
-        const totalIssuances = Object.values(studentActivity).reduce((sum, curr) => sum + curr.totalBooks, 0);
-        const totalActive = Object.values(studentActivity).reduce((sum, curr) => sum + curr.active, 0);
-        const totalReturned = Object.values(studentActivity).reduce((sum, curr) => sum + curr.returned, 0);
-        const totalLost = Object.values(studentActivity).reduce((sum, curr) => sum + curr.lost, 0);
-
-        this.reportStats.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Active Students</h3>
-                    <p>${totalStudents}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Total Issuances</h3>
-                    <p>${totalIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info warning">
-                    <h3>Total Lost</h3>
-                    <p>${totalLost}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Average Books per Student</h3>
-                    <p>${totalStudents ? (totalIssuances / totalStudents).toFixed(2) : 0}</p>
-                </div>
-            </div>
-        `;
-
-        const grades = new Set(Object.values(studentActivity).map(data => data.student.grade).filter(Boolean));
-        const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
-
-        let tableRows = [];
-        let rowNumber = 1;
-        for (const [studentId, data] of Object.entries(studentActivity)) {
-            tableRows.push(`
-                <tr>
-                    <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${studentId}"><span class="student-name-text">${data.student.name}</span></span></td>
-                    <td>${data.student.grade}</td>
-                    <td>${data.totalBooks}</td>
-                    <td>${data.active}</td>
-                    <td>${data.returned}</td>
-                    <td class="${data.lost > 0 ? 'warning' : ''}">${data.lost}</td>
-                    <td>
-                        <button onclick="deleteStudent('${studentId}')" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            `);
-        }
-
-        const totalsRow = `
-            <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalIssuances}</td>
-                <td>${totalActive}</td>
-                <td>${totalReturned}</td>
-                <td>${totalLost}</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        const averagesRow = `
-            <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalStudents ? (totalIssuances / totalStudents).toFixed(2) : 0}</td>
-                <td>${totalStudents ? (totalActive / totalStudents).toFixed(2) : 0}</td>
-                <td>${totalStudents ? (totalReturned / totalStudents).toFixed(2) : 0}</td>
-                <td>${totalStudents ? (totalLost / totalStudents).toFixed(2) : 0}</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        this.reportTable.innerHTML = `
-            <div class="table-wrapper">
-                <div class="sort-container">
-                    <label for="grade-filter">Filter by Grade: </label>
-                    <select id="grade-filter" class="grade-filter">
-                        <option value="all">All Grades</option>
-                        ${gradeOptions.map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                    <label for="sort-select">Sort by: </label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="grade-asc">Grade (Ascending)</option>
-                        <option value="grade-desc">Grade (Descending)</option>
-                    </select>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. <input type="text" class="search-input" placeholder="Search..." style="display: inline-block;"></th>
-                            <th>Student Name</th>
-                            <th>Grade</th>
-                            <th>Total Books</th>
-                            <th>Active</th>
-                            <th>Returned</th>
-                            <th>Lost</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot>${totalsRow}${averagesRow}</tfoot>
-                </table>
-            </div>
-        `;
-
-        window.deleteStudent = async (studentId) => {
-            if (confirm('Are you sure you want to delete this student and all their issuance records?')) {
-                try {
-                    await db.ref(`students/${studentId}`).remove();
-                    const issuanceIds = studentActivity[studentId].issuanceIds;
-                    for (const issuanceId of issuanceIds) {
-                        await db.ref(`issuance/${issuanceId}`).remove();
-                    }
-                    alert('Student and related issuances deleted successfully');
-                    this.generateStudentActivityReport(start, end);
-                } catch (error) {
-                    console.error('Error deleting student:', error);
-                    alert('Failed to delete student record');
-                }
-            }
-        };
-    }
-
-
-
-    async generateIssuanceHistoryReport(start, end) {
-        const snapshot = await db.ref('issuance').once('value');
-        const issuances = snapshot.val();
-        
-        let filteredIssuances = Object.values(issuances).filter(issuance => {
-            const issueDate = new Date(issuance.issueDate);
-            return issueDate >= start && issueDate <= end;
-        });
-
-        const totalIssuances = filteredIssuances.length;
-        const activeIssuances = filteredIssuances.filter(i => i.status === 'active').length;
-        const returnedIssuances = filteredIssuances.filter(i => i.status === 'returned').length;
-        const lostIssuances = filteredIssuances.filter(i => i.status === 'lost').length;
-
-        this.reportStats.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Total Issuances</h3>
-                    <p>${totalIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Active</h3>
-                    <p>${activeIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Returned</h3>
-                    <p>${returnedIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info warning">
-                    <h3>Lost</h3>
-                    <p>${lostIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Average Issuances per Student</h3>
-                    <p>${totalIssuances ? (totalIssuances / [...new Set(filteredIssuances.map(i => i.studentId))].length).toFixed(2) : 0}</p>
-                </div>
-            </div>
-        `;
-
-        const studentIds = [...new Set(filteredIssuances.map(issuance => issuance.studentId))];
-        const grades = new Set();
-        for (const studentId of studentIds) {
-            const student = (await db.ref(`students/${studentId}`).once('value')).val();
-            if (student?.grade) grades.add(student.grade);
-        }
-        const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
-
-        let tableRows = [];
-        let rowNumber = 1;
-        for (const [key, issuance] of Object.entries(issuances).filter(([_, iss]) => {
-            const issueDate = new Date(iss.issueDate);
-            return issueDate >= start && issueDate <= end;
-        })) {
-            const student = (await db.ref(`students/${issuance.studentId}`).once('value')).val();
-            const book = (await db.ref(`books/${issuance.bookId}`).once('value')).val();
-            tableRows.push(`
-                <tr>
-                    <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}"><span class="student-name-text">${student?.name || 'N/A'}</span></span></td>
-                    <td>${student?.grade || 'N/A'}</td>
-                    <td>${book?.title || 'N/A'}</td>
-                    <td>${issuance.isbn || 'ENG-009'}</td>
-                    <td>${issuance.issueDate}</td>
-                    <td>${issuance.returnDate}</td>
-                    <td class="${issuance.status === 'lost' ? 'warning' : ''}">${issuance.status}</td>
-                    <td>
-                        ${issuance.status === 'active' ? `
-                            <button class="return-btn" data-issuance-id="${key}" data-book-id="${issuance.bookId}">Return</button>
-                        ` : ''}
-                        <button onclick="deleteIssuance('${key}')" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            `);
-        }
-
-        const totalsRow = `
-            <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalIssuances} issuances</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        const averagesRow = `
-            <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        this.reportTable.innerHTML = `
-            <div class="table-wrapper">
-                <div class="sort-container">
-                    <label for="grade-filter">Filter by Grade: </label>
-                    <select id="grade-filter" class="grade-filter">
-                        <option value="all">All Grades</option>
-                        ${gradeOptions.map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                    <label for="status-filter">Filter by Status: </label>
-                    <select id="status-filter" class="status-filter">
-                        <option value="all">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="returned">Returned</option>
-                        <option value="lost">Lost</option>
-                    </select>
-                    <label for="sort-select">Sort by: </label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="grade-asc">Grade (Ascending)</option>
-                        <option value="grade-desc">Grade (Descending)</option>
-                    </select>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. <input type="text" class="search-input" placeholder="Search..."></th>
-                            <th>Student</th>
-                            <th>Grade</th>
-                            <th>Book</th>
-                            <th>Book No</th>
-                            <th>Issue Date</th>
-                            <th>Return Date</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot>${totalsRow}${averagesRow}</tfoot>
-                </table>
-            </div>
-        `;
-        window.deleteIssuance = async (issuanceId) => {
-            if (confirm('Are you sure you want to delete this issuance record?')) {
-                try {
-                    await db.ref(`issuance/${issuanceId}`).remove();
-                    alert('Issuance record deleted successfully');
-                    this.generateIssuanceHistoryReport(start, end);
-                } catch (error) {
-                    console.error('Error deleting issuance:', error);
-                    alert('Failed to delete issuance record');
-                }
-            }
-        };
-    }
-
-    async generateOverdueBooksReport() {
-        const currentDate = new Date();
-        const snapshot = await db.ref('issuance').once('value');
-        const issuances = snapshot.val();
-        
-        let overdueIssuances = Object.values(issuances).filter(issuance => {
-            const returnDate = new Date(issuance.returnDate);
-            return issuance.status === 'active' && returnDate < currentDate;
-        });
-
-        const totalOverdue = overdueIssuances.length;
-        let totalDaysOverdue = 0;
-        overdueIssuances.forEach(issuance => {
-            const daysOverdue = Math.floor((currentDate - new Date(issuance.returnDate)) / (1000 * 60 * 60 * 24));
-            totalDaysOverdue += daysOverdue;
-        });
-
-        this.reportStats.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Total Overdue</h3>
-                    <p>${totalOverdue}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Total Days Overdue</h3>
-                    <p>${totalDaysOverdue}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Average Days Overdue</h3>
-                    <p>${totalOverdue ? (totalDaysOverdue / totalOverdue).toFixed(2) : 0}</p>
-                </div>
-            </div>
-        `;
-
-        const studentIds = [...new Set(overdueIssuances.map(issuance => issuance.studentId))];
-        const grades = new Set();
-        for (const studentId of studentIds) {
-            const student = (await db.ref(`students/${studentId}`).once('value')).val();
-            if (student?.grade) grades.add(student.grade);
-        }
-        const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
-
-        let tableRows = [];
-        let rowNumber = 1;
-        for (const [key, issuance] of Object.entries(issuances).filter(([_, iss]) => {
-            const returnDate = new Date(iss.returnDate);
-            return iss.status === 'active' && returnDate < currentDate;
-        })) {
-            const student = (await db.ref(`students/${issuance.studentId}`).once('value')).val();
-            const book = (await db.ref(`books/${issuance.bookId}`).once('value')).val();
-            const daysOverdue = Math.floor((currentDate - new Date(issuance.returnDate)) / (1000 * 60 * 60 * 24));
-            tableRows.push(`
-                <tr>
-                    <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}"><span class="student-name-text">${student?.name || 'N/A'}</span></span></td>
-                    <td>${student?.grade || 'N/A'}</td>
-                    <td>${book?.title || 'N/A'}</td>
-                    <td>${issuance.isbn || 'ENG-009'}</td>
-                    <td>${issuance.issueDate}</td>
-                    <td>${issuance.returnDate}</td>
-                    <td>${daysOverdue} days</td>
-                    <td>
-                        <button class="return-btn" data-issuance-id="${key}" data-book-id="${issuance.bookId}">Return</button>
-                        <button onclick="deleteOverdueIssuance('${key}')" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            `);
-        }
-
-        const totalsRow = `
-            <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalDaysOverdue} days</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        const averagesRow = `
-            <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalOverdue ? (totalDaysOverdue / totalOverdue).toFixed(2) : 0} days</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        this.reportTable.innerHTML = `
-            <div class="table-wrapper">
-                <div class="sort-container">
-                    <label for="grade-filter">Filter by Grade: </label>
-                    <select id="grade-filter" class="grade-filter">
-                        <option value="all">All Grades</option>
-                        ${gradeOptions.map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                    <label for="sort-select">Sort by: </label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="grade-asc">Grade (Ascending)</option>
-                        <option value="grade-desc">Grade (Descending)</option>
-                    </select>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. <input type="text" class="search-input" placeholder="Search..."></th>
-                            <th>Student</th>
-                            <th>Grade</th>
-                            <th>Book</th>
-                            <th>Book No</th>
-                            <th>Issue Date</th>
-                            <th>Due Date</th>
-                            <th>Overdue By</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot>${totalsRow}${averagesRow}</tfoot>
-                </table>
-            </div>
-        `;
-
-        window.deleteOverdueIssuance = async (issuanceId) => {
-            if (confirm('Are you sure you want to delete this overdue issuance record?')) {
-                try {
-                    await db.ref(`issuance/${issuanceId}`).remove();
-                    alert('Overdue issuance record deleted successfully');
-                    this.generateOverdueBooksReport();
-                } catch (error) {
-                    console.error('Error deleting overdue issuance:', error);
-                    alert('Failed to delete overdue issuance record');
-                }
-            }
-        };
-    }
-
-    async generateLostBooksReport() {
-        const snapshot = await db.ref('issuance').once('value');
-        const issuances = snapshot.val();
-        
-        let lostIssuances = Object.values(issuances).filter(issuance => 
-            issuance.status === 'lost'
-        );
-
-        const totalLost = lostIssuances.length;
-
-        this.reportStats.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-info warning">
-                    <h3>Total Lost Books</h3>
-                    <p>${totalLost}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Average Lost Books per Student</h3>
-                    <p>${totalLost ? (totalLost / [...new Set(lostIssuances.map(i => i.studentId))].length).toFixed(2) : 0}</p>
-                </div>
-            </div>
-        `;
-
-        const studentIds = [...new Set(lostIssuances.map(issuance => issuance.studentId))];
-        const grades = new Set();
-        for (const studentId of studentIds) {
-            const student = (await db.ref(`students/${studentId}`).once('value')).val();
-            if (student?.grade) grades.add(student.grade);
-        }
-        const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
-
-        let tableRows = [];
-        let rowNumber = 1;
-        for (const [key, issuance] of Object.entries(issuances).filter(([_, iss]) => 
-            iss.status === 'lost'
-        )) {
-            const student = (await db.ref(`students/${issuance.studentId}`).once('value')).val();
-            const book = (await db.ref(`books/${issuance.bookId}`).once('value')).val();
-            tableRows.push(`
-                <tr>
-                    <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}"><span class="student-name-text">${student?.name || 'N/A'}</span></span></td>
-                    <td>${student?.grade || 'N/A'}</td>
-                    <td>${book?.title || 'N/A'}</td>
-                    <td>${issuance.isbn || 'ENG-009'}</td>
-                    <td>${issuance.issueDate}</td>
-                    <td>${issuance.returnDate}</td>
-                    <td>
-                        <button onclick="deleteLostIssuance('${key}')" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            `);
-        }
-
-        const totalsRow = `
-            <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        const averagesRow = `
-            <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        this.reportTable.innerHTML = `
-            <div class="table-wrapper">
-                <div class="sort-container">
-                    <label for="grade-filter">Filter by Grade: </label>
-                    <select id="grade-filter" class="grade-filter">
-                        <option value="all">All Grades</option>
-                        ${gradeOptions.map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                    <label for="sort-select">Sort by: </label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="grade-asc">Grade (Ascending)</option>
-                        <option value="grade-desc">Grade (Descending)</option>
-                    </select>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. <input type="text" class="search-input" placeholder="Search..."></th>
-                            <th>Student</th>
-                            <th>Grade</th>
-                            <th>Book</th>
-                            <th>Book No</th>
-                            <th>Issue Date</th>
-                            <th>Return Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot>${totalsRow}${averagesRow}</tfoot>
-                </table>
-            </div>
-        `;
-
-        window.deleteLostIssuance = async (issuanceId) => {
-            if (confirm('Are you sure you want to delete this lost book record?')) {
-                try {
-                    await db.ref(`issuance/${issuanceId}`).remove();
-                    alert('Lost book record deleted successfully');
-                    this.generateLostBooksReport();
-                } catch (error) {
-                    console.error('Error deleting lost issuance:', error);
-                    alert('Failed to delete lost book record');
-                }
-            }
-        };
-    }
-
-    async generateStudentActivityReport(start, end) {
-        const issuanceSnapshot = await db.ref('issuance').once('value');
-        const studentsSnapshot = await db.ref('students').once('value');
-        
-        const issuances = issuanceSnapshot.val();
-        const students = studentsSnapshot.val();
-        
-        let studentActivity = {};
-        
-        Object.entries(issuances).forEach(([key, issuance]) => {
-            const issueDate = new Date(issuance.issueDate);
-            if (issueDate >= start && issueDate <= end) {
-                if (!studentActivity[issuance.studentId]) {
-                    studentActivity[issuance.studentId] = {
-                        student: students[issuance.studentId],
-                        totalBooks: 0,
-                        active: 0,
-                        returned: 0,
-                        lost: 0,
-                        issuanceIds: []
-                    };
-                }
-                
-                studentActivity[issuance.studentId].totalBooks++;
-                studentActivity[issuance.studentId].issuanceIds.push(key);
-                switch(issuance.status) {
-                    case 'active':
-                        studentActivity[issuance.studentId].active++;
-                        break;
-                    case 'returned':
-                        studentActivity[issuance.studentId].returned++;
-                        break;
-                    case 'lost':
-                        studentActivity[issuance.studentId].lost++;
-                        break;
-                }
-            }
-        });
-
-        const totalStudents = Object.keys(studentActivity).length;
-        const totalIssuances = Object.values(studentActivity).reduce((sum, curr) => sum + curr.totalBooks, 0);
-        const totalActive = Object.values(studentActivity).reduce((sum, curr) => sum + curr.active, 0);
-        const totalReturned = Object.values(studentActivity).reduce((sum, curr) => sum + curr.returned, 0);
-        const totalLost = Object.values(studentActivity).reduce((sum, curr) => sum + curr.lost, 0);
-
-        this.reportStats.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Active Students</h3>
-                    <p>${totalStudents}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Total Issuances</h3>
-                    <p>${totalIssuances}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info warning">
-                    <h3>Total Lost</h3>
-                    <p>${totalLost}</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-info">
-                    <h3>Average Books per Student</h3>
-                    <p>${totalStudents ? (totalIssuances / totalStudents).toFixed(2) : 0}</p>
-                </div>
-            </div>
-        `;
-
-        const grades = new Set(Object.values(studentActivity).map(data => data.student.grade).filter(Boolean));
-        const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
-
-        let tableRows = [];
-        let rowNumber = 1;
-        for (const [studentId, data] of Object.entries(studentActivity)) {
-            tableRows.push(`
-                <tr>
-                    <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${studentId}"><span class="student-name-text">${data.student.name}</span></span></td>
-                    <td>${data.student.grade}</td>
-                    <td>${data.totalBooks}</td>
-                    <td>${data.active}</td>
-                    <td>${data.returned}</td>
-                    <td class="${data.lost > 0 ? 'warning' : ''}">${data.lost}</td>
-                    <td>
-                        <button onclick="deleteStudent('${studentId}')" class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-            `);
-        }
-
-        const totalsRow = `
-            <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalIssuances}</td>
-                <td>${totalActive}</td>
-                <td>${totalReturned}</td>
-                <td>${totalLost}</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        const averagesRow = `
-            <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>${totalStudents ? (totalIssuances / totalStudents).toFixed(2) : 0}</td>
-                <td>${totalStudents ? (totalActive / totalStudents).toFixed(2) : 0}</td>
-                <td>${totalStudents ? (totalReturned / totalStudents).toFixed(2) : 0}</td>
-                <td>${totalStudents ? (totalLost / totalStudents).toFixed(2) : 0}</td>
-                <td>N/A</td>
-            </tr>
-        `;
-
-        this.reportTable.innerHTML = `
-            <div class="table-wrapper">
-                <div class="sort-container">
-                    <label for="grade-filter">Filter by Grade: </label>
-                    <select id="grade-filter" class="grade-filter">
-                        <option value="all">All Grades</option>
-                        ${gradeOptions.map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                    <label for="sort-select">Sort by: </label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="grade-asc">Grade (Ascending)</option>
-                        <option value="grade-desc">Grade (Descending)</option>
-                    </select>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. <input type="text" class="search-input" placeholder="Search..."></th>
-                            <th>Student Name</th>
-                            <th>Grade</th>
-                            <th>Total Books</th>
-                            <th>Active</th>
-                            <th>Returned</th>
-                            <th>Lost</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot>${totalsRow}${averagesRow}</tfoot>
-                </table>
-            </div>
-        `;
-
-        window.deleteStudent = async (studentId) => {
-            if (confirm('Are you sure you want to delete this student and all their issuance records?')) {
-                try {
-                    await db.ref(`students/${studentId}`).remove();
-                    const issuanceIds = studentActivity[studentId].issuanceIds;
-                    for (const issuanceId of issuanceIds) {
-                        await db.ref(`issuance/${issuanceId}`).remove();
-                    }
-                    alert('Student and related issuances deleted successfully');
-                    this.generateStudentActivityReport(start, end);
-                } catch (error) {
-                    console.error('Error deleting student:', error);
-                    alert('Failed to delete student record');
-                }
-            }
-        };
-    }
-
-
-
     async generateReport() {
         const type = this.reportType.value;
         const start = new Date(this.startDate.value);
         const end = new Date(this.endDate.value);
 
+        // Remove existing print buttons
         const existingPrintBtn = document.getElementById('printReportBtn');
         if (existingPrintBtn) existingPrintBtn.remove();
         const existingPrintGradeBtn = document.getElementById('printGradeReportBtn');
@@ -3380,11 +2140,13 @@ class ReportManager {
                 break;
         }
 
+        // Add print full report button
         this.reportContent.insertAdjacentHTML('beforeend', 
             '<button id="printReportBtn" class="print-btn">Print Full Report</button>'
         );
         document.getElementById('printReportBtn').addEventListener('click', () => this.printReport());
 
+        // Add print selected grade button if applicable
         const gradeFilter = this.reportTable.querySelector('.grade-filter')?.value || 'all';
         this.togglePrintSelectedGradeButton(gradeFilter);
     }
@@ -3449,32 +2211,32 @@ class ReportManager {
                 <td>${book.quantity - book.available - (book.lost || 0)}</td>
                 <td>${book.lost || 0}</td>
                 <td>
-                    <button onclick="deleteBook('${key}')" class="delete-btn">Delete</button>
+                    <button onclick="deleteBook('${key}')" class="delete-btn"><i class="bi bi-trash"></i></button>
                 </td>
             </tr>
         `).join('');
 
         const totalsRow = `
             <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
+                <td><b>Total</b></td>
+                <td></td>
                 <td>${totalBooks}</td>
                 <td>${availableBooks}</td>
                 <td>${issuedBooks}</td>
                 <td>${lostBooks}</td>
-                <td>N/A</td>
+                <td></td>
             </tr>
         `;
 
         const averagesRow = `
             <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
+                <td>Average</td>
+                <td></td>
                 <td>${rowCount ? (totalBooks / rowCount).toFixed(2) : 0}</td>
                 <td>${rowCount ? (availableBooks / rowCount).toFixed(2) : 0}</td>
                 <td>${rowCount ? (issuedBooks / rowCount).toFixed(2) : 0}</td>
                 <td>${rowCount ? (lostBooks / rowCount).toFixed(2) : 0}</td>
-                <td>N/A</td>
+                <td></td>
             </tr>
         `;
 
@@ -3559,6 +2321,7 @@ class ReportManager {
             </div>
         `;
 
+        // Get unique grades
         const studentIds = [...new Set(filteredIssuances.map(issuance => issuance.studentId))];
         const grades = new Set();
         for (const studentId of studentIds) {
@@ -3578,7 +2341,7 @@ class ReportManager {
             tableRows.push(`
                 <tr>
                     <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}">${student?.name || 'N/A'}</span></td>
+                    <td>${student?.name || 'N/A'}</td>
                     <td>${student?.grade || 'N/A'}</td>
                     <td>${book?.title || 'N/A'}</td>
                     <td>${issuance.isbn || 'ENG-009'}</td>
@@ -3589,7 +2352,7 @@ class ReportManager {
                         ${issuance.status === 'active' ? `
                             <button class="return-btn" data-issuance-id="${key}" data-book-id="${issuance.bookId}">Return</button>
                         ` : ''}
-                        <button onclick="deleteIssuance('${key}')" class="delete-btn">Delete</button>
+                        <button onclick="deleteIssuance('${key}')" class="delete-btn"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
             `);
@@ -3597,29 +2360,29 @@ class ReportManager {
 
         const totalsRow = `
             <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td><b>Total</b></td>
+                <td><b>issuances</b></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td>${totalIssuances} issuances</td>
-                <td>N/A</td>
+                <td></td>
             </tr>
         `;
 
         const averagesRow = `
             <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td><b>Average</b></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
         `;
 
@@ -3648,7 +2411,7 @@ class ReportManager {
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Student</th>
+                            <th>Student <input type="text" class="search-input" placeholder="Search..."></th>
                             <th>Grade</th>
                             <th>Book</th>
                             <th>Book No</th>
@@ -3715,6 +2478,7 @@ class ReportManager {
             </div>
         `;
 
+        // Get unique grades
         const studentIds = [...new Set(overdueIssuances.map(issuance => issuance.studentId))];
         const grades = new Set();
         for (const studentId of studentIds) {
@@ -3735,7 +2499,7 @@ class ReportManager {
             tableRows.push(`
                 <tr>
                     <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}">${student?.name || 'N/A'}</span></td>
+                    <td>${student?.name || 'N/A'}</td>
                     <td>${student?.grade || 'N/A'}</td>
                     <td>${book?.title || 'N/A'}</td>
                     <td>${issuance.isbn || 'ENG-009'}</td>
@@ -3752,29 +2516,29 @@ class ReportManager {
 
         const totalsRow = `
             <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td><b>Total</b></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td>${totalDaysOverdue} days</td>
-                <td>N/A</td>
+                <td></td>
             </tr>
         `;
 
         const averagesRow = `
             <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td><b>Average</b></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>/td>
+                <td></td>
                 <td>${totalOverdue ? (totalDaysOverdue / totalOverdue).toFixed(2) : 0} days</td>
-                <td>N/A</td>
+                <td></td>
             </tr>
         `;
 
@@ -3796,7 +2560,7 @@ class ReportManager {
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Student</th>
+                            <th>Student <input type="text" class="search-input" placeholder="Search..."></th>
                             <th>Grade</th>
                             <th>Book</th>
                             <th>Book No</th>
@@ -3851,6 +2615,7 @@ class ReportManager {
             </div>
         `;
 
+        // Get unique grades
         const studentIds = [...new Set(lostIssuances.map(issuance => issuance.studentId))];
         const grades = new Set();
         for (const studentId of studentIds) {
@@ -3869,7 +2634,7 @@ class ReportManager {
             tableRows.push(`
                 <tr>
                     <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${issuance.studentId}">${student?.name || 'N/A'}</span></td>
+                    <td>${student?.name || 'N/A'}</td>
                     <td>${student?.grade || 'N/A'}</td>
                     <td>${book?.title || 'N/A'}</td>
                     <td>${issuance.isbn || 'ENG-009'}</td>
@@ -3884,27 +2649,27 @@ class ReportManager {
 
         const totalsRow = `
             <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
+               <td><b>Total</b></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
         `;
 
         const averagesRow = `
             <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td><b>Average</b></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
         `;
 
@@ -3926,7 +2691,7 @@ class ReportManager {
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Student</th>
+                            <th>Student <input type="text" class="search-input" placeholder="Search..."></th>
                             <th>Grade</th>
                             <th>Book</th>
                             <th>Book No</th>
@@ -4027,6 +2792,7 @@ class ReportManager {
             </div>
         `;
 
+        // Get unique grades
         const grades = new Set(Object.values(studentActivity).map(data => data.student.grade).filter(Boolean));
         const gradeOptions = [...grades].sort((a, b) => a.localeCompare(b, { numeric: true }));
 
@@ -4036,7 +2802,7 @@ class ReportManager {
             tableRows.push(`
                 <tr>
                     <td class="number-cell">${rowNumber++}</td>
-                    <td><span class="student-name" data-student-id="${studentId}">${data.student.name}</span></td>
+                    <td>${data.student.name}</td>
                     <td>${data.student.grade}</td>
                     <td>${data.totalBooks}</td>
                     <td>${data.active}</td>
@@ -4051,27 +2817,27 @@ class ReportManager {
 
         const totalsRow = `
             <tr class="totals-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td><b>Total</b></td>
+                <td></td>
+                <td></td>
                 <td>${totalIssuances}</td>
                 <td>${totalActive}</td>
                 <td>${totalReturned}</td>
                 <td>${totalLost}</td>
-                <td>N/A</td>
+                <td></td>
             </tr>
         `;
 
         const averagesRow = `
             <tr class="averages-row">
-                <td>N/A</td>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td><b>Average</b></td>
+                <td></td>
+                <td></td>
                 <td>${totalStudents ? (totalIssuances / totalStudents).toFixed(2) : 0}</td>
                 <td>${totalStudents ? (totalActive / totalStudents).toFixed(2) : 0}</td>
                 <td>${totalStudents ? (totalReturned / totalStudents).toFixed(2) : 0}</td>
                 <td>${totalStudents ? (totalLost / totalStudents).toFixed(2) : 0}</td>
-                <td>N/A</td>
+                <td></td>
             </tr>
         `;
 
@@ -4093,7 +2859,7 @@ class ReportManager {
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Student Name</th>
+                            <th>Student Name <input type="text" class="search-input" placeholder="Search..."></th>
                             <th>Grade</th>
                             <th>Total Books</th>
                             <th>Active</th>
@@ -4137,12 +2903,7 @@ class ReportManager {
             const cols = row.querySelectorAll('td,th');
             const rowData = Array.from(cols)
                 .filter(col => !col.querySelector('.search-input') && !col.querySelector('.delete-btn') && !col.querySelector('.return-btn'))
-                .map(col => {
-                    if (col.querySelector('.student-name')) {
-                        return `"${col.querySelector('.student-name').textContent}"`;
-                    }
-                    return `"${col.innerText}"`;
-                });
+                .map(col => `"${col.innerText}"`);
             csv.push(rowData.join(','));
         }
 

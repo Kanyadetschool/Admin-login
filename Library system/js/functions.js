@@ -109,52 +109,104 @@ class DashboardFunctions {
         }
     }
 
-    async updateMonthlyStats(snapshot) {
-        try {
-            // Get the last 12 months in chronological order
-            const months = Array.from({length: 12}, (_, i) => {
-                const d = new Date();
-                d.setMonth(d.getMonth() - (1 - i)); // Start from 11 months ago
-                return d;
-            });
+  async updateMonthlyStats(snapshot) {
+    try {
+        // Initialize arrays for the last 12 months
+        const months = Array.from({ length: 12 }, (_, i) => {
+            const d = new Date();
+            d.setMonth(d.getMonth() - (2 - i)); // Chronological order: oldest to newest
+            d.setDate(1); // Normalize to first of the month
+            d.setHours(0, 0, 0, 0); // Reset time for consistent comparison
+            return d;
+        });
 
-            const monthLabels = months.map(d => {
-                const monthName = d.toLocaleString('default', { month: 'short' });
-                const year = d.getFullYear();
-                return `${monthName} ${year}`;
-            });
+        // Format labels for the chart
+        const monthLabels = months.map(d =>
+            d.toLocaleString('default', { month: 'short', year: 'numeric' })
+        );
 
-            const issuesData = new Array(12).fill(0);
-            const returnsData = new Array(12).fill(0);
+        // Initialize data arrays
+        const messagesData = new Array(12).fill(0);
+        const returnsData = new Array(12).fill(0);
 
+        // Process snapshot
+        if (snapshot.exists()) {
             snapshot.forEach(child => {
                 const record = child.val();
-                const issueDate = new Date(record.issueDate);
+                
+                // Parse dates, ensuring valid dates
+                const issueDate = record.issueDate ? new Date(record.issueDate) : null;
                 const returnedAt = record.returnedAt ? new Date(record.returnedAt) : null;
 
-                months.forEach((month, index) => {
-                    if (issueDate.getMonth() === month.getMonth() && 
-                        issueDate.getFullYear() === month.getFullYear()) {
-                        issuesData[index]++;
-                    }
+                if (issueDate && !isNaN(issueDate)) {
+                    // Normalize issue date to start of month
+                    const issueMonth = new Date(issueDate.getFullYear(), issueDate.getMonth(), 1);
+                    
+                    months.forEach((month, index) => {
+                        if (
+                            issueMonth.getFullYear() === month.getFullYear() &&
+                            issueMonth.getMonth() === month.getMonth()
+                        ) {
+                            messagesData[index]++;
+                        }
+                    });
+                }
 
-                    if (returnedAt && 
-                        returnedAt.getMonth() === month.getMonth() && 
-                        returnedAt.getFullYear() === month.getFullYear()) {
-                        returnsData[index]++;
-                    }
-                });
+                if (returnedAt && !isNaN(returnedAt)) {
+                    // Normalize return date to start of month
+                    const returnMonth = new Date(returnedAt.getFullYear(), returnedAt.getMonth(), 1);
+                    
+                    months.forEach((month, index) => {
+                        if (
+                            returnMonth.getFullYear() === month.getFullYear() &&
+                            returnMonth.getMonth() === month.getMonth()
+                        ) {
+                            returnsData[index]++;
+                        }
+                    });
+                }
             });
-
-            // Update chart data
-            this.monthlyStatsChart.data.labels = monthLabels;
-            this.monthlyStatsChart.data.datasets[0].data = issuesData;
-            this.monthlyStatsChart.data.datasets[1].data = returnsData;
-            this.monthlyStatsChart.update();
-        } catch (error) {
-            console.error('Error updating monthly stats:', error);
+        } else {
+            console.warn('No issuance data found in snapshot');
         }
+
+        // Log data for debugging
+        console.log('Monthly Stats:', { labels: monthLabels, messages: messagesData, returns: returnsData });
+
+        // Update chart
+        if (this.monthlyStatsChart) {
+            this.monthlyStatsChart.data.labels = monthLabels;
+            this.monthlyStatsChart.data.datasets[0].data = messagesData;
+            this.monthlyStatsChart.data.datasets[1].data = returnsData;
+            
+            // Enhanced chart options
+            this.monthlyStatsChart.options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Count' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Month' }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Monthly Issues and Returns' }
+                }
+            };
+
+            this.monthlyStatsChart.update();
+        } else {
+            console.error('Monthly stats chart not initialized');
+        }
+    } catch (error) {
+        console.error('Error updating monthly stats:', error);
+        await this.showError('Chart Update Failed', error.message);
     }
+}
 
     updateCategoryStats(snapshot) {
         try {
@@ -523,7 +575,7 @@ class DashboardFunctions {
 
             const snapshot = await this.db.ref('activities')
                 .orderByChild('timestamp')
-                .limitToLast(2) // ...maximum number of activities to show...
+                .limitToLast(3) // ...maximum number of activities to show...
                 .once('value');
 
             const activities = [];
@@ -679,84 +731,94 @@ class DashboardFunctions {
     }
 
     // Update loadNotifications method to include more actions
-    async loadNotifications() {
-        try {
-            const notificationsList = document.getElementById('notificationsList');
-            if (!notificationsList) return;
+  async loadNotifications() {
+    try {
+        const notificationsList = document.getElementById('notificationsList');
+        if (!notificationsList) {
+            console.warn('Notifications list element not found');
+            return;
+        }
 
-            const snapshot = await this.db.ref('issues')
-                .orderByChild('timestamp')
-                .limitToLast(3)
-                .once('value');
-            
-            const notifications = [];
-            
-            snapshot.forEach(child => {
-                const issue = child.val();
-                notifications.unshift({
-                    id: child.key,
-                    message: issue.message || 'No message provided',
-                    title: issue.bookTitle || 'Unknown Book',
-                    type: issue.type || 'info',
-                    timestamp: issue.timestamp || Date.now(),
-                    status: issue.status || 'pending',
-                    studentName: issue.studentName || 'Unknown Student',
-                    studentGrade: issue.studentGrade || 'N/A',
-                    isNew: !issue.read
+        // Set up real-time listener on the messages node
+        this.db.ref('messages')
+            .orderByChild('timestamp')
+            .limitToLast(3)
+            .on('value', (snapshot) => {
+                const notifications = [];
+                
+                snapshot.forEach(child => {
+                    const message = child.val();
+                    notifications.unshift({
+                        id: child.key,
+                        message: message.subject || 'No issue specified',
+                        title: message.subject || 'Unknown Issue',
+                        type: message.type || 'info',
+                        timestamp: message.timestamp || Date.now(),
+                        status: message.status || 'pending',
+                        studentName: message.studentName || 'Unknown Student',
+                        studentGrade: message.studentGrade || 'N/A',
+                        studentId: message.studentId || 'N/A',
+                        isNew: !message.read // Adjust if read flag is not used
+                    });
                 });
+
+                if (notifications.length === 0) {
+                    notificationsList.innerHTML = `
+                        <div class="notification-item info">
+                            <div class="notification-content">
+                                <p>No notifications at this time</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                notificationsList.innerHTML = notifications.map(notification => `
+                    <div class="notification-item ${notification.type} ${notification.isNew ? 'new' : ''}" 
+                         data-id="${notification.id}">
+                        <div class="notification-content" onclick="dashboardFunctions.showNotificationDetails('${notification.id}')">
+                            <div class="notification-icon">
+                                <i class="bi ${this.getNotificationIcon(notification.type)}"></i>
+                            </div>
+                            <div class="notification-info">
+                                <p class="notification-title">${notification.title}</p>
+                                <p class="notification-message">${notification.message}</p>
+                                <small class="notification-meta">
+                                    ${notification.studentName} (${notification.studentGrade}, ID: ${notification.studentId})
+                                    <span class="notification-time">
+                                        ${new Date(notification.timestamp).toLocaleString()}
+                                    </span>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="notification-actions">
+                            ${notification.isNew ? '<span class="new-badge">New</span>' : ''}
+                            <button class="btn btn-sm btn-outline-primary" 
+                                    onclick="dashboardFunctions.handleQuickReply('${notification.id}')">
+                                <i class="bi bi-reply"></i> Reply
+                            </button>
+                            ${notification.status !== 'resolved' ? `
+                                <button class="btn btn-sm btn-outline-success" 
+                                        onclick="dashboardFunctions.markNotificationResolved('${notification.id}')">
+                                    <i class="bi bi-check-circle"></i> Resolve
+                                </button>
+                            ` : ''}
+                            <button class="btn btn-sm btn-outline-danger" 
+                                    onclick="dashboardFunctions.deleteNotification('${notification.id}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }, (error) => {
+                console.error('Error in real-time listener:', error);
+                this.showError('Notification Error', 'Failed to load notifications: ' + error.message);
             });
 
-            if (notifications.length === 0) {
-                notificationsList.innerHTML = `
-                    <div class="notification-item info">
-                        <div class="notification-content">
-                            <p>No notifications at this time</p>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            notificationsList.innerHTML = notifications.map(notification => `
-                <div class="notification-item ${notification.type} ${notification.isNew ? 'new' : ''}" 
-                     data-id="${notification.id}">
-                    <div class="notification-content" onclick="dashboardFunctions.showNotificationDetails('${notification.id}')">
-                        <div class="notification-icon">
-                            <i class="bi ${this.getNotificationIcon(notification.type)}"></i>
-                        </div>
-                        <div class="notification-info">
-                            <p class="notification-title">${notification.title}</p>
-                            <p class="notification-message">${notification.message}</p>
-                            <small class="notification-meta">
-                                ${notification.studentName} (${notification.studentGrade})
-                                <span class="notification-time">
-                                    ${new Date(notification.timestamp).toLocaleString()}
-                                </span>
-                            </small>
-                        </div>
-                    </div>
-                    <div class="notification-actions">
-                        ${notification.isNew ? '<span class="new-badge">New</span>' : ''}
-                        <button class="btn btn-sm btn-outline-primary" 
-                                onclick="dashboardFunctions.handleQuickReply('${notification.id}')">
-                            <i class="bi bi-reply"></i> Reply
-                        </button>
-                        ${notification.status !== 'resolved' ? `
-                            <button class="btn btn-sm btn-outline-success" 
-                                    onclick="dashboardFunctions.markNotificationResolved('${notification.id}')">
-                                <i class="bi bi-check-circle"></i> Resolve
-                            </button>
-                        ` : ''}
-                        <button class="btn btn-sm btn-outline-danger" 
-                                onclick="dashboardFunctions.deleteNotification('${notification.id}')">
-                             <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-
-            // Add notification styles
+        // Add notification styles (only if not already added)
+        if (!document.querySelector('style#notification-styles')) {
             const style = document.createElement('style');
+            style.id = 'notification-styles';
             style.textContent = `
                 .notification-item {
                     display: flex;
@@ -816,12 +878,13 @@ class DashboardFunctions {
                 }
             `;
             document.head.appendChild(style);
-
-        } catch (error) {
-            console.error('Error loading notifications:', error);
-            await this.showError('Notification Error', 'Failed to load notifications');
         }
+
+    } catch (error) {
+        console.error('Error setting up notifications listener:', error);
+        await this.showError('Notification Error', 'Failed to set up notifications: ' + error.message);
     }
+}
 
     // Add this helper method if not already present
     getNotificationIcon(type) {
@@ -1004,14 +1067,14 @@ class DashboardFunctions {
             const reply = prompt(`Quick reply regarding: ${bookTitle}`);
             if (!reply) return;
 
-            await this.db.ref(`issues/${issueId}/replies`).push({
+            await this.db.ref(`messages/${issueId}/replies`).push({
                 message: reply,
                 timestamp: Date.now(),
                 sender: 'librarian'
             });
 
             // Mark the issue as read
-            await this.db.ref(`issues/${issueId}`).update({
+            await this.db.ref(`messages/${issueId}`).update({
                 read: true
             });
 
@@ -1711,7 +1774,7 @@ async processCSV(data) {
 
             if (result.isConfirmed) {
                 // Get the notification details
-                const snapshot = await this.db.ref(`issues/${notificationId}`).once('value');
+                const snapshot = await this.db.ref(`messages/${notificationId}`).once('value');
                 const notification = snapshot.val();
 
                 if (!notification) {
@@ -1719,7 +1782,7 @@ async processCSV(data) {
                 }
 
                 // Update the notification status
-                await this.db.ref(`issues/${notificationId}`).update({
+                await this.db.ref(`messages/${notificationId}`).update({
                     status: 'resolved',
                     resolvedAt: Date.now(),
                     resolvedBy: 'librarian', // You might want to get this from user session
@@ -1750,7 +1813,7 @@ async processCSV(data) {
     // Add these methods to the DashboardFunctions class
     async showNotificationDetails(notificationId) {
         try {
-            const snapshot = await this.db.ref(`issues/${notificationId}`).once('value');
+            const snapshot = await this.db.ref(`messages/${notificationId}`).once('value');
             const notification = snapshot.val();
             
             if (!notification) throw new Error('Notification not found');
@@ -1876,8 +1939,8 @@ async processCSV(data) {
                 }
 
                 // Create issue record
-                const issueRef = this.db.ref('issues').push();
-                updates[`issues/${issueRef.key}`] = {
+                const issueRef = this.db.ref('messages').push();
+                updates[`messages/${issueRef.key}`] = {
                     type: 'lost',
                     bookId,
                     bookTitle: book.title,
@@ -1927,7 +1990,7 @@ async processCSV(data) {
     // Add this method to the DashboardFunctions class
     async handleQuickReply(notificationId) {
         try {
-            const snapshot = await this.db.ref(`issues/${notificationId}`).once('value');
+            const snapshot = await this.db.ref(`messages/${notificationId}`).once('value');
             const notification = snapshot.val();
             
             if (!notification) throw new Error('Notification not found');
@@ -1978,14 +2041,14 @@ async processCSV(data) {
                         return;
                     }
 
-                    await this.db.ref(`issues/${notificationId}/replies`).push({
+                    await this.db.ref(`messages/${notificationId}/replies`).push({
                         message: replyMessage,
                         timestamp: Date.now(),
                         sender: 'librarian'
                     });
 
                     // Mark as read
-                    await this.db.ref(`issues/${notificationId}`).update({
+                    await this.db.ref(`messages/${notificationId}`).update({
                         read: true,
                         lastRepliedAt: Date.now()
                     });
@@ -2074,52 +2137,56 @@ async processCSV(data) {
     }
 
     // Add this method to the DashboardFunctions class
-    async deleteNotification(notificationId) {
-        try {
-            const result = await Swal.fire({
-                title: 'Delete Notification',
-                text: 'Are you sure you want to delete this notification? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, delete it',
-                cancelButtonText: 'Cancel'
-            });
+  async deleteNotification(notificationId) {
+    try {
+        // Show confirmation dialog
+        const result = await Swal.fire({
+            title: 'Delete Notification',
+            text: 'Are you sure you want to delete this notification? This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
+        });
 
-            if (result.isConfirmed) {
-                // Get notification details for activity log
-                const snapshot = await this.db.ref(`issues/${notificationId}`).once('value');
-                const notification = snapshot.val();
-
-                // Delete the notification
-                await this.db.ref(`issues/${notificationId}`).remove();
-
-                // Remove the notification element from DOM immediately
-                const notificationElement = document.querySelector(`[data-id="${notificationId}"]`);
-                if (notificationElement) {
-                    notificationElement.remove();
-                }
-
-                // Create activity record
-                await this.createActivity('delete', 
-                    `Deleted notification regarding "${notification?.bookTitle || 'Unknown Book'}"`
-                );
-
-                // Show success message
-                await this.showSuccess(
-                    'Success', 
-                    'Notification deleted successfully'
-                );
+        if (result.isConfirmed) {
+            // Get notification details for activity log
+            const snapshot = await this.db.ref(`messages/${notificationId}`).once('value');
+            if (!snapshot.exists()) {
+                throw new Error('Notification not found');
             }
-        } catch (error) {
-            console.error('Error deleting notification:', error);
-            await this.showError(
-                'Delete Failed',
-                'Failed to delete notification: ' + error.message
+            const notification = snapshot.val();
+
+            // Delete the notification from the messages node
+            await this.db.ref(`messages/${notificationId}`).remove();
+
+            // Remove the notification element from DOM immediately
+            const notificationElement = document.querySelector(`[data-id="${notificationId}"]`);
+            if (notificationElement) {
+                notificationElement.remove();
+            }
+
+            // Create activity record
+            await this.createActivity('delete', 
+                `Deleted ${notification.type || 'issue'} notification for ${notification.studentName || 'Unknown Student'} regarding ${notification.subject || 'unknown issue'}`
+            );
+
+            // Show success message
+            await this.showSuccess(
+                'Success', 
+                'Notification deleted successfully'
             );
         }
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+        await this.showError(
+            'Delete Failed',
+            `Failed to delete notification: ${error.message}`
+        );
     }
+}
 
     // Add this method to the DashboardFunctions class
     async deleteActivity(activityId) {

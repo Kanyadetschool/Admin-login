@@ -3,7 +3,9 @@ const bookCovers = {
     'BK001': 'covers/skills in English.jpg', // English grade 4
     'BK002': 'covers/Agriculture.png', // Agriculture grade 4
     'BK003': 'covers/Creative Art.png', // Creative Art grade 4
-    'BK004': 'covers/BK004.png', // Math grade 4
+    'BK004': 'covers/visionary mathematics.png', // Math grade 4
+    'BK005': 'covers/social 4.jpg', // Social Studies grade 4
+    'BK006': 'covers/sci 4.jpg', // Science grade 4
     // Add more book covers as needed
 };
 

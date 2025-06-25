@@ -29,7 +29,84 @@ table th .search-input {
 }
 
 
+.search-input {
+    display: inline-block !important;
+    width: 120px;
+    padding: 5px;
+    margin-left: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
+.clickable-row {
+    cursor: pointer;
+    background-color: #fff3f3; /* Light red background for lost books */
+    transition: background-color 0.2s;
+}
+
+.clickable-row:hover {
+    background-color: #ffe0e0; /* Slightly darker on hover */
+}
+
+.clickable-row::after {
+    content: '🔍'; /* Magnifying glass emoji as a clickable indicator */
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+@media print {
+    .search-input, .clickable-row::after, .delete-btn, .sort-select, .grade-filter, .status-filter, .return-btn, .student-name-text {
+        display: none !important;
+    }
+    .clickable-row {
+        background-color: transparent; /* Remove background in print */
+    }
+}
+
+.stat-card {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.warning {
+    color: #ff4444;
+}
+
+.totals-row {
+    background-color: #e8f4f8;
+}
+
+.averages-row {
+    background-color: #f0f8e8;
+}
+
+.number-cell {
+    text-align: center;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.sort-container {
+    margin-bottom: 10px;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
 
 .search-input {
     width: 100%;
@@ -88,10 +165,16 @@ table th .search-input {
     max-width: 150px; /* Adjust based on content */
 }
 td.warning{
-    background-color: #eecbc9;
     color: #d83d0d;
     border-radius: 10px;
     
+}
+/* Full-width modal styling */
+#studentRecoveryModal .modal-dialog {
+    width: 1000px; /* Set a specific width instead of 1000% */
+    max-width: none !important;
+    margin: 0 auto; /* Center horizontally */
+    height: 100vh; /* Optional: full height for better alignment */
 }
 
 .table-wrapper th {
@@ -485,7 +568,7 @@ button {
 /* Action Bar */
 .action-bar,.filters {
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;

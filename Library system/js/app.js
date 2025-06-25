@@ -74,7 +74,7 @@ const statusFilter = document.getElementById('statusFilter');
 
 // Predefined Categories
 const bookCategories = [
-    'Skills in English -Grd 4',
+    'Grade 4 Textbooks',
     'Reference Book',
     'Study Guide',
     'Workbook',
@@ -257,6 +257,7 @@ class DashboardManager {
 class BookManager {
     constructor() {
         this.booksRef = db.ref('books');
+        this.issuanceRef = db.ref('issuance'); // Reference to issuance node
         this.booksList = document.getElementById('booksList');
         this.bookForm = document.getElementById('bookForm');
         this.allBooks = new Map();
@@ -265,7 +266,7 @@ class BookManager {
         this.loadBooks();
     }
 
-     async showError(title, message) {
+    async showError(title, message) {
         alert(`${title}: ${message}`);
     }
 
@@ -274,11 +275,12 @@ class BookManager {
     }
 
     setupListeners() {
-        addBookBtn.addEventListener('click', () => this.showBookModal());
+        document.getElementById('addBookBtn').addEventListener('click', () => this.showBookModal());
         this.bookForm.addEventListener('submit', (e) => this.handleBookSubmit(e));
-        categoryFilter.addEventListener('change', () => this.applyFilters());
-        availabilityFilter.addEventListener('change', () => this.applyFilters());
-        searchInput.addEventListener('input', () => this.handleSearch());
+        document.getElementById('categoryFilter').addEventListener('change', () => this.applyFilters());
+        document.getElementById('availabilityFilter').addEventListener('change', () => this.applyFilters());
+        document.getElementById('searchInput').addEventListener('input', () => this.handleSearch());
+        document.getElementById('deleteOptionsBtn').addEventListener('click', () => this.showDeleteOptionsModal());
     }
 
     handleSearch() {
@@ -289,9 +291,9 @@ class BookManager {
     }
 
     applyFilters() {
-        const category = categoryFilter.value;
-        const availability = availabilityFilter.value;
-        const searchTerm = searchInput.value.toLowerCase();
+        const category = document.getElementById('categoryFilter').value;
+        const availability = document.getElementById('availabilityFilter').value;
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 
         this.booksList.innerHTML = '';
 
@@ -400,8 +402,8 @@ class BookManager {
                 </div>
             `;
 
-            bookModal.innerHTML = modalHtml;
-            const modal = new bootstrap.Modal(bookModal);
+            document.getElementById('bookModal').innerHTML = modalHtml;
+            const modal = new bootstrap.Modal(document.getElementById('bookModal'));
             modal.show();
 
             document.getElementById('saveBook').onclick = async () => {
@@ -421,7 +423,6 @@ class BookManager {
             const quantity = parseInt(formData.get('quantity'));
             const isbn = formData.get('isbn').trim();
 
-            // Validate inputs
             if (isNaN(quantity) || quantity < 1) {
                 throw new Error('Quantity must be a positive number');
             }
@@ -429,7 +430,6 @@ class BookManager {
                 throw new Error('ISBN is required');
             }
 
-            // Create base book data
             const bookData = {
                 title: formData.get('title'),
                 author: formData.get('author'),
@@ -442,18 +442,15 @@ class BookManager {
             };
 
             if (bookId) {
-                // Update existing book
                 const currentSnapshot = await this.booksRef.child(bookId).once('value');
                 const currentData = currentSnapshot.val();
                 
-                // Maintain existing values
                 bookData.available = currentData.available || currentData.quantity;
-                bookData.addedAt = currentData.addedAt || Date.now(); // Fallback to current timestamp
+                bookData.addedAt = currentData.addedAt || Date.now();
                 bookData.lost = currentData.lost || 0;
                 
                 await this.booksRef.child(bookId).update(bookData);
             } else {
-                // Create new book
                 bookData.available = bookData.quantity;
                 bookData.addedAt = Date.now();
                 bookData.lost = 0;
@@ -504,12 +501,10 @@ class BookManager {
                 <button onclick="bookManager.showBookModal('${bookId}')">Edit</button>
                 <button onclick="bookManager.deleteBook('${bookId}')">Delete</button>
                 <button onclick="bookManager.reportLost('${bookId}')" class="btn-warning">Report Lost</button>
-                <!-- <button onclick="dashboardFunctions.deleteBookCollection('${book.category}', '${bookId}')" class="btn-danger">Delete Collection</button>-->
             </div>
             </div>
         `;
         
-        // Add book cover
         const coverContainer = card.querySelector('.book-cover-container');
         BookCoverManager.renderBookCover(bookId, coverContainer);
 
@@ -533,12 +528,162 @@ class BookManager {
         }
     }
 
+    async checkBookIssuance(bookId) {
+        const snapshot = await this.issuanceRef.orderByChild('bookId').equalTo(bookId).once('value');
+        return snapshot.exists();
+    }
+
     async deleteBook(bookId) {
-        if (confirm('Are you sure you want to delete this book?')) {
-            await this.booksRef.child(bookId).remove();
+        try {
+            const isIssued = await this.checkBookIssuance(bookId);
+            if (isIssued) {
+                await this.showError('Error', 'Cannot delete this book because it has been issued.');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this book?')) {
+                await this.booksRef.child(bookId).remove();
+                await this.showSuccess('Success', 'Book deleted successfully');
+            }
+        } catch (error) {
+            console.error('Error deleting book:', error);
+            await this.showError('Error', 'Failed to delete book');
+        }
+    }
+
+    async deleteBookCollection(category) {
+    try {
+        const snapshot = await this.booksRef.once('value');
+        const books = snapshot.val();
+        const booksToDelete = [];
+        let hasIssuedBooks = false;
+
+        // Check if books node exists and is an object
+        if (!books || typeof books !== 'object') {
+            await this.showError('Error', `No books found in the database.`);
+            return;
+        }
+
+        // Iterate over books using Object.entries
+        for (const [bookId, book] of Object.entries(books)) {
+            if (book.category === category) {
+                const isIssued = await this.checkBookIssuance(bookId);
+                if (isIssued) {
+                    hasIssuedBooks = true;
+                    break;
+                }
+                booksToDelete.push(bookId);
+            }
+        }
+
+        if (hasIssuedBooks) {
+            await this.showError('Error', `Cannot delete category ${category} because some books are currently issued.`);
+            return;
+        }
+
+        if (booksToDelete.length === 0) {
+            await this.showError('Error', `No books found in category ${category}.`);
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete all books in the ${category} category? This action cannot be undone.`)) {
+            const updates = {};
+            booksToDelete.forEach(bookId => {
+                updates[bookId] = null;
+            });
+
+            await this.booksRef.update(updates);
+            await this.showSuccess('Success', `All books in ${category} category deleted successfully`);
+            this.loadBooks();
+        }
+    } catch (error) {
+        console.error('Error deleting collection:', error);
+        await this.showError('Error', `Failed to delete ${category} collection`);
+    }
+}
+
+    async showDeleteOptionsModal() {
+        try {
+            const snapshot = await this.booksRef.once('value');
+            const books = [];
+            const categories = new Set();
+            snapshot.forEach((childSnapshot) => {
+                const book = childSnapshot.val();
+                const bookId = childSnapshot.key;
+                books.push({ id: bookId, title: book.title, category: book.category });
+                categories.add(book.category);
+            });
+
+            const modalHtml = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete Options</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Delete a Specific Book</label>
+                                <select id="deleteBookSelect" class="form-select">
+                                    <option value="">Select a Book</option>
+                                    ${books.map(book => `
+                                        <option value="${book.id}">${book.title} (ID: ${book.id})</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Delete an Entire Category</label>
+                                <select id="deleteCategorySelect" class="form-select">
+                                    <option value="">Select a Category</option>
+                                    ${Array.from(categories).map(category => `
+                                        <option value="${category}">${category}</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const deleteModal = document.getElementById('deleteModal') || document.createElement('div');
+            deleteModal.id = 'deleteModal';
+            deleteModal.className = 'modal fade';
+            deleteModal.innerHTML = modalHtml;
+            document.body.appendChild(deleteModal);
+
+            const modal = new bootstrap.Modal(deleteModal);
+            modal.show();
+
+            document.getElementById('confirmDelete').onclick = async () => {
+                const bookId = document.getElementById('deleteBookSelect').value;
+                const category = document.getElementById('deleteCategorySelect').value;
+
+                if (bookId && category) {
+                    await this.showError('Error', 'Please select either a book or a category, not both');
+                    return;
+                }
+
+                if (bookId) {
+                    await this.deleteBook(bookId);
+                } else if (category) {
+                    await this.deleteBookCollection(category);
+                } else {
+                    await this.showError('Error', 'Please select a book or category to delete');
+                }
+
+                modal.hide();
+            };
+        } catch (error) {
+            console.error('Error showing delete options modal:', error);
+            await this.showError('Error', 'Failed to load delete options');
         }
     }
 }
+
 
 // Students Management
 class StudentManager {
@@ -585,6 +730,20 @@ class StudentManager {
 
         if (Object.keys(updates).length > 0) {
             await this.studentsRef.update(updates);
+        }
+    }
+    
+    async deleteAllStudents() {
+        if (confirm('Are you sure you want to delete ALL students? This action cannot be undone.')) {
+            try {
+                await this.studentsRef.remove();
+                this.studentsList.innerHTML = ''; // Clear the displayed list
+                this.allStudents.clear(); // Clear the local cache
+                alert('All students have been deleted successfully.');
+            } catch (error) {
+                console.error('Error deleting all students:', error);
+                alert('Failed to delete students. Please try again.');
+            }
         }
     }
 
@@ -846,17 +1005,17 @@ class IssuanceManager {
         if (this.statusFilter) {
             this.statusFilter.addEventListener('change', () => this.applyFilters());
         }
-        newIssuanceBtn.addEventListener('click', () => this.showIssuanceModal());
+        document.getElementById('newIssuanceBtn').addEventListener('click', () => this.showIssuanceModal());
         this.issuanceForm.addEventListener('submit', (e) => this.handleIssuanceSubmit(e));
         
+        const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.addEventListener('input', () => this.handleSearch());
         }
 
-        // Add delete all button listener
-        const deleteAllIssuancesBtn = document.getElementById('deleteAllIssuancesBtn');
-        if (deleteAllIssuancesBtn) {
-            deleteAllIssuancesBtn.addEventListener('click', () => this.deleteAllIssuances());
+        const deleteIssuanceOptionsBtn = document.getElementById('deleteIssuanceOptionsBtn');
+        if (deleteIssuanceOptionsBtn) {
+            deleteIssuanceOptionsBtn.addEventListener('click', () => this.showDeleteIssuanceOptionsModal());
         }
     }
 
@@ -869,7 +1028,7 @@ class IssuanceManager {
 
     async applyFilters() {
         const status = this.statusFilter.value;
-        const searchTerm = searchInput.value.toLowerCase();
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const currentDate = new Date();
 
         this.issuanceList.innerHTML = '';
@@ -923,7 +1082,6 @@ class IssuanceManager {
     async showIssuanceModal() {
         const modal = document.getElementById('issuanceModal');
         
-        // Reset selections
         this.gradeSelect.value = '';
         await this.populateStudentSelect();
         await this.populateBookSelect();
@@ -935,7 +1093,8 @@ class IssuanceManager {
         document.getElementById('issueDate').value = today;
         document.getElementById('returnDate').value = returnDate.toISOString().split('T')[0];
         
-        modal.classList.add('active');
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
     }
 
     async populateStudentSelect() {
@@ -1008,7 +1167,6 @@ class IssuanceManager {
                 throw new Error('Please fill in all required fields');
             }
 
-            // Get student and book details
             const [studentSnapshot, bookSnapshot] = await Promise.all([
                 db.ref(`students/${studentId}`).once('value'),
                 db.ref(`books/${bookId}`).once('value')
@@ -1025,7 +1183,6 @@ class IssuanceManager {
                 throw new Error('Book is not available for issuance');
             }
 
-            // Create issuance record
             const issuanceData = {
                 studentId,
                 studentName: student.name,
@@ -1039,7 +1196,6 @@ class IssuanceManager {
                 timestamp: Date.now()
             };
 
-            // Create new issuance and update records
             await Promise.all([
                 this.issuanceRef.push(issuanceData),
                 db.ref().update({
@@ -1055,20 +1211,18 @@ class IssuanceManager {
                 })
             ]);
 
-            // Close modal and reset form
-            modalElement.classList.remove('active');
+            const bsModal = bootstrap.Modal.getInstance(modalElement);
+            bsModal.hide();
             this.issuanceForm.reset();
 
-            // Show success message
             await Swal.fire({
-                icon: 'success',
+                icon: 'warning',
                 title: 'Success',
                 text: 'Book issued successfully',
                 timer: 1500,
                 showConfirmButton: false
             });
 
-            // Refresh UI
             await this.loadIssuances();
             if (window.dashboardManager) {
                 window.dashboardManager.updateAllStats();
@@ -1096,54 +1250,6 @@ class IssuanceManager {
         });
     }
 
-    // async renderIssuanceCard(issuance, issuanceId) {
-    //     try {
-    //         const studentSnapshot = await db.ref(`students/${issuance.studentId}`).once('value');
-    //         const bookSnapshot = await db.ref(`books/${issuance.bookId}`).once('value');
-    //         const student = studentSnapshot.val();
-    //         const book = bookSnapshot.val();
-
-    //         if (!student || !book) return;
-
-    //         const currentDate = new Date();
-    //         const returnDate = new Date(issuance.returnDate);
-    //         const isOverdue = returnDate < currentDate && issuance.status === 'active';
-    //         const displayStatus = isOverdue ? 'overdue' : issuance.status;
-
-    //         const card = document.createElement('div');
-    //         card.className = 'grid-item issuance-card';
-    //         card.innerHTML = `
-    //             <div class="book-cover-container"></div>
-    //             <div class="issuance-info">
-    //                 <h3>${student.name}</h3>
-    //                 <h4>${book.title}</h4>
-    //                 <h4>${student.assessmentNo}</h4>
-    //                 <h5>Book No: ${issuance.isbn}</h5>
-    //                 <p>Grade: ${student.grade || 'Not assigned'}</p>
-    //                 <p>Issue Date: ${issuance.issueDate}</p>
-    //                 <p>Return Date: ${issuance.returnDate}</p>
-    //                 <p class="status ${displayStatus}">Status: ${displayStatus}</p>
-    //                 ${issuance.status === 'active' ? `
-    //                     <div class="button-group">
-    //                         <button onclick="issuanceManager.returnBook('${issuanceId}', '${issuance.bookId}')" class="primary-btn">Return Book</button>
-    //                         <button onclick="issuanceManager.reportBookLost('${issuanceId}', '${issuance.bookId}')" class="btn-warning">Report Lost</button>
-    //                     </div>
-    //                 ` : ''}
-    //              <button onclick="issuanceManager.deleteIssuance('${issuanceId}', '${issuance.bookId}')" class="btn-danger">
-    //                     <i class="bi bi-trash"></i> Delete Record
-    //                 </button>
-    //         `;
-
-            
-    //         // Add book cover
-    //         const coverContainer = card.querySelector('.book-cover-container');
-    //         BookCoverManager.renderBookCover(issuance.bookId, coverContainer);
-
-    //         this.issuanceList.appendChild(card);
-    //     } catch (error) {
-    //         console.error('Error rendering issuance card:', error);
-    //     }
-    // }
     async renderIssuanceCard(issuance, issuanceId) {
         try {
             const studentSnapshot = await db.ref(`students/${issuance.studentId}`).once('value');
@@ -1162,6 +1268,7 @@ class IssuanceManager {
             card.className = 'grid-item issuance-card';
             card.innerHTML = `
             <div class="issuance-card-content">
+
                 <div class="student-image-container"></div>
                 <div class="book-cover-container"></div>
                 </div>
@@ -1169,7 +1276,7 @@ class IssuanceManager {
                     <h3>${student.name}</h3>
                     <h4>${book.title}</h4>
                     <h4>${student.assessmentNo}</h4>
-                    <h5>Book No: ${issuance.isbn}</h5>
+                    <h5>Book No: ${issuance.isbn || 'N/A'}</h5>
                     <p>Grade: ${student.grade || 'Not assigned'}</p>
                     <p>Issue Date: ${issuance.issueDate}</p>
                     <p>Return Date: ${issuance.returnDate}</p>
@@ -1185,14 +1292,17 @@ class IssuanceManager {
                     </button>
                 </div>
             `;
+     // Add student image
+            // const imageContainer = card.querySelector('.student-image-container');
+            // StudentImageManager.renderStudentImage(issuance.studentId, imageContainer, displayStatus);
 
-            // Add student image
-            const imageContainer = card.querySelector('.student-image-container');
-            StudentImageManager.renderStudentImage(issuance.studentId, imageContainer, displayStatus);
+ // Add student Gender below image
+        const imageContainer = card.querySelector('.student-image-container');
+        const status = student.Gender ? `${student.Gender.toLowerCase().replace(/\s+/g, ' -')}` : 'no-gender';
+        StudentImageManager.renderStudentImage(issuance.studentId, imageContainer, status);
 
-            // Add book cover
             const coverContainer = card.querySelector('.book-cover-container');
-            BookCoverManager.renderBookCover(issuance.bookId, coverContainer, displayStatus);
+            BookCoverManager.renderBookCover(issuance.bookId, coverContainer);
 
             this.issuanceList.appendChild(card);
         } catch (error) {
@@ -1214,7 +1324,6 @@ class IssuanceManager {
             });
 
             if (result.isConfirmed) {
-                // Get the issuance record first
                 const issuanceSnapshot = await this.issuanceRef.child(issuanceId).once('value');
                 const issuance = issuanceSnapshot.val();
 
@@ -1222,10 +1331,8 @@ class IssuanceManager {
                     throw new Error('Issuance record not found');
                 }
 
-                // Delete the issuance record
                 await this.issuanceRef.child(issuanceId).remove();
 
-                // If the status was 'active', update the book availability
                 if (issuance.status === 'active') {
                     const bookRef = db.ref(`books/${bookId}`);
                     const bookSnapshot = await bookRef.once('value');
@@ -1240,14 +1347,13 @@ class IssuanceManager {
                 }
 
                 await Swal.fire({
-                    icon: 'warning',
+                    icon: 'success',
                     title: 'Deleted!',
                     text: 'The issuance record has been deleted.',
                     timer: 1000,
                     showConfirmButton: false
                 });
 
-                // Refresh the issuance list
                 this.loadIssuances();
             }
         } catch (error) {
@@ -1263,21 +1369,66 @@ class IssuanceManager {
     }
 
     async reportBookLost(issuanceId, bookId) {
-        if (confirm('Are you sure you want to report this book as lost?')) {
-            await this.issuanceRef.child(issuanceId).update({ status: 'lost' });
+        try {
+            const result = await Swal.fire({
+                title: 'Report Book Lost',
+                text: 'Are you sure you want to report this book as lost?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, report lost',
+                cancelButtonText: 'Cancel'
+            });
 
-            const bookRef = db.ref(`books/${bookId}`);
-            const bookSnapshot = await bookRef.once('value');
-            const book = bookSnapshot.val();
-            await bookRef.update({ 
-                lost: (book.lost || 0) + 1
+            if (result.isConfirmed) {
+                await this.issuanceRef.child(issuanceId).update({ 
+                    status: 'lost',
+                    updatedAt: Date.now()
+                });
+
+                const bookRef = db.ref(`books/${bookId}`);
+                const bookSnapshot = await bookRef.once('value');
+                const book = bookSnapshot.val();
+                await bookRef.update({ 
+                    lost: (book.lost || 0) + 1,
+                    updatedAt: Date.now()
+                });
+
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Reported',
+                    text: 'Book reported as lost.',
+                    timer: 1000,
+                    showConfirmButton: false
+                });
+            }
+        } catch (error) {
+            console.error('Error reporting book lost:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to report book as lost.',
+                timer: 1000,
+                showConfirmButton: false
             });
         }
     }
 
     async returnBook(issuanceId, bookId) {
-        if (confirm('Are you sure you want to mark this book as returned?')) {
-            try {
+        try {
+            const result = await Swal.fire({
+                title: 'Return Book',
+                text: 'Are you sure you want to mark this book as returned?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, return it',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (result.isConfirmed) {
                 const issuanceRef = db.ref(`issuance/${issuanceId}`);
                 const issuanceSnapshot = await issuanceRef.once('value');
                 const issuance = issuanceSnapshot.val();
@@ -1307,12 +1458,24 @@ class IssuanceManager {
                     await studentManager.updateStudentIssuanceStatus(issuance.studentId);
                 }
 
-                alert('Book returned successfully!');
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Book returned successfully!',
+                    timer: 1000,
+                    showConfirmButton: false
+                });
                 this.loadIssuances();
-            } catch (error) {
-                console.error('Error returning book:', error);
-                alert('Error returning book. Please try again.');
             }
+        } catch (error) {
+            console.error('Error returning book:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error returning book. Please try again.',
+                timer: 1000,
+                showConfirmButton: false
+            });
         }
     }
 
@@ -1350,52 +1513,168 @@ class IssuanceManager {
     }
 
     async showRecoveryModal(issuanceId) {
-        const issuance = this.allIssuances.get(issuanceId);
-        if (!issuance) return;
+        try {
+            const issuance = this.allIssuances.get(issuanceId);
+            if (!issuance) return;
 
-        const student = (await db.ref(`students/${issuance.studentId}`).once('value')).val();
-        const book = (await db.ref(`books/${issuance.bookId}`).once('value')).val();
+            const student = (await db.ref(`students/${issuance.studentId}`).once('value')).val();
+            const book = (await db.ref(`books/${issuance.bookId}`).once('value')).val();
 
-        document.getElementById('lostBookStudent').textContent = student.name;
-        document.getElementById('lostBookTitle').textContent = book.title;
-        document.getElementById('lostBookIssueDate').textContent = issuance.issueDate;
+            if (!student || !book) return;
 
-        const modal = document.getElementById('lostBookModal');
-        const form = document.getElementById('lostBookForm');
+            document.getElementById('lostBookStudent').textContent = student.name;
+            document.getElementById('lostBookTitle').textContent = book.title;
+            document.getElementById('lostBookIssueDate').textContent = issuance.issueDate;
 
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            const recoveryMethod = document.getElementById('recoveryMethod').value;
-            const recoveryNotes = document.getElementById('recoveryNotes').value;
+            const modal = document.getElementById('lostBookModal');
+            const form = document.getElementById('lostBookForm');
 
-            await this.handleBookRecovery(issuanceId, recoveryMethod, recoveryNotes);
-            modal.classList.remove('active');
-            form.reset();
-        };
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                const recoveryMethod = document.getElementById('recoveryMethod').value;
+                const recoveryNotes = document.getElementById('recoveryNotes').value;
 
-        modal.classList.add('active');
+                await this.handleBookRecovery(issuanceId, recoveryMethod, recoveryNotes);
+                const bsModal = bootstrap.Modal.getInstance(modal);
+                bsModal.hide();
+                form.reset();
+            };
+
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        } catch (error) {
+            console.error('Error showing recovery modal:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load recovery modal.',
+                timer: 1000,
+                showConfirmButton: false
+            });
+        }
     }
 
     async handleBookRecovery(issuanceId, recoveryMethod, notes) {
-        const issuance = this.allIssuances.get(issuanceId);
-        if (!issuance) return;
+        try {
+            const issuance = this.allIssuances.get(issuanceId);
+            if (!issuance) return;
 
-        const updates = {
-            recoveryStatus: true,
-            recoveryMethod,
-            recoveryNotes: notes,
-            recoveryDate: new Date().toISOString()
-        };
+            const updates = {
+                recoveryStatus: true,
+                recoveryMethod,
+                recoveryNotes: notes,
+                recoveryDate: new Date().toISOString(),
+                updatedAt: Date.now()
+            };
 
-        await this.issuanceRef.child(issuanceId).update(updates);
+            await this.issuanceRef.child(issuanceId).update(updates);
 
-        if (recoveryMethod === 'found' || recoveryMethod === 'replaced') {
-            const bookRef = db.ref(`books/${issuance.bookId}`);
-            const bookSnapshot = await bookRef.once('value');
+            if (recoveryMethod === 'found' || recoveryMethod === 'replaced') {
+                const bookRef = db.ref(`books/${issuance.bookId}`);
+                const bookSnapshot = await bookRef.once('value');
+                const book = bookSnapshot.val();
+                await bookRef.update({
+                    available: book.available + 1,
+                    lost: book.lost - 1,
+                    updatedAt: Date.now()
+                });
+            }
+
+            await Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Book recovery recorded successfully.',
+                timer: 1000,
+                showConfirmButton: false
+            });
+        } catch (error) {
+            console.error('Error handling book recovery:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to record book recovery.',
+                timer: 1000,
+                showConfirmButton: false
+            });
+        }
+    }
+
+    async deleteIssuancesByBook(bookId) {
+        try {
+            console.log(`Attempting to delete issuances for book ID: ${bookId}`);
+            const bookSnapshot = await db.ref(`books/${bookId}`).once('value');
             const book = bookSnapshot.val();
-            await bookRef.update({
-                available: book.available + 1,
-                lost: book.lost - 1
+            if (!book) {
+                throw new Error('Book not found.');
+            }
+
+            const result = await Swal.fire({
+                title: 'Delete Issuances for Book',
+                text: `Are you sure you want to delete all issuance records for "${book.title}" (ID: ${bookId})? This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete them!',
+                cancelButtonText: 'Cancel',
+                showLoaderOnConfirm: true,
+                preConfirm: async () => {
+                    const snapshot = await this.issuanceRef.orderByChild('bookId').equalTo(bookId).once('value');
+                    if (!snapshot.exists()) {
+                        throw new Error(`No issuance records found for book ID: ${bookId}.`);
+                    }
+
+                    const updates = {};
+                    let activeCount = 0;
+
+                    snapshot.forEach(childSnapshot => {
+                        const issuance = childSnapshot.val();
+                        const issuanceId = childSnapshot.key;
+                        updates[`issuance/${issuanceId}`] = null;
+                        if (issuance.status === 'active') {
+                            activeCount++;
+                        }
+                    });
+
+                    console.log(`Found ${Object.keys(updates).length} issuances to delete, ${activeCount} active.`);
+
+                    if (activeCount > 0) {
+                        const bookSnapshot = await db.ref(`books/${bookId}`).once('value');
+                        const book = bookSnapshot.val();
+                        if (book) {
+                            updates[`books/${bookId}/available`] = book.available + activeCount;
+                            updates[`books/${bookId}/updatedAt`] = Date.now();
+                        }
+                    }
+
+                    await db.ref().update(updates);
+                    console.log(`Successfully deleted issuances for book ID: ${bookId}`);
+                    return true;
+                }
+            });
+
+            if (result.isConfirmed) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: `All issuance records for "${book.title}" have been deleted.`,
+                    timer: 1000,
+                    showConfirmButton: false
+                });
+
+                this.loadIssuances();
+                if (window.dashboardManager) {
+                    window.dashboardManager.updateAllStats();
+                }
+            }
+        } catch (error) {
+            console.error('Error deleting issuances for book:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Failed to delete issuance records for the selected book.',
+                timer: 1000,
+                showConfirmButton: false
             });
         }
     }
@@ -1408,33 +1687,29 @@ class IssuanceManager {
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                cancelButtonText: 'Cancel',
+                cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Yes, delete all!',
+                cancelButtonText: 'Cancel',
                 showLoaderOnConfirm: true,
                 preConfirm: async () => {
-                    // Get all active issuances to update book availability
                     const activeIssuances = await this.issuanceRef
                         .orderByChild('status')
                         .equalTo('active')
                         .once('value');
 
                     const updates = {};
-                    
+                    const bookUpdates = new Map();
+
                     if (activeIssuances.exists()) {
-                        const bookUpdates = new Map();
-                        
-                        // Collect all books that need updating
                         activeIssuances.forEach(snapshot => {
                             const issuance = snapshot.val();
                             const count = bookUpdates.get(issuance.bookId) || 0;
                             bookUpdates.set(issuance.bookId, count + 1);
                         });
 
-                        // Get current book data and calculate updates
                         for (const [bookId, count] of bookUpdates) {
                             const bookSnapshot = await db.ref(`books/${bookId}`).once('value');
                             const book = bookSnapshot.val();
-                            
                             if (book) {
                                 updates[`books/${bookId}/available`] = book.available + count;
                                 updates[`books/${bookId}/updatedAt`] = Date.now();
@@ -1442,12 +1717,9 @@ class IssuanceManager {
                         }
                     }
 
-                    // Delete all issuance records
                     updates['issuance'] = null;
-
-                    // Perform all updates in a single transaction
                     await db.ref().update(updates);
-
+                    console.log('Successfully deleted all issuances');
                     return true;
                 }
             });
@@ -1457,17 +1729,14 @@ class IssuanceManager {
                     icon: 'success',
                     title: 'Deleted!',
                     text: 'All issuance records have been deleted.',
-                    timer: 2000,
+                    timer: 1000,
                     showConfirmButton: false
                 });
 
-                // Update dashboard stats
+                this.issuanceList.innerHTML = '';
                 if (window.dashboardManager) {
                     window.dashboardManager.updateAllStats();
                 }
-
-                // Clear the issuance list
-                this.issuanceList.innerHTML = '';
             }
         } catch (error) {
             console.error('Error deleting all issuances:', error);
@@ -1475,6 +1744,95 @@ class IssuanceManager {
                 icon: 'error',
                 title: 'Error',
                 text: 'Failed to delete all issuance records. Please try again.',
+                timer: 1000,
+                showConfirmButton: false
+            });
+        }
+    }
+
+    async showDeleteIssuanceOptionsModal() {
+        try {
+            const bookSnapshot = await db.ref('books').once('value');
+            const books = [];
+
+            bookSnapshot.forEach((childSnapshot) => {
+                const book = childSnapshot.val();
+                const bookId = childSnapshot.key;
+                books.push({ id: bookId, title: book.title });
+            });
+
+            const modalHtml = `
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete Issuance Options</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="deleteIssuanceBookSelect" class="form-label">Delete Issuances for a Specific Book</label>
+                                <select id="deleteIssuanceBookSelect" class="form-select">
+                                    <option value="">Select a Book</option>
+                                    ${books.map(book => `
+                                        <option value="${book.id}">${book.title} (ID: ${book.id})</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Delete All Issuance Records</label>
+                                <div class="alert alert-warning mt-2">
+                                    <strong>Warning:</strong> This will permanently delete ALL issuance records for all books.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="confirmIssuanceDelete">Delete Selected Book Issuances</button>
+                        <button type="button" class="btn btn-danger" id="deleteAllIssuancesOption">Delete All Issuances</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const deleteModal = document.getElementById('deleteIssuanceModal') || document.createElement('div');
+            deleteModal.id = 'deleteIssuanceModal';
+            deleteModal.className = 'modal fade';
+            deleteModal.innerHTML = modalHtml;
+            document.body.appendChild(deleteModal);
+
+            const modal = new bootstrap.Modal(deleteModal);
+            modal.show();
+
+            document.getElementById('deleteAllIssuancesOption').onclick = async () => {
+                await this.deleteAllIssuances();
+                modal.hide();
+            };
+
+            document.getElementById('confirmIssuanceDelete').onclick = async () => {
+                const bookId = document.getElementById('deleteIssuanceBookSelect').value;
+                console.log(`Delete button clicked with book ID: ${bookId}`);
+
+                if (bookId) {
+                    await this.deleteIssuancesByBook(bookId);
+                    modal.hide();
+                } else {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Please select a book to delete its issuance records.',
+                        timer: 1000,
+                        showConfirmButton: false
+                    });
+                }
+            };
+        } catch (error) {
+            console.error('Error showing delete issuance options modal:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load delete issuance options.',
+                timer: 1000,
+                showConfirmButton: false
             });
         }
     }
@@ -1498,7 +1856,7 @@ class ReportManager {
     initializeDates() {
         const end = new Date();
         const start = new Date();
-        start.setDate(start.getDate() - 30);
+        start.setDate(start.getDate() - 30); // test date range that must be in import files aper report date headers in html 
         
         this.endDate.value = end.toISOString().split('T')[0];
         this.startDate.value = start.toISOString().split('T')[0];
@@ -1948,7 +2306,7 @@ class ReportManager {
             <div class="header">
                 <img src="../images/logo.png" alt="Kanyadet Logo" class="logo">
                 <h1>Kanyadet Primary and Junior Secondary</h1>
-                <h2>${reportTitle}${selectedGrade && selectedGrade !== 'all' ? ` - Grade ${selectedGrade}` : ''}</h2>
+                <h2>${reportTitle}${selectedGrade && selectedGrade !== 'all' ? ` - ${selectedGrade}` : ''}</h2>
                 <p>Date: ${currentDate}</p>
             </div>
             <div>${statsContent}</div>
@@ -2796,6 +3154,9 @@ class ReportManager {
 }
 
 
+
+
+
 // Lost Books Management
 class LostBooksManager {
     constructor() {
@@ -2975,7 +3336,7 @@ class LostBooksManager {
                 }
 
                 await Swal.fire({
-                    icon: 'success',
+                    icon: 'warning',
                     title: 'Deleted!',
                     text: 'The lost book record has been deleted.',
                     timer: 2000,
