@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f8fafc;
+        }
+        [data-filter-field] {
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        [data-filter-field]:hover {
+            background-color: #f1f5f9;
+            transform: translateX(4px);
+        }
+        .pagination-btn {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .pagination-btn:hover {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .pagination-btn.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .student-image {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .modal-student-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        tr.cursor-pointer:not(.no-hover) td:not(.action-buttons) {
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        tr.cursor-pointer:not(.no-hover):hover td:not(.action-buttons) {
+            background-color: #dbeafe !important;
+            transform: scale(1.01);
+        }
+        .action-buttons {
+            background-color: transparent !important;
+            transform: none !important;
+        }
+        .chart-container {
+            max-height: 200px;
+            margin-bottom: 1rem;
+        }
+        .grade-toggle-btn, .export-btn {
+            padding: 4px 8px;
+            margin: 0 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .grade-toggle-btn.active, .export-btn:hover {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .grade-toggle-btn:hover, .export-btn:hover {
+            background-color: #dbeafe;
+        }
+    </style>
+  
+</head>
+<body class="bg-gray-100">
+    <div id="loader" class="fixed inset-0 flex items-center justify-center z-500 bg-white/40 backdrop-blur-md">
+        <div class="relative h-16 w-16">
+            <div class="absolute inset-0 rounded-full border-4 border-gray-200"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-t-blue-500 border-r-red-500 border-b-yellow-500 border-l-green-500 animate-spin"></div>
+        </div>
+    </div>
+
+    <div class="w-full mx-auto p-4 md:p-8">
+        <header class="flex justify-between items-center mb-6">
+           <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 p-4">
+  <img src="./logo.png" alt="School Logo" class="w-20 h-20 md:w-28 md:h-28 object-contain">
+
+  <div class="text-center md:text-left">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+      STUDENTS DATA DASHBOARD RTD F
+    </h1>
+    <p class="text-gray-500 text-sm md:text-base">
+      Manage and analyze student information efficiently.
+    </p>
+  </div>
+</div>
+
+            <div class="flex flex-wrap items-center space-x-4">
+                <span id="user-id-display" class="text-sm text-gray-600"></span>
+                <button id="sign-out-btn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 shadow-sm">
+                    Sign Out
+                </button>
+            </div>
+        </header>
+
+        <div id="sign-in-section" class="hidden">
+            <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
+                <h2 class="text-2xl font-semibold mb-4">Please Sign In</h2>
+                <div class="space-y-4">
+                    <button id="sign-in-google-btn" class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Sign in with Google
+                    </button>
+                    <button id="sign-in-fingerprint-btn" class="w-full py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                        Sign in with Fingerprint
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <main id="data-section" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+
+<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+</button>
+
+<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
+    <div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full transform">
+        </div>
+</div>
+
+
+
+                <section id="excel-upload-section" class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Upload Excel File</h2>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <label for="file-input" class="cursor-pointer text-blue-600 hover:text-blue-800">
+                            <span>Drag & drop or click to upload</span>
+                            <input id="file-input" type="file" class="hidden" accept=".xlsx, .xls">
+                        </label>
+                    </div>
+                    <span class="text-sm text-gray-500 text-center">First column (A1) in your excel file must be "Assessment No"</span>
+
+                    <p id="status-message" class="mt-4 text-center hidden"></p>
+                </section>
+
+                <section id="manual-entry-section" class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Add Student Manually</h2>
+                    <form id="manual-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" name="assessmentNo" placeholder="Assessment No (Required)" required class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="text" name="studentName" placeholder="Official Student Name" class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="text" name="studentClass" placeholder="Class" class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="text" name="studentGrade" placeholder="Grade" class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div id="custom-fields-container"></div>
+                        <div class="flex justify-between items-center">
+                            <button type="button" id="add-field-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">Add Custom Field</button>
+                            <button type="submit" class="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition">Add Student</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <section id="stats-section" class="mb-8">
+            </section>
+
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                    <h2 class="text-xl font-semibold text-gray-700">Student Records</h2>
+
+                    
+                    <div class="flex flex-row items-center justify-between mt-4 mx-4">
+                        <div class="flex items-center space-x-2">
+                            <label for="students-per-page" class="text-sm text-gray-600">Students per page:</label>
+                            <select id="students-per-page" class="p-2 border border-gray-300 rounded-md">
+                                <option value="10">10</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                                <option value="300">300</option>
+                                <option value="400">400</option>
+                                <option value="500">500</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 w-full md:w-auto">
+                        <input id="search-input" type="text" placeholder="Search anything..." class="p-2 border border-gray-300 rounded-md w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="grade-filter-select" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Grades</option>
+                        </select>
+                        <button id="print-all-btn" class="hidden px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">Print All</button>
+                        <button id="print-grade-btn" class="hidden px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">Print Grade</button>
+                    </div>
+                    <button id="delete-grade-btn" class="hidden p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-300">
+   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" />
+    </svg>
+    </button>
+
+                <button id="delete-selected-btn" class="hidden px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block -mt-1 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete Selected
+                </button>
+                </div>
+                <div id="data-display" class="overflow-x-auto">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="message-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <p id="modal-text" class="text-center text-gray-700 mb-4"></p>
+            <button id="close-modal-btn" class="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">OK</button>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 class="text-lg font-semibold mb-4 text-center">Confirm Deletion</h3>
+            <p id="confirm-modal-text" class="text-center text-gray-700 mb-6"></p>
+            <div class="flex justify-center space-x-4">
+                <button id="confirm-delete-btn" class="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition">Delete</button>
+                <button id="cancel-delete-btn" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="print-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 class="text-lg font-semibold mb-4 text-center">Choose Export Format</h3>
+            <div class="flex justify-around">
+                <button id="print-excel-btn" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Excel</button>
+                <button id="print-pdf-btn" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">PDF</button>
+                <button id="print-word-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Word</button>
+            </div>
+            <button id="close-print-modal-btn" class="mt-6 w-full py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancel</button>
+        </div>
+    </div>
+
+    <div id="pdf-modal-backdrop" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center space-x-4">
+                    <img id="pdf-modal-student-image" class="modal-student-image" src="" alt="Student Image">
+                    <h3 id="pdf-modal-student-name" class="text-lg font-semibold text-gray-700"></h3>
+                    <h2 class="text-lg font-semibold text-gray-700">Birth Certificate</h2>
+                </div>
+                <button id="close-pdf-modal-btn" class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <iframe id="pdf-iframe" class="flex-1 w-full rounded-lg" src=""></iframe>
+        </div>
+    </div>
+          <script src="./Students-hamburger.js" ></script>
+
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getDatabase, ref, set, onValue, remove, update,get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const sanitizedAppId = appId.replace(/\./g, '_');
+        const customFirebaseConfig = {
+            apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+            authDomain: "kanyadet-school-admin.firebaseapp.com",
+            projectId: "kanyadet-school-admin",
+            databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com",
+            storageBucket: "kanyadet-school-admin.firebasestorage.app",
+            messagingSenderId: "409708360032",
+            appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+            measurementId: "G-Y4C0ZRRL52"
+        };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : customFirebaseConfig;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth, userId = null;
+        let studentsData = [];
+        let currentPage = 1;
+        let studentsPerPage = 10;
+        let selectedStudentIds = new Set(); // New Set to track selected student IDs
+
+        const deleteGradeBtn = document.getElementById('delete-grade-btn');
+        const studentsPerPageSelect = document.getElementById('students-per-page');
+        const fileInput = document.getElementById('file-input');
+        const manualForm = document.getElementById('manual-form');
+        const addFieldBtn = document.getElementById('add-field-btn');
+        const customFieldsContainer = document.getElementById('custom-fields-container');
+        const dataDisplay = document.getElementById('data-display');
+        const statusMessage = document.getElementById('status-message');
+        const modal = document.getElementById('message-modal');
+        const modalText = document.getElementById('modal-text');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const loader = document.getElementById('loader');
+        const signInSection = document.getElementById('sign-in-section');
+        const dataSection = document.getElementById('data-section');
+        const signInGoogleBtn = document.getElementById('sign-in-google-btn');
+        const signInFingerprintBtn = document.getElementById('sign-in-fingerprint-btn');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const excelUploadSection = document.getElementById('excel-upload-section');
+        const manualEntrySection = document.getElementById('manual-entry-section');
+        const printAllBtn = document.getElementById('print-all-btn');
+        const gradeFilterSelect = document.getElementById('grade-filter-select');
+        const printGradeBtn = document.getElementById('print-grade-btn');
+        const printModal = document.getElementById('print-modal');
+        const closePrintModalBtn = document.getElementById('close-print-modal-btn');
+        const printExcelBtn = document.getElementById('print-excel-btn');
+        const printWordBtn = document.getElementById('print-word-btn');
+        const printPdfBtn = document.getElementById('print-pdf-btn');
+        const searchInput = document.getElementById('search-input');
+        const statsSection = document.getElementById('stats-section');
+        const pdfModalBackdrop = document.getElementById('pdf-modal-backdrop');
+        const pdfIframe = document.getElementById('pdf-iframe');
+        const closePdfModalBtn = document.getElementById('close-pdf-modal-btn');
+        const pdfModalStudentImage = document.getElementById('pdf-modal-student-image');
+        const pdfModalStudentName = document.getElementById('pdf-modal-student-name');
+
+        const deleteSelectedBtn = document.getElementById('delete-selected-btn');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmModalText = document.getElementById('confirm-modal-text');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+
+
+        const showModal = (message) => {
+            modalText.textContent = message;
+            modal.classList.remove('hidden');
+        };
+
+        studentsPerPageSelect.addEventListener('change', (e) => {
+            studentsPerPage = parseInt(e.target.value);
+            currentPage = 1;
+            const selectedGrade = gradeFilterSelect.value;
+            const searchTerm = searchInput.value;
+
+            if (selectedGrade) {
+                const filteredStudents = studentsData.filter(student => student.Grade === selectedGrade);
+                renderStudents(filteredStudents, { field: 'Grade', value: selectedGrade });
+            } else if (searchTerm) {
+                const searchTermLower = searchTerm.toLowerCase();
+                const filteredStudents = studentsData.filter(student => 
+                    Object.values(student).some(value => 
+                        String(value).toLowerCase().includes(searchTermLower)
+                    )
+                );
+                renderStudents(filteredStudents, { field: 'Search', value: searchTerm });
+            } else {
+                renderStudents(studentsData);
+            }
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        printAllBtn.addEventListener('click', () => {
+            gradeFilterSelect.value = '';
+            printModal.classList.remove('hidden');
+        });
+
+        printGradeBtn.addEventListener('click', () => {
+            printModal.classList.remove('hidden');
+        });
+
+        closePrintModalBtn.addEventListener('click', () => {
+            printModal.classList.add('hidden');
+        });
+
+        closePdfModalBtn.addEventListener('click', () => {
+            pdfModalBackdrop.classList.add('hidden');
+            pdfModalBackdrop.classList.remove('flex');
+            pdfIframe.src = '';
+            pdfModalStudentImage.src = '';
+            pdfModalStudentName.textContent = '';
+        });
+
+        const signInWithGoogle = async () => {
+            try {
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Error during Google sign-in:", error);
+                showModal(`Failed to sign in with Google: ${error.message}`);
+            }
+        };
+
+        const signInWithFingerprint = async () => {
+            if (!window.PublicKeyCredential) {
+                showModal("Fingerprint authentication not supported on this device or browser.");
+                return;
+            }
+            try {
+                const challenge = new Uint8Array(32);
+                window.crypto.getRandomValues(challenge);
+
+                let credential;
+                try {
+                    credential = await navigator.credentials.get({
+                        publicKey: {
+                            challenge: challenge,
+                            rpId: window.location.hostname,
+                            userVerification: 'required',
+                        }
+                    });
+                } catch (e) {
+                    credential = await navigator.credentials.create({
+                        publicKey: {
+                            challenge: challenge,
+                            rp: {
+                                name: "Student Data Uploader",
+                                id: window.location.hostname,
+                            },
+                            user: {
+                                id: new Uint8Array(16),
+                                name: "webauthn-user",
+                                displayName: "WebAuthn User",
+                            },
+                            pubKeyCredParams: [{
+                                type: "public-key",
+                                alg: -7
+                            }],
+                            timeout: 60000,
+                            attestation: "direct"
+                        }
+                    });
+                }
+                showModal("Successfully authenticated with fingerprint!");
+                const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+                await signInWithCustomToken(auth, credentialId);
+            } catch (error) {
+                console.error("Error during fingerprint sign-in:", error);
+                showModal(`Fingerprint authentication failed: ${error.message}`);
+            }
+        };
+
+        const signOutUser = async () => {
+            try {
+                await signOut(auth);
+                showModal("You have been signed out.");
+            } catch (error) {
+                console.error("Error during sign-out:", error);
+                showModal("Failed to sign out. Check console for details.");
+            }
+        };
+
+        if (signInGoogleBtn) {
+            signInGoogleBtn.addEventListener('click', signInWithGoogle);
+        }
+        if (signInFingerprintBtn) {
+            signInFingerprintBtn.addEventListener('click', signInWithFingerprint);
+        }
+        signOutBtn.addEventListener('click', signOutUser);
+
+        const setupFirebase = async () => {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getDatabase(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Authenticated with user ID:", userId);
+                        const email = user.email;
+                        let username = email.split("@")[0];
+                        username = username.replace(/[^a-zA-Z]/g, "");
+                        let spacedName = username.replace(/([a-z])([A-Z])/g, '$1 $2');
+                        spacedName = spacedName.replace(/\b\w/g, char => char.toUpperCase());
+                        userIdDisplay.textContent = `${spacedName}`;
+
+                        if (user.photoURL) {
+                            const userImg = document.createElement("img");
+                            userImg.src = user.photoURL;
+                            userImg.alt = "User profile picture";
+                            userImg.style.width = "50px";
+                            userImg.style.height = "50px";
+                            userImg.style.borderRadius = "50%";
+                            userIdDisplay.insertAdjacentElement("beforebegin", userImg);
+                        }
+
+                        signInSection.classList.add('hidden');
+                        dataSection.classList.remove('hidden');
+
+                        const studentsRef = ref(db, `artifacts/${sanitizedAppId}/students`);
+                        onValue(studentsRef, (snapshot) => {
+                            const students = [];
+                            const data = snapshot.val();
+                            if (data) {
+                                for (let key in data) {
+                                    students.push({ id: key, ...data[key] });
+                                }
+                            }
+                            students.sort((a, b) => {
+                                const assessmentNoA = parseFloat(a['Assessment No']) || Infinity;
+                                const assessmentNoB = parseFloat(b['Assessment No']) || Infinity;
+                                return assessmentNoA - assessmentNoB;
+                            });
+                            studentsData = students;
+                            currentPage = 1;
+                            populateFilters(students);
+                            renderStudents(students);
+                            loader.classList.add('hidden');
+                        }, (error) => {
+                            console.error("Error fetching students:", error);
+                            showModal(`Error fetching data: ${error.message}`);
+                            loader.classList.add('hidden');
+                        });
+                    } else {
+                        userId = null;
+                        userIdDisplay.textContent = `User ID: Not Signed In`;
+                        signInSection.classList.remove('hidden');
+                        dataSection.classList.add('hidden');
+                        loader.classList.add('hidden');
+                        dataDisplay.innerHTML = '';
+                    }
+                });
+            } catch (e) {
+                console.error("Error setting up Firebase: ", e);
+                showModal(`Failed to initialize application. Check console for details.`);
+                loader.classList.add('hidden');
+            }
+        };
+
+        const populateFilters = (students) => {
+            const grades = new Set();
+            students.forEach(student => {
+                if (student.Grade) {
+                    grades.add(student.Grade);
+                }
+            });
+            
+            gradeFilterSelect.innerHTML = '<option value="">All Grades</option>';
+            const sortedGrades = Array.from(grades).sort();
+            sortedGrades.forEach(gradeName => {
+                const option = document.createElement('option');
+                option.value = gradeName;
+                option.textContent = gradeName;
+                gradeFilterSelect.appendChild(option);
+            });
+            
+            if (students.length > 0) {
+                printAllBtn.classList.remove('hidden');
+            } else {
+                printAllBtn.classList.add('hidden');
+            }
+        };
+
+      // Update the gradeFilterSelect event listener to show the delete button
+gradeFilterSelect.addEventListener('change', () => {
+    const selectedGrade = gradeFilterSelect.value;
+    searchInput.value = '';
+    currentPage = 1;
+    if (selectedGrade) {
+        const filteredStudents = studentsData.filter(student => student.Grade === selectedGrade);
+        renderStudents(filteredStudents, { field: 'Grade', value: selectedGrade });
+        printGradeBtn.classList.remove('hidden');
+        deleteGradeBtn.classList.remove('hidden'); // Show the delete button
+    } else {
+        renderStudents(studentsData);
+        printGradeBtn.classList.add('hidden');
+        deleteGradeBtn.classList.add('hidden'); // Hide the delete button
+    }
+});
+
+        const readFileAsArrayBuffer = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(e);
+                reader.readAsArrayBuffer(file);
+            });
+        };
+
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            statusMessage.textContent = 'Processing file...';
+            statusMessage.classList.remove('hidden');
+            loader.classList.remove('hidden');
+
+            try {
+                const data = await readFileAsArrayBuffer(file);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                if (jsonRows.length < 2) {
+                    throw new Error("File must contain a header row and at least one data row.");
+                }
+
+                const headers = jsonRows[0].map(h => String(h).trim());
+                const studentData = jsonRows.slice(1);
+
+                if (!headers.includes("Assessment No")) {
+                    throw new Error("Excel file must have a column titled 'Assessment No'.");
+                }
+                const assessmentNoIndex = headers.indexOf("Assessment No");
+
+                const studentsRef = ref(db, `artifacts/${sanitizedAppId}/students`);
+                for (const row of studentData) {
+                    const assessmentNo = row[assessmentNoIndex];
+                    if (!assessmentNo) {
+                        console.warn("Skipping row with missing 'Assessment No'.");
+                        continue;
+                    }
+                    const studentDocKey = String(assessmentNo);
+                    const studentObj = {};
+                    headers.forEach((header, index) => {
+                        studentObj[header] = row[index];
+                    });
+                    await set(ref(db, `artifacts/${sanitizedAppId}/students/${studentDocKey}`), studentObj);
+                }
+
+                statusMessage.textContent = 'Data uploaded successfully!';
+                statusMessage.classList.remove('hidden');
+                setTimeout(() => statusMessage.classList.add('hidden'), 3000);
+            } catch (error) {
+                console.error("Error processing file:", error);
+                statusMessage.textContent = `Error: ${error.message}`;
+                statusMessage.classList.add('text-red-600');
+            } finally {
+                loader.classList.add('hidden');
+            }
+        });
+        
+        // Manual entry form submission
+        manualForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(manualForm);
+            const studentObj = {};
+            for (const [key, value] of formData.entries()) {
+                if (key === 'assessmentNo') {
+                    studentObj['Assessment No'] = value;
+                } else if (key === 'studentName') {
+                    studentObj['Official Student Name'] = value;
+                } else if (key === 'studentClass') {
+                    studentObj['Class'] = value;
+                } else if (key === 'studentGrade') {
+                    studentObj['Grade'] = value;
+                } else {
+                    studentObj[key] = value;
+                }
+            }
+
+            if (!studentObj['Assessment No']) {
+                showModal("Assessment No is required.");
+                return;
+            }
+
+            loader.classList.remove('hidden');
+            try {
+                const studentRef = ref(db, `artifacts/${sanitizedAppId}/students/${studentObj['Assessment No']}`);
+                await set(studentRef, studentObj);
+                manualForm.reset();
+                customFieldsContainer.innerHTML = '';
+                showModal("Student added successfully!");
+            } catch (error) {
+                console.error("Error adding student:", error);
+                showModal(`Failed to add student: ${error.message}`);
+            } finally {
+                loader.classList.add('hidden');
+            }
+        });
+        
+        addFieldBtn.addEventListener('click', () => {
+            const fieldGroup = document.createElement('div');
+            fieldGroup.className = 'flex space-x-2 items-center mb-2';
+            fieldGroup.innerHTML = `
+                <input type="text" placeholder="Field Name" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2">
+                <input type="text" placeholder="Value" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2">
+                <button type="button" class="remove-field-btn px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition">Remove</button>
+            `;
+            customFieldsContainer.appendChild(fieldGroup);
+            const newFieldInputs = fieldGroup.querySelectorAll('input');
+            const removeBtn = fieldGroup.querySelector('.remove-field-btn');
+            
+            newFieldInputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    const fieldName = newFieldInputs[0].value;
+                    const fieldValue = newFieldInputs[1].value;
+                    if (fieldName) {
+                        newFieldInputs[1].name = fieldName;
+                    }
+                });
+            });
+
+            removeBtn.addEventListener('click', () => {
+                fieldGroup.remove();
+            });
+        });
+
+        // Delete all students in the current grade
+        deleteGradeBtn.addEventListener('click', () => {
+            const selectedGrade = gradeFilterSelect.value;
+            if (!selectedGrade) {
+                showModal("Please select a grade to delete.");
+                return;
+            }
+            if (confirm(`Are you sure you want to delete all students in grade "${selectedGrade}"? This action cannot be undone.`)) {
+                const studentsToDelete = studentsData.filter(student => student.Grade === selectedGrade);
+                const deletePromises = studentsToDelete.map(student => 
+                    remove(ref(db, `artifacts/${sanitizedAppId}/students/${student.id}`))
+                );
+                Promise.all(deletePromises)
+                    .then(() => showModal(`Successfully deleted all students in grade "${selectedGrade}".`))
+                    .catch(error => {
+                        console.error("Error deleting students:", error);
+                        showModal(`Failed to delete students: ${error.message}`);
+                    });
+            }
+        });
+
+        // Function to update the state of the "Delete Selected" button
+        const updateDeleteButtonState = () => {
+            if (selectedStudentIds.size > 0) {
+                deleteSelectedBtn.classList.remove('hidden');
+            } else {
+                deleteSelectedBtn.classList.add('hidden');
+            }
+        };
+
+        // Main function to render the student table
+        const renderStudents = (students) => {
+            selectedStudentIds.clear(); // Clear selections on new render
+            updateDeleteButtonState();
+            
+            const start = (currentPage - 1) * studentsPerPage;
+            const end = start + studentsPerPage;
+            const studentsToDisplay = students.slice(start, end);
+
+            if (students.length === 0) {
+                dataDisplay.innerHTML = '<p class="text-center text-gray-500">No student records found.</p>';
+                return;
+            }
+
+            const headers = Object.keys(students[0]).filter(key => key !== 'id');
+            const tableHeaders = ['Select', ...headers, 'Actions']; // Add Select to the header
+
+            let tableHTML = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <input type="checkbox" id="master-checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            </th>
+            `;
+            tableHeaders.slice(1).forEach(header => {
+                tableHTML += `<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${header}</th>`;
+            });
+            tableHTML += `</tr></thead><tbody class="bg-white divide-y divide-gray-200">`;
+
+            studentsToDisplay.forEach(student => {
+                tableHTML += `<tr data-student-id="${student.id}" class="hover:bg-gray-50">`;
+                tableHTML += `<td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="student-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" data-id="${student.id}" ${selectedStudentIds.has(student.id) ? 'checked' : ''}></td>`;
+                headers.forEach(header => {
+                    const value = student[header] !== undefined && student[header] !== null ? student[header] : 'N/A';
+                    tableHTML += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${value}</td>`;
+                });
+                tableHTML += `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-indigo-600 hover:text-indigo-900 mx-2 edit-btn" data-id="${student.id}">Edit</button>
+                        <button class="text-red-600 hover:text-red-900 delete-btn" data-id="${student.id}">Delete</button>
+                    </td>
+                </tr>`;
+            });
+            tableHTML += `</tbody></table>`;
+            dataDisplay.innerHTML = tableHTML;
+            addPaginationControls(students.length);
+            addEventListeners();
+        };
+
+        const addEventListeners = () => {
+            // Master checkbox event listener
+            const masterCheckbox = document.getElementById('master-checkbox');
+            if (masterCheckbox) {
+                masterCheckbox.addEventListener('change', (e) => {
+                    const isChecked = e.target.checked;
+                    const studentCheckboxes = document.querySelectorAll('.student-checkbox');
+                    studentCheckboxes.forEach(checkbox => {
+                        checkbox.checked = isChecked;
+                        const studentId = checkbox.dataset.id;
+                        if (isChecked) {
+                            selectedStudentIds.add(studentId);
+                        } else {
+                            selectedStudentIds.delete(studentId);
+                        }
+                    });
+                    updateDeleteButtonState();
+                });
+            }
+
+            // Individual student checkbox event listener
+            document.querySelectorAll('.student-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const studentId = e.target.dataset.id;
+                    if (e.target.checked) {
+                        selectedStudentIds.add(studentId);
+                    } else {
+                        selectedStudentIds.delete(studentId);
+                    }
+                    updateDeleteButtonState();
+                    const allCheckboxes = document.querySelectorAll('.student-checkbox');
+                    const isAllChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+                    if (masterCheckbox) {
+                        masterCheckbox.checked = isAllChecked;
+                    }
+                });
+            });
+
+            // Delete Selected button event listener
+            deleteSelectedBtn.addEventListener('click', () => {
+                if (selectedStudentIds.size === 0) {
+                    showModal("No students selected for deletion.");
+                    return;
+                }
+                confirmModalText.textContent = `Are you sure you want to delete ${selectedStudentIds.size} selected student(s)? This action cannot be undone.`;
+                confirmModal.classList.remove('hidden');
+            });
+
+            // Confirm delete button listener
+            confirmDeleteBtn.addEventListener('click', async () => {
+                confirmModal.classList.add('hidden');
+                loader.classList.remove('hidden');
+                
+                const deletePromises = Array.from(selectedStudentIds).map(id => {
+                    return remove(ref(db, `artifacts/${sanitizedAppId}/students/${id}`));
+                });
+
+                try {
+                    await Promise.all(deletePromises);
+                    showModal(`Successfully deleted ${selectedStudentIds.size} student(s).`);
+                    selectedStudentIds.clear();
+                    updateDeleteButtonState();
+                } catch (error) {
+                    console.error("Error deleting selected students:", error);
+                    showModal(`Failed to delete selected students: ${error.message}`);
+                } finally {
+                    loader.classList.add('hidden');
+                }
+            });
+
+            // Cancel delete button listener
+            cancelDeleteBtn.addEventListener('click', () => {
+                confirmModal.classList.add('hidden');
+            });
+
+
+            // Existing edit/delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.dataset.id;
+                    const studentToEdit = studentsData.find(s => s.id === id);
+                    if (studentToEdit) {
+                        // Implement edit logic here (e.g., populate a modal form)
+                        console.log('Edit student:', studentToEdit);
+                        showModal(`Editing student with ID: ${id}`);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.dataset.id;
+                    if (confirm("Are you sure you want to delete this student?")) {
+                        loader.classList.remove('hidden');
+                        remove(ref(db, `artifacts/${sanitizedAppId}/students/${id}`))
+                            .then(() => showModal("Student deleted successfully!"))
+                            .catch(error => {
+                                console.error("Error deleting student:", error);
+                                showModal(`Failed to delete student: ${error.message}`);
+                            })
+                            .finally(() => loader.classList.add('hidden'));
+                    }
+                });
+            });
+        };
+
+        const addPaginationControls = (totalStudents) => {
+            const totalPages = Math.ceil(totalStudents / studentsPerPage);
+            const paginationContainer = document.createElement('div');
+            paginationContainer.className = 'flex justify-center mt-4';
+            paginationContainer.innerHTML = `
+                <button id="prev-btn" class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+                <div id="page-numbers" class="flex items-center mx-2"></div>
+                <button id="next-btn" class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+            `;
+            
+            dataDisplay.appendChild(paginationContainer);
+            
+            const pageNumbersContainer = document.getElementById('page-numbers');
+            const maxPageButtons = 5;
+            let startPage, endPage;
+
+            if (totalPages <= maxPageButtons) {
+                startPage = 1;
+                endPage = totalPages;
+            } else {
+                startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+                endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+                if (endPage === totalPages) {
+                    startPage = Math.max(1, endPage - maxPageButtons + 1);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    const selectedGrade = gradeFilterSelect.value;
+                    const searchTerm = searchInput.value;
+                    let studentsToRender = studentsData;
+                    if (selectedGrade) {
+                        studentsToRender = studentsData.filter(student => student.Grade === selectedGrade);
+                    } else if (searchTerm) {
+                        const searchTermLower = searchTerm.toLowerCase();
+                        studentsToRender = studentsData.filter(student =>
+                            Object.values(student).some(value =>
+                                String(value).toLowerCase().includes(searchTermLower)
+                            )
+                        );
+                    }
+                    renderStudents(studentsToRender);
+                });
+                pageNumbersContainer.appendChild(pageBtn);
+            }
+
+            document.getElementById('prev-btn').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    const selectedGrade = gradeFilterSelect.value;
+                    const searchTerm = searchInput.value;
+                    let studentsToRender = studentsData;
+                    if (selectedGrade) {
+                        studentsToRender = studentsData.filter(student => student.Grade === selectedGrade);
+                    } else if (searchTerm) {
+                        const searchTermLower = searchTerm.toLowerCase();
+                        studentsToRender = studentsData.filter(student =>
+                            Object.values(student).some(value =>
+                                String(value).toLowerCase().includes(searchTermLower)
+                            )
+                        );
+                    }
+                    renderStudents(studentsToRender);
+                }
+            });
+            
+            document.getElementById('next-btn').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    const selectedGrade = gradeFilterSelect.value;
+                    const searchTerm = searchInput.value;
+                    let studentsToRender = studentsData;
+                    if (selectedGrade) {
+                        studentsToRender = studentsData.filter(student => student.Grade === selectedGrade);
+                    } else if (searchTerm) {
+                        const searchTermLower = searchTerm.toLowerCase();
+                        studentsToRender = studentsData.filter(student =>
+                            Object.values(student).some(value =>
+                                String(value).toLowerCase().includes(searchTermLower)
+                            )
+                        );
+                    }
+                    renderStudents(studentsToRender);
+                }
+            });
+        };
+
+        setupFirebase();
+    </script>
+</body>
+</html>

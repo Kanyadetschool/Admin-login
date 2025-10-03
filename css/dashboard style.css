@@ -49,6 +49,21 @@ body {
 }
 
 
+
+.bx-menu {
+  position: fixed;
+  top: 5px;
+  left: 10px;
+  font-size: 24px;   /* adjust size as needed */
+  cursor: pointer;
+   z-index: 2147483647; /* 🔥 max safe z-index in browsers */
+  background: white; /* optional: makes it stand out */
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* optional shadow */
+}
+
+
 .logo{
 	width: 40px;
 }
@@ -203,7 +218,6 @@ body {
 	position: sticky;
 	top: 0;
 	left: 0;
-	z-index: 1000;
 }
 #content nav::before {
 	content: '';
@@ -220,7 +234,7 @@ body {
 }
 #content nav .bx.bx-menu {
 	cursor: pointer;
-	color: var(--dark);
+	color: red;
 }
 #content nav .nav-link {
 	font-size: 16px;
@@ -374,7 +388,7 @@ body {
 
 #content main .box-info {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 	grid-gap: 24px;
 	margin-top: 36px;
 }

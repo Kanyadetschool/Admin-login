@@ -1,0 +1,3158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Birth Certificate Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#1D4ED8',
+                            dark: '#3B82F6',
+                        },
+                        secondary: {
+                            DEFAULT: '#6B7280',
+                            dark: '#9CA3AF',
+                        },
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideIn: {
+                            '0%': { opacity: '0', transform: 'translateX(10px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .sortable:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        .highlight {
+            background-color: #fef3c7;
+            color: #92400e;
+            font-weight: bold;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .dark .highlight {
+            background-color: #f59e0b;
+            color: #92400e;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 4px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .table {
+            min-width: 800px;
+        }
+        .modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        @media (max-width: 640px) {
+            .table {
+                min-width: 600px;
+            }
+            .modal-content {
+                max-height: 70vh;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen font-sans transition-colors duration-300">
+    <!-- Toast Container -->
+    <div id="toast-container" class="z-50"></div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl flex items-center space-x-3">
+            <div class="loading-spinner"></div>
+            <span class="text-gray-700 dark:text-gray-300">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Authentication Container -->
+    <div id="auth-container" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 space-y-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Student Management System</h1>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Sign in or create an account to manage student records</p>
+            </div>
+            <form id="auth-form" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" id="email" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200" placeholder="Enter your email">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                    <input type="password" id="password" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200" placeholder="Enter your password">
+                </div>
+                <button id="signin-btn" type="submit" class="w-full bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-primary text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                    Sign In
+                </button>
+            </form>
+            <div class="text-center">
+                <a id="signup-link" href="#" class="text-primary dark:text-primary-dark hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition-colors duration-200">
+                    Don't have an account? Sign up here
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="main-app-container" class="hidden min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Student Birth Certificate Manager</h1>
+                        <span id="user-id" class="text-sm text-secondary dark:text-secondary-dark bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">Anonymous</span>
+                        <span id="user-profile" class="text-sm text-secondary dark:text-secondary-dark bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full"></span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="profile-settings-btn" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200" title="Profile Settings" aria-label="Profile settings">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m0 14v1m-8-8h1m14 0h1m-7-7l1 1m-2 10l1-1m7-7l-1-1m-2 10l-1 1" />
+                            </svg>
+                        </button>
+                        <button id="dark-mode-toggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                            <svg id="dark-mode-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                            </svg>
+                        </button>
+                        <button id="sign-out-btn" class="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Controls Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Search and Filters -->
+                <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Search & Filters</h2>
+                    <div class="space-y-6">
+                        <!-- Search Controls -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <select id="search-type" class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                                <option value="name">Student Name</option>
+                                <option value="assessmentNo">Assessment No</option>
+                                <option value="upi">UPI</option>
+                            </select>
+                            <input type="text" id="search-input" placeholder="Enter search term" class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                            <button id="search-btn" class="px-4 py-3 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-primary text-white font-semibold rounded-lg shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                                Search
+                            </button>
+                        </div>
+                        <!-- Live Filter -->
+                        <div class="flex gap-3">
+                            <input type="text" id="live-filter" placeholder="Live filter..." class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                            <button id="clear-filter" class="px-4 py-3 bg-secondary hover:bg-gray-700 dark:bg-secondary-dark dark:hover:bg-gray-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                                Clear
+                            </button>
+                        </div>
+                        <!-- Filter Buttons -->
+                        <div class="flex flex-wrap gap-3">
+                            <button id="show-all" class="filter-btn px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary hover:text-white active:bg-primary active:text-white">All</button>
+                            <button id="show-with-pdf" class="filter-btn px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary hover:text-white">With PDF</button>
+                            <button id="show-without-pdf" class="filter-btn px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary hover:text-white">Without PDF</button>
+                            <button id="show-recent" class="filter-btn px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary hover:text-white">Recent (Last 30 Days)</button>
+                        </div>
+                        <!-- Grade and Date Filters -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label for="grade-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Grade</label>
+                                <select id="grade-filter" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                                    <option value="all">All Grades</option>
+                                    <option value="Grade 1">Grade 1</option>
+                                    <option value="Grade 2">Grade 2</option>
+                                    <option value="Grade 3">Grade 3</option>
+                                    <option value="Grade 4">Grade 4</option>
+                                    <option value="Grade 5">Grade 5</option>
+                                    <option value="Grade 6">Grade 6</option>
+                                    <option value="Grade 7">Grade 7</option>
+                                    <option value="Grade 8">Grade 8</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="date-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Date Added</label>
+                                <input type="date" id="date-filter" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Statistics -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Statistics</h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Total Students</span>
+                            <span id="total-count" class="text-lg font-bold text-gray-900 dark:text-white">0</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-green-100 dark:bg-green-900/20 rounded-lg shadow-sm">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">With PDF</span>
+                            <span id="pdf-count" class="text-lg font-bold text-green-600 dark:text-green-400">0 (0%)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-red-100 dark:bg-red-900/20 rounded-lg shadow-sm">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Without PDF</span>
+                            <span id="no-pdf-count" class="text-lg font-bold text-red-600 dark:text-red-400">0 (0%)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-blue-100 dark:bg-blue-900/20 rounded-lg shadow-sm">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filtered</span>
+                            <span id="filtered-count" class="text-lg font-bold text-blue-600 dark:text-blue-400">0</span>
+                        </div>
+                    </div>
+                    <div id="grade-stats-container" class="mt-6 space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- Actions and Add Student -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
+                <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
+                    <div class="flex items-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
+                        <input type="checkbox" id="select-all" class="rounded border-gray-300 dark:border-gray-600 focus:ring-primary">
+                        <label for="select-all" class="font-medium">Select All</label>
+                        <span id="selected-count" class="ml-2">0 selected</span>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <button id="add-student-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Add Student
+                        </button>
+                        <button id="bulk-upload-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Bulk Upload
+                        </button>
+                        <button id="export-csv-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Export CSV
+                        </button>
+                        <button id="export-json-btn" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Export JSON
+                        </button>
+                        <button id="export-selected-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Export Selected
+                        </button>
+                        <button id="print-btn" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Print List
+                        </button>
+                        <button id="bulk-download-btn" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Download PDFs (ZIP)
+                        </button>
+                        <button id="batch-delete-btn" disabled class="px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Delete Selected
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm">
+                        <label for="items-per-page" class="text-gray-700 dark:text-gray-300 font-medium">Show:</label>
+                        <select id="items-per-page" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <input type="number" id="custom-items-per-page" min="1" max="100" class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Custom">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                <div class="table-container">
+                    <table class="table w-full">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-secondary dark:text-secondary-dark uppercase tracking-wider">
+                                    <input type="checkbox" id="select-all-header" class="rounded border-gray-300 dark:border-gray-600 focus:ring-primary">
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-secondary dark:text-secondary-dark uppercase tracking-wider sortable" data-column="name">
+                                    Student Name <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-secondary dark:text-secondary-dark uppercase tracking-wider sortable" data-column="assessmentNo">
+                                    Assessment No <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-secondary dark:text-secondary-dark uppercase tracking-wider sortable" data-column="upi">
+                                    UPI <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-secondary dark:text-secondary-dark uppercase tracking-wider sortable" data-column="grade">
+                                    Grade <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-secondary dark:text-secondary-dark uppercase tracking-wider sortable" data-column="dateAdded">
+                                    Date Added <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-secondary dark:text-secondary-dark uppercase tracking-wider">
+                                    PDF Status
+                                </th>
+                                <th class="px-6 py-4 text-right text-xs font-medium text-secondary dark:text-secondary-dark uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body" class="divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+                    </table>
+                </div>
+                <div id="no-students-message" class="hidden text-center py-12">
+                    <div class="text-gray-500 dark:text-gray-400">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No students</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">No student records found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-controls" class="hidden bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 mt-6 flex flex-col sm:flex-row items-center justify-between">
+                <div class="text-sm text-gray-700 dark:text-gray-300">
+                    Showing <span id="pagination-info">1</span> to <span id="pagination-info-end">10</span> of <span id="pagination-total">100</span> results
+                </div>
+                <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                    <button id="prev-page" disabled class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                        Previous
+                    </button>
+                    <div id="page-numbers" class="flex space-x-1"></div>
+                    <button id="next-page" disabled class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PDF Modal -->
+    <div id="pdf-modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-6xl w-full m-4 flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Birth Certificate</h3>
+                <button id="pdf-modal-close-btn" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <iframe id="pdf-iframe" class="flex-1 w-full border-0" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- Student Details/Edit Modal -->
+    <div id="student-details-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full m-4 modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Student Details</h3>
+                    <button id="student-details-close-btn" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="student-details-form" class="space-y-4">
+                    <div>
+                        <label for="edit-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Student Name</label>
+                        <input type="text" id="edit-name" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div>
+                        <label for="edit-assessmentNo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assessment No</label>
+                        <input type="text" id="edit-assessmentNo" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200" readonly>
+                    </div>
+                    <div>
+                        <label for="edit-upi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">UPI</label>
+                        <input type="text" id="edit-upi" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div>
+                        <label for="edit-grade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Grade</label>
+                        <select id="edit-grade" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                            <option value="Grade 1">Grade 1</option>
+                            <option value="Grade 2">Grade 2</option>
+                            <option value="Grade 3">Grade 3</option>
+                            <option value="Grade 4">Grade 4</option>
+                            <option value="Grade 5">Grade 5</option>
+                            <option value="Grade 6">Grade 6</option>
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-pdf-upload" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload PDF</label>
+                        <input type="file" id="edit-pdf-upload" accept=".pdf" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" id="edit-save-btn" class="px-4 py-2 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-primary text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Save
+                        </button>
+                        <button type="button" id="edit-cancel-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg shadow-md transition-all duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+                <div id="student-details-content" class="space-y-3 text-gray-700 dark:text-gray-300 hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="add-student-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full m-4 modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add New Student</h3>
+                    <button id="add-student-close-btn" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="add-student-form" class="space-y-4">
+                    <div>
+                        <label for="add-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Student Name</label>
+                        <input type="text" id="add-name" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div>
+                        <label for="add-assessmentNo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assessment No</label>
+                        <input type="text" id="add-assessmentNo" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div>
+                        <label for="add-upi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">UPI</label>
+                        <input type="text" id="add-upi" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div>
+                        <label for="add-grade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Grade</label>
+                        <select id="add-grade" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                            <option value="Grade 1">Grade 1</option>
+                            <option value="Grade 2">Grade 2</option>
+                            <option value="Grade 3">Grade 3</option>
+                            <option value="Grade 4">Grade 4</option>
+                            <option value="Grade 5">Grade 5</option>
+                            <option value="Grade 6">Grade 6</option>
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="add-pdf-upload" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload PDF</label>
+                        <input type="file" id="add-pdf-upload" accept=".pdf" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="submit" class="px-4 py-2 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-primary text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Add Student
+                        </button>
+                        <button type="button" id="add-cancel-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg shadow-md transition-all duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Upload Modal -->
+    <div id="bulk-upload-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full m-4 modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Bulk Upload Students</h3>
+                    <button id="bulk-upload-close-btn" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="bulk-upload-form" class="space-y-4">
+                    <div>
+                        <label for="bulk-upload-file" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload CSV</label>
+                        <input type="file" id="bulk-upload-file" accept=".csv" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="submit" class="px-4 py-2 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-primary text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Upload
+                        </button>
+                        <button type="button" id="bulk-upload-cancel-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg shadow-md transition-all duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Settings Modal -->
+    <div id="profile-settings-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full m-4 modal-content">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Profile Settings</h3>
+                    <button id="profile-settings-close-btn" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="profile-settings-form" class="space-y-4">
+                    <div>
+                        <label for="profile-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                        <input type="text" id="profile-name" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                    </div>
+                    <div>
+                        <label for="profile-role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
+                        <select id="profile-role" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white transition-colors duration-200">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="submit" class="px-4 py-2 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-primary text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                            Save
+                        </button>
+                        <button type="button" id="profile-settings-cancel-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg shadow-md transition-all duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Modal -->
+    <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full m-4">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modal-title" class="text-lg font-semibold text-gray-900 dark:text-white">Modal Title</h3>
+                    <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <p id="modal-message" class="text-gray-600 dark:text-gray-400"></p>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button id="modal-confirm-btn" class="px-4 py-2 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-primary text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+                        OK
+                    </button>
+                    <button id="modal-cancel-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark rounded-lg shadow-md transition-all duration-200">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    updateProfile
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+    getDatabase,
+    ref,
+    onValue,
+    set,
+    push,
+    update,
+    remove
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+// Firebase configuration
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+const customFirebaseConfig = {
+    apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+    authDomain: "kanyadet-school-admin.firebaseapp.com",
+    projectId: "kanyadet-school-admin",
+    databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com",
+    storageBucket: "kanyadet-school-admin.firebasestorage.app",
+    messagingSenderId: "409708360032",
+    appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+    measurementId: "G-Y4C0ZRRL52"
+};
+const mergedConfig = { ...customFirebaseConfig, ...firebaseConfig };
+const app = initializeApp(mergedConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app);
+
+// Global variables
+let userId = 'anonymous';
+let userEmail = '';
+let userRole = 'user';
+let userDisplayName = '';
+let allStudents = [];
+let filteredStudents = [];
+let currentPage = 1;
+let itemsPerPage = 10;
+let sortColumn = 'name';
+let sortDirection = 'asc';
+let currentFilter = 'all';
+let currentSearchTerm = '';
+let currentGrade = 'all';
+let currentDateFilter = '';
+let selectedStudents = new Set();
+let lastActivityTime = Date.now();
+const sanitizedAppId = appId.replace(/[.#$[\]]/g, '_');
+
+// UI elements
+const authContainer = document.getElementById('auth-container');
+const mainAppContainer = document.getElementById('main-app-container');
+const authForm = document.getElementById('auth-form');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const signinBtn = document.getElementById('signin-btn');
+const signupLink = document.getElementById('signup-link');
+const userIdEl = document.getElementById('user-id');
+const userProfileEl = document.getElementById('user-profile');
+const pdfModalBackdrop = document.getElementById('pdf-modal-backdrop');
+const pdfModalCloseBtn = document.getElementById('pdf-modal-close-btn');
+const pdfIframe = document.getElementById('pdf-iframe');
+const searchInput = document.getElementById('search-input');
+const searchTypeSelect = document.getElementById('search-type');
+const liveFilterInput = document.getElementById('live-filter');
+const studentTableBody = document.getElementById('student-table-body');
+const noStudentsMessage = document.getElementById('no-students-message');
+const paginationControls = document.getElementById('pagination-controls');
+const prevPageBtn = document.getElementById('prev-page');
+const nextPageBtn = document.getElementById('next-page');
+const pageNumbersDiv = document.getElementById('page-numbers');
+const gradeFilterSelect = document.getElementById('grade-filter');
+const dateFilterInput = document.getElementById('date-filter');
+const gradeStatsContainer = document.getElementById('grade-stats-container');
+const exportCsvBtn = document.getElementById('export-csv-btn');
+const exportJsonBtn = document.getElementById('export-json-btn');
+const exportSelectedBtn = document.getElementById('export-selected-btn');
+const printBtn = document.getElementById('print-btn');
+const bulkDownloadBtn = document.getElementById('bulk-download-btn');
+const batchDeleteBtn = document.getElementById('batch-delete-btn');
+const addStudentBtn = document.getElementById('add-student-btn');
+const bulkUploadBtn = document.getElementById('bulk-upload-btn');
+const studentDetailsModal = document.getElementById('student-details-modal');
+const studentDetailsForm = document.getElementById('student-details-form');
+const studentDetailsContent = document.getElementById('student-details-content');
+const studentDetailsCloseBtn = document.getElementById('student-details-close-btn');
+const editSaveBtn = document.getElementById('edit-save-btn');
+const editCancelBtn = document.getElementById('edit-cancel-btn');
+const addStudentModal = document.getElementById('add-student-modal');
+const addStudentForm = document.getElementById('add-student-form');
+const addStudentCloseBtn = document.getElementById('add-student-close-btn');
+const addCancelBtn = document.getElementById('add-cancel-btn');
+const bulkUploadModal = document.getElementById('bulk-upload-modal');
+const bulkUploadForm = document.getElementById('bulk-upload-form');
+const bulkUploadCloseBtn = document.getElementById('bulk-upload-close-btn');
+const bulkUploadCancelBtn = document.getElementById('bulk-upload-cancel-btn');
+const profileSettingsBtn = document.getElementById('profile-settings-btn');
+const profileSettingsModal = document.getElementById('profile-settings-modal');
+const profileSettingsForm = document.getElementById('profile-settings-form');
+const profileSettingsCloseBtn = document.getElementById('profile-settings-close-btn');
+const profileSettingsCancelBtn = document.getElementById('profile-settings-cancel-btn');
+const toastContainer = document.getElementById('toast-container');
+const loadingSpinner = document.getElementById('loading-spinner');
+const itemsPerPageSelect = document.getElementById('items-per-page');
+const customItemsPerPageInput = document.getElementById('custom-items-per-page');
+const modalBackdrop = document.getElementById('modal-backdrop');
+const modalTitle = document.getElementById('modal-title');
+const modalMessage = document.getElementById('modal-message');
+const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+const modalCloseBtn = document.getElementById('modal-close-btn');
+const modalCancelBtn = document.getElementById('modal-cancel-btn');
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const darkModeIcon = document.getElementById('dark-mode-icon');
+const signOutBtn = document.getElementById('sign-out-btn');
+const selectAllCheckbox = document.getElementById('select-all');
+const selectAllHeader = document.getElementById('select-all-header');
+const selectedCountEl = document.getElementById('selected-count');
+
+// Session timeout
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+function checkSessionTimeout() {
+    if (Date.now() - lastActivityTime > SESSION_TIMEOUT) {
+        signOut(auth).then(() => showToast("Session timed out. Please sign in again.", 'error'));
+    }
+}
+setInterval(checkSessionTimeout, 60000);
+
+// Update last activity
+document.addEventListener('click', () => { lastActivityTime = Date.now(); });
+document.addEventListener('keypress', () => { lastActivityTime = Date.now(); });
+
+// Toast notifications
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-500'} text-white px-4 py-3 rounded-lg shadow-lg mb-3 animate-slide-in`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+// Log errors to Firebase
+function logErrorToFirebase(error, context) {
+    const errorRef = ref(db, `errors/${sanitizedAppId}/${Date.now()}`);
+    set(errorRef, {
+        message: error.message,
+        stack: error.stack,
+        context: context,
+        timestamp: new Date().toISOString(),
+        userId: userId
+    });
+}
+
+// Log user actions
+function logUserAction(action, details) {
+    const actionRef = ref(db, `audit_log/${sanitizedAppId}/${Date.now()}`);
+    set(actionRef, {
+        userId: userId,
+        userEmail: userEmail,
+        action: action,
+        details: details,
+        timestamp: new Date().toISOString()
+    });
+}
+
+// Validate student data
+function validateStudentData(name, assessmentNo, upi, grade) {
+    if (!name || name.length < 2) return "Student name must be at least 2 characters.";
+    if (!assessmentNo || !/^[A-Za-z0-9]+$/.test(assessmentNo)) return "Assessment No must be alphanumeric.";
+    if (upi && !/^[A-Za-z0-9]+$/.test(upi)) return "UPI must be alphanumeric.";
+    if (grade && !['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8'].includes(grade)) return "Invalid grade.";
+    return null;
+}
+
+// PDF handling
+window.openLocalPDF = function(assessmentNo) {
+    const pdfPath = `./birth_certificates/${assessmentNo}.pdf`;
+    pdfIframe.src = pdfPath;
+    pdfModalBackdrop.classList.remove('hidden');
+    pdfModalBackdrop.classList.add('flex');
+    if (!pdfModalBackdrop.dataset.outsideClickAdded) {
+        pdfModalBackdrop.addEventListener('click', (event) => {
+            if (event.target === pdfModalBackdrop) closePDFModal();
+        });
+        pdfModalBackdrop.dataset.outsideClickAdded = 'true';
+    }
+};
+
+function closePDFModal() {
+    pdfModalBackdrop.classList.add('hidden');
+    pdfModalBackdrop.classList.remove('flex');
+    pdfIframe.src = '';
+}
+
+// Download single PDF
+async function downloadSinglePDF(assessmentNo, studentName) {
+    try {
+        const response = await fetch(`./birth_certificates/${assessmentNo}.pdf`);
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${studentName}_${assessmentNo}.pdf`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast(`Downloaded PDF for ${studentName}`, 'success');
+            logUserAction('download_pdf', { assessmentNo, studentName });
+        } else {
+            showToast('PDF not found.', 'error');
+        }
+    } catch (error) {
+        logErrorToFirebase(error, 'download_single_pdf');
+        showToast('Failed to download PDF.', 'error');
+    }
+}
+
+// Student details/edit
+function showStudentDetails(student, isEdit = false) {
+    studentDetailsContent.innerHTML = `
+        <h3 class="text-lg font-bold">${student.name}</h3>
+        <p><strong>Assessment No:</strong> ${student.assessmentNo}</p>
+        <p><strong>UPI:</strong> ${student.upi || 'N/A'}</p>
+        <p><strong>Grade:</strong> ${student.grade || 'N/A'}</p>
+        <p><strong>Date Added:</strong> ${new Date(student.dateAdded).toLocaleDateString()}</p>
+        <p><strong>PDF Status:</strong> ${student.hasPdf ? 'Available' : 'Not Available'}</p>
+    `;
+    document.getElementById('edit-name').value = student.name;
+    document.getElementById('edit-assessmentNo').value = student.assessmentNo;
+    document.getElementById('edit-upi').value = student.upi || '';
+    document.getElementById('edit-grade').value = student.grade || 'Grade 1';
+    studentDetailsForm.classList.toggle('hidden', !isEdit);
+    studentDetailsContent.classList.toggle('hidden', isEdit);
+    studentDetailsModal.classList.remove('hidden');
+    studentDetailsModal.classList.add('flex');
+    if (!studentDetailsModal.dataset.outsideClickAdded) {
+        studentDetailsModal.addEventListener('click', (event) => {
+            if (event.target === studentDetailsModal) closeStudentDetailsModal();
+        });
+        studentDetailsModal.dataset.outsideClickAdded = 'true';
+    }
+}
+
+function closeStudentDetailsModal() {
+    studentDetailsModal.classList.add('hidden');
+    studentDetailsModal.classList.remove('flex');
+    studentDetailsForm.classList.add('hidden');
+    studentDetailsContent.classList.remove('hidden');
+    document.getElementById('edit-pdf-upload').value = '';
+}
+
+// Export functions
+function exportToCSV(students) {
+    const headers = ['Name', 'Assessment No', 'UPI', 'Grade', 'Date Added', 'PDF Status'];
+    const rows = students.map(student => [
+        `"${student.name.replace(/"/g, '""')}"`,
+        student.assessmentNo,
+        student.upi || 'N/A',
+        student.grade || 'N/A',
+        new Date(student.dateAdded).toLocaleDateString(),
+        student.hasPdf ? 'Yes' : 'No'
+    ]);
+    const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'students_export.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('Exported to CSV successfully!', 'success');
+    logUserAction('export_csv', { count: students.length });
+}
+
+function exportToJSON(students) {
+    const jsonContent = JSON.stringify(students, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'students_export.json';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('Exported to JSON successfully!', 'success');
+    logUserAction('export_json', { count: students.length });
+}
+
+async function bulkDownloadPdfs() {
+    const pdfStudents = filteredStudents.filter(s => s.hasPdf && selectedStudents.has(s.assessmentNo));
+    if (pdfStudents.length === 0) {
+        showToast('No PDFs selected or available.', 'error');
+        return;
+    }
+    loadingSpinner.classList.remove('hidden');
+    showToast('Preparing ZIP download...');
+    try {
+        const { default: JSZip } = await import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+        const zip = new JSZip();
+        for (const student of pdfStudents) {
+            try {
+                const response = await fetch(`./birth_certificates/${student.assessmentNo}.pdf`);
+                if (response.ok) {
+                    const arrayBuffer = await response.arrayBuffer();
+                    zip.file(`${student.name}_${student.assessmentNo}.pdf`, arrayBuffer);
+                    logUserAction('download_pdf', { assessmentNo: student.assessmentNo, studentName: student.name });
+                }
+            } catch (e) {
+                console.error(`Failed to fetch PDF for ${student.assessmentNo}:`, e);
+            }
+        }
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `student_pdfs_${new Date().toISOString().split('T')[0]}.zip`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showToast(`Downloaded ${pdfStudents.length} PDFs successfully!`, 'success');
+    } catch (error) {
+        logErrorToFirebase(error, 'bulk_download');
+        showToast('Failed to create ZIP.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+}
+
+// Print student list
+function printStudentList() {
+    const printWindow = window.open('', '_blank');
+    const headers = ['Name', 'Assessment No', 'UPI', 'Grade', 'Date Added', 'PDF Status'];
+    const rows = filteredStudents.map(student => `
+        <tr>
+            <td class="border px-4 py-2">${student.name}</td>
+            <td class="border px-4 py-2">${student.assessmentNo}</td>
+            <td class="border px-4 py-2">${student.upi || 'N/A'}</td>
+            <td class="border px-4 py-2">${student.grade || 'N/A'}</td>
+            <td class="border px-4 py-2">${new Date(student.dateAdded).toLocaleDateString()}</td>
+            <td class="border px-4 py-2">${student.hasPdf ? 'Yes' : 'No'}</td>
+        </tr>
+    `).join('');
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Student List</title>
+                <style>
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                    @media print { body { margin: 0; } }
+                </style>
+            </head>
+            <body>
+                <h1>Student List</h1>
+                <table>
+                    <thead>
+                        <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+                <script>window.print(); window.close();</script>
+            </body>
+        </html>
+    `);
+    printWindow.document.close();
+    logUserAction('print_list', { count: filteredStudents.length });
+}
+
+// Check PDF existence
+async function checkLocalPdfExists(assessmentNo) {
+    try {
+        const response = await fetch(`./birth_certificates/${assessmentNo}.pdf`, { method: 'HEAD' });
+        return response.ok;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Highlight search terms
+function highlightText(text, searchTerm) {
+    if (!searchTerm) return text;
+    try {
+        const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<span class="highlight">$1</span>');
+    } catch (e) {
+        return text;
+    }
+}
+
+// Update statistics
+function updateStatistics() {
+    const total = allStudents.length;
+    const withPdfCount = allStudents.filter(s => s.hasPdf).length;
+    const withoutPdfCount = total - withPdfCount;
+    const withPdfPercentage = total > 0 ? ((withPdfCount / total) * 100).toFixed(2) : 0;
+    const withoutPdfPercentage = total > 0 ? ((withoutPdfCount / total) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-count').textContent = total;
+    document.getElementById('pdf-count').textContent = `${withPdfCount} (${withPdfPercentage}%)`;
+    document.getElementById('no-pdf-count').textContent = `${withoutPdfCount} (${withoutPdfPercentage}%)`;
+    document.getElementById('filtered-count').textContent = filteredStudents.length;
+
+    const gradeStats = {};
+    allStudents.forEach(student => {
+        const grade = student.grade || 'N/A';
+        if (!gradeStats[grade]) {
+            gradeStats[grade] = { total: 0, withPdf: 0, withoutPdf: 0 };
+        }
+        gradeStats[grade].total++;
+        if (student.hasPdf) gradeStats[grade].withPdf++;
+        else gradeStats[grade].withoutPdf++;
+    });
+
+    gradeStatsContainer.innerHTML = '';
+    const sortedGrades = Object.keys(gradeStats).sort();
+    sortedGrades.forEach(grade => {
+        const stats = gradeStats[grade];
+        const gradeTotal = stats.total;
+        const withPdfPercent = gradeTotal > 0 ? ((stats.withPdf / gradeTotal) * 100).toFixed(2) : 0;
+        const withoutPdfPercent = gradeTotal > 0 ? ((stats.withoutPdf / gradeTotal) * 100).toFixed(2) : 0;
+
+        const gradeStatHtml = `
+            <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm mb-3">
+                <h4 class="font-bold text-md text-gray-800 dark:text-gray-200">Grade: ${grade} (${gradeTotal} students)</h4>
+                <p class="text-sm text-green-600 dark:text-green-400">With PDF: ${stats.withPdf} (${withPdfPercent}%)</p>
+                <p class="text-sm text-red-600 dark:text-red-400">Without PDF: ${stats.withoutPdf} (${withoutPdfPercent}%)</p>
+            </div>
+        `;
+        gradeStatsContainer.innerHTML += gradeStatHtml;
+    });
+}
+
+// Inline editing
+function enableInlineEditing(cell, student, field) {
+    if (userRole !== 'admin') return;
+    const originalValue = cell.textContent;
+    const input = document.createElement(field === 'grade' ? 'select' : 'input');
+    input.className = 'w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white';
+    if (field === 'grade') {
+        ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8'].forEach(grade => {
+            const option = document.createElement('option');
+            option.value = grade;
+            option.textContent = grade;
+            if (grade === student[field]) option.selected = true;
+            input.appendChild(option);
+        });
+    } else {
+        input.type = 'text';
+        input.value = originalValue;
+    }
+    cell.innerHTML = '';
+    cell.appendChild(input);
+    input.focus();
+
+    async function saveInlineEdit() {
+        const newValue = input.value.trim();
+        const validationError = validateStudentData(
+            field === 'name' ? newValue : student.name,
+            field === 'assessmentNo' ? newValue : student.assessmentNo,
+            field === 'upi' ? newValue : student.upi,
+            field === 'grade' ? newValue : student.grade
+        );
+        if (validationError) {
+            showToast(validationError, 'error');
+            cell.textContent = originalValue;
+            return;
+        }
+        try {
+            await update(ref(db, `students/${sanitizedAppId}/${student.assessmentNo}`), {
+                [field]: newValue
+            });
+            student[field] = newValue;
+            cell.textContent = newValue;
+            showToast(`Updated ${field} for ${student.name}`, 'success');
+            logUserAction('inline_edit', { assessmentNo: student.assessmentNo, field, newValue });
+        } catch (error) {
+            logErrorToFirebase(error, 'inline_edit');
+            showToast('Failed to update student.', 'error');
+            cell.textContent = originalValue;
+        }
+    }
+
+    input.addEventListener('blur', saveInlineEdit);
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            saveInlineEdit();
+        } else if (e.key === 'Escape') {
+            cell.textContent = originalValue; 
+        }
+    });
+}
+
+// Render students
+function renderStudents() {
+    studentTableBody.innerHTML = '';
+    noStudentsMessage.classList.add('hidden');
+    loadingSpinner.classList.add('hidden');
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const studentsToDisplay = filteredStudents.slice(start, end);
+
+    if (studentsToDisplay.length === 0) {
+        noStudentsMessage.classList.remove('hidden');
+        paginationControls.classList.add('hidden');
+        return;
+    }
+
+    studentsToDisplay.forEach(student => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer';
+        row.setAttribute('aria-label', `Student ${student.name}`);
+        row.tabIndex = 0;
+        row.addEventListener('click', (e) => {
+            if (!e.target.closest('.select-student, button, input, select')) {
+                showStudentDetails(student);
+            }
+        });
+        row.addEventListener('keypress', (e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('input, select')) {
+                showStudentDetails(student);
+            }
+        });
+
+        const pdfStatus = student.hasPdf ?
+            '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-200">Has PDF</span>' :
+            '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-700 text-red-800 dark:text-red-200">No PDF</span>';
+
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">
+                <input type="checkbox" class="select-student rounded border-gray-300 dark:border-gray-600 focus:ring-primary" data-assessment-no="${student.assessmentNo}" ${selectedStudents.has(student.assessmentNo) ? 'checked' : ''}>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200 editable-cell" data-field="name">${highlightText(student.name, currentSearchTerm)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${highlightText(student.assessmentNo, currentSearchTerm)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 editable-cell" data-field="upi">${highlightText(student.upi || 'N/A', currentSearchTerm)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 editable-cell" data-field="grade">${student.grade || 'N/A'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${new Date(student.dateAdded).toLocaleDateString()}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${pdfStatus}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <div class="flex justify-end gap-2">
+                    <button onclick="openLocalPDF('${student.assessmentNo}'); event.stopPropagation();" class="px-3 py-1 text-white font-semibold rounded-lg shadow-md transition-all duration-200 ${student.hasPdf ? 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600' : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'}" ${!student.hasPdf ? 'disabled' : ''}>
+                        View
+                    </button>
+                   <button 
+  onclick="downloadSinglePDF('${student.assessmentNo}', decodeURIComponent('${encodeURIComponent(student.name)}')); event.stopPropagation();"
+  class="px-3 py-1 text-white font-semibold rounded-lg shadow-md transition-all duration-200 ${student.hasPdf ? 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600' : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'}" 
+  ${!student.hasPdf ? 'disabled' : ''}>
+  Download
+</button>
+
+                    ${userRole === 'admin' ? `
+                      <button 
+  onclick='showStudentDetails(JSON.parse(this.dataset.student), true); event.stopPropagation();'
+  data-student='${JSON.stringify(student).replace(/'/g, "&apos;")}'
+  class="px-3 py-1 bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+  Edit
+</button>
+
+                    <button 
+  onclick="confirmDeleteStudent('${student.assessmentNo}', decodeURIComponent('${encodeURIComponent(student.name)}')); event.stopPropagation();" 
+  class="px-3 py-1 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-semibold rounded-lg shadow-md transition-all duration-200">
+  Delete
+</button>
+
+                </div>
+            </td>
+        `;
+        studentTableBody.appendChild(row);
+
+        // Add inline editing for editable cells
+        row.querySelectorAll('.editable-cell').forEach(cell => {
+            const field = cell.dataset.field;
+            cell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                enableInlineEditing(cell, student, field);
+            });
+        });
+    });
+
+    document.querySelectorAll('.select-student').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const assessmentNo = e.target.dataset.assessmentNo;
+            if (e.target.checked) {
+                selectedStudents.add(assessmentNo);
+            } else {
+                selectedStudents.delete(assessmentNo);
+            }
+            updateSelectedCount();
+            batchDeleteBtn.disabled = selectedStudents.size === 0;
+        });
+    });
+
+    updatePagination();
+    updateStatistics();
+}
+
+// Update selected count
+function updateSelectedCount() {
+    selectedCountEl.textContent = `${selectedStudents.size} selected`;
+    selectAllHeader.checked = filteredStudents.every(student => selectedStudents.has(student.assessmentNo));
+}
+
+// Pagination
+function updatePagination() {
+    const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+    paginationControls.classList.toggle('hidden', totalPages <= 1);
+    if (totalPages <= 1) return;
+
+    document.getElementById('pagination-info').textContent = ((currentPage - 1) * itemsPerPage + 1);
+    document.getElementById('pagination-info-end').textContent = Math.min(currentPage * itemsPerPage, filteredStudents.length);
+    document.getElementById('pagination-total').textContent = filteredStudents.length;
+
+    prevPageBtn.disabled = currentPage === 1;
+    nextPageBtn.disabled = currentPage === totalPages;
+
+    pageNumbersDiv.innerHTML = '';
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    if (startPage > 1) {
+        const firstPageBtn = document.createElement('button');
+        firstPageBtn.textContent = '1';
+        firstPageBtn.className = 'px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white transition-all duration-200';
+        firstPageBtn.addEventListener('click', () => {
+            currentPage = 1;
+            renderStudents();
+        });
+        pageNumbersDiv.appendChild(firstPageBtn);
+        if (startPage > 2) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.className = 'px-3 py-1 text-gray-500 dark:text-gray-400';
+            pageNumbersDiv.appendChild(dots);
+        }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.textContent = i;
+        pageBtn.className = `px-3 py-1 rounded-lg transition-all duration-200 ${i === currentPage ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'}`;
+        pageBtn.addEventListener('click', () => {
+            currentPage = i;
+            renderStudents();
+        });
+        pageNumbersDiv.appendChild(pageBtn);
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.className = 'px-3 py-1 text-gray-500 dark:text-gray-400';
+            pageNumbersDiv.appendChild(dots);
+        }
+        const lastPageBtn = document.createElement('button');
+        lastPageBtn.textContent = totalPages;
+        lastPageBtn.className = 'px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white transition-all duration-200';
+        lastPageBtn.addEventListener('click', () => {
+            currentPage = totalPages;
+            renderStudents();
+        });
+        pageNumbersDiv.appendChild(lastPageBtn);
+    }
+}
+
+// Apply filters and sort
+function applyFiltersAndSort() {
+    filteredStudents = allStudents.filter(student => {
+        let matches = true;
+
+        // Search filter
+        if (currentSearchTerm) {
+            const searchValue = currentSearchTerm.toLowerCase();
+            const field = searchTypeSelect.value;
+            if (field === 'name' && !student.name.toLowerCase().includes(searchValue)) matches = false;
+            if (field === 'assessmentNo' && !student.assessmentNo.toLowerCase().includes(searchValue)) matches = false;
+            if (field === 'upi' && (!student.upi || !student.upi.toLowerCase().includes(searchValue))) matches = false;
+        }
+
+        // Live filter
+        if (liveFilterInput.value) {
+            const liveFilterValue = liveFilterInput.value.toLowerCase();
+            if (!student.name.toLowerCase().includes(liveFilterValue) &&
+                !student.assessmentNo.toLowerCase().includes(liveFilterValue) &&
+                (!student.upi || !student.upi.toLowerCase().includes(liveFilterValue))) {
+                matches = false;
+            }
+        }
+
+        // Status filter
+        if (currentFilter === 'with-pdf' && !student.hasPdf) matches = false;
+        if (currentFilter === 'without-pdf' && student.hasPdf) matches = false;
+        if (currentFilter === 'recent') {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            if (new Date(student.dateAdded) < thirtyDaysAgo) matches = false;
+        }
+
+        // Grade filter
+        if (currentGrade !== 'all' && student.grade !== currentGrade) matches = false;
+
+        // Date filter
+        if (currentDateFilter) {
+            const filterDate = new Date(currentDateFilter);
+            const studentDate = new Date(student.dateAdded);
+            if (studentDate.toDateString() !== filterDate.toDateString()) matches = false;
+        }
+
+        return matches;
+    });
+
+    // Sort
+    filteredStudents.sort((a, b) => {
+        let valueA = a[sortColumn] || '';
+        let valueB = b[sortColumn] || '';
+        
+        if (sortColumn === 'dateAdded') {
+            valueA = new Date(a.dateAdded).getTime();
+            valueB = new Date(b.dateAdded).getTime();
+        } else if (sortColumn === 'grade') {
+            valueA = valueA || 'N/A';
+            valueB = valueB || 'N/A';
+            // Extract numeric part for grade sorting
+            const numA = valueA === 'N/A' ? 0 : parseInt(valueA.match(/\d+/)[0]);
+            const numB = valueB === 'N/A' ? 0 : parseInt(valueB.match(/\d+/)[0]);
+            valueA = numA;
+            valueB = numB;
+        } else {
+            valueA = valueA.toString().toLowerCase();
+            valueB = valueB.toString().toLowerCase();
+        }
+
+        if (sortDirection === 'asc') {
+            return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+        } else {
+            return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+        }
+    });
+
+    // Reset to first page after filtering/sorting
+    currentPage = 1;
+    renderStudents();
+}
+
+// Authentication
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        userId = user.uid;
+        userEmail = user.email;
+        userDisplayName = user.displayName || '';
+        userIdEl.textContent = userEmail;
+        const userRef = ref(db, `users/${sanitizedAppId}/${userId}`);
+        onValue(userRef, (snapshot) => {
+            const data = snapshot.val();
+            userRole = data?.role || 'user';
+            userDisplayName = data?.name || user.displayName || 'Anonymous';
+            userProfileEl.textContent = `${userDisplayName} (${userRole})`;
+            batchDeleteBtn.style.display = userRole === 'admin' ? 'block' : 'none';
+            applyFiltersAndSort();
+        });
+        authContainer.classList.add('hidden');
+        mainAppContainer.classList.remove('hidden');
+        loadStudents();
+    } else {
+        authContainer.classList.remove('hidden');
+        mainAppContainer.classList.add('hidden');
+        allStudents = [];
+        filteredStudents = [];
+        selectedStudents.clear();
+        updateSelectedCount();
+        renderStudents();
+    }
+});
+
+authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    loadingSpinner.classList.remove('hidden');
+
+    try {
+        if (signupLink.textContent.includes('Sign up')) {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            await set(ref(db, `users/${sanitizedAppId}/${user.uid}`), {
+                email: user.email,
+                role: 'user',
+                name: user.displayName || 'Anonymous',
+                createdAt: new Date().toISOString()
+            });
+            showToast('Account created successfully!', 'success');
+            logUserAction('signup', { email });
+        } else {
+            await signInWithEmailAndPassword(auth, email, password);
+            showToast('Signed in successfully!', 'success');
+            logUserAction('signin', { email });
+        }
+    } catch (error) {
+        logErrorToFirebase(error, 'auth');
+        showToast(error.message, 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+});
+
+signupLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    const isSignup = signupLink.textContent.includes('Sign up');
+    signupLink.textContent = isSignup ? 'Already have an account? Sign in here' : "Don't have an account? Sign up here";
+    signinBtn.textContent = isSignup ? 'Sign Up' : 'Sign In';
+});
+
+// Sign out
+signOutBtn.addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+        showToast('Signed out successfully!', 'success');
+        logUserAction('signout', {});
+    } catch (error) {
+        logErrorToFirebase(error, 'signout');
+        showToast('Failed to sign out.', 'error');
+    }
+});
+
+// Load students
+async function loadStudents() {
+    loadingSpinner.classList.remove('hidden');
+    const studentsRef = ref(db, `students/${sanitizedAppId}`);
+    onValue(studentsRef, async (snapshot) => {
+        allStudents = [];
+        const data = snapshot.val();
+        if (data) {
+            for (const [assessmentNo, studentData] of Object.entries(data)) {
+                const hasPdf = await checkLocalPdfExists(assessmentNo);
+                allStudents.push({
+                    assessmentNo,
+                    name: studentData.name,
+                    upi: studentData.upi || '',
+                    grade: studentData.grade || '',
+                    dateAdded: studentData.dateAdded || new Date().toISOString(),
+                    hasPdf
+                });
+            }
+        }
+        applyFiltersAndSort();
+        loadingSpinner.classList.add('hidden');
+    }, (error) => {
+        logErrorToFirebase(error, 'load_students');
+        showToast('Failed to load students.', 'error');
+        loadingSpinner.classList.add('hidden');
+    });
+}
+
+// Search and filters
+searchInput.addEventListener('input', () => {
+    currentSearchTerm = searchInput.value.trim();
+    applyFiltersAndSort();
+});
+
+document.getElementById('search-btn').addEventListener('click', () => {
+    currentSearchTerm = searchInput.value.trim();
+    applyFiltersAndSort();
+});
+
+liveFilterInput.addEventListener('input', () => {
+    applyFiltersAndSort();
+});
+
+document.getElementById('clear-filter').addEventListener('click', () => {
+    liveFilterInput.value = '';
+    searchInput.value = '';
+    currentSearchTerm = '';
+    currentFilter = 'all';
+    currentGrade = 'all';
+    currentDateFilter = '';
+    gradeFilterSelect.value = 'all';
+    dateFilterInput.value = '';
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-white');
+        btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-secondary', 'dark:text-secondary-dark');
+    });
+    document.getElementById('show-all').classList.add('bg-primary', 'text-white');
+    applyFiltersAndSort();
+});
+
+document.querySelectorAll('.filter-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('bg-primary', 'text-white');
+            btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-secondary', 'dark:text-secondary-dark');
+        });
+        button.classList.add('bg-primary', 'text-white');
+        currentFilter = button.id.replace('show-', '');
+        applyFiltersAndSort();
+    });
+});
+
+gradeFilterSelect.addEventListener('change', () => {
+    currentGrade = gradeFilterSelect.value;
+    applyFiltersAndSort();
+});
+
+dateFilterInput.addEventListener('change', () => {
+    currentDateFilter = dateFilterInput.value;
+    applyFiltersAndSort();
+});
+
+// Sorting
+document.querySelectorAll('.sortable').forEach(header => {
+    header.addEventListener('click', () => {
+        const column = header.dataset.column;
+        if (sortColumn === column) {
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortColumn = column;
+            sortDirection = 'asc';
+        }
+        document.querySelectorAll('.sort-icon').forEach(icon => {
+            icon.textContent = '↑';
+            icon.classList.remove('text-primary');
+        });
+        const sortIcon = header.querySelector('.sort-icon');
+        sortIcon.textContent = sortDirection === 'asc' ? '↑' : '↓';
+        sortIcon.classList.add('text-primary');
+        applyFiltersAndSort();
+    });
+});
+
+// Pagination controls
+prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        renderStudents();
+    }
+});
+
+nextPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderStudents();
+    }
+});
+
+itemsPerPageSelect.addEventListener('change', () => {
+    itemsPerPage = parseInt(itemsPerPageSelect.value);
+    currentPage = 1;
+    renderStudents();
+});
+
+customItemsPerPageInput.addEventListener('change', () => {
+    const value = parseInt(customItemsPerPageInput.value);
+    if (value >= 1 && value <= 100) {
+        itemsPerPage = value;
+        currentPage = 1;
+        renderStudents();
+    } else {
+        showToast('Items per page must be between 1 and 100.', 'error');
+        customItemsPerPageInput.value = '';
+    }
+});
+
+// Add student
+addStudentBtn.addEventListener('click', () => {
+    if (userRole !== 'admin') {
+        showToast('Only admins can add students.', 'error');
+        return;
+    }
+    addStudentModal.classList.remove('hidden');
+    addStudentModal.classList.add('flex');
+    if (!addStudentModal.dataset.outsideClickAdded) {
+        addStudentModal.addEventListener('click', (event) => {
+            if (event.target === addStudentModal) closeAddStudentModal();
+        });
+        addStudentModal.dataset.outsideClickAdded = 'true';
+    }
+});
+
+addStudentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (userRole !== 'admin') {
+        showToast('Only admins can add students.', 'error');
+        return;
+    }
+    const name = document.getElementById('add-name').value.trim();
+    const assessmentNo = document.getElementById('add-assessmentNo').value.trim();
+    const upi = document.getElementById('add-upi').value.trim();
+    const grade = document.getElementById('add-grade').value;
+    const pdfFile = document.getElementById('add-pdf-upload').files[0];
+
+    const validationError = validateStudentData(name, assessmentNo, upi, grade);
+    if (validationError) {
+        showToast(validationError, 'error');
+        return;
+    }
+
+    loadingSpinner.classList.remove('hidden');
+    try {
+        const studentRef = ref(db, `students/${sanitizedAppId}/${assessmentNo}`);
+        const existingStudent = allStudents.find(s => s.assessmentNo === assessmentNo);
+        if (existingStudent) {
+            showToast('Assessment No already exists.', 'error');
+            return;
+        }
+
+        let pdfUrl = '';
+        if (pdfFile) {
+            const pdfRef = storageRef(storage, `birth_certificates/${assessmentNo}.pdf`);
+            await uploadBytes(pdfRef, pdfFile);
+            pdfUrl = await getDownloadURL(pdfRef);
+        }
+
+        await set(studentRef, {
+            name,
+            assessmentNo,
+            upi: upi || null,
+            grade: grade || null,
+            dateAdded: new Date().toISOString(),
+            pdfUrl: pdfUrl || null
+        });
+
+        showToast('Student added successfully!', 'success');
+        logUserAction('add_student', { name, assessmentNo, upi, grade });
+        closeAddStudentModal();
+        addStudentForm.reset();
+    } catch (error) {
+        logErrorToFirebase(error, 'add_student');
+        showToast('Failed to add student.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+});
+
+function closeAddStudentModal() {
+    addStudentModal.classList.add('hidden');
+    addStudentModal.classList.remove('flex');
+    addStudentForm.reset();
+}
+
+addStudentCloseBtn.addEventListener('click', closeAddStudentModal);
+addCancelBtn.addEventListener('click', closeAddStudentModal);
+
+// Edit student
+editSaveBtn.addEventListener('click', async () => {
+    if (userRole !== 'admin') {
+        showToast('Only admins can edit students.', 'error');
+        return;
+    }
+    const name = document.getElementById('edit-name').value.trim();
+    const assessmentNo = document.getElementById('edit-assessmentNo').value.trim();
+    const upi = document.getElementById('edit-upi').value.trim();
+    const grade = document.getElementById('edit-grade').value;
+    const pdfFile = document.getElementById('edit-pdf-upload').files[0];
+
+    const validationError = validateStudentData(name, assessmentNo, upi, grade);
+    if (validationError) {
+        showToast(validationError, 'error');
+        return;
+    }
+
+    loadingSpinner.classList.remove('hidden');
+    try {
+        const studentRef = ref(db, `students/${sanitizedAppId}/${assessmentNo}`);
+        let pdfUrl = allStudents.find(s => s.assessmentNo === assessmentNo)?.pdfUrl || '';
+        if (pdfFile) {
+            const pdfRef = storageRef(storage, `birth_certificates/${assessmentNo}.pdf`);
+            await uploadBytes(pdfRef, pdfFile);
+            pdfUrl = await getDownloadURL(pdfRef);
+        }
+
+        await update(studentRef, {
+            name,
+            upi: upi || null,
+            grade: grade || null,
+            pdfUrl: pdfUrl || null
+        });
+
+        showToast('Student updated successfully!', 'success');
+        logUserAction('edit_student', { name, assessmentNo, upi, grade });
+        closeStudentDetailsModal();
+    } catch (error) {
+        logErrorToFirebase(error, 'edit_student');
+        showToast('Failed to update student.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+});
+
+editCancelBtn.addEventListener('click', closeStudentDetailsModal);
+studentDetailsCloseBtn.addEventListener('click', closeStudentDetailsModal);
+
+// Delete student
+window.confirmDeleteStudent = function(assessmentNo, studentName) {
+    if (userRole !== 'admin') {
+        showToast('Only admins can delete students.', 'error');
+        return;
+    }
+    modalTitle.textContent = 'Confirm Delete';
+    modalMessage.textContent = `Are you sure you want to delete ${studentName}? This action cannot be undone.`;
+    modalBackdrop.classList.remove('hidden');
+    modalBackdrop.classList.add('flex');
+    if (!modalBackdrop.dataset.outsideClickAdded) {
+        modalBackdrop.addEventListener('click', (event) => {
+            if (event.target === modalBackdrop) closeModal();
+        });
+        modalBackdrop.dataset.outsideClickAdded = 'true';
+    }
+
+    modalConfirmBtn.onclick = async () => {
+        loadingSpinner.classList.remove('hidden');
+        try {
+            await remove(ref(db, `students/${sanitizedAppId}/${assessmentNo}`));
+            const pdfRef = storageRef(storage, `birth_certificates/${assessmentNo}.pdf`);
+            await deleteObject(pdfRef).catch(() => {}); // Ignore if PDF doesn't exist
+            showToast(`Deleted ${studentName} successfully!`, 'success');
+            logUserAction('delete_student', { assessmentNo, studentName });
+            closeModal();
+        } catch (error) {
+            logErrorToFirebase(error, 'delete_student');
+            showToast('Failed to delete student.', 'error');
+        } finally {
+            loadingSpinner.classList.add('hidden');
+        }
+    };
+};
+
+function closeModal() {
+    modalBackdrop.classList.add('hidden');
+    modalBackdrop.classList.remove('flex');
+    modalConfirmBtn.onclick = null;
+}
+
+modalCloseBtn.addEventListener('click', closeModal);
+modalCancelBtn.addEventListener('click', closeModal);
+
+// Bulk upload
+bulkUploadBtn.addEventListener('click', () => {
+    if (userRole !== 'admin') {
+        showToast('Only admins can perform bulk uploads.', 'error');
+        return;
+    }
+    bulkUploadModal.classList.remove('hidden');
+    bulkUploadModal.classList.add('flex');
+    if (!bulkUploadModal.dataset.outsideClickAdded) {
+        bulkUploadModal.addEventListener('click', (event) => {
+            if (event.target === bulkUploadModal) closeBulkUploadModal();
+        });
+        bulkUploadModal.dataset.outsideClickAdded = 'true';
+    }
+});
+
+bulkUploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (userRole !== 'admin') {
+        showToast('Only admins can perform bulk uploads.', 'error');
+        return;
+    }
+    const file = document.getElementById('bulk-upload-file').files[0];
+    if (!file) {
+        showToast('Please select a CSV file.', 'error');
+        return;
+    }
+
+    loadingSpinner.classList.remove('hidden');
+    try {
+        const text = await file.text();
+        const rows = text.split('\n').map(row => row.split(',').map(cell => cell.trim()));
+        const headers = rows.shift();
+        const expectedHeaders = ['name', 'assessmentNo', 'upi', 'grade'];
+        if (!expectedHeaders.every((header, i) => headers[i]?.toLowerCase() === header)) {
+            showToast('Invalid CSV format. Expected headers: ' + expectedHeaders.join(', '), 'error');
+            return;
+        }
+
+        const newStudents = [];
+        for (const row of rows) {
+            if (row.length < expectedHeaders.length) continue;
+            const [name, assessmentNo, upi, grade] = row;
+            const validationError = validateStudentData(name, assessmentNo, upi, grade);
+            if (validationError) {
+                showToast(`Invalid data in row: ${validationError}`, 'error');
+                continue;
+            }
+            if (allStudents.find(s => s.assessmentNo === assessmentNo)) {
+                showToast(`Assessment No ${assessmentNo} already exists.`, 'error');
+                continue;
+            }
+            newStudents.push({ name, assessmentNo, upi: upi || null, grade: grade || null, dateAdded: new Date().toISOString() });
+        }
+
+        for (const student of newStudents) {
+            await set(ref(db, `students/${sanitizedAppId}/${student.assessmentNo}`), student);
+        }
+
+        showToast(`Successfully uploaded ${newStudents.length} students!`, 'success');
+        logUserAction('bulk_upload', { count: newStudents.length });
+        closeBulkUploadModal();
+        bulkUploadForm.reset();
+    } catch (error) {
+        logErrorToFirebase(error, 'bulk_upload');
+        showToast('Failed to upload CSV.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+});
+
+function closeBulkUploadModal() {
+    bulkUploadModal.classList.add('hidden');
+    bulkUploadModal.classList.remove('flex');
+    bulkUploadForm.reset();
+}
+
+bulkUploadCloseBtn.addEventListener('click', closeBulkUploadModal);
+bulkUploadCancelBtn.addEventListener('click', closeBulkUploadModal);
+
+// Profile settings
+profileSettingsBtn.addEventListener('click', () => {
+    document.getElementById('profile-name').value = userDisplayName;
+    document.getElementById('profile-role').value = userRole;
+    document.getElementById('profile-role').disabled = userRole !== 'admin';
+    profileSettingsModal.classList.remove('hidden');
+    profileSettingsModal.classList.add('flex');
+    if (!profileSettingsModal.dataset.outsideClickAdded) {
+        profileSettingsModal.addEventListener('click', (event) => {
+            if (event.target === profileSettingsModal) closeProfileSettingsModal();
+        });
+        profileSettingsModal.dataset.outsideClickAdded = 'true';
+    }
+});
+
+profileSettingsForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('profile-name').value.trim();
+    const role = document.getElementById('profile-role').value;
+
+    if (!name || name.length < 2) {
+        showToast('Name must be at least 2 characters.', 'error');
+        return;
+    }
+
+    loadingSpinner.classList.remove('hidden');
+    try {
+        await updateProfile(auth.currentUser, { displayName: name });
+        await update(ref(db, `users/${sanitizedAppId}/${userId}`), {
+            name,
+            role: userRole === 'admin' ? role : userRole
+        });
+        userDisplayName = name;
+        userRole = userRole === 'admin' ? role : userRole;
+        userProfileEl.textContent = `${userDisplayName} (${userRole})`;
+        showToast('Profile updated successfully!', 'success');
+        logUserAction('update_profile', { name, role });
+        closeProfileSettingsModal();
+    } catch (error) {
+        logErrorToFirebase(error, 'update_profile');
+        showToast('Failed to update profile.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+});
+
+function closeProfileSettingsModal() {
+    profileSettingsModal.classList.add('hidden');
+    profileSettingsModal.classList.remove('flex');
+}
+
+profileSettingsCloseBtn.addEventListener('click', closeProfileSettingsModal);
+profileSettingsCancelBtn.addEventListener('click', closeProfileSettingsModal);
+
+// Export buttons
+exportCsvBtn.addEventListener('click', () => exportToCSV(filteredStudents));
+exportJsonBtn.addEventListener('click', () => exportToJSON(filteredStudents));
+exportSelectedBtn.addEventListener('click', () => {
+    const selected = filteredStudents.filter(s => selectedStudents.has(s.assessmentNo));
+    if (selected.length === 0) {
+        showToast('No students selected.', 'error');
+        return;
+    }
+    exportToCSV(selected);
+});
+printBtn.addEventListener('click', printStudentList);
+bulkDownloadBtn.addEventListener('click', bulkDownloadPdfs);
+
+// Batch delete
+batchDeleteBtn.addEventListener('click', () => {
+    if (userRole !== 'admin') {
+        showToast('Only admins can delete students.', 'error');
+        return;
+    }
+    if (selectedStudents.size === 0) {
+        showToast('No students selected.', 'error');
+        return;
+    }
+    modalTitle.textContent = 'Confirm Batch Delete';
+    modalMessage.textContent = `Are you sure you want to delete ${selectedStudents.size} selected students? This action cannot be undone.`;
+    modalBackdrop.classList.remove('hidden');
+    modalBackdrop.classList.add('flex');
+
+    modalConfirmBtn.onclick = async () => {
+        loadingSpinner.classList.remove('hidden');
+        try {
+            for (const assessmentNo of selectedStudents) {
+                await remove(ref(db, `students/${sanitizedAppId}/${assessmentNo}`));
+                const pdfRef = storageRef(storage, `birth_certificates/${assessmentNo}.pdf`);
+                await deleteObject(pdfRef).catch(() => {});
+            }
+            showToast(`Deleted ${selectedStudents.size} students successfully!`, 'success');
+            logUserAction('batch_delete', { count: selectedStudents.size });
+            selectedStudents.clear();
+            updateSelectedCount();
+            closeModal();
+        } catch (error) {
+            logErrorToFirebase(error, 'batch_delete');
+            showToast('Failed to delete students.', 'error');
+        } finally {
+            loadingSpinner.classList.add('hidden');
+        }
+    };
+});
+
+// Select all
+selectAllCheckbox.addEventListener('change', (e) => {
+    const isChecked = e.target.checked;
+    filteredStudents.forEach(student => {
+        if (isChecked) {
+            selectedStudents.add(student.assessmentNo);
+        } else {
+            selectedStudents.delete(student.assessmentNo);
+        }
+    });
+    renderStudents();
+});
+
+selectAllHeader.addEventListener('change', (e) => {
+    const isChecked = e.target.checked;
+    filteredStudents.forEach(student => {
+        if (isChecked) {
+            selectedStudents.add(student.assessmentNo);
+        } else {
+            selectedStudents.delete(student.assessmentNo);
+        }
+    });
+    renderStudents();
+});
+
+// Dark mode toggle
+darkModeToggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    darkModeIcon.innerHTML = isDark ?
+        '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>' :
+        '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>';
+    logUserAction('toggle_dark_mode', { darkMode: isDark });
+});
+
+// PDF modal close
+pdfModalCloseBtn.addEventListener('click', closePDFModal);
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) {
+        document.documentElement.classList.add('dark');
+        darkModeIcon.innerHTML = '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>';
+    }
+});
+function enableInlineEditing(cell, student, field) {
+    const originalValue = cell.textContent;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = originalValue;
+    input.className = 'w-full border border-gray-300 rounded px-2 py-1';
+    cell.textContent = '';
+    cell.appendChild(input);
+    input.focus();
+
+    const saveChanges = async () => {
+        const newValue = input.value.trim();
+        if (newValue === originalValue) {
+            cell.textContent = originalValue;
+            return;
+        }
+
+        const validationError = validateStudentData(
+            field === 'name' ? newValue : student.name,
+            field === 'assessmentNo' ? newValue : student.assessmentNo,
+            field === 'upi' ? newValue : student.upi,
+            field === 'grade' ? newValue : student.grade
+        );
+        if (validationError) {
+            showToast(validationError, 'error');
+            cell.textContent = originalValue;
+            return;
+        }
+
+        loadingSpinner.classList.remove('hidden');
+        try {
+            const studentRef = ref(db, `students/${sanitizedAppId}/${student.assessmentNo}`);
+            const updates = {};
+            updates[field] = newValue || null;
+
+            // If assessmentNo is changed, we need to create a new entry and delete the old one
+            if (field === 'assessmentNo') {
+                const existingStudent = allStudents.find(s => s.assessmentNo === newValue);
+                if (existingStudent) {
+                    showToast('Assessment No already exists.', 'error');
+                    cell.textContent = originalValue;
+                    return;
+                }
+                await set(ref(db, `students/${sanitizedAppId}/${newValue}`), {
+                    ...student,
+                    [field]: newValue
+                });
+                await remove(studentRef);
+                // Also rename PDF in storage if exists
+                if (student.hasPdf) {
+                    const oldPdfRef = storageRef(storage, `birth_certificates/${student.assessmentNo}.pdf`);
+                    const newPdfRef = storageRef(storage, `birth_certificates/${newValue}.pdf`);
+                    const pdfUrl = await getDownloadURL(oldPdfRef); // Get existing PDF URL
+                    await uploadBytes(newPdfRef, await fetch(pdfUrl).then(res => res.blob())); // Re-upload to new location
+                    await deleteObject(oldPdfRef); // Delete old PDF
+                }
+            } else {
+                await update(studentRef, updates);
+            }   
+            showToast('Student updated successfully!', 'success');
+            logUserAction('inline_edit_student', { assessmentNo: student.assessmentNo, field, newValue });
+            applyFiltersAndSort();
+        } catch (error) {
+            logErrorToFirebase(error, 'inline_edit_student');   
+            showToast('Failed to update student.', 'error');
+            cell.textContent = originalValue;
+        } finally {
+            loadingSpinner.classList.add('hidden');
+        }
+    };
+    input.addEventListener('blur', saveChanges);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            saveChanges();
+        } else if (e.key === 'Escape') {
+            cell.textContent = originalValue;
+        }
+    });
+}
+function renderPagination() {
+    pageNumbersDiv.innerHTML = '';
+    const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+    if (totalPages <= 1) {
+        prevPageBtn.disabled = true;
+        nextPageBtn.disabled = true;
+        return;
+    }
+
+    prevPageBtn.disabled = currentPage === 1;
+    nextPageBtn.disabled = currentPage === totalPages;
+
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = `px-3 py-1 rounded-lg ${i === currentPage ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+            pageBtn.addEventListener('click', () => {
+                currentPage = i;
+                renderStudents();
+            });
+            pageNumbersDiv.appendChild(pageBtn);
+        }
+    } else {
+        const firstPageBtn = document.createElement('button');
+        firstPageBtn.textContent = '1';
+        firstPageBtn.className = `px-3 py-1 rounded-lg ${currentPage === 1 ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+        firstPageBtn.addEventListener('click', () => {
+            currentPage = 1;
+            renderStudents();
+        });
+        pageNumbersDiv.appendChild(firstPageBtn);
+
+        if (currentPage > 4) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.className = 'px-2 text-gray-500 dark:text-gray-400';
+            pageNumbersDiv.appendChild(dots);
+        }
+
+        const startPage = Math.max(2, currentPage - 1);
+        const endPage = Math.min(totalPages - 1, currentPage + 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = `px-3 py-1 rounded-lg ${i === currentPage ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+            pageBtn.addEventListener('click', () => {
+                currentPage = i;
+                renderStudents();
+            });
+            pageNumbersDiv.appendChild(pageBtn);
+        }
+        if (currentPage < totalPages - 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.className = 'px-2 text-gray-500 dark:text-gray-400';
+            pageNumbersDiv.appendChild(dots);
+        }
+        const lastPageBtn = document.createElement('button');
+        lastPageBtn.textContent = totalPages;
+        lastPageBtn.className = `px-3 py-1 rounded-lg ${currentPage === totalPages ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+        lastPageBtn.addEventListener('click', () => {
+            currentPage = totalPages;
+            renderStudents();
+        });
+        pageNumbersDiv.appendChild(lastPageBtn);
+    }
+}
+function applyFiltersAndSort() {
+    filteredStudents = allStudents.filter(student => {
+        const matchesSearch = currentSearchTerm === '' || 
+            student.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) || 
+            student.assessmentNo.toLowerCase().includes(currentSearchTerm.toLowerCase()) || 
+            (student.upi && student.upi.toLowerCase().includes(currentSearchTerm.toLowerCase()));
+
+        const matchesLiveFilter = liveFilterInput.value === '' || 
+            student.name.toLowerCase().includes(liveFilterInput.value.toLowerCase()) || 
+            student.assessmentNo.toLowerCase().includes(liveFilterInput.value.toLowerCase()) || 
+            (student.upi && student.upi.toLowerCase().includes(liveFilterInput.value.toLowerCase()));
+
+        const matchesStatus = currentFilter === 'all' ||
+            (currentFilter === 'with-pdf' && student.hasPdf) ||
+            (currentFilter === 'without-pdf' && !student.hasPdf);
+
+        const matchesGrade = currentGrade === 'all' || (student.grade && student.grade === currentGrade);
+
+        const matchesDate = currentDateFilter === '' || (new Date(student.dateAdded).toISOString().split('T')[0] === currentDateFilter);
+
+        return matchesSearch && matchesLiveFilter && matchesStatus && matchesGrade && matchesDate;
+    });
+
+    if (sortColumn) {
+        filteredStudents.sort((a, b) => {
+            let valueA = a[sortColumn] || '';
+            let valueB = b[sortColumn] || '';
+
+            if (sortColumn === 'dateAdded') {
+                valueA = new Date(valueA);
+                valueB = new Date(valueB);
+            } else {
+                valueA = valueA.toString().toLowerCase();
+                valueB = valueB.toString().toLowerCase();
+            }
+            return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+        });
+    }
+
+    renderStudents();
+}
+function renderStudents() {
+    studentTableBody.innerHTML = '';
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = Math.min(startIdx + itemsPerPage, filteredStudents.length);
+    const studentsToShow = filteredStudents.slice(startIdx, endIdx);
+
+    studentsToShow.forEach(student => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800';
+
+        const selectTd = document.createElement('td');
+        selectTd.className = 'px-4 py-2';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = selectedStudents.has(student.assessmentNo);
+        checkbox.className = 'form-checkbox h-4 w-4 text-primary';
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                selectedStudents.add(student.assessmentNo);
+            } else {
+                selectedStudents.delete(student.assessmentNo);
+            }
+            updateSelectedCount();
+        });
+        selectTd.appendChild(checkbox);
+        tr.appendChild(selectTd);
+
+        const nameTd = document.createElement('td');
+        nameTd.className = 'px-4 py-2 cursor-pointer';
+        nameTd.textContent = student.name;
+        nameTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            nameTd.addEventListener('dblclick', () => enableInlineEditing(nameTd, student, 'name'));
+        }
+        tr.appendChild(nameTd);
+
+        const assessmentNoTd = document.createElement('td');
+        assessmentNoTd.className = 'px-4 py-2 cursor-pointer';
+        assessmentNoTd.textContent = student.assessmentNo;
+        assessmentNoTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            assessmentNoTd.addEventListener('dblclick', () => enableInlineEditing(assessmentNoTd, student, 'assessmentNo'));
+        }
+        tr.appendChild(assessmentNoTd);
+
+        const upiTd = document.createElement('td');
+        upiTd.className = 'px-4 py-2 cursor-pointer';
+        upiTd.textContent = student.upi || '';
+        upiTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            upiTd.addEventListener('dblclick', () => enableInlineEditing(upiTd, student, 'upi'));
+        }   
+        tr.appendChild(upiTd);
+        const gradeTd = document.createElement('td');
+        gradeTd.className = 'px-4 py-2 cursor-pointer';
+        gradeTd.textContent = student.grade || '';
+        gradeTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            gradeTd.addEventListener('dblclick', () => enableInlineEditing(gradeTd, student, 'grade'));
+        }
+        tr.appendChild(gradeTd);
+        const dateAddedTd = document.createElement('td');
+        dateAddedTd.className = 'px-4 py-2';
+        dateAddedTd.textContent = student.dateAdded || '';
+        dateAddedTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            dateAddedTd.addEventListener('dblclick', () => enableInlineEditing(dateAddedTd, student, 'dateAdded'));
+        }
+        tr.appendChild(dateAddedTd);
+        const pdfTd = document.createElement('td');
+        pdfTd.className = 'px-4 py-2 text-center';
+        const pdfLink = document.createElement('a');
+        pdfLink.href = student.pdfUrl || '#';
+        pdfLink.textContent = 'View PDF';
+        pdfLink.className = 'text-blue-500 hover:underline';
+        pdfTd.appendChild(pdfLink);
+        tr.appendChild(pdfTd);
+        const actionsTd = document.createElement('td');
+        actionsTd.className = 'px-4 py-2 text-center space-x-2';
+        const editBtn = document.createElement('button');
+        editBtn.className = 'text-yellow-500 hover:text-yellow-700';        
+        editBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 010 2.828l-10 10a2 2 0 01-.707.414l-4 1a1 1 0 01-1.213-1.213l1-4a2 2 0 01.414-.707l10-10a2 2 0 012.828 0zM15.586 4L6 13.586V16h2.414L16 6.414 15.586 4z" /></svg>';
+        editBtn.title = 'Edit Student';
+        editBtn.addEventListener('click', () => {
+            if (userRole !== 'admin') {
+                showToast('Only admins can edit students.', 'error');
+                return;
+            }
+            openStudentDetailsModal(student);
+        });
+        actionsTd.appendChild(editBtn);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'text-red-500 hover:text-red-700';
+        deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor"><path d="M6 2a1 1 0 00-1 1v1H2a1 1 0 000 2h1v12a2 2 0 002 2h12a2 2 0 002-2V6h1a1 1 0 000-2h-3V3a1 1 0 00-1-1H6zm0 2h8v2H6V4zm0 4h8v10H6V8z" /></svg>';
+        deleteBtn.title = 'Delete Student';
+        deleteBtn.addEventListener('click', () => {
+            if (userRole !== 'admin') {
+                showToast('Only admins can delete students.', 'error');
+                return;
+            }
+            confirmDeleteStudent(student);
+        });
+        actionsTd.appendChild(deleteBtn);
+        tr.appendChild(actionsTd);
+    });
+    studentTableBody.appendChild(tr);
+    renderPagination();
+    updateSelectedCount();
+}   
+function updateSelectedCount() {
+    selectedCountSpan.textContent = selectedStudents.size;
+    batchDeleteBtn.disabled = selectedStudents.size === 0 || userRole !== 'admin';
+    exportSelectedBtn.disabled = selectedStudents.size === 0;
+    const allOnPageSelected = filteredStudents.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+        .every(student => selectedStudents.has(student.assessmentNo));
+    selectAllCheckbox.checked = allOnPageSelected;
+    selectAllHeader.checked = allOnPageSelected;
+}
+function validateStudentData(name, assessmentNo, upi, grade) {
+    if (!name || name.length < 2) return 'Name must be at least 2 characters.';
+    if (!assessmentNo || assessmentNo.length < 2) return 'Assessment No must be at least 2 characters.';
+    if (upi && (upi.length < 2 || upi.length > 10)) return 'UPI must be between 2 and 10 characters.';
+    if (grade && !['1', '2', '3', '4', '5', '6', '7', '8'].includes(grade)) return 'Grade must be between 1 and 8.';
+    return null;
+}
+addStudentBtn.addEventListener('click', () => {
+    if (userRole !== 'admin') {
+        showToast('Only admins can add students.', 'error');
+        return;
+    }
+    addStudentModal.classList.remove('hidden');
+    addStudentModal.classList.add('flex');
+    if (!addStudentModal.dataset.outsideClickAdded) {
+        addStudentModal.addEventListener('click', (event) => {
+            if (event.target === addStudentModal) closeAddStudentModal();
+        });
+        addStudentModal.dataset.outsideClickAdded = 'true';
+    }
+});
+addStudentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (userRole !== 'admin') {
+        showToast('Only admins can add students.', 'error');
+        return;
+    }
+    const name = document.getElementById('add-name').value.trim();
+    const assessmentNo = document.getElementById('add-assessmentNo').value.trim();
+    const upi = document.getElementById('add-upi').value.trim();
+    const grade = document.getElementById('add-grade').value;
+    const pdfFile = document.getElementById('add-pdf-upload').files[0];
+    const validationError = validateStudentData(name, assessmentNo, upi, grade);
+    if (validationError) {
+        showToast(validationError, 'error');
+        return;
+    }
+    // Proceed with adding the student
+});
+    if (allStudents.find(s => s.assessmentNo === assessmentNo)) {
+        showToast('Assessment No already exists.', 'error');
+        return;
+    }   
+    loadingSpinner.classList.remove('hidden');
+    try {
+        let pdfUrl = '';
+        if (pdfFile) {
+            const pdfRef = storageRef(storage, `birth_certificates/${assessmentNo}.pdf`);
+            await uploadBytes(pdfRef, pdfFile);
+            pdfUrl = await getDownloadURL(pdfRef);
+        }
+        await set(ref(db, `students/${sanitizedAppId}/${assessmentNo}`), {
+            name,
+            assessmentNo,
+            upi: upi || null,
+            grade: grade || null,
+            pdfUrl: pdfUrl || null,
+            dateAdded: new Date().toISOString()
+        });
+        showToast('Student added successfully!', 'success');
+        logUserAction('add_student', { name, assessmentNo, upi, grade });
+        closeAddStudentModal(); 
+
+        addStudentForm.reset();
+    } catch (error) {
+        logErrorToFirebase(error, 'add_student');
+        showToast('Failed to add student.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }   
+});
+function closeAddStudentModal() {
+    addStudentModal.classList.add('hidden');
+    addStudentModal.classList.remove('flex');
+    addStudentForm.reset();
+}
+addStudentCloseBtn.addEventListener('click', closeAddStudentModal);
+addStudentCancelBtn.addEventListener('click', closeAddStudentModal);
+// Student details modal
+function openStudentDetailsModal(student) {
+    modalTitle.textContent = 'Student Details';
+    document.getElementById('edit-name').value = student.name;
+    document.getElementById('edit-assessmentNo').value = student.assessmentNo;
+    document.getElementById('edit-upi').value = student.upi || '';
+    document.getElementById('edit-grade').value = student.grade || '';
+    document.getElementById('current-pdf-link').innerHTML = student.pdfUrl ?
+        `<a href="${student.pdfUrl}" target="_blank" class="text-blue-500 hover:underline">View Current PDF</a>` :
+        'No PDF uploaded';  
+    document.getElementById('edit-assessmentNo').disabled = true; // Prevent changing assessmentNo here
+    studentDetailsModal.classList.remove('hidden');
+    studentDetailsModal.classList.add('flex');
+    if (!studentDetailsModal.dataset.outsideClickAdded) {
+        studentDetailsModal.addEventListener('click', (event) => {
+            if (event.target === studentDetailsModal) closeStudentDetailsModal();
+        });
+        studentDetailsModal.dataset.outsideClickAdded = 'true';
+    }
+    studentDetailsForm.onsubmit = async (e) => {
+        e.preventDefault();
+        if (userRole !== 'admin') {
+            showToast('Only admins can edit students.', 'error');
+            return;
+        }
+        const name = document.getElementById('edit-name').value.trim();
+        const upi = document.getElementById('edit-upi').value.trim();
+        const grade = document.getElementById('edit-grade').value;
+        const pdfFile = document.getElementById('edit-pdf-upload').files[0];
+        const validationError = validateStudentData(name, student.assessmentNo, upi, grade);
+        if (validationError) {
+            showToast(validationError, 'error');
+            return;
+        }
+        loadingSpinner.classList.remove('hidden');
+        try {
+            const updates = {
+                name,
+                upi: upi || null,
+                grade: grade || null
+            };
+            if (pdfFile) {
+                const pdfRef = storageRef(storage, `birth_certificates/${student.assessmentNo}.pdf`);
+                await uploadBytes(pdfRef, pdfFile);
+                updates.pdfUrl = await getDownloadURL(pdfRef);
+            }
+            await update(ref(db, `students/${sanitizedAppId}/${student.assessmentNo}`), updates);
+            showToast('Student updated successfully!', 'success');
+            logUserAction('edit_student', { ...updates, assessmentNo: student.assessmentNo });
+            closeStudentDetailsModal();
+        } catch (error) {
+            logErrorToFirebase(error, 'edit_student');
+            showToast('Failed to update student.', 'error');
+        } finally {
+            loadingSpinner.classList.add('hidden');
+        }
+    };
+}
+function closeStudentDetailsModal() {
+    studentDetailsModal.classList.add('hidden');
+    studentDetailsModal.classList.remove('flex');
+    studentDetailsForm.reset();
+}
+studentDetailsCloseBtn.addEventListener('click', closeStudentDetailsModal);
+studentDetailsCancelBtn.addEventListener('click', closeStudentDetailsModal);
+// Confirm delete student
+function confirmDeleteStudent(student) {
+    modalTitle.textContent = 'Confirm Delete';
+    modalMessage.textContent = `Are you sure you want to delete student ${student.name} (Assessment No: ${student.assessmentNo})? This action cannot be undone.`;
+    modalBackdrop.classList.remove('hidden');
+    modalBackdrop.classList.add('flex');
+
+    modalConfirmBtn.onclick = async () => {
+        loadingSpinner.classList.remove('hidden');
+        try {
+            await remove(ref(db, `students/${sanitizedAppId}/${student.assessmentNo}`));
+            const pdfRef = storageRef(storage, `birth_certificates/${student.assessmentNo}.pdf`);
+            await deleteObject(pdfRef).catch(() => {});
+            showToast('Student deleted successfully!', 'success');
+            logUserAction('delete_student', { assessmentNo: student.assessmentNo });
+            closeModal();
+        } catch (error) {
+            logErrorToFirebase(error, 'delete_student');
+            showToast('Failed to delete student.', 'error');
+        } finally {
+            loadingSpinner.classList.add('hidden');
+        }
+    };
+}
+function closeModal() {
+    modalBackdrop.classList.add('hidden');
+    modalBackdrop.classList.remove('flex');
+    modalConfirmBtn.onclick = null;
+}
+bulkUploadBtn.addEventListener('click', () => {
+    if (userRole !== 'admin') {
+        showToast('Only admins can upload students in bulk.', 'error');
+        return;
+    }
+    bulkUploadModal.classList.remove('hidden');
+    bulkUploadModal.classList.add('flex');
+    if (!bulkUploadModal.dataset.outsideClickAdded) {
+        bulkUploadModal.addEventListener('click', (event) => {
+            if (event.target === bulkUploadModal) closeBulkUploadModal();
+        });
+        bulkUploadModal.dataset.outsideClickAdded = 'true';
+    }
+});
+bulkUploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (userRole !== 'admin') {
+        showToast('Only admins can upload students in bulk.', 'error');
+        return;
+    }
+    const file = document.getElementById('csv-file').files[0];
+    if (!file) {
+        showToast('Please select a CSV file.', 'error');
+        return;
+    }
+    loadingSpinner.classList.remove('hidden');
+    try {
+        const text = await file.text();
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+        if (lines.length < 2) {
+            showToast('CSV file is empty or has no valid data.', 'error');
+            return;
+        }
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+        const requiredHeaders = ['name', 'assessmentno'];
+        for (const header of requiredHeaders) {
+            if (!headers.includes(header)) {
+                showToast(`Missing required header: ${header}`, 'error');
+                return;
+            }
+        }
+
+        const newStudents = [];
+        for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(',').map(c => c.trim());
+            const studentData = {};
+            headers.forEach((header, idx) => {
+                studentData[header] = cols[idx] || '';
+            });
+            const name = studentData['name'];
+            const assessmentNo = studentData['assessmentno'];
+            const upi = studentData['upi'] || '';
+            const grade = studentData['grade'] || '';
+            const validationError = validateStudentData(name, assessmentNo, upi, grade);
+            if (validationError) {
+                showToast(`Row ${i + 1}: ${validationError}`, 'error');
+                return;
+            }
+            if (allStudents.find(s => s.assessmentNo === assessmentNo) || newStudents.find(s => s.assessmentNo === assessmentNo)) {
+                showToast(`Row ${i + 1}: Duplicate Assessment No: ${assessmentNo}`, 'error');
+                return;
+            }
+            newStudents.push({
+                name,
+                assessmentNo,
+                upi: upi || null,
+                grade: grade || null,
+                pdfUrl: null,
+                dateAdded: new Date().toISOString()
+            });
+        }
+        for (const student of newStudents) {
+            await set(ref(db, `students/${sanitizedAppId}/${student.assessmentNo}`), student);
+        }   
+        showToast(`Successfully added ${newStudents.length} students!`, 'success');
+        logUserAction('bulk_upload', { count: newStudents.length });
+        closeBulkUploadModal();
+        bulkUploadForm.reset();
+    } catch (error) {
+        logErrorToFirebase(error, 'bulk_upload');
+        showToast('Failed to upload students.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+});
+function closeBulkUploadModal() {
+    bulkUploadModal.classList.add('hidden');
+    bulkUploadModal.classList.remove('flex');
+    bulkUploadForm.reset();
+}
+bulkUploadCloseBtn.addEventListener('click', closeBulkUploadModal);
+bulkUploadCancelBtn.addEventListener('click', closeBulkUploadModal);
+// Profile settings modal
+profileSettingsBtn.addEventListener('click', () => {
+    profileSettingsModal.classList.remove('hidden');
+    profileSettingsModal.classList.add('flex');
+    if (!profileSettingsModal.dataset.outsideClickAdded) {
+        profileSettingsModal.addEventListener('click', (event) => {
+            if (event.target === profileSettingsModal) closeProfileSettingsModal();
+        });
+        profileSettingsModal.dataset.outsideClickAdded = 'true';
+    }
+});
+profileSettingsCloseBtn.addEventListener('click', closeProfileSettingsModal);
+profileSettingsCancelBtn.addEventListener('click', closeProfileSettingsModal);      
+function closeProfileSettingsModal() {
+    profileSettingsModal.classList.add('hidden');
+    profileSettingsModal.classList.remove('flex');
+    profileSettingsForm.reset();
+}
+profileSettingsForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newEmail = document.getElementById('profile-email').value.trim();
+    const newPassword = document.getElementById('profile-password').value;
+    const confirmPassword = document.getElementById('profile-confirm-password').value;
+    if (newPassword && newPassword !== confirmPassword) {
+        showToast('Passwords do not match.', 'error');
+        return;
+    }
+    loadingSpinner.classList.remove('hidden');
+    try {
+        if (newEmail && newEmail !== currentUser.email) {
+            await updateEmail(currentUser, newEmail);
+        }
+        if (newPassword) {
+            await updatePassword(currentUser, newPassword);
+        }
+        showToast('Profile updated successfully!', 'success');
+        logUserAction('update_profile', { emailChanged: newEmail !== currentUser.email, passwordChanged: !!newPassword });
+        closeProfileSettingsModal();
+    } catch (error) {
+        logErrorToFirebase(error, 'update_profile');
+        showToast('Failed to update profile. Please re-authenticate and try again.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+});
+// Batch delete
+batchDeleteBtn.addEventListener('click', () => {
+    if (userRole !== 'admin') {
+        showToast('Only admins can delete students.', 'error');
+        return;
+    }
+    modalTitle.textContent = 'Confirm Batch Delete';
+    modalMessage.textContent = `Are you sure you want to delete the selected ${selectedStudents.size} students? This action cannot be undone.`;
+    modalBackdrop.classList.remove('hidden');
+    modalBackdrop.classList.add('flex');
+
+    modalConfirmBtn.onclick = async () => {
+        loadingSpinner.classList.remove('hidden');
+        try {
+            const deletePromises = [];
+            selectedStudents.forEach(assessmentNo => {
+                deletePromises.push(remove(ref(db, `students/${sanitizedAppId}/${assessmentNo}`)));
+                const pdfRef = storageRef(storage, `birth_certificates/${assessmentNo}.pdf`);
+                deletePromises.push(deleteObject(pdfRef).catch(() => {}));
+            });
+            await Promise.all(deletePromises);
+            showToast(`Successfully deleted ${selectedStudents.size} students!`, 'success');
+            logUserAction('batch_delete', { count: selectedStudents.size });
+            applyFiltersAndSort();
+            selectedStudents.clear();
+            updateSelectedCount();
+            closeModal();
+        } catch (error) {
+            logErrorToFirebase(error, 'batch_delete');
+            showToast('Failed to delete selected students.', 'error');
+        } finally {
+            loadingSpinner.classList.add('hidden');
+        }
+    };
+}); 
+// Export selected students
+exportSelectedBtn.addEventListener('click', () => {
+    if (selectedStudents.size === 0) {
+        showToast('No students selected for export.', 'error');
+        return;
+    }
+    const studentsToExport = allStudents.filter(student => selectedStudents.has(student.assessmentNo));
+    let csvContent = 'Name,AssessmentNo,UPI,Grade,DateAdded,HasPDF\n';
+    studentsToExport.forEach(student => {
+        const row = [
+            `"${student.name.replace(/"/g, '""')}"`,
+            `"${student.assessmentNo.replace(/"/g, '""')}"`,
+            `"${(student.upi || '').replace(/"/g, '""')}"`,
+            `"${(student.grade || '').replace(/"/g, '""')}"`,
+            `"${student.dateAdded || ''}"`,
+            student.pdfUrl ? 'Yes' : 'No'
+        ].join(',');
+        csvContent += row + '\n';
+    });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `students_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    logUserAction('export_students', { count: selectedStudents.size });
+});
+        editBtn.innerHTML = '<path fill-rule="evenodd" d="M17.414 2.586a2 2 0 010 2.828l-10 10a2 2 0 01-.707.414l-4 1a1 1 0 01-1.213-1.213l1-4a2 2 0 01.414-.707l10-10a2 2 0 012.828 0zM15.586 4L6 13.586V16h2.414L16 6.414 15.586 4z" clip-rule="evenodd"></path>';
+        deleteBtn.innerHTML = '<path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H2a1 1 0 000 2h1v12a2 2 0 002 2h12a2 2 0 002-2V6h1a1 1 0 000-2h-3V3a1 1 0 00-1-1H6zm0 2h8v2H6V4zm0 4h8v10H6V8z" clip-rule="evenodd"></path>';
+// Inline editing
+function enableInlineEditing(cell, student, field) {
+    if (cell.querySelector('input')) return; // Already editing
+    const originalValue = cell.textContent;
+    const input = document.createElement('input');
+    input.type = field === 'grade' ? 'number' : 'text';
+    input.value = originalValue;
+    input.className = 'w-full border border-gray-300 rounded px-2 py-1';
+    if (field === 'grade') {
+        input.min = 1;
+        input.max = 8;
+    }
+    cell.textContent = '';
+    cell.appendChild(input);
+    input.focus();
+    input.select();
+
+    const saveChanges = async () => {
+        const newValue = input.value.trim();
+        if (newValue === originalValue) {
+            cell.textContent = originalValue;
+            return;
+        }   
+        const validationError = validateStudentData(
+            field === 'name' ? newValue : student.name,
+            field === 'assessmentNo' ? newValue : student.assessmentNo,
+            field === 'upi' ? newValue : (student.upi || ''),
+            field === 'grade' ? newValue : (student.grade || '')
+        );
+        if (validationError) {
+            showToast(validationError, 'error');
+            cell.textContent = originalValue;
+            return;
+        }
+        student[field] = newValue;
+        cell.textContent = newValue;
+        logUserAction('edit_student', { id: student.id, field, value: newValue });
+    };
+    input.addEventListener('blur', saveChanges);
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            saveChanges();
+        } else if (event.key === 'Escape') {
+            cell.textContent = originalValue;
+        }
+    });
+}
+async function enableInlineEditing(cell, student, field) {
+    if (cell.querySelector('input')) return; // Already editing
+    const originalValue = cell.textContent;
+    const input = document.createElement('input');
+    input.type = field === 'grade' ? 'number' : 'text';
+    input.value = originalValue;
+    input.className = 'w-full border border-gray-300 rounded px-2 py-1';
+    if (field === 'grade') {
+        input.min = 1;
+        input.max = 8;
+    }
+    cell.textContent = '';
+    cell.appendChild(input);
+    input.focus();
+    input.select();
+
+    const saveChanges = async () => {
+        const newValue = input.value.trim();
+        if (newValue === originalValue) {
+            cell.textContent = originalValue;
+            return;
+        }
+        const validationError = validateStudentData(
+            field === 'name' ? newValue : student.name,
+            field === 'assessmentNo' ? newValue : student.assessmentNo,
+            field === 'upi' ? newValue : (student.upi || ''),
+            field === 'grade' ? newValue : (student.grade || '')
+        );
+        if (validationError) {
+            showToast(validationError, 'error');
+            cell.textContent = originalValue;
+            return;
+        }
+        const updates = {};
+        updates[field] = newValue;
+        cell.textContent = newValue;
+        loadingSpinner.classList.remove('hidden');
+        try {
+            const studentRef = ref(db, `students/${sanitizedAppId}/${student.assessmentNo}`);
+            if (field === 'assessmentNo') {
+                if (allStudents.find(s => s.assessmentNo === newValue)) {
+                    showToast('Assessment No already exists.', 'error');
+                    cell.textContent = originalValue;
+                    return;
+                }
+                await set(ref(db, `students/${sanitizedAppId}/${newValue}`), { ...student, assessmentNo: newValue, ...updates });
+                await remove(studentRef);
+                student.assessmentNo = newValue;
+                if (student.pdfUrl) {
+                    const oldPdfRef = storageRef(storage, `birth_certificates/${student.assessmentNo}.pdf`);
+                    const newPdfRef = storageRef(storage, `birth_certificates/${newValue}.pdf`);
+                    await copyObject(oldPdfRef, newPdfRef);
+                    await deleteObject(oldPdfRef);
+                    student.pdfUrl = await getDownloadURL(newPdfRef);
+                }
+            } else {
+                await update(studentRef, updates);
+                student[field] = newValue;
+            }
+            showToast('Student updated successfully!', 'success');
+            logUserAction('edit_student', { assessmentNo: student.assessmentNo, ...updates });
+        } catch (error) {
+            logErrorToFirebase(error, 'edit_student');
+            showToast('Failed to update student.', 'error');
+            cell.textContent = originalValue;
+        } finally {
+            loadingSpinner.classList.add('hidden');
+        }
+    };
+    input.addEventListener('blur', saveChanges);
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            saveChanges();
+        } else if (event.key === 'Escape') {
+            cell.textContent = originalValue;
+        }
+    });
+}
+function copyObject(sourceRef, destRef) {
+    return getDownloadURL(sourceRef).then((url) => {
+        return fetch(url).then((response) => {
+            return response.blob();
+        }).then((blob) => {
+            return uploadBytes(destRef, blob);
+        });
+    });
+}
+function renderPagination() {
+    paginationDiv.innerHTML = '';
+    const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+    if (totalPages <= 1) return;
+
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Previous';
+    prevBtn.className = `px-3 py-1 rounded-lg mr-2 ${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderStudents();
+        }
+    });
+    paginationDiv.appendChild(prevBtn);
+
+    const pageNumbersDiv = document.createElement('div');
+    pageNumbersDiv.className = 'inline-block';
+    paginationDiv.appendChild(pageNumbersDiv);
+
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next';
+    nextBtn.className = `px-3 py-1 rounded-lg ml-2 ${currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderStudents();
+        }
+    });
+    paginationDiv.appendChild(nextBtn);
+
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = `px-3 py-1 rounded-lg ${currentPage === i ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+            pageBtn.addEventListener('click', () => {
+                currentPage = i;
+                renderStudents();
+            });
+            pageNumbersDiv.appendChild(pageBtn);
+        }
+    } else {
+        const firstPageBtn = document.createElement('button');
+        firstPageBtn.textContent = '1';
+        firstPageBtn.className = `px-3 py-1 rounded-lg ${currentPage === 1 ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+        firstPageBtn.addEventListener('click', () => {
+            currentPage = 1;
+            renderStudents();
+        });
+        pageNumbersDiv.appendChild(firstPageBtn);
+
+        if (currentPage > 4) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            pageNumbersDiv.appendChild(dots);
+        }
+
+        const lastPageBtn = document.createElement('button');
+        lastPageBtn.textContent = totalPages;
+        lastPageBtn.className = `px-3 py-1 rounded-lg ${currentPage === totalPages ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-secondary dark:text-secondary-dark hover:bg-primary hover:text-white'} transition-all duration-200`;
+        lastPageBtn.addEventListener('click', () => {
+            currentPage = totalPages;
+            renderStudents();
+        });
+        pageNumbersDiv.appendChild(lastPageBtn);
+    }
+}
+function renderStudents() {
+    studentTableBody.innerHTML = '';
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    const studentsToShow = filteredStudents.slice(startIdx, endIdx);
+    studentsToShow.forEach(student => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b hover:bg-gray-100 dark:hover:bg-gray-700';
+
+        const selectTd = document.createElement('td');
+        selectTd.className = 'px-4 py-2 text-center';   
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox'; 
+        checkbox.checked = selectedStudents.has(student.assessmentNo);
+        checkbox.addEventListener('change', (e) => {    
+            if (e.target.checked) {
+                selectedStudents.add(student.assessmentNo);
+            } else {
+                selectedStudents.delete(student.assessmentNo);
+            }
+            updateSelectedCount();
+        });
+        selectTd.appendChild(checkbox);
+        tr.appendChild(selectTd);
+        const nameTd = document.createElement('td');
+        nameTd.className = 'px-4 py-2 cursor-pointer';
+        nameTd.textContent = student.name;
+        nameTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            nameTd.addEventListener('dblclick', () => enableInlineEditing(nameTd, student, 'name'));
+        }
+        tr.appendChild(nameTd);
+        const assessmentNoTd = document.createElement('td');
+        assessmentNoTd.className = 'px-4 py-2';
+        assessmentNoTd.textContent = student.assessmentNo;
+        tr.appendChild(assessmentNoTd);
+        const upiTd = document.createElement('td');
+        upiTd.className = 'px-4 py-2 cursor-pointer';
+        upiTd.textContent = student.upi || '';
+        upiTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            upiTd.addEventListener('dblclick', () => enableInlineEditing(upiTd, student, 'upi'));
+        }   
+        tr.appendChild(upiTd);
+        const gradeTd = document.createElement('td');
+        gradeTd.className = 'px-4 py-2 cursor-pointer';
+        gradeTd.textContent = student.grade || '';
+        gradeTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            gradeTd.addEventListener('dblclick', () => enableInlineEditing(gradeTd, student, 'grade'));
+        }
+        tr.appendChild(gradeTd);
+        const dateAddedTd = document.createElement('td');
+        dateAddedTd.className = 'px-4 py-2 cursor-pointer';
+        dateAddedTd.textContent = student.dateAdded || '';
+        dateAddedTd.addEventListener('click', () => openStudentDetailsModal(student));
+        if (userRole === 'admin') {
+            dateAddedTd.addEventListener('dblclick', () => enableInlineEditing(dateAddedTd, student, 'dateAdded'));
+        }
+        tr.appendChild(dateAddedTd);
+        const pdfTd = document.createElement('td');
+        pdfTd.className = 'px-4 py-2 text-center';  
+        const pdfLink = document.createElement('a');
+        pdfLink.href = student.pdfUrl || '#';
+        pdfLink.textContent = 'View PDF';
+        pdfLink.target = '_blank';
+        pdfTd.appendChild(pdfLink);
+        tr.appendChild(pdfTd);
+        const actionsTd = document.createElement('td');
+        actionsTd.className = 'px-4 py-2 text-center space-x-2';
+        const editBtn = document.createElement('button');
+        editBtn.className = 'text-blue-500 hover:text-blue-700';
+        editBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 010 2.828l-10 10a2 2 0 01-.707.414l-4 1a1 1 0 01-1.213-1.213l1-4a2 2 0 01.414-.707l10-10a2 2 0 012.828 0zM15.586 4L6 13.586V16h2.414L16 6.414 15.586 4z" /></svg>';
+        editBtn.title = 'Edit Student';
+        editBtn.addEventListener('click', () => {
+            if (userRole !== 'admin') {
+                showToast('Only admins can edit students.', 'error');
+                return;
+            }
+            if (!student) {
+                showToast('Student data not found.', 'error');
+                return;
+            }
+            if (!student.assessmentNo) {
+                showToast('Invalid student data.', 'error');
+                return;
+            }
+            if (!allStudents.find(s => s.assessmentNo === student.assessmentNo)) {
+                showToast('Student does not exist.', 'error');
+                return;
+            }
+            if (!student.name) {
+                showToast('Student name is missing.', 'error');
+                return;
+            }
+            if (!student.grade) {
+                showToast('Student grade is missing.', 'error');
+                return;
+            }
+            if (!student.dateAdded) {
+                showToast('Student date added is missing.', 'error');
+                return;
+            }
+            if (!student.pdfUrl) {
+                showToast('Student PDF URL is missing.', 'error');
+                return;
+            }
+            if (typeof student.name !== 'string' || typeof student.assessmentNo !== 'string') {
+                showToast('Invalid student data format.', 'error');
+                return;
+            }
+            if (student.upi && typeof student.upi !== 'string') {
+                showToast('Invalid UPI format.', 'error');
+                return;
+            }
+            if (student.grade && !['1', '2', '3', '4', '5', '6', '7', '8'].includes(student.grade)) {
+                showToast('Grade must be between 1 and 8.', 'error');
+                return;
+            }
+            if (student.pdfUrl && typeof student.pdfUrl !== 'string') {
+                showToast('Invalid PDF URL format.', 'error');
+                return;
+            }
+        });
+        actionsTd.appendChild(editBtn);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'text-red-500 hover:text-red-700';
+        deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor"><path d="M6 2a1 1 0 00-1 1v1H2a1 1 0 000 2h1v12a2 2 0 002 2h12a2 2 0 002-2V6h1a1 1 0 000-2h-3V3a1 1 0 00-1-1H6zm0 2h8v2H6V4zm0 4h8v10H6V8z" /></svg>';
+        deleteBtn.title = 'Delete Student';
+        deleteBtn.addEventListener('click', () => {
+            if (userRole !== 'admin') {
+                showToast('Only admins can delete students.', 'error');
+                return;
+            }
+            if (!student) {
+                showToast('Student data not found.', 'error');
+                return;
+            }
+            if (!student.assessmentNo) {
+                showToast('Invalid student data.', 'error');
+                return;
+            }
+            if (!allStudents.find(s => s.assessmentNo === student.assessmentNo)) {
+                showToast('Student does not exist.', 'error');
+                return;
+            }
+            // Proceed with deletion
+            deleteStudent(student.assessmentNo);
+        });
+        actionsTd.appendChild(deleteBtn);  
+        tr.appendChild(actionsTd);
+        studentTableBody.appendChild(tr);   
+    });
+    renderPagination();
+    updateSelectedCount();
+}
+addStudentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(addStudentForm);
+    const newStudent = Object.fromEntries(formData);
+    try {
+        await addStudent(newStudent);
+        showToast('Student added successfully.', 'success');
+        addStudentForm.reset();
+        loadStudents();
+    } catch (error) {
+        showToast('Error adding student: ' + error.message, 'error');
+    }
+});
+addStudentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (userRole !== 'admin') {
+        showToast('Only admins can add students.', 'error');
+        return;
+    }
+    const name = document.getElementById('student-name').value.trim();
+    const assessmentNo = document.getElementById('assessment-no').value.trim();
+    const upi = document.getElementById('upi').value.trim();
+    const grade = document.getElementById('grade').value;
+    const pdfFile = document.getElementById('pdf-upload').files[0];
+    const validationError = validateStudentData(name, assessmentNo, upi, grade);
+    if (validationError) {
+        showToast(validationError, 'error');
+        return;
+    }
+    if (allStudents.find(s => s.assessmentNo === assessmentNo)) {
+        showToast('Assessment No already exists.', 'error');
+        return;
+    }
+    loadingSpinner.classList.remove('hidden');
+    try {
+        let pdfUrl = null;
+        if (pdfFile) {
+            const pdfRef = storageRef(storage, `birth_certificates/${assessmentNo}.pdf`);
+            await uploadBytes(pdfRef, pdfFile);
+            pdfUrl = await getDownloadURL(pdfRef);
+        }
+        await set(ref(db, `students/${sanitizedAppId}/${assessmentNo}`), {
+            name,
+            assessmentNo,
+            upi: upi || null,
+            grade: grade || null,
+            pdfUrl: pdfUrl || null,
+            dateAdded: new Date().toISOString()
+        });
+        allStudents.push({
+            name,
+            assessmentNo,
+            upi: upi || null,
+            grade: grade || null,
+            pdfUrl: pdfUrl || null,
+            dateAdded: new Date().toISOString()
+        });
+        applyFiltersAndSort();
+        showToast('Student added successfully!', 'success');
+        logUserAction('add_student', { name, assessmentNo, upi, grade });
+        closeAddStudentModal(); 
+
+        addStudentForm.reset();
+    } catch (error) {
+        logErrorToFirebase(error, 'add_student');
+        showToast('Failed to add student.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }   
+});
+// Open student details modal
+function openStudentDetailsModal(student) {
+    modalTitle.textContent = 'Student Details';
+    studentDetailsModal.classList.remove('hidden');
+    studentDetailsModal.classList.add('flex');
+    if (!studentDetailsModal.dataset.outsideClickAdded) {
+        studentDetailsModal.addEventListener('click', (event) => {
+            if (event.target === studentDetailsModal) closeStudentDetailsModal();
+        });
+        studentDetailsModal.dataset.outsideClickAdded = 'true';
+    }
+    document.getElementById('edit-name').value = student.name;
+    document.getElementById('edit-assessment-no').value = student.assessmentNo;
+    document.getElementById('edit-upi').value = student.upi || '';
+    document.getElementById('edit-grade').value = student.grade || '';
+    const pdfLink = document.getElementById('current-pdf-link');
+    if (student.pdfUrl) {
+        pdfLink.href = student.pdfUrl;
+        pdfLink.textContent = 'View Current PDF';
+        pdfLink.classList.remove('hidden');
+    } else {
+        pdfLink.href = '#';
+        pdfLink.textContent = '';
+        pdfLink.classList.add('hidden');
+    }
+    // Handle form submission for editing
+    studentDetailsForm.onsubmit = async (e) => {
+        e.preventDefault();
+        if (userRole !== 'admin') {
+            showToast('Only admins can edit students.', 'error');
+            return;
+        }
+        const name = document.getElementById('edit-name').value.trim();
+        const assessmentNo = document.getElementById('edit-assessment-no').value.trim();
+        const upi = document.getElementById('edit-upi').value.trim();
+        const grade = document.getElementById('edit-grade').value;
+        const validationError = validateStudentData(name, assessmentNo, upi, grade);
+        if (validationError) {
+            showToast(validationError, 'error');
+            return;
+        }
+        try {
+            await set(ref(db, `students/${sanitizedAppId}/${assessmentNo}`), {
+                name,
+                assessmentNo,
+                upi: upi || null,
+                grade: grade || null,
+                pdfUrl: student.pdfUrl || null,
+                dateAdded: student.dateAdded
+            });
+            const index = allStudents.findIndex(s => s.assessmentNo === assessmentNo);
+            if (index !== -1) {
+                allStudents[index] = {
+                    name,
+                    assessmentNo,
+                    upi: upi || null,
+                    grade: grade || null,
+                    pdfUrl: student.pdfUrl || null,
+                    dateAdded: student.dateAdded
+                };
+            }
+            applyFiltersAndSort();
+            showToast('Student details updated successfully!', 'success');
+            logUserAction('edit_student', { name, assessmentNo, upi, grade });
+            closeStudentDetailsModal();
+        } catch (error) {
+            logErrorToFirebase(error, 'edit_student');
+            showToast('Failed to update student details.', 'error');
+        }
+    };
+}
+function closeStudentDetailsModal() {
+    studentDetailsModal.classList.add('hidden');
+    studentDetailsModal.classList.remove('flex');
+    studentDetailsForm.onsubmit = null;
+    studentDetailsForm.reset();
+}
+
+</script>
+</body>
+</html>

@@ -21,6 +21,9 @@ if (!firebase.apps.length) {
         measurementId: "G-Y4C0ZRRL52"
     };
     firebase.initializeApp(firebaseConfig);
+     // Now you can call firebase.auth()
+  const auth = firebase.auth()
 } else {
     firebase.app(); // if already initialized, use that one
 }
+

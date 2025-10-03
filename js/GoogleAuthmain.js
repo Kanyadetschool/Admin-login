@@ -1,10 +1,22 @@
 var mainApp = {};
 (function() {
     var mainContainer = document.getElementById("main_container");
-    const TOKEN_LIFETIME = 21600000; // 6 hours in milliseconds
-    const WARNING_BEFORE_EXPIRY = 300000; // 5 minutes in milliseconds
+    const TOKEN_LIFETIME = 1800000; // 30 minutes in milliseconds
+    // const TOKEN_LIFETIME = 240000; // 4 minutes in milliseconds
+    const WARNING_BEFORE_EXPIRY = 15000; // 15 seconds before expiry
     let tokenExpiryTimer;
     let warningTimer;
+    let isTabActive = document.visibilityState === 'visible';
+    let lastActivity = Date.now();
+
+    // Debounce function to limit frequent event triggers
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(func, wait);
+        };
+    }
 
     // Listen for storage events to sync logout across tabs
     window.addEventListener('storage', function(e) {
@@ -14,6 +26,29 @@ var mainApp = {};
             }).catch(function(error) {
                 console.error("Logout error:", error);
             });
+        } else if (e.key === 'activity-update') {
+            // Update last activity time from other tabs
+            lastActivity = parseInt(e.newValue, 10);
+            if (isTabActive) {
+                setupTokenExpiration();
+            }
+        }
+    });
+
+    // Handle visibility change to track active tab
+    document.addEventListener('visibilitychange', function() {
+        isTabActive = document.visibilityState === 'visible';
+        if (isTabActive) {
+            // Active tab: check if session is still valid
+            if (Date.now() - lastActivity < TOKEN_LIFETIME) {
+                setupTokenExpiration();
+            } else {
+                logout();
+            }
+        } else {
+            // Inactive tab: clear timers to prevent interference
+            clearTimeout(tokenExpiryTimer);
+            clearTimeout(warningTimer);
         }
     });
 
@@ -32,7 +67,7 @@ var mainApp = {};
             title: 'Security Notice',
             text: 'Please ensure you\'re in a secure environment before proceeding.',
             icon: 'info',
-            timer: 100,
+            timer: 3000,
             timerProgressBar: true,
             confirmButtonText: 'Understood',
             allowOutsideClick: false,
@@ -45,7 +80,7 @@ var mainApp = {};
 
     // Show warning before token expiration
     function showExpiryWarning() {
-        var countdown = 300; // 5 minutes in seconds
+        var countdown = Math.floor(WARNING_BEFORE_EXPIRY / 1000);
         Swal.fire({
             title: 'Session Expiring Soon',
             html: `Your session will expire in <strong id="countdown">${countdown}</strong> seconds.<br>You will need to log in again after expiration.`,
@@ -53,7 +88,7 @@ var mainApp = {};
             timer: WARNING_BEFORE_EXPIRY,
             timerProgressBar: true,
             showCancelButton: true,
-            confirmButtonText: 'Understood',
+            confirmButtonText: 'Stay Logged In',
             cancelButtonText: 'Logout Now',
             allowOutsideClick: false,
             allowEscapeKey: false
@@ -76,6 +111,8 @@ var mainApp = {};
 
     // Set up token expiration timer
     function setupTokenExpiration() {
+        if (!isTabActive) return; // Only active tab sets timers
+
         clearTimeout(tokenExpiryTimer);
         clearTimeout(warningTimer);
 
@@ -83,20 +120,38 @@ var mainApp = {};
         tokenExpiryTimer = setTimeout(logout, TOKEN_LIFETIME);
     }
 
+    // Handle user activity
+    const handleUserActivity = debounce(function() {
+        if (!isTabActive) return; // Only active tab updates activity
+
+        lastActivity = Date.now();
+        localStorage.setItem('activity-update', lastActivity.toString());
+        setupTokenExpiration();
+    }, 200); // Debounce for 200ms
+
+    // Initialize the application
     var init = function() {
         showSecurityNotification();
 
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 console.log("Authenticated user detected");
-                // Override CSS body display: none to show content
                 document.body.style.display = 'block';
                 mainContainer.style.display = 'block';
-                setupTokenExpiration();
+                if (isTabActive) {
+                    setupTokenExpiration();
+                }
+
+                // Add event listeners for user activity
+                window.addEventListener('mousemove', handleUserActivity);
+                window.addEventListener('click', handleUserActivity);
+                window.addEventListener('keypress', handleUserActivity);
+                window.addEventListener('scroll', handleUserActivity);
+                window.addEventListener('touchstart', handleUserActivity);
             } else {
-                // Keep content hidden and redirect
                 document.body.style.display = 'none';
                 mainContainer.style.display = 'none';
+                // window.location.replace("./login.html");
                 window.location.replace("https://kanyadet-school-admin.web.app/login.html");
             }
         });

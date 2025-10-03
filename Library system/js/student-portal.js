@@ -3,6 +3,9 @@ const db = firebase.database();
 
 class StudentPortal {
     constructor() {
+        // Initialize Firebase services as class properties
+        this.db = firebase.database();
+
         this.loginPage = document.getElementById('loginPage');
         this.loginForm = document.getElementById('loginForm');
         this.dashboardContent = document.getElementById('dashboardContent');
@@ -13,6 +16,7 @@ class StudentPortal {
 
         if (!this.loginPage || !this.loginForm || !this.dashboardContent || !this.logoutBtn) {
             console.error('Required elements not found');
+            document.body.innerHTML = '<div class="alert alert-danger">Error: Required page elements are missing. Please contact support.</div>';
             return;
         }
 
@@ -23,6 +27,140 @@ class StudentPortal {
         this.views = ['dashboard', 'activeBooks', 'messages', 'history'];
         
         this.setupEventListeners();
+        this.setupSearchListener();
+        this.setupDashboardStatsHandlers();
+    }
+
+    // Add this method to handle search functionality
+    setupSearchListener() {
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('#activeBooksView input[type="text"]');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    this.filterActiveBooks(e.target.value);
+                });
+            }
+        });
+    }
+
+    // Add this method to filter active books
+    filterActiveBooks(searchTerm) {
+        const container = document.querySelector('#activeBooksView .row');
+        if (!container) return;
+
+        const bookCards = container.querySelectorAll('.col-md-6');
+        const normalizedSearch = searchTerm.toLowerCase().trim();
+
+        bookCards.forEach(card => {
+            const title = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
+            const author = card.querySelector('.card-body p')?.textContent.toLowerCase() || '';
+            const isbn = card.querySelector('.card-body')?.textContent.toLowerCase() || '';
+            
+            const isMatch = title.includes(normalizedSearch) || 
+                           author.includes(normalizedSearch) || 
+                           isbn.includes(normalizedSearch);
+
+            card.style.display = isMatch ? 'block' : 'none';
+        });
+
+        const existingNoResults = container.querySelector('.no-results-message');
+        if (existingNoResults) {
+            existingNoResults.remove();
+        }
+
+        const visibleCards = container.querySelectorAll('.col-md-6[style*="block"], .col-md-6:not([style*="none"])');
+        if (visibleCards.length === 0 && normalizedSearch) {
+            const noResultsDiv = document.createElement('div');
+            noResultsDiv.className = 'col-12 text-center text-muted no-results-message';
+            noResultsDiv.innerHTML = `<p>No books found matching "${searchTerm}"</p>`;
+            container.appendChild(noResultsDiv);
+        }
+    }
+
+    // Add this method to setup dashboard stats click handlers
+    setupDashboardStatsHandlers() {
+        document.addEventListener('DOMContentLoaded', () => {
+            const statsElements = {
+                totalBooks: 'all',
+                activeBooks: 'active',
+                overdueBooks: 'overdue',
+                lostBooks: 'lost'
+            };
+
+            Object.entries(statsElements).forEach(([elementId, filter]) => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.style.cursor = 'pointer';
+                    element.addEventListener('click', () => {
+                        this.showFilteredBooks(filter);
+                    });
+                }
+            });
+        });
+    }
+
+    // Add this method to show filtered books
+    async showFilteredBooks(filter) {
+        try {
+            this.switchView('activeBooks');
+
+            const issuanceSnapshot = await this.db.ref('issuance')
+                .orderByChild('studentId')
+                .equalTo(this.studentData.id)
+                .once('value');
+
+            const container = document.querySelector('#activeBooksView .row');
+            if (!container) return;
+
+            const filteredBooks = [];
+            const currentDate = new Date();
+
+            issuanceSnapshot.forEach(child => {
+                const issuance = child.val();
+                let shouldInclude = false;
+
+                switch(filter) {
+                    case 'all':
+                        shouldInclude = true;
+                        break;
+                    case 'active':
+                        shouldInclude = issuance.status === 'active';
+                        break;
+                    case 'overdue':
+                        shouldInclude = issuance.status === 'active' && 
+                                      new Date(issuance.returnDate) < currentDate;
+                        break;
+                    case 'lost':
+                        shouldInclude = issuance.status === 'lost';
+                        break;
+                }
+
+                if (shouldInclude) {
+                    filteredBooks.push(this.loadBookDetails(issuance, child.key));
+                }
+            });
+
+            if (filteredBooks.length === 0) {
+                container.innerHTML = `<div class="col-12 text-center text-muted">No ${filter} books found</div>`;
+                return;
+            }
+
+            const bookCards = await Promise.all(filteredBooks);
+            container.innerHTML = bookCards.join('');
+
+            const titleElement = document.querySelector('#activeBooksView h4');
+            if (titleElement) {
+                const filterNames = {
+                    'all': 'All Books',
+                    'active': 'Active Books',
+                    'overdue': 'Overdue Books',
+                    'lost': 'Lost Books'
+                };
+                titleElement.textContent = filterNames[filter] || 'Active Books';
+            }
+        } catch (error) {
+            console.error('Error loading filtered books:', error);
+        }
     }
 
     setupEventListeners() {
@@ -39,11 +177,11 @@ class StudentPortal {
 
     setupMessageListener() {
         if (this.messageListener) {
-            db.ref('messages').off('value', this.messageListener);
+            this.db.ref('messages').off('value', this.messageListener);
         }
 
         if (this.studentData?.id) {
-            this.messageListener = db.ref('messages')
+            this.messageListener = this.db.ref('messages')
                 .orderByChild('studentId')
                 .equalTo(this.studentData.id)
                 .on('value', () => {
@@ -57,14 +195,14 @@ class StudentPortal {
 
         if (!this.studentData?.id) return;
 
-        const issuanceListener = db.ref('issuance')
+        const issuanceListener = this.db.ref('issuance')
             .orderByChild('studentId')
             .equalTo(this.studentData.id)
             .on('value', (snapshot) => {
                 this.loadStudentData();
             });
 
-        const booksListener = db.ref('books').on('value', (snapshot) => {
+        const booksListener = this.db.ref('books').on('value', (snapshot) => {
             if (this.currentView === 'dashboard' || this.currentView === 'activeBooks') {
                 this.loadStudentData();
             }
@@ -79,18 +217,21 @@ class StudentPortal {
     removeRealtimeListeners() {
         if (this.bookListeners) {
             this.bookListeners.forEach(({ ref, listener }) => {
-                db.ref(ref).off('value', listener);
+                this.db.ref(ref).off('value', listener);
             });
             this.bookListeners = [];
         }
         if (this.messageListener) {
-            db.ref('messages').off('value', this.messageListener);
+            this.db.ref('messages').off('value', this.messageListener);
             this.messageListener = null;
         }
     }
 
     updateStudentInfo() {
-        if (!this.studentData) return;
+        if (!this.studentData) {
+            console.error('No student data available for updateStudentInfo');
+            return;
+        }
 
         const elements = {
             studentName: document.getElementById('studentName'),
@@ -98,11 +239,91 @@ class StudentPortal {
             infoName: document.getElementById('infoName'),
             infoGrade: document.getElementById('infoGrade'),
             infoAssessmentNo: document.getElementById('infoAssessmentNo'),
-            infoUpiNo: document.getElementById('infoUpiNo')
+            infoUpiNo: document.getElementById('infoUpiNo'),
+            studentAvatar: document.querySelector('.student-avatar')
         };
 
+        console.log('Elements found:', {
+            studentName: !!elements.studentName,
+            studentGrade: !!elements.studentGrade,
+            infoName: !!elements.infoName,
+            infoGrade: !!elements.infoGrade,
+            infoAssessmentNo: !!elements.infoAssessmentNo,
+            infoUpiNo: !!elements.infoUpiNo,
+            studentAvatar: !!elements.studentAvatar
+        });
+        console.log('Student data:', this.studentData);
+        console.log('Student image URL:', StudentImageManager.getStudentImage(this.studentData.id));
+
+        if (elements.studentAvatar) {
+            elements.studentAvatar.innerHTML = '';
+            const imageContainer = StudentImageManager.renderStudentImage(this.studentData.id, elements.studentAvatar);
+
+            const hoverCard = document.createElement('div');
+            hoverCard.className = 'student-hover-card';
+
+            const studentInfo = Object.entries(this.studentData)
+                .filter(([key]) => key !== 'id')
+                .map(([key, value]) => {
+                    const formattedKey = key
+                        .replace(/([A-Z])/g, ' $1')
+                        .replace(/^./, str => str.toUpperCase());
+                    return `<p>${formattedKey}: ${value || 'Not assigned'}</p>`;
+                })
+                .join('');
+
+            hoverCard.innerHTML = `
+                <div class="hover-card-content">
+                    <img src="${StudentImageManager.getStudentImage(this.studentData.id)}" 
+                         alt="${this.studentData.name || 'Student'}" 
+                         class="hover-card-image"
+                         onerror="this.src='images/default-student.png'; console.log('Image failed to load, using default:', this.src)">
+                    <div class="hover-card-info">
+                        <h5>${this.studentData.name || 'Unknown'}</h5>
+                        ${studentInfo}
+                    </div>
+                </div>
+            `;
+            elements.studentAvatar.appendChild(hoverCard);
+
+            console.log('Hover card appended to DOM:', !!elements.studentAvatar.querySelector('.student-hover-card'));
+            console.log('Hover card styles on creation:', {
+                display: hoverCard.style.display,
+                opacity: hoverCard.style.opacity,
+                transform: hoverCard.style.transform,
+                zIndex: window.getComputedStyle(hoverCard).zIndex
+            });
+
+            elements.studentAvatar.removeEventListener('mouseenter', elements.studentAvatar._mouseenterHandler);
+            elements.studentAvatar.removeEventListener('mouseleave', elements.studentAvatar._mouseleaveHandler);
+
+            elements.studentAvatar._mouseenterHandler = () => {
+                console.log('Hover card shown for student:', this.studentData.id);
+                hoverCard.style.display = 'block';
+                hoverCard.style.opacity = '1';
+                hoverCard.style.transform = 'translateX(-50%) translateY(0)';
+                console.log('Hover card styles on hover:', {
+                    display: window.getComputedStyle(hoverCard).display,
+                    opacity: window.getComputedStyle(hoverCard).opacity,
+                    transform: window.getComputedStyle(hoverCard).transform,
+                    zIndex: window.getComputedStyle(hoverCard).zIndex
+                });
+            };
+            elements.studentAvatar._mouseleaveHandler = () => {
+                console.log('Hover card hidden for student:', this.studentData.id);
+                hoverCard.style.display = 'none';
+                hoverCard.style.opacity = '0';
+                hoverCard.style.transform = 'translateX(-50%) translateY(-10px)';
+            };
+
+            elements.studentAvatar.addEventListener('mouseenter', elements.studentAvatar._mouseenterHandler);
+            elements.studentAvatar.addEventListener('mouseleave', elements.studentAvatar._mouseleaveHandler);
+        } else {
+            console.error('Student avatar element not found');
+        }
+
         Object.entries(elements).forEach(([key, element]) => {
-            if (element) {
+            if (element && key !== 'studentAvatar') {
                 switch(key) {
                     case 'studentName':
                     case 'infoName':
@@ -123,38 +344,34 @@ class StudentPortal {
         });
     }
 
-    async handleLogin(e) {
-        e.preventDefault();
-        const assessmentNo = document.getElementById('assessmentNo').value;
-        const grade = document.getElementById('grade').value;
+async handleLogin(e) {
+    e.preventDefault();
+    const assessmentNo = document.getElementById('assessmentNo').value;
 
-        try {
-            this.removeRealtimeListeners();
+    try {
+        this.removeRealtimeListeners();
+        
+        const snapshot = await this.db.ref('students')
+            .orderByChild('assessmentNo')
+            .equalTo(assessmentNo)
+            .once('value');
+
+        if (snapshot.exists()) {
+            const studentData = Object.values(snapshot.val())[0];
+            const studentId = Object.keys(snapshot.val())[0];
             
-            const snapshot = await db.ref('students')
-                .orderByChild('assessmentNo')
-                .equalTo(assessmentNo)
-                .once('value');
-
-            if (snapshot.exists()) {
-                const studentData = Object.values(snapshot.val())[0];
-                const studentId = Object.keys(snapshot.val())[0];
-                if (studentData.grade === grade) {
-                    this.studentData = { ...studentData, id: studentId };
-                    this.setupMessageListener();
-                    this.setupRealtimeListeners();
-                    this.showDashboard();
-                } else {
-                    alert('Invalid grade for this assessment number');
-                }
-            } else {
-                alert('Student not found');
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            alert('Error during login');
+            this.studentData = { ...studentData, id: studentId };
+            this.setupMessageListener();
+            this.setupRealtimeListeners();
+            this.showDashboard();
+        } else {
+            alert('Student not found');
         }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Error during login');
     }
+}
 
     handleLogout() {
         this.studentData = null;
@@ -175,7 +392,7 @@ class StudentPortal {
 
     async loadStudentData() {
         try {
-            const issuanceSnapshot = await db.ref('issuance')
+            const issuanceSnapshot = await this.db.ref('issuance')
                 .orderByChild('studentId')
                 .equalTo(this.studentData.id)
                 .once('value');
@@ -223,31 +440,158 @@ class StudentPortal {
 
             const bookCards = await Promise.all(bookPromises);
             document.getElementById('booksContainer').innerHTML = bookCards.join('');
-
         } catch (error) {
             console.error('Error loading student data:', error);
         }
     }
 
     updateStatistics(stats) {
-        document.getElementById('totalBooks').textContent = stats.total;
-        document.getElementById('activeBooks').textContent = stats.active;
-        document.getElementById('overdueBooks').textContent = stats.overdue;
-        document.getElementById('lostBooks').textContent = stats.lost;
+        this.showStatsLoading();
         
-        const avgBorrowDays = stats.returned ? Math.round(stats.totalDays / stats.returned) : 0;
-        const returnRate = stats.returned ? Math.round((stats.onTimeReturns / stats.returned) * 100) : 0;
+        setTimeout(() => {
+            const totalBooksEl = document.getElementById('totalBooks');
+            const activeBooksEl = document.getElementById('activeBooks');
+            const overdueBooksEl = document.getElementById('overdueBooks');
+            const lostBooksEl = document.getElementById('lostBooks');
+            
+            if (totalBooksEl) {
+                totalBooksEl.textContent = stats.total;
+                this.makeStatClickable(totalBooksEl, 'all');
+            }
+            
+            if (activeBooksEl) {
+                activeBooksEl.textContent = stats.active;
+                this.makeStatClickable(activeBooksEl, 'active');
+            }
+            
+            if (overdueBooksEl) {
+                overdueBooksEl.textContent = stats.overdue;
+                this.makeStatClickable(overdueBooksEl, 'overdue');
+            }
+            
+            if (lostBooksEl) {
+                lostBooksEl.textContent = stats.lost;
+                this.makeStatClickable(lostBooksEl, 'lost');
+            }
+            
+            const avgBorrowDays = stats.returned ? Math.round(stats.totalDays / stats.returned) : 0;
+            const returnRate = stats.returned ? Math.round((stats.onTimeReturns / stats.returned) * 100) : 0;
 
-        document.getElementById('borrowingStats').innerHTML = `
-            <div class="text-center mb-2">
-                <small class="text-muted">Average Borrowing Duration</small>
-                <h4>${avgBorrowDays} days</h4>
-            </div>
-            <div class="text-center">
-                <small class="text-muted">On-time Return Rate</small>
-                <h4>${returnRate}%</h4>
-            </div>
-        `;
+            const borrowingStatsEl = document.getElementById('borrowingStats');
+            if (borrowingStatsEl) {
+                borrowingStatsEl.innerHTML = `
+                    <div class="text-center mb-2">
+                        <small class="text-muted">Average Borrowing Duration</small>
+                        <h4>${avgBorrowDays} days</h4>
+                    </div>
+                    <div class="text-center">
+                        <small class="text-muted">On-time Return Rate</small>
+                        <h4>${returnRate}%</h4>
+                    </div>
+                `;
+            }
+            
+            this.hideStatsLoading();
+        }, 500);
+    }
+
+    showStatsLoading() {
+        const statElements = [
+            'totalBooks',
+            'activeBooks', 
+            'overdueBooks',
+            'lostBooks'
+        ];
+        
+        statElements.forEach(elementId => {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div>';
+            }
+        });
+        
+        const borrowingStatsEl = document.getElementById('borrowingStats');
+        if (borrowingStatsEl) {
+            borrowingStatsEl.innerHTML = `
+                <div class="text-center mb-2">
+                    <small class="text-muted">Average Borrowing Duration</small>
+                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                </div>
+                <div class="text-center">
+                    <small class="text-muted">On-time Return Rate</small>
+                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                </div>
+            `;
+        }
+    }
+
+    hideStatsLoading() {
+        console.log('Stats loading completed');
+    }
+
+    showStatsLoadingSkeleton() {
+        const statClasses = [
+            '.total-books',
+            '.active-books', 
+            '.overdue-books',
+            '.card-body',
+            '.lost-books'
+        ];
+        
+        statClasses.forEach(className => {
+            const elements = document.querySelectorAll(className);
+            elements.forEach(element => {
+                element.innerHTML = '<div class="skeleton-text" style="width: 40px; height: 20px; background: #e9ecef; border-radius: 4px; animation: pulse 1.5s ease-in-out infinite;"></div>';
+            });
+        });
+        
+        const borrowingStatsEl = document.querySelector('.borrowing-stats');
+        if (borrowingStatsEl) {
+            borrowingStatsEl.innerHTML = `
+                <div class="text-center mb-2">
+                    <small class="text-muted">Average Borrowing Duration</small>
+                    <div class="skeleton-text" style="width: 60px; height: 24px; background: #e9ecef; border-radius: 4px; animation: pulse 1.5s ease-in-out infinite; margin: 0 auto;"></div>
+                </div>
+                <div class="text-center">
+                    <small class="text-muted">On-time Return Rate</small>
+                    <div class="skeleton-text" style="width: 40px; height: 24px; background: #e9ecef; border-radius: 4px; animation: pulse 1.5s ease-in-out infinite; margin: 0 auto;"></div>
+                </div>
+            `;
+        }
+    }
+
+    makeStatClickable(element, filter) {
+        if (!element) return;
+        
+        let clickableParent = element.closest('.card') || 
+                            element.closest('.stat-item') || 
+                            element.parentElement;
+        
+        if (clickableParent) {
+            clickableParent.style.cursor = 'pointer';
+            clickableParent.style.transition = 'all 0.2s ease';
+            clickableParent.classList.add('stats-clickable');
+            
+            clickableParent.removeEventListener('click', clickableParent._clickHandler);
+            
+            clickableParent._clickHandler = () => {
+                this.showFilteredBooks(filter);
+            };
+            
+            clickableParent.addEventListener('click', clickableParent._clickHandler);
+            
+            clickableParent.addEventListener('mouseenter', () => {
+                clickableParent.style.transform = 'translateY(-2px)';
+                clickableParent.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                clickableParent.style.backgroundColor = 'rgba(0,123,255,0.05)';
+            });
+            
+            clickableParent.addEventListener('mouseleave', () => {
+                clickableParent.style.transform = 'translateY(0)';
+                clickableParent.style.boxShadow = '';
+                clickableParent.style.backgroundColor = '';
+            });
+        }
     }
 
     async loadBookDetails(issuance, issuanceId) {
@@ -257,7 +601,7 @@ class StudentPortal {
                 return '';
             }
 
-            const bookSnapshot = await db.ref(`books/${issuance.bookId}`).once('value');
+            const bookSnapshot = await this.db.ref(`books/${issuance.bookId}`).once('value');
             const book = bookSnapshot.val() || {
                 title: 'Unknown Book',
                 author: 'Unknown',
@@ -383,7 +727,7 @@ class StudentPortal {
         if (!issueType) return;
 
         try {
-            await db.ref('messages').push({
+            await this.db.ref('messages').push({
                 issuanceId,
                 studentId: this.studentData.id,
                 bookTitle: bookTitle,
@@ -466,7 +810,7 @@ class StudentPortal {
 
     async loadMessages() {
         try {
-            const messagesRef = db.ref('messages').orderByChild('studentId').equalTo(this.studentData.id);
+            const messagesRef = this.db.ref('messages').orderByChild('studentId').equalTo(this.studentData.id);
             const snapshot = await messagesRef.once('value');
             
             const messagesContainer = document.getElementById('messagesContainer');
@@ -492,7 +836,7 @@ class StudentPortal {
             messages.sort((a, b) => b.timestamp - a.timestamp);
 
             for (const message of messages) {
-                const threadSnapshot = await db.ref(`message_threads/${message.id}`).once('value');
+                const threadSnapshot = await this.db.ref(`message_threads/${message.id}`).once('value');
                 const threadMessages = threadSnapshot.val() || {};
                 const lastMessage = Object.values(threadMessages).sort((a, b) => b.timestamp - a.timestamp)[0];
 
@@ -555,7 +899,6 @@ class StudentPortal {
             } else {
                 unreadCount.style.display = 'none';
             }
-
         } catch (error) {
             console.error('Error loading messages:', error);
             document.getElementById('messagesContainer').innerHTML = 
@@ -565,7 +908,7 @@ class StudentPortal {
 
     async markMessageAsRead(messageId) {
         try {
-            await db.ref(`messages/${messageId}`).update({
+            await this.db.ref(`messages/${messageId}`).update({
                 readByStudent: true
             });
             this.loadMessages();
@@ -584,9 +927,16 @@ class StudentPortal {
         this.views.forEach(view => {
             const container = document.querySelector(`#${view}View`);
             if (container) {
-                container.classList.toggle('active', view === viewName);
+                container.classList.remove('active');
+                container.style.display = 'none';
             }
         });
+
+        const activeContainer = document.querySelector(`#${viewName}View`);
+        if (activeContainer) {
+            activeContainer.classList.add('active');
+            activeContainer.style.display = 'block';
+        }
 
         this.currentView = viewName;
 
@@ -600,20 +950,27 @@ class StudentPortal {
             case 'history':
                 this.loadHistory();
                 break;
+            case 'dashboard':
             default:
-                this.loadDashboard();
+                this.loadStudentData();
         }
     }
 
     async loadActiveBooks() {
         try {
-            const issuanceSnapshot = await db.ref('issuance')
+            const issuanceSnapshot = await this.db.ref('issuance')
                 .orderByChild('studentId')
                 .equalTo(this.studentData.id)
                 .once('value');
 
-            const activeBooksContainer = document.querySelector('#activeBooks');
-            if (!activeBooksContainer) return;
+            const activeBooksContainer = document.querySelector('#activeBooksView .row') || 
+                                       document.querySelector('#activeBooksView') ||
+                                       document.createElement('div');
+
+            if (!activeBooksContainer) {
+                console.error('Active books container not found');
+                return;
+            }
 
             const activeBooks = [];
             issuanceSnapshot.forEach(child => {
@@ -623,22 +980,46 @@ class StudentPortal {
                 }
             });
 
+            if (activeBooks.length === 0) {
+                activeBooksContainer.innerHTML = '<div class="col-12 text-center text-muted">No active books found</div>';
+                return;
+            }
+
             const bookCards = await Promise.all(activeBooks);
             activeBooksContainer.innerHTML = bookCards.join('');
+
+            const searchInput = document.querySelector('#activeBooksView input[type="text"]');
+            if (searchInput) {
+                searchInput.removeEventListener('input', this.filterActiveBooks);
+                searchInput.addEventListener('input', (e) => {
+                    this.filterActiveBooks(e.target.value);
+                });
+            }
         } catch (error) {
             console.error('Error loading active books:', error);
+            const activeBooksContainer = document.querySelector('#activeBooksView .row') || 
+                                       document.querySelector('#activeBooksView');
+            if (activeBooksContainer) {
+                activeBooksContainer.innerHTML = '<div class="col-12 text-center text-danger">Error loading active books</div>';
+            }
         }
     }
 
     async loadHistory() {
         try {
-            const issuanceSnapshot = await db.ref('issuance')
+            const issuanceSnapshot = await this.db.ref('issuance')
                 .orderByChild('studentId')
                 .equalTo(this.studentData.id)
                 .once('value');
 
-            const historyContainer = document.querySelector('#historyView');
-            if (!historyContainer) return;
+            const historyContainer = document.querySelector('#historyView .row') || 
+                                   document.querySelector('#historyView') ||
+                                   document.createElement('div');
+
+            if (!historyContainer) {
+                console.error('History container not found');
+                return;
+            }
 
             const history = [];
             issuanceSnapshot.forEach(child => {
@@ -648,17 +1029,26 @@ class StudentPortal {
                 }
             });
 
+            if (history.length === 0) {
+                historyContainer.innerHTML = '<div class="col-12 text-center text-muted">No returned books found</div>';
+                return;
+            }
+
             const bookCards = await Promise.all(history);
             historyContainer.innerHTML = bookCards.join('');
         } catch (error) {
             console.error('Error loading history:', error);
+            const historyContainer = document.querySelector('#historyView .row') || 
+                                   document.querySelector('#historyView');
+            if (historyContainer) {
+                historyContainer.innerHTML = '<div class="col-12 text-center text-danger">Error loading history</div>';
+            }
         }
     }
 
     async handleFileUpload(file) {
         try {
-            const storage = firebase.storage();
-            const storageRef = storage.ref(`message-attachments/${Date.now()}_${file.name}`);
+            const storageRef = this.storage.ref(`message-attachments/${Date.now()}_${file.name}`);
             const snapshot = await storageRef.put(file);
             const url = await snapshot.ref.getDownloadURL();
             return {
@@ -809,7 +1199,7 @@ class StudentPortal {
                     }
                 }
 
-                await db.ref('messages').push({
+                await this.db.ref('messages').push({
                     studentId: this.studentData.id,
                     studentName: this.studentData.name,
                     studentGrade: this.studentData.grade,
@@ -912,7 +1302,6 @@ class StudentPortal {
                     <span class="text-danger">${stats.lost || 0}</span>
                 </div>
             `;
-
         } catch (error) {
             console.error('Error loading dashboard:', error);
         }

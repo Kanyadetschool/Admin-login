@@ -9,22 +9,34 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-	 <!-- Add Firebase SDK -->
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-app-compat.js"></script>
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-auth-compat.js"></script>
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
+	<!-- Add Firebase SDK -->
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.js"></script>
 	 <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+	 
 	 <meta name="google-site-verification" content="SCQsD_6XaiMfET6jXvdsAicaJyGk-Gu3oyxO2Ty-Sfs" />
 	 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+   
 
 	   <!-- Add Firebase SDK -->
 
 
 	<!-- My CSS -->
 	<link rel="stylesheet" href="./css/dashboard style.css">
-	<link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/swalOnly.css">
+	<link rel="stylesheet" href="./css/swalOnly.css">
+	
+	<!-- <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/dashboard style.css">
+    <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/swalOnly.css">  -->
 	<title>Kanyadet</title>
+	
 </head>
 
 <body>
@@ -34,65 +46,93 @@
 
 	<!-- SIDEBAR -->
 	<section id="sidebar">
-		<a href="#" class="brand">
-			<!-- <i class='bx bxs-school' ></i> -->
-			<i class='bx bx-menu' ></i>
-
-			<img src="./img/logo.png" alt=""class="logo" >
-			<span class="text"> Kanyadet </span>
+		<a href="#" class="br/and">
+			
+			<li><i class='bx bx-menu' ></i></li>
+			
 		</a>
 		<ul class="side-menu top">
-			<li class="active">
-				<a href="#">
-					<i class='bx bxs-dashboard' ></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-			<li>
-				<a href="./students dashboard/Search.html" target="_blank"  >
-					<i class='bx bxs-user' ></i>
-					<span class="text">Students</span>
-				</a>
-			</li>
-			<li>
-				<a href="https://kanyadet-school-portal.web.app/Internal Results/index.html" target="_blank"  >
-					<i class='bx bxs-school' ></i>
-					<span class="text">Academics</span>
-				 </a>
-			</li>
-			
+  <li class="active">
+    <a href="#">
+      <i class='bx bxs-dashboard'></i>
+      <span class="text">Dashboard</span>
+    </a>
+  </li>
 
-			<li>
-				<a href="https://kanyadet-school-portal.web.app" target="_blank"  >
-					<i class='bx bxs-group' ></i>
-					<span class="text">Teachers Portal</span>
-				</a>
-			</li>
+  <li>
+    <a href="./New-Students-Database/Active-Students-Database.html" target="_blank">
+      <i class='bx bxs-user-detail'></i>
+      <span class="text">Active Students..</span>
+    </a>
+  </li>
+  <li>
+    <a href="./New-Students-Database/Missing-Fields/index.html" target="_blank">
+      <i class='bx bxs-user-detail'></i>
+      <span class="text">Students Missing Records.</span>
+    </a>
+  </li>
+
+  <li>
+    <a href="./New-Students-Database/All-Deleted-Students.html" target="_blank">
+      <i class='bx bxs-user-x'></i>
+      <span class="text">Deleted Students</span>
+    </a>
+  </li>
+
+  <li>
+    <a href="./New-Students-Database/Birth-certificates.html" target="_blank">
+      <i class='bx bxs-file'></i>
+      <span class="text">Birth Certificates</span>
+    </a>
+  </li>
+
+  <li>
+    <a href="https://kanyadet-school-portal.web.app/Internal Results/index.html" target="_blank">
+      <i class='bx bxs-graduation'></i>
+      <span class="text">Academics</span>
+    </a>
+  </li>
+
+  <li>
+    <a href="https://kanyadet-school-portal.web.app" target="_blank">
+      <i class='bx bxs-chalkboard'></i>
+      <span class="text">Teachers Portal</span>
+    </a>
+  </li>
+
+  <li>
+    <a href="./inventories/Inventory.html" target="_blank">
+      <i class='bx bxs-box'></i>
+      <span class="text">School Inventory</span>
+    </a>
+  </li>
+
+  <li>
+    <a href="./Library system/index.html" target="_blank">
+      <i class='bx bxs-book'></i>
+      <span class="text">School Library</span>
+    </a>
+  </li>
+
+  <li>
+    <a href="./Library system/student-portal.html" target="_blank">
+      <i class='bx bxs-book'></i>
+      <span class="text">students Library records</span>
+    </a>
+  </li>
+  <li>
+    <a href="#">
+     <i class='bx bxs-log-out-circle' ></i>
+      <span class="text"  onclick="mainApp.logout()">Logout</span>
+    </a>
+  </li>
+
+  
+</ul>
+		
 
 			
-			<li>
-				<a href="./inventories/Inventory.html" target="_blank">
-					<i class='bx bxs-group' ></i>
-					<span class="text"> School Inventory</span>
-				</a>
-			</li>
-			<li>
-				<a href="./Library system/index.html" target="_blank">
-					<i class='bx bxs-group' ></i>
-					<span class="text"> School Library</span>
-				</a>
-			</li>
-			
-		</ul>
-		<ul class="side-menu">
-
-			<li>
-			
-					<i class='bx bxs-log-out-circle' ></i>
-					<span class="text"  onclick="mainApp.logout()">Logout</span>
-				
-			</li>
-		</ul>
+		
 	</section>
 	<!-- SIDEBAR -->
 
@@ -102,7 +142,7 @@
 	<section id="content">
 		<!-- NAVBAR -->
 		<nav>
-			<a href="#" class="nav-link">Categories</a>
+			<a href="#" class="nav-link">Categories..</a>
 			<form action="#">
 				<div class="form-input">
 					<input type="search" placeholder="Search...">
@@ -125,8 +165,10 @@
 		<!-- MAIN -->
 		<main>
 			<div class="head-title">
+				
 				<div class="left">
-					<h1>Dashboard</h1>
+					
+					<h1><img src="./img/logo.png" alt=""class="logo" > Dashboard..</h1>
 					<ul class="breadcrumb">
 						<li>
 							<a href="#">Dashboard</a>
@@ -154,19 +196,44 @@
 					
 				      </li> -->
 					  
-					  <a href="./students dashboard/students.html" target="_blank" class="dark">
+						<a href="./New-Students-Database/Active-Students-Database.html" target="_blank"  >
+
 						<div id="studentCounter"></div>
 					 </a>
 					  
 		<li style="cursor: pointer;">
-    <i class='bx bxs-user'></i>
+  <div>  <i class='bx bxs-user'></i></div>
     <span class="text">
         <h3 id="transferredCounter">0</h3>
         <p>Transferred Students</p>  
     </span>
 </li>
+
+
+
+    <div class="summary-box">
+        <h3>Gender Distribution</h3>
+        <canvas id="genderChart" style="max-height: 300px;"></canvas>
+    </div>
+	<div class="summary-box">
+        <h3>Students by Grade</h3>
+        <canvas id="gradeChart" style="max-height: 300px;"></canvas>
+    </div>
+    <div class="summary-box">
+        <h3>Disability Statistics</h3>
+        <canvas id="disabilityChart" style="max-height: 300px;"></canvas>
+    </div>
+    <div class="summary-box">
+        <h3>Admission Trends</h3>
+       <canvas id="admissionChart" style="max-height: 3000px; box-sizing: border-box; display: block; height: 1104px; width: 229px;" width="458" height="229"></canvas>
+    </div>
+    <div id="summaryDashboard"></div>
+
+	</ul>
+	<div id="viewGradeTable" class="summary-box">View Students by Grade</div>
+	<div id="generateReportBtn" class="summary-box">Generate PDF Report</div>
 				
-			</ul>
+			
 
 
 			<div class="table-data">
@@ -257,13 +324,23 @@
 				</div>
 			</div>
 		</main>
+		
 		<!-- MAIN -->
 	</section>
 	<!-- CONTENT -->
+
+
+    <!-- <script type="module" src="./js/Counter ADVANCE QUALITY CHECK.js"></script>
+    <script  src="./js/dashboard script.js"></script> 
+	<script src="./js/GoogleAuthfireBase.js"></script>
+    <script src="./js/GoogleAuthmain.js"></script> -->
+
+
+    <script  src="https://kanyadet-school-admin.web.app/js/dashboard script.js"></script>
+    <script type="module" src="https://kanyadet-school-admin.web.app/js/Counter ADVANCE QUALITY CHECK.js"></script>
 	<script src="https://kanyadet-school-admin.web.app/js/GoogleAuthfireBase.js"></script>
-    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>
-    <script  src="./js/dashboard script.js"></script>
-    <script type="module" src="./students dashboard/js/Counter.js"></script>
+    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script> 
+
 
 </div>
 </body>

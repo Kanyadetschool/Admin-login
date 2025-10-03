@@ -36,10 +36,10 @@
   .swal2-popup.swal2-modal.swal2-show{
 
       background-color: #ffffff9d;
-      border: 2px solid lavender;
+      border: 6px solid lavender;
       box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
-      z-index: 999999 !important;
+      /* height: 90vh; */
   }
   
      .swal2-popup{
@@ -64,6 +64,7 @@
   }
   .swal2-container.swal2-backdrop-show, .swal2-container.swal2-noanimation {
     background: rgba(117, 138, 138, 0.4)!important;
+
     /* background: rgba(117, 138, 138, 0.4); */
     backdrop-filter: blur(5px);
   }
@@ -118,8 +119,8 @@
       backdrop-filter: blur(5px);
      
     }
-    button.swal2-confirm.swal2-styled,.swal2-cancel.swal2-styled {
-      border:1px solid gray ;
+    button.swal2-cancel.swal2-styled {
+      border:2px solid gray ;
       border-radius: 20px;
       background: initial;
       backdrop-filter: blur(50px);
@@ -129,22 +130,54 @@
       width: auto !important;;
       font-size: 1em;
       font-family: Georgia, 'Times New Roman', Times, serif;
-      outline: none;
+      box-shadow: 0 0 0 3px red;
      
     
       
     }
+    button.swal2-confirm.swal2-styled {
+      border:2px solid gray ;
+      border-radius: 20px;
+      background: initial;
+      backdrop-filter: blur(50px);
+      color: #fff;
+      background-color: red;
+      border: 2px solid lavender;
+      width: auto !important;;
+      font-size: 1em;
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      box-shadow: 0 0 0 3px red;
+     
+    
+      
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     div:where(.swal2-container) .swal2-html-container {
       z-index: 1;
       justify-content: center;
+      padding: 1.9rem 1.6rem 0.4rem;
       margin: 0;
-      padding: 0 !important;
       overflow: auto;
       color: inherit;
       font-size: 1.125em;
       font-weight: normal;
       line-height: normal;
-      text-align: center;
+      text-align: left;
       word-wrap: break-word;
       word-break: break-word;
   }

@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Birth Certificate Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        .sortable:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        .highlight {
+            background-color: #fef3c7;
+            color: #92400e;
+            font-weight: bold;
+        }
+        .dark .highlight {
+            background-color: #f59e0b;
+            color: #92400e;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            .table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <!-- Toast Container -->
+    <div id="toast-container" class="z-50"></div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl flex items-center space-x-3">
+            <div class="loading-spinner"></div>
+            <span class="text-gray-700 dark:text-gray-300">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Authentication Container -->
+    <div id="auth-container" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Student Management System</h1>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Sign in to access student records</p>
+            </div>
+            
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" id="email" required 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                           placeholder="Enter your email">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                    <input type="password" id="password" required 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+                           placeholder="Enter your password">
+                </div>
+                <button id="signin-btn" type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="text-center">
+                <a id="signup-link" href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm font-medium">
+                    Don't have an account? Sign up here
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="main-app-container" class="hidden min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Student Birth Certificate Manager</h1>
+                        <span id="user-id" class="text-sm text-gray-500 dark:text-gray-400">Anonymous</span>
+                        <span id="user-profile" class="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full"></span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Dark Mode Toggle -->
+                        <button id="dark-mode-toggle" 
+                                class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                                title="Toggle Dark Mode"
+                                aria-label="Toggle dark mode">
+                            <svg id="dark-mode-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Sign Out -->
+                        <button id="sign-out-btn"
+                                class="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Controls Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Search and Filters -->
+                <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Search & Filters</h2>
+                    
+                    <!-- Search Controls -->
+                    <div class="space-y-4 mb-6">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <select id="search-type" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                <option value="name">Student Name</option>
+                                <option value="assessmentNo">Assessment No</option>
+                                <option value="upi">UPI</option>
+                            </select>
+                            <input type="text" id="search-input" placeholder="Enter Student Name" 
+                                   class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            <button id="search-btn" 
+                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-md shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                Search
+                            </button>
+                        </div>
+                        
+                        <!-- Live Filter -->
+                        <div class="flex gap-2">
+                            <input type="text" id="live-filter" placeholder="Live filter..." 
+                                   class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            <button id="clear-filter" 
+                                    class="px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-semibold rounded-md shadow-sm transition-colors">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Buttons -->
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button id="show-all" class="filter-btn px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium transition-colors active:bg-blue-500 active:text-white">All</button>
+                        <button id="show-with-pdf" class="filter-btn px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium transition-colors">With PDF</button>
+                        <button id="show-without-pdf" class="filter-btn px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium transition-colors">Without PDF</button>
+                    </div>
+
+                    <!-- Grade Filter -->
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <label for="grade-filter" class="text-sm font-medium text-gray-700 dark:text-gray-300 self-center">Filter by Grade:</label>
+                        <select id="grade-filter" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            <option value="all">All Grades</option>
+                            <option value="Grade 1">Grade 1</option>
+                            <option value="Grade 2">Grade 2</option>
+                            <option value="Grade 3">Grade 3</option>
+                            <option value="Grade 4">Grade 4</option>
+                            <option value="Grade 5">Grade 5</option>
+                            <option value="Grade 6">Grade 6</option>
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Statistics</h2>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Total Students</span>
+                            <span id="total-count" class="text-lg font-bold text-gray-900 dark:text-white">0</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-md">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">With PDF</span>
+                            <span id="pdf-count" class="text-lg font-bold text-green-600 dark:text-green-400">0 (0%)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-red-50 dark:bg-red-900/20 rounded-md">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Without PDF</span>
+                            <span id="no-pdf-count" class="text-lg font-bold text-red-600 dark:text-red-400">0 (0%)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filtered</span>
+                            <span id="filtered-count" class="text-lg font-bold text-blue-600 dark:text-blue-400">0</span>
+                        </div>
+                    </div>
+                    
+                    <div id="grade-stats-container" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- Export and Batch Actions -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+                <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                        <input type="checkbox" id="select-all" class="rounded">
+                        <label for="select-all">Select All</label>
+                        <span id="selected-count" class="ml-2">0 selected</span>
+                    </div>
+                    
+                    <!-- Export Buttons -->
+                    <div class="flex flex-wrap gap-2">
+                        <button id="export-csv-btn" 
+                                class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white font-semibold rounded-md shadow-sm transition-colors">
+                            Export CSV
+                        </button>
+                        <button id="export-json-btn" 
+                                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white font-semibold rounded-md shadow-sm transition-colors">
+                            Export JSON
+                        </button>
+                        <button id="bulk-download-btn" 
+                                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 text-white font-semibold rounded-md shadow-sm transition-colors">
+                            Download PDFs (ZIP)
+                        </button>
+                        <button id="batch-delete-btn" disabled
+                                class="px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-semibold rounded-md shadow-sm transition-colors">
+                            Delete Selected
+                        </button>
+                    </div>
+
+                    <!-- Items Per Page -->
+                    <div class="flex items-center gap-2 text-sm">
+                        <label for="items-per-page" class="text-gray-700 dark:text-gray-300">Show:</label>
+                        <select id="items-per-page" class="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>per page</span>
+                        <input type="number" id="custom-items-per-page" min="1" max="100" 
+                               class="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" 
+                               placeholder="Custom">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                <div class="table-container">
+                    <table class="table w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <input type="checkbox" id="select-all-header" class="rounded">
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider sortable" data-column="name">
+                                    Student Name
+                                    <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider sortable" data-column="assessmentNo">
+                                    Assessment No
+                                    <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider sortable" data-column="upi">
+                                    UPI
+                                    <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider sortable" data-column="grade">
+                                    Grade
+                                    <span class="ml-1">↑</span>
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    PDF Status
+                                </th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Student rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="no-students-message" class="hidden text-center py-12">
+                    <div class="text-gray-500 dark:text-gray-400">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No students</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">No student records found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-controls" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mt-6 flex flex-col sm:flex-row items-center justify-between">
+                <div class="text-sm text-gray-700 dark:text-gray-300">
+                    Showing <span id="pagination-info">1</span> to <span id="pagination-info-end">10</span> of <span id="pagination-total">100</span> results
+                </div>
+                
+                <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                    <button id="prev-page" disabled
+                            class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        Previous
+                    </button>
+                    <div id="page-numbers" class="flex space-x-1"></div>
+                    <button id="next-page" disabled
+                            class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PDF Modal -->
+    <div id="pdf-modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-6xl  w-full m-4 flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Birth Certificate</h3>
+                <button id="pdf-modal-close-btn" 
+                        class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <iframe id="pdf-iframe" class="flex-1 w-full border-0" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div id="student-details-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full m-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Student Details</h3>
+                    <button id="student-details-close-btn" 
+                            class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="student-details-content" class="space-y-3 text-gray-700 dark:text-gray-300">
+                    <!-- Student details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Modal -->
+    <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full m-4">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modal-title" class="text-lg font-semibold text-gray-900 dark:text-white">Modal Title</h3>
+                    <button id="modal-close-btn" 
+                            class="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <p id="modal-message" class="text-gray-600 dark:text-gray-400"></p>
+                </div>
+                <div class="flex justify-end">
+                    <button id="modal-confirm-btn"
+                            class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Your existing script tag goes here -->
+    <script type="module">
+     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, onValue, child, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// Global variables provided by the environment
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+// Custom config from user prompt
+const customFirebaseConfig = {
+    apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+    authDomain: "kanyadet-school-admin.firebaseapp.com",
+    projectId: "kanyadet-school-admin",
+    databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com",
+    storageBucket: "kanyadet-school-admin.firebasestorage.app",
+    messagingSenderId: "409708360032",
+    appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+    measurementId: "G-Y4C0ZRRL52"
+};
+
+// Merge provided config with user's custom config
+const mergedConfig = { ...customFirebaseConfig, ...firebaseConfig };
+
+// Initialize Firebase
+const app = initializeApp(mergedConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let userId = 'anonymous';
+let userEmail = '';
+let userRole = 'user'; // Default role
+const userIdEl = document.getElementById('user-id');
+const userProfileEl = document.getElementById('user-profile');
+const sanitizedAppId = appId.replace(/[.#$[\]]/g, '_');
+
+// Global variables for filtering, pagination, and sorting
+let allStudents = [];
+let currentFilter = 'all';
+let currentSearchTerm = '';
+let currentGrade = 'all';
+let filteredStudents = [];
+let currentPage = 1;
+let itemsPerPage = 10;
+let sortColumn = 'name';
+let sortDirection = 'asc';
+let selectedStudents = new Set();
+let lastActivityTime = Date.now();
+
+// UI elements
+const pdfModalBackdrop = document.getElementById('pdf-modal-backdrop');
+const pdfModalCloseBtn = document.getElementById('pdf-modal-close-btn');
+const pdfIframe = document.getElementById('pdf-iframe');
+const itemsPerPageSelect = document.getElementById('items-per-page');
+const customItemsPerPageInput = document.getElementById('custom-items-per-page');
+const authContainer = document.getElementById('auth-container');
+const mainAppContainer = document.getElementById('main-app-container');
+const authForm = document.getElementById('auth-form');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const signinBtn = document.getElementById('signin-btn');
+const signupLink = document.getElementById('signup-link');
+const searchInput = document.getElementById('search-input');
+const searchTypeSelect = document.getElementById('search-type');
+const liveFilterInput = document.getElementById('live-filter');
+const studentListDiv = document.getElementById('student-list');
+const studentTableBody = document.getElementById('student-table-body');
+const noStudentsMessage = document.getElementById('no-students-message');
+const paginationControls = document.getElementById('pagination-controls');
+const prevPageBtn = document.getElementById('prev-page');
+const nextPageBtn = document.getElementById('next-page');
+const pageNumbersDiv = document.getElementById('page-numbers');
+const gradeFilterSelect = document.getElementById('grade-filter');
+const gradeStatsContainer = document.getElementById('grade-stats-container');
+const exportCsvBtn = document.getElementById('export-csv-btn');
+const exportJsonBtn = document.getElementById('export-json-btn');
+const bulkDownloadBtn = document.getElementById('bulk-download-btn');
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const batchDeleteBtn = document.getElementById('batch-delete-btn');
+const toastContainer = document.getElementById('toast-container');
+const loadingSpinner = document.getElementById('loading-spinner');
+const studentDetailsModal = document.getElementById('student-details-modal');
+const studentDetailsContent = document.getElementById('student-details-content');
+const studentDetailsCloseBtn = document.getElementById('student-details-close-btn');
+
+// Session timeout (30 minutes)
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+function checkSessionTimeout() {
+    if (Date.now() - lastActivityTime > SESSION_TIMEOUT) {
+        signOut(auth).then(() => showToast("Session timed out. Please sign in again."));
+    }
+}
+setInterval(checkSessionTimeout, 60000);
+
+// Update last activity on user interaction
+document.addEventListener('click', () => { lastActivityTime = Date.now(); });
+document.addEventListener('keypress', () => { lastActivityTime = Date.now(); });
+
+// Open PDF function
+window.openLocalPDF = function(assessmentNo) {
+    const pdfPath = `./birth_certificates/${assessmentNo}.pdf`;
+    pdfIframe.src = pdfPath;
+    pdfModalBackdrop.classList.remove('hidden');
+    pdfModalBackdrop.classList.add('flex');
+    if (!pdfModalBackdrop.dataset.outsideClickAdded) {
+        pdfModalBackdrop.addEventListener('click', function(event) {
+            if (event.target === pdfModalBackdrop) {
+                closePDFModal();
+            }
+        });
+        pdfModalBackdrop.dataset.outsideClickAdded = 'true';
+    }
+};
+
+function closePDFModal() {
+    pdfModalBackdrop.classList.remove('flex');
+    pdfModalBackdrop.classList.add('hidden');
+    pdfIframe.src = '';
+}
+
+// Student details modal
+function showStudentDetails(student) {
+    studentDetailsContent.innerHTML = `
+        <h3 class="text-lg font-bold">${student.name}</h3>
+        <p><strong>Assessment No:</strong> ${student.assessmentNo}</p>
+        <p><strong>UPI:</strong> ${student.upi || 'N/A'}</p>
+        <p><strong>Grade:</strong> ${student.grade || 'N/A'}</p>
+        <p><strong>PDF Status:</strong> ${student.hasPdf ? 'Available' : 'Not Available'}</p>
+    `;
+    studentDetailsModal.classList.remove('hidden');
+    studentDetailsModal.classList.add('flex');
+}
+
+studentDetailsCloseBtn.addEventListener('click', () => {
+    studentDetailsModal.classList.add('hidden');
+    studentDetailsModal.classList.remove('flex');
+});
+
+// Toast notifications
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-500'} text-white px-4 py-2 rounded-md shadow-md mb-2`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+// Log errors to Firebase
+function logErrorToFirebase(error, context) {
+    const errorRef = ref(db, `errors/${sanitizedAppId}/${Date.now()}`);
+    set(errorRef, {
+        message: error.message,
+        stack: error.stack,
+        context: context,
+        timestamp: new Date().toISOString(),
+        userId: userId
+    });
+}
+
+// Export to CSV
+function exportToCSV() {
+    const headers = ['Name', 'Assessment No', 'UPI', 'Grade', 'PDF Status'];
+    const rows = filteredStudents.map(student => [
+        `"${student.name.replace(/"/g, '""')}"`,
+        student.assessmentNo,
+        student.upi || 'N/A',
+        student.grade || 'N/A',
+        student.hasPdf ? 'Yes' : 'No'
+    ]);
+    const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'students_export.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+// Export to JSON
+function exportToJSON() {
+    const jsonContent = JSON.stringify(filteredStudents, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'students_export.json';
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+// Bulk PDF download (now with dynamic ES module import for JSZip)
+async function bulkDownloadPdfs() {
+    const pdfStudents = filteredStudents.filter(s => s.hasPdf);
+    if (pdfStudents.length === 0) {
+        showToast('No PDFs available in the filtered students.', 'error');
+        return;
+    }
+
+    loadingSpinner.classList.remove('hidden');
+    showToast('Preparing ZIP download... This may take a moment.');
+
+    try {
+        // Dynamic import of JSZip as ES module from a compatible CDN
+        const { default: JSZip } = await import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+        const zip = new JSZip();
+
+        for (const student of pdfStudents) {
+            try {
+                const response = await fetch(`./birth_certificates/${student.assessmentNo}.pdf`);
+                if (response.ok) {
+                    const arrayBuffer = await response.arrayBuffer();
+                    zip.file(`${student.name} - ${student.assessmentNo}.pdf`, arrayBuffer);
+                }
+            } catch (e) {
+                console.error(`Failed to fetch PDF for ${student.assessmentNo}:`, e);
+            }
+        }
+
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `student_pdfs_${new Date().toISOString().split('T')[0]}.zip`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showToast(`Downloaded ${pdfStudents.length} PDFs successfully!`, 'success');
+    } catch (error) {
+        console.error('Failed to load JSZip or generate ZIP:', error);
+        logErrorToFirebase(error, 'bulk_download');
+        showToast('Failed to create ZIP. Please try again or check your connection.', 'error');
+    } finally {
+        loadingSpinner.classList.add('hidden');
+    }
+}
+
+// DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.open-pdf-button');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const assessmentNo = this.getAttribute('data-assessment-no');
+            if (assessmentNo) {
+                window.openLocalPDF(assessmentNo);
+            } else {
+                showToast('No assessment number provided.', 'error');
+            }
+        });
+    });
+
+    // Load cached data
+    const cachedData = localStorage.getItem(`students_${sanitizedAppId}`);
+    if (cachedData) {
+        allStudents = JSON.parse(cachedData);
+        applyFiltersAndRender();
+    }
+});
+
+// Event listeners
+pdfModalCloseBtn.addEventListener('click', closePDFModal);
+itemsPerPageSelect.addEventListener('change', (e) => {
+    itemsPerPage = parseInt(e.target.value, 10);
+    currentPage = 1;
+    applyFiltersAndRender();
+});
+if (customItemsPerPageInput) {
+    customItemsPerPageInput.addEventListener('change', (e) => {
+        const value = parseInt(e.target.value, 10);
+        if (value > 0 && value <= 100) {
+            itemsPerPage = value;
+            currentPage = 1;
+            applyFiltersAndRender();
+        } else {
+            showToast('Items per page must be between 1 and 100.', 'error');
+        }
+    });
+}
+if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportToCSV);
+if (exportJsonBtn) exportJsonBtn.addEventListener('click', exportToJSON);
+if (bulkDownloadBtn) bulkDownloadBtn.addEventListener('click', bulkDownloadPdfs);
+if (darkModeToggle) darkModeToggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('darkMode', document.documentElement.classList.contains('dark') ? 'true' : 'false');
+});
+if (batchDeleteBtn) batchDeleteBtn.addEventListener('click', () => {
+    if (selectedStudents.size === 0) {
+        showToast('No students selected for deletion.', 'error');
+        return;
+    }
+    if (confirm(`Are you sure you want to delete ${selectedStudents.size} student(s)?`)) {
+        // Implement deletion logic here (requires Firebase write permissions)
+        showToast('Batch deletion not implemented in this version.', 'error');
+    }
+});
+
+// Modal close
+document.getElementById('modal-close-btn')?.addEventListener('click', () => {
+    document.getElementById('modal-backdrop')?.classList.add('hidden');
+    document.getElementById('modal-backdrop')?.classList.remove('flex');
+});
+
+// Authentication
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        userId = user.uid;
+        userEmail = user.email;
+        userIdEl.textContent = userId;
+        if (userProfileEl) userProfileEl.textContent = `${userEmail} (${userRole})`;
+        authContainer.classList.add('hidden');
+        mainAppContainer.classList.remove('hidden');
+        startRealtimeListener();
+        showToast('Signed in successfully!', 'success');
+    } else {
+        userId = 'anonymous';
+        userEmail = '';
+        userIdEl.textContent = userId;
+        if (userProfileEl) userProfileEl.textContent = '';
+        mainAppContainer.classList.add('hidden');
+        authContainer.classList.remove('hidden');
+    }
+});
+
+let isSigningUp = false;
+if (signupLink) signupLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    isSigningUp = !isSigningUp;
+    signinBtn.textContent = isSigningUp ? 'Sign Up' : 'Sign In';
+    signupLink.textContent = isSigningUp ? 'Already have an account? Sign in' : 'Don\'t have an account? Sign up';
+});
+
+authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    if (!email || !password) {
+        showToast('Email and password are required.', 'error');
+        return;
+    }
+    if (isSigningUp) {
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            showToast('Account created successfully!', 'success');
+            isSigningUp = false;
+            signinBtn.textContent = 'Sign In';
+            signupLink.textContent = 'Don\'t have an account? Sign up';
+        } catch (error) {
+            logErrorToFirebase(error, 'signup');
+            showToast(error.message, 'error');
+        }
+    } else {
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            showToast('Signed in successfully!', 'success');
+        } catch (error) {
+            logErrorToFirebase(error, 'signin');
+            showToast(error.message, 'error');
+        }
+    }
+});
+
+document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+        showToast('Signed out successfully!', 'success');
+    } catch (error) {
+        logErrorToFirebase(error, 'signout');
+        showToast('Failed to sign out.', 'error');
+    }
+});
+
+if (searchTypeSelect) searchTypeSelect.addEventListener('change', (event) => {
+    const selectedType = event.target.value;
+    searchInput.placeholder = selectedType === 'assessmentNo' ? 'Enter Assessment No.' :
+                            selectedType === 'upi' ? 'Enter UPI' : 'Enter Student Name';
+});
+
+document.getElementById('search-btn')?.addEventListener('click', () => {
+    const searchTerm = searchInput.value.trim();
+    if (searchTerm) {
+        currentSearchTerm = searchTerm;
+        applyFiltersAndRender();
+    } else {
+        showToast('Please enter a search term.', 'error');
+    }
+});
+
+if (gradeFilterSelect) gradeFilterSelect.addEventListener('input', (e) => {
+    currentGrade = e.target.value;
+    applyFiltersAndRender();
+});
+
+// Sort table columns
+document.querySelectorAll('.sortable').forEach(header => {
+    header.addEventListener('click', () => {
+        const column = header.dataset.column;
+        if (sortColumn === column) {
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortColumn = column;
+            sortDirection = 'asc';
+        }
+        applyFiltersAndRender();
+    });
+});
+
+// Check if PDF exists
+async function checkLocalPdfExists(assessmentNo) {
+    try {
+        const response = await fetch(`./birth_certificates/${assessmentNo}.pdf`, { method: 'HEAD' });
+        return response.ok;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Highlight search terms
+function highlightText(text, searchTerm) {
+    if (!searchTerm) return text;
+    try {
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        return text.replace(regex, '<span class="highlight">$1</span>');
+    } catch (e) {
+        return text; // Fallback if regex is invalid
+    }
+}
+
+// Update statistics
+function updateStatistics() {
+    const total = allStudents.length;
+    const withPdfCount = allStudents.filter(s => s.hasPdf).length;
+    const withoutPdfCount = total - withPdfCount;
+    const withPdfPercentage = total > 0 ? ((withPdfCount / total) * 100).toFixed(2) : 0;
+    const withoutPdfPercentage = total > 0 ? ((withoutPdfCount / total) * 100).toFixed(2) : 0;
+
+    document.getElementById('total-count').textContent = total;
+    document.getElementById('pdf-count').textContent = `${withPdfCount} (${withPdfPercentage}%)`;
+    document.getElementById('no-pdf-count').textContent = `${withoutPdfCount} (${withoutPdfPercentage}%)`;
+    document.getElementById('filtered-count').textContent = filteredStudents.length;
+
+    const gradeStats = {};
+    allStudents.forEach(student => {
+        const grade = student.grade || 'N/A';
+        if (!gradeStats[grade]) {
+            gradeStats[grade] = { total: 0, withPdf: 0, withoutPdf: 0 };
+        }
+        gradeStats[grade].total++;
+        if (student.hasPdf) gradeStats[grade].withPdf++;
+        else gradeStats[grade].withoutPdf++;
+    });
+
+    gradeStatsContainer.innerHTML = '';
+    const sortedGrades = Object.keys(gradeStats).sort();
+    sortedGrades.forEach(grade => {
+        const stats = gradeStats[grade];
+        const gradeTotal = stats.total;
+        const withPdfPercent = gradeTotal > 0 ? ((stats.withPdf / gradeTotal) * 100).toFixed(2) : 0;
+        const withoutPdfPercent = gradeTotal > 0 ? ((stats.withoutPdf / gradeTotal) * 100).toFixed(2) : 0;
+
+        const gradeStatHtml = `
+            <div class="p-4 bg-white dark:bg-gray-800 rounded-md shadow-md mb-2">
+                <h4 class="font-bold text-md text-gray-800 dark:text-gray-200">Grade: ${grade} (${gradeTotal} students)</h4>
+                <p class="text-sm text-green-600 dark:text-green-400">With PDF: ${stats.withPdf} (${withPdfPercent}%)</p>
+                <p class="text-sm text-red-600 dark:text-red-400">Without PDF: ${stats.withoutPdf} (${withoutPdfPercent}%)</p>
+            </div>
+        `;
+        gradeStatsContainer.innerHTML += gradeStatHtml;
+    });
+}
+
+// Render students
+function renderStudents() {
+    studentTableBody.innerHTML = '';
+    noStudentsMessage.classList.add('hidden');
+    loadingSpinner.classList.add('hidden');
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const studentsToDisplay = filteredStudents.slice(start, end);
+
+    if (studentsToDisplay.length === 0) {
+        noStudentsMessage.classList.remove('hidden');
+        paginationControls.classList.add('hidden');
+        return;
+    }
+
+    studentsToDisplay.forEach(student => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer';
+        row.setAttribute('aria-label', `Student ${student.name}`);
+        row.tabIndex = 0;
+        row.addEventListener('click', () => showStudentDetails(student));
+        row.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') showStudentDetails(student);
+        });
+
+        const pdfStatus = student.hasPdf ?
+            '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-200">Has PDF</span>' :
+            '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 dark:bg-red-700 text-red-800 dark:text-red-200">No PDF</span>';
+
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">
+                <input type="checkbox" class="select-student" data-assessment-no="${student.assessmentNo}" ${selectedStudents.has(student.assessmentNo) ? 'checked' : ''}>
+                ${highlightText(student.name, currentSearchTerm)}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${highlightText(student.assessmentNo, currentSearchTerm)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${highlightText(student.upi || 'N/A', currentSearchTerm)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${student.grade || 'N/A'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${pdfStatus}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button onclick="openLocalPDF('${student.assessmentNo}'); event.stopPropagation();"
+                    class="px-4 py-2 text-white font-semibold rounded-md shadow-md transition-colors ${student.hasPdf
+                        ? 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'
+                        : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'}"
+                    ${!student.hasPdf ? 'disabled' : ''}>
+                    View
+                </button>
+            </td>
+        `;
+        studentTableBody.appendChild(row);
+    });
+
+    // Update checkboxes for batch selection
+    document.querySelectorAll('.select-student').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const assessmentNo = e.target.dataset.assessmentNo;
+            if (e.target.checked) {
+                selectedStudents.add(assessmentNo);
+            } else {
+                selectedStudents.delete(assessmentNo);
+            }
+            if (batchDeleteBtn) batchDeleteBtn.disabled = selectedStudents.size === 0;
+        });
+    });
+
+    updatePaginationControls();
+    updateStatistics();
+}
+
+// Update pagination
+function updatePaginationControls() {
+    pageNumbersDiv.innerHTML = '';
+    const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+
+    if (totalPages > 1) {
+        paginationControls.classList.remove('hidden');
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.className = `px-3 py-1 text-sm font-medium rounded-md ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}`;
+            pageButton.setAttribute('aria-label', `Go to page ${i}`);
+            pageButton.addEventListener('click', () => {
+                currentPage = i;
+                renderStudents();
+            });
+            pageNumbersDiv.appendChild(pageButton);
+        }
+    } else {
+        paginationControls.classList.add('hidden');
+    }
+}
+
+prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        renderStudents();
+    }
+});
+
+nextPageBtn.addEventListener('click', () => {
+    const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderStudents();
+    }
+});
+
+// Apply filters and sort
+function applyFiltersAndRender() {
+    filteredStudents = allStudents.filter(student => {
+        const name = student.name.toLowerCase();
+        const assessmentNo = student.assessmentNo.toLowerCase();
+        const upi = (student.upi || '').toLowerCase();
+        const hasPdf = student.hasPdf;
+        const studentGrade = student.grade;
+
+        const searchField = searchTypeSelect?.value === 'assessmentNo' ? assessmentNo :
+                           searchTypeSelect?.value === 'upi' ? upi : name;
+        const matchesSearch = currentSearchTerm === '' ||
+            searchField.match(new RegExp(currentSearchTerm.toLowerCase(), 'i'));
+
+        const matchesPdfFilter = currentFilter === 'all' ||
+            (currentFilter === 'with-pdf' && hasPdf) ||
+            (currentFilter === 'without-pdf' && !hasPdf);
+
+        const matchesGrade = currentGrade === 'all' ||
+            studentGrade === currentGrade;
+
+        return matchesSearch && matchesPdfFilter && matchesGrade;
+    });
+
+    // Sort students
+    filteredStudents.sort((a, b) => {
+        const aValue = a[sortColumn] || '';
+        const bValue = b[sortColumn] || '';
+        if (sortDirection === 'asc') {
+            return aValue.localeCompare(bValue, undefined, { numeric: true });
+        } else {
+            return bValue.localeCompare(aValue, undefined, { numeric: true });
+        }
+    });
+
+    currentPage = 1;
+    renderStudents();
+}
+
+liveFilterInput.addEventListener('input', (e) => {
+    currentSearchTerm = e.target.value;
+    applyFiltersAndRender();
+});
+
+document.getElementById('clear-filter')?.addEventListener('click', () => {
+    liveFilterInput.value = '';
+    currentSearchTerm = '';
+    applyFiltersAndRender();
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active', 'bg-blue-500', 'text-white');
+            b.classList.add('bg-gray-200', 'text-gray-700');
+        });
+
+        e.target.classList.add('active', 'bg-blue-500', 'text-white');
+        e.target.classList.remove('bg-gray-200', 'text-gray-700');
+
+        currentFilter = e.target.id.replace('show-', '').replace('-', '-');
+        applyFiltersAndRender();
+    });
+});
+
+// Real-time listener
+function startRealtimeListener() {
+    loadingSpinner.classList.remove('hidden');
+    const dbPath = `artifacts/${sanitizedAppId}/students`;
+    const studentsRef = ref(db, dbPath);
+
+    onValue(studentsRef, async (snapshot) => {
+        studentTableBody.innerHTML = '';
+        if (snapshot.exists()) {
+            allStudents = [];
+            const studentsData = snapshot.val();
+            const studentEntries = Object.entries(studentsData);
+
+            const pdfExistenceChecks = studentEntries.map(async ([assessmentNo, student]) => {
+                const hasPdf = await checkLocalPdfExists(assessmentNo);
+                return {
+                    assessmentNo,
+                    name: student['Official Student Name'],
+                    upi: student.UPI,
+                    grade: student.Grade,
+                    hasPdf
+                };
+            });
+
+            allStudents = await Promise.all(pdfExistenceChecks);
+            localStorage.setItem(`students_${sanitizedAppId}`, JSON.stringify(allStudents));
+
+            if (allStudents.length === 0) {
+                noStudentsMessage.classList.remove('hidden');
+                paginationControls.classList.add('hidden');
+            } else {
+                applyFiltersAndRender();
+            }
+        } else {
+            allStudents = [];
+            noStudentsMessage.classList.remove('hidden');
+            paginationControls.classList.add('hidden');
+        }
+        loadingSpinner.classList.add('hidden');
+    }, (error) => {
+        logErrorToFirebase(error, 'realtime_listener');
+        studentTableBody.innerHTML = `<p class="text-center text-red-500 dark:text-red-400">Error fetching data. Check console.</p>`;
+        loadingSpinner.classList.add('hidden');
+    });
+}
+// Initialize dark mode from local storage (default to light/off)
+if (localStorage.getItem('darkMode') === 'true') {
+    document.documentElement.classList.add('light');
+} else {
+    document.documentElement.classList.remove('dark');
+}
+
+// Ensure the script runs after the DOM is fully loaded for PDF buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.open-pdf-button');
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent row click
+            const assessmentNo = this.getAttribute('data-assessment-no');
+            if (assessmentNo) {
+                window.openLocalPDF(assessmentNo);
+            } else {
+                showToast('No assessment number provided.', 'error');
+            }
+        });
+    });
+});
+
+// Add event listener to close the PDF modal
+pdfModalCloseBtn.addEventListener('click', () => {
+    pdfModalBackdrop.classList.add('hidden');
+    pdfModalBackdrop.classList.remove('flex');
+    // Stop the iframe content from loading/playing (e.g., if it's a video)
+    pdfIframe.src = '';
+});
+
+// New event listener for the grade filter dropdown
+if (gradeFilterSelect) gradeFilterSelect.addEventListener('change', (e) => {
+    currentGrade = e.target.value;
+    applyFiltersAndRender();
+});
+
+// Items per page select
+if (itemsPerPageSelect) itemsPerPageSelect.addEventListener('change', (e) => {
+    // Update the global variable with the new value from the dropdown
+    itemsPerPage = parseInt(e.target.value, 10);
+    // Reset to the first page and re-render the student list
+    currentPage = 1;
+    applyFiltersAndRender();
+});
+
+// Helper function to show a custom modal instead of alert()
+function showModal(title, message) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-message').textContent = message;
+    document.getElementById('modal-backdrop').classList.remove('hidden');
+    document.getElementById('modal-backdrop').classList.add('flex');
+}
+
+document.getElementById('modal-close-btn')?.addEventListener('click', () => {
+    document.getElementById('modal-backdrop')?.classList.add('hidden');
+    document.getElementById('modal-backdrop')?.classList.remove('flex');
+});
+
+// Update placeholder based on search type
+if (searchTypeSelect) searchTypeSelect.addEventListener('change', (event) => {
+    const selectedType = event.target.value;
+    if (selectedType === 'assessmentNo') {
+        searchInput.placeholder = 'Enter Assessment No.';
+    } else if (selectedType === 'upi') {
+        searchInput.placeholder = 'Enter UPI';
+    } else {
+        searchInput.placeholder = 'Enter Student Name';
+    }
+});
+
+// Search functionality (re-purposed to be a full-list search)
+document.getElementById('search-btn')?.addEventListener('click', () => {
+    const searchTerm = searchInput.value.trim();
+    if (searchTerm) {
+        currentSearchTerm = searchTerm;
+        applyFiltersAndRender();
+    } else {
+        showModal("Validation Error", "Please enter a search term.");
+    }
+});
+
+// Live filter event listeners
+liveFilterInput.addEventListener('input', (e) => {
+    currentSearchTerm = e.target.value;
+    applyFiltersAndRender();
+});
+
+document.getElementById('clear-filter')?.addEventListener('click', () => {
+    liveFilterInput.value = '';
+    currentSearchTerm = '';
+    applyFiltersAndRender();
+});
+
+// Filter button event listeners
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active', 'bg-blue-500', 'text-white');
+            b.classList.add('bg-gray-200', 'text-gray-700');
+        });
+
+        e.target.classList.add('active', 'bg-blue-500', 'text-white');
+        e.target.classList.remove('bg-gray-200', 'text-gray-700');
+
+        currentFilter = e.target.id.replace('show-', '').replace('-', '-');
+        applyFiltersAndRender();
+    });
+});
+
+// Sign out functionality
+document.getElementById('sign-out-btn')?.addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+    } catch (error) {
+        console.error("Sign out failed:", error);
+        showModal("Sign Out Error", "Failed to sign out. Please try again.");
+    }
+});
+    </script>
+</body>
+</html>

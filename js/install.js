@@ -77,8 +77,8 @@ function updateDateAndTime() {
   ];
 
   const months = [
-    "January", "February", "March", "April", "May", "June", "July", "August",
-    "September", "October", "November", "December"
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
+    "Sept", "Oct", "Nov", "Dec"
   ];
 
   const now = new Date();
@@ -96,7 +96,7 @@ function updateDateAndTime() {
 
   dayElement.textContent = dayOfWeek;
   dateElement.textContent = `${month} ${day}, ${year}`;
-  timeElement.textContent = `${hours}hrs : ${minutes}min`;
+  timeElement.textContent = `Time ${hours} : ${minutes} : ${seconds} hrs`;
 }
 
 updateDateAndTime(); // Initial call to display the date and time
