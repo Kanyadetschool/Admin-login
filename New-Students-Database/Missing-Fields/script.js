@@ -67,24 +67,25 @@ const userInfo = document.getElementById('user-info');
 const controlsDiv = document.querySelector('.controls');
 const printAreaDiv = document.getElementById('print-area');
 
-// Auto-clear search input on focus
-searchInput.addEventListener('focus', function() {
-    this.value = '';
-});
 
 
 
-// Replace around line 153 with this:
+// Replace around line 153 with this complete solution:
 searchInput.addEventListener('input', handleSearch);
 
-// Add this right after:
-searchInput.addEventListener('focus', function() {
-    if (this.value) { // Only clear if there's content
-        this.value = '';
-        // Trigger the input event to reset filters
-        this.dispatchEvent(new Event('input'));
+// Auto-clear on focus for all inputs (including dynamically created ones)
+document.addEventListener('focus', function(e) {
+    // Target all text-type inputs
+    if (e.target.tagName === 'INPUT' && 
+        (e.target.type === 'text' || e.target.type === 'search')) {
+        if (e.target.value) {
+            e.target.value = '';
+            e.target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
     }
-});
+}, true);
+
+
 
 // --- Enhanced Notification System ---
 const NotificationManager = {
@@ -1181,4 +1182,4 @@ async function exportMissingDataToPdf() {
     );
 }
 
-window.exportMissingDataToPdf = exportMissingDataToPdf;                  
+window.exportMissingDataToPdf = exportMissingDataToPdf;
