@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buildModal = () => {
         modalContent.innerHTML = `
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-6 h-16  ">
                 <h2 class="text-xl md:text-2xl font-bold text-gray-800">External Resources</h2>
                 <button id="closeModalBtn" class="text-gray-500 hover:text-gray-900 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -25,7 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </svg>
                 </button>
             </div>
-            <div id="linksContainer" class="grid gap-4 grid-cols-1 md:grid-cols-2"></div>
+
+         <!-- <div id="linksContainer" class="grid gap-4 grid-cols-1 md:grid-cols-2 h-1/2 overflow-y-scroll"></div> -->
+
+      <div id="linksContainer" class="grid gap-4 grid-cols-1 md:grid-cols-2 h-1/2 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500"></div>
+
             <div id="summarySection" class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
                 <p class="font-semibold text-lg mb-2 text-gray-800">Summary ✨</p>
                 <p class="text-gray-600 text-sm">Click a link to view its content and resources.</p>

@@ -1,3 +1,11 @@
+<!-- Changes made here are the following:
+1. Added Tailwind CSS for styling. toogle.js and index.html
+2. Adjusted the height of the modal header to ensure consistent spacing.
+3. Ensured the modal content is responsive and well-aligned. -->
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,6 +50,7 @@
 <body>
 	<div class="container">
 
+
 	 <div id="main_container" style="display:none;"></div> 
 
 	<!-- SIDEBAR -->
@@ -66,7 +75,7 @@
     </a>
   </li>
   <li>
-    <a href="./New-Students-Database/Missing-Fields/index.html" target="_blank">
+    <a href="./New-Students-Database/Missing-Fields/Specific-missing-fields/index.html" target="_blank">
       <i class='bx bxs-user-detail'></i>
       <span class="text">Students Missing Records.</span>
     </a>
@@ -151,7 +160,7 @@
 
 
 	<!-- CONTENT -->
-	<section id="content">
+	<setion id="content">
 		<!-- NAVBAR -->
 		<nav>
 			<a href="#" class="nav-link">Categories..</a>
@@ -338,20 +347,38 @@
 		</main>
 		
 		<!-- MAIN -->
-	</section>
+	</setion>
 	<!-- CONTENT -->
+<!-- Toggle Button (just the icon button) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg h-16 w-16">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+</button>
+
+<!-- Modal wrapper (empty, JS will fill content) -->
+<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
+    <div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full transform">
+        <!-- JS will inject modal content here -->
+    </div>
+</div>
 
 
-    <!-- <script type="module" src="./js/Counter ADVANCE QUALITY CHECK.js"></script>
+    <script type="module" src="./js/Counter ADVANCE QUALITY CHECK.js"></script>
     <script  src="./js/dashboard script.js"></script> 
 	<script src="./js/GoogleAuthfireBase.js"></script>
-    <script src="./js/GoogleAuthmain.js"></script> -->
+    <script src="./js/GoogleAuthmain.js"></script>
 
 
-    <script  src="https://kanyadet-school-admin.web.app/js/dashboard script.js"></script>
+    <!-- <script  src="https://kanyadet-school-admin.web.app/js/dashboard script.js"></script>
     <script type="module" src="https://kanyadet-school-admin.web.app/js/Counter ADVANCE QUALITY CHECK.js"></script>
 	<script src="https://kanyadet-school-admin.web.app/js/GoogleAuthfireBase.js"></script>
-    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script> 
+    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>  -->
+
+
+   <script src="https://kanyadet-school-admin.web.app/Print-Individual-Results/js/Toggle.js" ></script>
+
 
 
 </div>

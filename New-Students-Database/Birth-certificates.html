@@ -279,6 +279,22 @@
                   <script src="./js/HamburgerToggle.js" ></script>
 
     <script type="module">
+
+// Auto-clear on focus for all inputs
+searchInput.addEventListener('input', handleSearch);
+
+document.addEventListener('focus', function(e) {
+    if (e.target.tagName === 'INPUT' && 
+        (e.target.type === 'text' || e.target.type === 'search')) {
+        if (e.target.value) {
+            e.target.value = '';
+            e.target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+}, true);
+
+
+
    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
     getAuth,
