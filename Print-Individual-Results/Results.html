@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Data Dashboard</title>
+    <title>Results</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,9 +25,101 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/swalOnly.css">
    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-   <link rel="stylesheet" href="./css/Active-students.css">
 
 
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f8fafc;
+        }
+        [data-filter-field] {
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        [data-filter-field]:hover {
+            background-color: #bec1c4;
+            transform: translateX(4px);
+        }
+        .pagination-btn {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .pagination-btn:hover {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .pagination-btn.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .student-image {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .modal-student-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        tr.cursor-pointer:not(.no-hover) td:not(.action-buttons) {
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        tr.cursor-pointer:not(.no-hover):hover td:not(.action-buttons) {
+            background-color: #dbeafe !important;
+            transform: scale(1.01);
+        }
+        .action-buttons {
+            background-color: transparent !important;
+            transform: none !important;
+        }
+        .chart-container {
+            max-height: 200px;
+            margin-bottom: 1rem;
+        }
+        .grade-toggle-btn, .export-btn {
+            padding: 4px 8px;
+            margin: 0 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .grade-toggle-btn.active, .export-btn:hover {
+            background-color: #040405;
+            color: #ffffff;
+        }
+        .grade-toggle-btn:hover, .export-btn {
+            background-color: #ff0f0f;
+            color: #ffffff;
+        }
+        .grade-toggle-btn:hover, .export-btn:hover {
+            background-color: #0f23ff;
+
+        }
+        .grade-toggle-btn:hover, .export-btn:hover {
+            background-color: #0f23ff;
+
+        }
+    </style>
   
 </head>
 <body class="bg-gray-100">
@@ -65,10 +157,10 @@
   <!-- Text Section -->
   <div class="text-center md:text-left">
     <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
-      Active students Management System
+      Online Students Results
     </h1>
     <p class="text-gray-500 text-sm md:text-base">
-      Manage and analyze student information efficiently.
+      Manage and analyze student results.
     </p>
   </div>
 </div
@@ -96,7 +188,7 @@
         </div>
 
         <main id="data-section" class="hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" id="grid">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
 
 
@@ -170,7 +262,7 @@
    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" />
     </svg>
-    <span>Delete Grade</span>
+    <!-- <span>Delete Grade</span> -->
 </button>
                 </div>
                 <div id="data-display" class="overflow-x-auto">
@@ -222,17 +314,13 @@
 </div>
     <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthfireBase.js"></script>
     <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>
-          <script src="./image-popup.js" ></script>
-                <script src="./js/image-popup.js" ></script>
-                  <script src="./js/HamburgerToggle.js" ></script>
-                  <script src="./js/HamburgerToggle.js" ></script>
-                  <!-- <script src="./js/tabblock.js" ></script>| -->
+                <script src="https://kanyadet-school-admin.web.app/New-Students-Database/js/image-popup.js" ></script>
+                  <script src="https://kanyadet-school-admin.web.app/Print-Individual-Results/js/Toggle.js" ></script>
                   
-<!-- Add this AFTER your main script but keep it as type="module" -->
-<!-- <script type="module" src="grade-promotion.js"></script> -->
 
 <script type="module">
-  
+
+
 
 // Get the grid element
 const grid = document.querySelector('.grid');
@@ -285,7 +373,7 @@ toggleBtn.addEventListener('click', () => {
 
 
 
-        import GradePromotionSystem from './js/grade-promotion.js';
+
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithCustomToken, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -353,7 +441,7 @@ toggleBtn.addEventListener('click', () => {
             // Auto-close after 2 seconds
     setTimeout(() => {
         modal.classList.add('hidden');
-    }, 500);
+    }, 1500);
         };
 
         studentsPerPageSelect.addEventListener('change', (e) => {
@@ -480,80 +568,76 @@ toggleBtn.addEventListener('click', () => {
         }
         signOutBtn.addEventListener('click', signOutUser);
 
-    const setupFirebase = async () => {
-    try {
-        const app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getDatabase(app);
+        const setupFirebase = async () => {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getDatabase(app);
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userId = user.uid;
-                console.log("Authenticated with user ID:", userId);
-                const email = user.email;
-                let username = email.split("@")[0];
-                username = username.replace(/[^a-zA-Z]/g, "");
-                let spacedName = username.replace(/([a-z])([A-Z])/g, '$1 $2');
-                spacedName = spacedName.replace(/\b\w/g, char => char.toUpperCase());
-                userIdDisplay.textContent = `${spacedName}`;
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Authenticated with user ID:", userId);
+                        const email = user.email;
+                        let username = email.split("@")[0];
+                        username = username.replace(/[^a-zA-Z]/g, "");
+                        let spacedName = username.replace(/([a-z])([A-Z])/g, '$1 $2');
+                        spacedName = spacedName.replace(/\b\w/g, char => char.toUpperCase());
+                        userIdDisplay.textContent = `${spacedName}`;
 
-                if (user.photoURL) {
-                    const userImg = document.createElement("img");
-                    userImg.src = user.photoURL;
-                    userImg.alt = "User profile picture";
-                    userImg.style.width = "50px";
-                    userImg.style.height = "50px";
-                    userImg.style.borderRadius = "50%";
-                    userIdDisplay.insertAdjacentElement("beforebegin", userImg);
-                }
-
-                signInSection.classList.add('hidden');
-                dataSection.classList.remove('hidden');
-
-                // ✨ INITIALIZE GRADE PROMOTION SYSTEM ✨
-                const promotionSystem = new GradePromotionSystem();
-                promotionSystem.initialize(db, auth, appId);
-                window.gradePromotion = promotionSystem; // Make it globally accessible
-
-                const studentsRef = ref(db, `artifacts/${sanitizedAppId}/students`);
-                onValue(studentsRef, (snapshot) => {
-                    const students = [];
-                    const data = snapshot.val();
-                    if (data) {
-                        for (let key in data) {
-                            students.push({ id: key, ...data[key] });
+                        if (user.photoURL) {
+                            const userImg = document.createElement("img");
+                            userImg.src = user.photoURL;
+                            userImg.alt = "User profile picture";
+                            userImg.style.width = "50px";
+                            userImg.style.height = "50px";
+                            userImg.style.borderRadius = "50%";
+                            userIdDisplay.insertAdjacentElement("beforebegin", userImg);
                         }
+
+                        signInSection.classList.add('hidden');
+                        dataSection.classList.remove('hidden');
+
+                        const studentsRef = ref(db, `Results/${sanitizedAppId}/students`);
+                        onValue(studentsRef, (snapshot) => {
+                            const students = [];
+                            const data = snapshot.val();
+                            if (data) {
+                                for (let key in data) {
+                                    students.push({ id: key, ...data[key] });
+                                }
+                            }
+                            students.sort((a, b) => {
+                                const assessmentNoA = parseFloat(a['Assessment No']) || Infinity;
+                                const assessmentNoB = parseFloat(b['Assessment No']) || Infinity;
+                                return assessmentNoA - assessmentNoB;
+                            });
+                            studentsData = students;
+                            currentPage = 1;
+                            populateFilters(students);
+                            renderStudents(students);
+                            loader.classList.add('hidden');
+                        }, (error) => {
+                            console.error("Error fetching students:", error);
+                            showModal(`Error fetching data: ${error.message}`);
+                            loader.classList.add('hidden');
+                        });
+                    } else {
+                        userId = null;
+                        userIdDisplay.textContent = `User ID: Not Signed In`;
+                        signInSection.classList.remove('hidden');
+                        dataSection.classList.add('hidden');
+                        loader.classList.add('hidden');
+                        dataDisplay.innerHTML = '';
                     }
-                    students.sort((a, b) => {
-                        const assessmentNoA = parseFloat(a['Assessment No']) || Infinity;
-                        const assessmentNoB = parseFloat(b['Assessment No']) || Infinity;
-                        return assessmentNoA - assessmentNoB;
-                    });
-                    studentsData = students;
-                    currentPage = 1;
-                    populateFilters(students);
-                    renderStudents(students);
-                    loader.classList.add('hidden');
-                }, (error) => {
-                    console.error("Error fetching students:", error);
-                    showModal(`Error fetching data: ${error.message}`);
-                    loader.classList.add('hidden');
                 });
-            } else {
-                userId = null;
-                userIdDisplay.textContent = `User ID: Not Signed In`;
-                signInSection.classList.remove('hidden');
-                dataSection.classList.add('hidden');
+            } catch (e) {
+                console.error("Error setting up Firebase: ", e);
+                showModal(`Failed to initialize application. Check console for details.`);
                 loader.classList.add('hidden');
-                dataDisplay.innerHTML = '';
             }
-        });
-    } catch (e) {
-        console.error("Error setting up Firebase: ", e);
-        showModal(`Failed to initialize application. Check console for details.`);
-        loader.classList.add('hidden');
-    }
-};
+        };
+
         const populateFilters = (students) => {
             const grades = new Set();
             students.forEach(student => {
@@ -626,24 +710,24 @@ gradeFilterSelect.addEventListener('change', () => {
                 const headers = jsonRows[0].map(h => String(h).trim());
                 const studentData = jsonRows.slice(1);
 
-                if (!headers.includes("Assessment No")) {
-                    throw new Error("Excel file must have a column titled 'Assessment No'.");
+                if (!headers.includes("Term")) {
+                    throw new Error("Excel file must have a column titled 'Term'.");
                 }
-                const assessmentNoIndex = headers.indexOf("Assessment No");
+                const termIndex = headers.indexOf("Term");
 
-                const studentsRef = ref(db, `artifacts/${sanitizedAppId}/students`);
+                const studentsRef = ref(db, `Results/${sanitizedAppId}/students`);
                 for (const row of studentData) {
-                    const assessmentNo = row[assessmentNoIndex];
-                    if (!assessmentNo) {
-                        console.warn("Skipping row with missing 'Assessment No'.");
+                    const term = row[termIndex];
+                    if (!term) {
+                        console.warn("Skipping row with missing 'Term'.");
                         continue;
                     }
-                    const studentDocKey = String(assessmentNo);
+                    const studentDocKey = String(term).trim();
                     const studentObj = {};
                     headers.forEach((header, index) => {
                         studentObj[header] = row[index];
                     });
-                    await set(ref(db, `artifacts/${sanitizedAppId}/students/${studentDocKey}`), studentObj);
+                    await set(ref(db, `Results/${sanitizedAppId}/students/${studentDocKey}`), studentObj);
                 }
 
                 statusMessage.textContent = 'Data uploaded successfully!';
@@ -714,7 +798,7 @@ gradeFilterSelect.addEventListener('change', () => {
 
             try {
                 const studentDocKey = String(studentData['Assessment No']);
-                const studentsRef = ref(db, `artifacts/${sanitizedAppId}/students/${studentDocKey}`);
+                const studentsRef = ref(db, `Results/${sanitizedAppId}/students/${studentDocKey}`);
                 await set(studentsRef, studentData);
                 showModal('Student data added successfully!');
                 manualForm.reset();
@@ -1314,7 +1398,7 @@ gradeFilterSelect.addEventListener('change', () => {
             students.forEach(student => {
                 Object.keys(student).forEach(key => allKeys.add(key));
             });
-            const priorityHeaders = ['Grade', 'Assessment No', 'Official Student Name', 'UPI', 'Gender'];
+            const priorityHeaders = ['Grade', 'Term','Assessment No', 'Official Student Name', 'UPI', 'Gender','MATHS','MATHS Rubric','ENG','ENG Rubric','KISW', 'KISW Rubric', 'SCI', 'SCI Rubric', 'SSTRE', 'SSTRE Rubric', ];
             const otherHeaders = Array.from(allKeys)
                 .filter(key => key !== 'id' && !priorityHeaders.includes(key))
                 .sort();
@@ -1346,11 +1430,6 @@ const renderStudents = (students, activeFilter = null) => {
 
             const headers = getOrderedHeaders(students);
 
-if (bulkSelectMode) {
-    headers.unshift('Select');
-}
-
-
             const table = document.createElement('table');
             table.id = 'student-table';
             table.className = "min-w-full bg-white rounded-lg shadow-md overflow-hidden";
@@ -1362,48 +1441,29 @@ if (bulkSelectMode) {
             tableHTML += `<tbody class="divide-y divide-gray-200">`;
 
             paginatedStudents.forEach(student => {
-               tableHTML += `
-    <tr id="row-${student.id}" class="cursor-pointer" data-id="${student.id}" 
-        ${!bulkSelectMode ? `onclick="if(!event.target.closest('.action-buttons') && !event.target.classList.contains('student-image') && !event.target.closest('.checkbox-cell')) openLocalPDF('${student['Assessment No']}', '${student['Official Student Name'] || ''}')"` : ''}>
-`;
-
-headers.forEach(header => {
-    if (header === 'Select' && bulkSelectMode) {
-        const isChecked = selectedStudents.has(student.id) ? 'checked' : '';
-        tableHTML += `
-            <td class="py-3 px-4 whitespace-nowrap text-sm checkbox-cell" onclick="event.stopPropagation()">
-                <input 
-                    type="checkbox" 
-                    class="student-checkbox w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer" 
-                    data-student-id="${student.id}"
-                    ${isChecked}
-                    onchange="handleCheckboxChange('${student.id}', this.checked)"
-                >
-            </td>`;
-    } else if (header === 'Image') {
-        const imageName = student['Official Student Name'] ? encodeURIComponent(student['Official Student Name']) : '';
-        const imagePath = imageName ? `./student_images/${imageName}.jpg` : './student_images/default.jpg';
-        tableHTML += `
-            <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-600" data-header="Image">
-                <img src="${imagePath}" alt="${student['Official Student Name'] || 'Student Image'}" class="student-image" onerror="this.src='./student_images/default.jpg';this.alt='Default Image'">
-            </td>`;
-    } else if (header !== 'Select') {
-        const value = student[header] !== undefined ? student[header] : '-';
-        tableHTML += `<td class="py-3 px-4 whitespace-nowrap text-sm text-gray-600" data-header="${header}">${value}</td>`;
-    }
-});
-
-// Hide action buttons in bulk select mode
-if (!bulkSelectMode) {
-    tableHTML += `
-        <td class="py-2 px-4 whitespace-nowrap flex items-center space-x-2 action-buttons">
-            <button onclick="editStudent('${student.id}')" class="edit-btn p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">Edit</button>
-            <button onclick="deleteStudent('${student.id}')" class="delete-btn p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-300">Delete</button>
-        </td>
-    `;
-}
-
-tableHTML += `</tr>`;
+                tableHTML += `
+                    <tr id="row-${student.id}" class="cursor-pointer" data-id="${student.id}" onclick="if(!event.target.closest('.action-buttons') && !event.target.classList.contains('student-image')) openLocalPDF('${student['Assessment No']}', '${student['Official Student Name'] || ''}')">
+                `;
+                headers.forEach(header => {
+                    if (header === 'Image') {
+                        const imageName = student['Official Student Name'] ? encodeURIComponent(student['Official Student Name']) : '';
+                        const imagePath = imageName ? `./student_images/${imageName}.jpg` : './student_images/default.jpg';
+                        tableHTML += `
+                            <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-600" data-header="Image">
+                                <img src="${imagePath}" alt="${student['Official Student Name'] || 'Student Image'}" class="student-image" onerror="this.src='./student_images/default.jpg';this.alt='Default Image'">
+                            </td>`;
+                    } else {
+                        const value = student[header] !== undefined ? student[header] : '-';
+                        tableHTML += `<td class="py-3 px-4 whitespace-nowrap text-sm text-gray-600" data-header="${header}">${value}</td>`;
+                    }
+                });
+                tableHTML += `
+                    <td class="py-2 px-4 whitespace-nowrap flex items-center space-x-2 action-buttons">
+                        <button onclick="editStudent('${student.id}')" class="edit-btn p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">Edit</button>
+                        <button onclick="deleteStudent('${student.id}')" class="delete-btn p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-300">Delete</button>
+                    </td>
+                `;
+                tableHTML += `</tr>`;
             });
 
             tableHTML += `</tbody>`;
@@ -1461,7 +1521,7 @@ tableHTML += `</tr>`;
             }
 
             try {
-                const studentRef = ref(db, `artifacts/${sanitizedAppId}/students/${id}`);
+                const studentRef = ref(db, `Results/${sanitizedAppId}/students/${id}`);
                 await update(studentRef, updatedData);
                 showModal('Student record updated successfully!');
 
@@ -1527,8 +1587,8 @@ window.deleteStudent = async (id) => {
     }
 
     try {
-        const studentRef = ref(db, `artifacts/${sanitizedAppId}/students/${id}`);
-        const deletedStudentRef = ref(db, `Deletedstudents/${sanitizedAppId}/artifacts/${id}`);
+        const studentRef = ref(db, `Results/${sanitizedAppId}/students/${id}`);
+        const deletedStudentRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${id}`);
 
         const snapshot = await get(studentRef);
         if (snapshot.exists()) {
@@ -1542,7 +1602,7 @@ window.deleteStudent = async (id) => {
         }
 
         await remove(studentRef);
-        showModal('Student record deleted successfully and moved to Deletedstudents.');
+        showModal('Student record deleted successfully and moved to DeletedResults.');
         // Remove totalStudents-- and replace fetchAndRenderStudents with renderStudents
         renderStudents(studentsData);
     } catch (e) {
@@ -1569,10 +1629,10 @@ deleteGradeBtn.addEventListener('click', async () => {
         const userEmail = auth.currentUser ? auth.currentUser.email : 'unknown';
 
         const deletionPromises = studentsInGrade.map(async (student) => {
-            const studentRef = ref(db, `artifacts/${sanitizedAppId}/students/${student.id}`);
-            const deletedStudentRef = ref(db, `Deletedstudents/${sanitizedAppId}/artifacts/${student.id}`);
+            const studentRef = ref(db, `Results/${sanitizedAppId}/students/${student.id}`);
+            const deletedStudentRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${student.id}`);
 
-            // Save student data to Deletedstudents
+            // Save student data to DeletedResults
             await set(deletedStudentRef, {
                 ...student,
                 deletedAt: new Date().toISOString(),
@@ -1585,7 +1645,7 @@ deleteGradeBtn.addEventListener('click', async () => {
 
         try {
             await Promise.all(deletionPromises);
-            showModal(`Successfully deleted all students from ${selectedGrade} and moved to Deletedstudents.`);
+            showModal(`Successfully deleted all students from ${selectedGrade} and moved to DeletedResults.`);
             // Update studentsData and re-render
             studentsData = studentsData.filter(student => student.Grade !== selectedGrade);
             gradeFilterSelect.value = '';
@@ -1617,7 +1677,7 @@ deleteGradeBtn.addEventListener('click', async () => {
             const worksheet = XLSX.utils.json_to_sheet(formattedData, { header: headers });
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
-            XLSX.writeFile(workbook, `student_data_${selectedGrade || 'all'}.xlsx`);
+            XLSX.writeFile(workbook, `student_Assessment_Outcome${selectedGrade || 'all'}.xlsx`);
             printModal.classList.add('hidden');
         };
 
@@ -1627,11 +1687,15 @@ const exportToPdf = async () => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('landscape');
 
-    const selectedGrade = gradeFilterSelect.value;
-    const dataToExport = selectedGrade ? studentsData.filter(s => s.Grade === selectedGrade) : studentsData;
-    const title = `Student Data Report`;
-    const subtitle = `Print for: ${selectedGrade || 'All Grades'}`;
-    const totalStudents = dataToExport.length;
+const selectedGrade = gradeFilterSelect.value;
+const dataToExport = selectedGrade ? studentsData.filter(s => s.Grade === selectedGrade) : studentsData;
+
+// Get term from the first student
+const term = dataToExport.length > 0 ? (dataToExport[0]['Term'] || 'N/A') : 'N/A';
+
+const title = `P O BOX 45 - 40139, AKALA, KENYA`;
+const subtitle = `LEVEL: ${selectedGrade || 'All Grades'} | Term: ${term} | Academic Year: ${new Date().getFullYear()}`;
+const totalStudents = dataToExport.length;
     
     // Load and process logo image to make it completely white
     const logoImg = new Image();
@@ -1688,17 +1752,20 @@ const exportToPdf = async () => {
     
     // Select only essential columns (now with No. column)
     const essentialColumns = [
-        'No.',
-        'Official Student Name', 
-        'Assessment No', 
-        'UPI',
-        'Gender', 
-        'DOB', 
-        'Birth Entry',
-        'Father',
-        'Mother',
-        'Home phone',
-    ];
+           'No.',
+           'Assessment No',
+           'UPI',
+           'Official Student Name', 
+           'Gender',
+           'MATHS',
+           'ENG',
+           'KISW',
+           'SCI',
+           'SSTRE',
+           'Total Marks',
+           'AVG MARKS',
+           'Level'
+        ];
     
     const headers = essentialColumns;
     const body = dataToExport.map((student, index) => {
@@ -1759,10 +1826,13 @@ const exportToPdf = async () => {
         doc.setFont(undefined, 'normal');
         const dateText = `Date: ${new Date().toLocaleDateString()}`;
         const gradeText = subtitle;
-        const studentCount = `Total Students: ${totalStudents}`;
+        const studentCount = `Assessment Outcome: Total Students: ${totalStudents}`;
         doc.text(dateText, pageWidth - 14, 8, { align: 'right' });
         doc.text(gradeText, pageWidth - 14, 13, { align: 'right' });
         doc.text(studentCount, pageWidth - 14, 18, { align: 'right' });
+
+
+
         
         // Decorative line under header
         doc.setDrawColor(41, 128, 185);
@@ -1792,9 +1862,9 @@ const exportToPdf = async () => {
         doc.setFont(undefined, 'bold');
         doc.text('Prepared by:', 14, footerY);
         doc.setFont(undefined, 'normal');
-        doc.text('_________________', 14, footerY + 4);
+        doc.text('Automated Online School System ', 14, footerY + 4);
         doc.setFontSize(7);
-        doc.text('Signature & Date', 14, footerY + 8);
+        doc.text('Ict Dept - Digital Signature ©️2025', 14, footerY + 8);
         
         // Center section - Page number (now with correct total)
         doc.setFontSize(9);
@@ -1857,7 +1927,7 @@ const exportToPdf = async () => {
         addFooter({ pageNumber: i }, totalPages);
     }
 
-    doc.save(`student_data_${selectedGrade || 'all'}_${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`students_Assessment_Outcome for: ${selectedGrade || 'all'}_${new Date().toISOString().split('T')[0]}.pdf`);
     printModal.classList.add('hidden');
 };
 
@@ -1909,7 +1979,7 @@ const exportToPdf = async () => {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `student_data_${selectedGrade || 'all'}.docx`;
+                a.download = `student_Assessment_Outcome${selectedGrade || 'all'}.docx`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -1919,373 +1989,11 @@ const exportToPdf = async () => {
             printModal.classList.add('hidden');
         };
 
-
-        // ============================================
-// BULK STUDENT SELECTION & DELETE SYSTEM
-// Add this code to your existing script
-// ============================================
-
-// Global state for bulk operations
-let selectedStudents = new Set();
-let bulkSelectMode = false;
-
-// Create bulk action toolbar
-const createBulkActionToolbar = () => {
-    const toolbar = document.createElement('div');
-    toolbar.id = 'bulk-action-toolbar';
-    toolbar.className = 'fixed top-0 left-0 right-0 bg-blue-600 text-white p-4 shadow-lg z-50 transform -translate-y-full transition-transform duration-300';
-    toolbar.innerHTML = `
-        <div class="container mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <button id="close-bulk-mode" class="p-2 hover:bg-blue-700 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <span id="selected-count" class="font-semibold text-lg">0 selected</span>
-            </div>
-            <div class="flex items-center space-x-3">
-                <button id="select-all-btn" class="px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 font-medium transition">
-                    Select All
-                </button>
-                <button id="deselect-all-btn" class="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 font-medium transition">
-                    Deselect All
-                </button>
-                <button id="bulk-delete-btn" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    Delete Selected
-                </button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(toolbar);
-    return toolbar;
-};
-
-// Create bulk select toggle button
-const createBulkSelectButton = () => {
-    const button = document.createElement('button');
-    button.id = 'toggle-bulk-select';
-    button.className = 'px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium transition-all duration-300 flex items-center space-x-2';
-    button.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-        </svg>
-        <span>Bulk Select</span>
-    `;
-    
-    // Insert button next to the search input
-    const searchInput = document.getElementById('search-input');
-    if (searchInput && searchInput.parentNode) {
-        searchInput.parentNode.insertBefore(button, searchInput.nextSibling);
-    }
-    
-    return button;
-};
-
-// Toggle bulk select mode
-const toggleBulkSelectMode = () => {
-    bulkSelectMode = !bulkSelectMode;
-    const toolbar = document.getElementById('bulk-action-toolbar');
-    const toggleBtn = document.getElementById('toggle-bulk-select');
-    
-    if (bulkSelectMode) {
-        toolbar.style.transform = 'translateY(0)';
-        toggleBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
-        toggleBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-        toggleBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            <span>Bulk Mode Active</span>
-        `;
-        // Re-render to show checkboxes
-        reRenderWithCheckboxes();
-    } else {
-        toolbar.style.transform = 'translateY(-100%)';
-        toggleBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
-        toggleBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
-        toggleBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-            <span>Bulk Select</span>
-        `;
-        selectedStudents.clear();
-        updateSelectedCount();
-        // Re-render without checkboxes
-        const selectedGrade = document.getElementById('grade-filter-select').value;
-        const searchTerm = document.getElementById('search-input').value;
-        if (selectedGrade) {
-            const filteredStudents = studentsData.filter(student => student.Grade === selectedGrade);
-            renderStudents(filteredStudents, { field: 'Grade', value: selectedGrade });
-        } else if (searchTerm) {
-            const searchTermLower = searchTerm.toLowerCase();
-            const filteredStudents = studentsData.filter(student => 
-                Object.values(student).some(value => 
-                    String(value).toLowerCase().includes(searchTermLower)
-                )
-            );
-            renderStudents(filteredStudents, { field: 'Search', value: searchTerm });
-        } else {
-            renderStudents(studentsData);
-        }
-    }
-};
-
-// Update selected count in toolbar
-const updateSelectedCount = () => {
-    const countElement = document.getElementById('selected-count');
-    const deleteBtn = document.getElementById('bulk-delete-btn');
-    const count = selectedStudents.size;
-    
-    if (countElement) {
-        countElement.textContent = `${count} selected`;
-    }
-    
-    if (deleteBtn) {
-        deleteBtn.disabled = count === 0;
-    }
-};
-
-// Handle checkbox change
-const handleCheckboxChange = (studentId, checked) => {
-    if (checked) {
-        selectedStudents.add(studentId);
-    } else {
-        selectedStudents.delete(studentId);
-    }
-    updateSelectedCount();
-};
-
-// Select all visible students
-const selectAllVisibleStudents = () => {
-    const checkboxes = document.querySelectorAll('.student-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = true;
-        selectedStudents.add(checkbox.dataset.studentId);
-    });
-    updateSelectedCount();
-};
-
-// Deselect all students
-const deselectAllStudents = () => {
-    const checkboxes = document.querySelectorAll('.student-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = false;
-    });
-    selectedStudents.clear();
-    updateSelectedCount();
-};
-
-// Bulk delete selected students
-const bulkDeleteStudents = async () => {
-    const count = selectedStudents.size;
-    if (count === 0) return;
-    
-    if (!confirm(`Are you sure you want to delete ${count} student record(s)? This action cannot be undone.`)) {
-        return;
-    }
-    
-    showModal(`Deleting ${count} student(s)...`);
-    
-    try {
-        const userEmail = auth.currentUser ? auth.currentUser.email : 'unknown';
-        const deletionPromises = Array.from(selectedStudents).map(async (id) => {
-            const studentRef = ref(db, `artifacts/${sanitizedAppId}/students/${id}`);
-            const deletedStudentRef = ref(db, `Deletedstudents/${sanitizedAppId}/artifacts/${id}`);
-            
-            const snapshot = await get(studentRef);
-            if (snapshot.exists()) {
-                const studentData = snapshot.val();
-                await set(deletedStudentRef, {
-                    ...studentData,
-                    deletedAt: new Date().toISOString(),
-                    deletedBy: userEmail
-                });
-            }
-            
-            return remove(studentRef);
-        });
-        
-        await Promise.all(deletionPromises);
-        
-        showModal(`Successfully deleted ${count} student record(s) and moved to Deletedstudents.`);
-        selectedStudents.clear();
-        updateSelectedCount();
-        
-        // Refresh the view
-        const selectedGrade = document.getElementById('grade-filter-select').value;
-        const searchTerm = document.getElementById('search-input').value;
-        if (selectedGrade) {
-            const filteredStudents = studentsData.filter(student => student.Grade === selectedGrade);
-            renderStudents(filteredStudents, { field: 'Grade', value: selectedGrade });
-        } else if (searchTerm) {
-            const searchTermLower = searchTerm.toLowerCase();
-            const filteredStudents = studentsData.filter(student => 
-                Object.values(student).some(value => 
-                    String(value).toLowerCase().includes(searchTermLower)
-                )
-            );
-            renderStudents(filteredStudents, { field: 'Search', value: searchTerm });
-        } else {
-            renderStudents(studentsData);
-        }
-    } catch (error) {
-        console.error("Error in bulk delete:", error);
-        showModal(`Error deleting records: ${error.message}`);
-    }
-};
-
-// Re-render current view with checkboxes
-const reRenderWithCheckboxes = () => {
-    const selectedGrade = document.getElementById('grade-filter-select').value;
-    const searchTerm = document.getElementById('search-input').value;
-    
-    if (selectedGrade) {
-        const filteredStudents = studentsData.filter(student => student.Grade === selectedGrade);
-        renderStudents(filteredStudents, { field: 'Grade', value: selectedGrade });
-    } else if (searchTerm) {
-        const searchTermLower = searchTerm.toLowerCase();
-        const filteredStudents = studentsData.filter(student => 
-            Object.values(student).some(value => 
-                String(value).toLowerCase().includes(searchTermLower)
-            )
-        );
-        renderStudents(filteredStudents, { field: 'Search', value: searchTerm });
-    } else {
-        renderStudents(studentsData);
-    }
-};
-
-// MODIFY THE EXISTING renderStudents FUNCTION
-// Add this code at the beginning of the renderStudents function, right after the line:
-// const headers = getOrderedHeaders(students);
-
-// Insert checkbox column if in bulk select mode
-if (bulkSelectMode) {
-    headers.unshift('Select');
-}
-
-// MODIFY THE TABLE GENERATION
-// Replace the existing table row generation with this enhanced version:
-
-// After the line: paginatedStudents.forEach(student => {
-// Replace the entire row generation code with:
-
-/*
-tableHTML += `
-    <tr id="row-${student.id}" class="cursor-pointer" data-id="${student.id}" 
-        ${!bulkSelectMode ? `onclick="if(!event.target.closest('.action-buttons') && !event.target.classList.contains('student-image') && !event.target.closest('.checkbox-cell')) openLocalPDF('${student['Assessment No']}', '${student['Official Student Name'] || ''}')"` : ''}>
-`;
-
-headers.forEach(header => {
-    if (header === 'Select' && bulkSelectMode) {
-        const isChecked = selectedStudents.has(student.id) ? 'checked' : '';
-        tableHTML += `
-            <td class="py-3 px-4 whitespace-nowrap text-sm checkbox-cell" onclick="event.stopPropagation()">
-                <input 
-                    type="checkbox" 
-                    class="student-checkbox w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer" 
-                    data-student-id="${student.id}"
-                    ${isChecked}
-                    onchange="handleCheckboxChange('${student.id}', this.checked)"
-                >
-            </td>`;
-    } else if (header === 'Image') {
-        const imageName = student['Official Student Name'] ? encodeURIComponent(student['Official Student Name']) : '';
-        const imagePath = imageName ? `./student_images/${imageName}.jpg` : './student_images/default.jpg';
-        tableHTML += `
-            <td class="py-3 px-4 whitespace-nowrap text-sm text-gray-600" data-header="Image">
-                <img src="${imagePath}" alt="${student['Official Student Name'] || 'Student Image'}" class="student-image" onerror="this.src='./student_images/default.jpg';this.alt='Default Image'">
-            </td>`;
-    } else if (header !== 'Select') {
-        const value = student[header] !== undefined ? student[header] : '-';
-        tableHTML += `<td class="py-3 px-4 whitespace-nowrap text-sm text-gray-600" data-header="${header}">${value}</td>`;
-    }
-});
-
-// Hide action buttons in bulk select mode
-if (!bulkSelectMode) {
-    tableHTML += `
-        <td class="py-2 px-4 whitespace-nowrap flex items-center space-x-2 action-buttons">
-            <button onclick="editStudent('${student.id}')" class="edit-btn p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">Edit</button>
-            <button onclick="deleteStudent('${student.id}')" class="delete-btn p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-300">Delete</button>
-        </td>
-    `;
-}
-
-tableHTML += `</tr>`;
-*/
-
-// ============================================
-// INITIALIZATION CODE
-// Add this at the end of window.onload or setupFirebase
-// ============================================
-
-// Create toolbar and button
-createBulkActionToolbar();
-createBulkSelectButton();
-
-// Event listeners
-document.getElementById('toggle-bulk-select').addEventListener('click', toggleBulkSelectMode);
-document.getElementById('close-bulk-mode').addEventListener('click', toggleBulkSelectMode);
-document.getElementById('select-all-btn').addEventListener('click', selectAllVisibleStudents);
-document.getElementById('deselect-all-btn').addEventListener('click', deselectAllStudents);
-document.getElementById('bulk-delete-btn').addEventListener('click', bulkDeleteStudents);
-
-// Add CSS for bulk select mode
-const style = document.createElement('style');
-style.textContent = `
-    #bulk-action-toolbar {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    
-    .student-checkbox {
-        transition: all 0.2s ease;
-    }
-    
-    .student-checkbox:hover {
-        transform: scale(1.1);
-    }
-    
-    .checkbox-cell {
-        width: 50px;
-    }
-    
-    /* Adjust main content when toolbar is visible */
-    body.bulk-mode-active {
-        padding-top: 70px;
-    }
-    
-    /* Highlight selected rows */
-    tr.selected-row {
-        background-color: #EBF5FF !important;
-    }
-    
-    /* Animation for toolbar */
-    @keyframes slideDown {
-        from {
-            transform: translateY(-100%);
-        }
-        to {
-            transform: translateY(0);
-        }
-    }
-`;
-document.head.appendChild(style);
-
-console.log('Bulk student selection system initialized successfully!');
-
         printExcelBtn.addEventListener('click', exportToExcel);
         printPdfBtn.addEventListener('click', exportToPdf);
         printWordBtn.addEventListener('click', exportToWord);
 
         window.onload = setupFirebase;
-        window.handleCheckboxChange = handleCheckboxChange;
-
     </script>
 </body>
 </html>

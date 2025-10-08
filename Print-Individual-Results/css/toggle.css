@@ -1,0 +1,27 @@
+ .grade-toggle-btn, .export-btn {
+            padding: 4px 8px;
+            margin: 0 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .grade-toggle-btn.active, .export-btn:hover {
+            background-color: #040405;
+            color: #ffffff;
+        }
+        .grade-toggle-btn:hover, .export-btn {
+            background-color: #ff0f0f;
+            color: #ffffff;
+        }
+        .grade-toggle-btn:hover, .export-btn:hover {
+            background-color: #0f23ff;
+
+        }
+        .grade-toggle-btn:hover, .export-btn:hover {
+            background-color: #0f23ff;
+
+        }
+        

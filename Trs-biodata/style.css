@@ -1,0 +1,155 @@
+/* GLOBAL STYLES */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f9;
+    color: #333;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+    color: #007bff;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-top: 25px;
+}
+
+hr {
+    margin: 35px 0;
+    border: 0;
+    border-top: 1px dashed #ccc;
+}
+
+/* FORM AND INPUT STYLES */
+input[type="text"], input[type="email"], input[type="file"], select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+}
+
+button {
+    cursor: pointer;
+    padding: 10px 15px;
+    margin: 8px 5px 8px 0;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+/* Specific Button Colors */
+#teacher-form button[type="submit"] {
+    background-color: #28a745; /* Green for Save */
+    width: 100%;
+    margin-top: 15px;
+}
+#teacher-form button[type="submit"]:hover {
+    background-color: #1e7e34;
+}
+#add-custom-field {
+    background-color: #6c757d; /* Gray for Custom Field */
+}
+#add-custom-field:hover {
+    background-color: #5a6268;
+}
+#upload-xlsx {
+    background-color: #ffc107; /* Yellow/Orange for Upload */
+    color: #333;
+}
+#upload-xlsx:hover {
+    background-color: #e0a800;
+}
+
+/* Custom Fields Container */
+#custom-fields-container .custom-field-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+#custom-fields-container input {
+    width: 50%;
+}
+
+/* FILTER AND SEARCH STYLES */
+#filter-controls {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+#teacher-search {
+    width: 70%;
+}
+#filter-subject {
+    width: 30%;
+}
+
+/* TABLE STYLES */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background-color: #e9ecef;
+    color: #495057;
+    font-weight: 600;
+    white-space: nowrap; /* Prevents long headers from wrapping */
+}
+
+/* Actions Cell Buttons */
+.actions-cell {
+    white-space: nowrap;
+}
+.actions-cell button {
+    padding: 6px 10px;
+    font-size: 0.9em;
+    margin: 2px;
+}
+.edit-btn {
+    background-color: #17a2b8; /* Info/Teal for Edit */
+}
+.edit-btn:hover {
+    background-color: #117a8b;
+}
+.delete-btn {
+    background-color: #dc3545; /* Red for Delete */
+}
+.delete-btn:hover {
+    background-color: #c82333;
+}

@@ -1,0 +1,200 @@
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f8fafc;
+        }
+        [data-filter-field] {
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        [data-filter-field]:hover {
+            background-color: #bec1c4;
+            transform: translateX(4px);
+        }
+
+        /* Compact Promotion Buttons with Scrolling Text on Hover */
+
+.grade-promotion-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap !important;
+    align-items: center;
+    margin-left: 10px;
+    max-width: 350px;
+}
+
+.grade-promotion-btn {
+    background: #9333ea;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(147, 51, 234, 0.3);
+    
+    /* Text ellipsis - default state */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+    min-width: 80px;
+    position: relative;
+}
+
+.grade-promotion-btn.selective {
+    background: #10b981;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+/* Hover state - enable scrolling animation */
+.grade-promotion-btn:hover {
+    box-shadow: 0 4px 10px rgba(147, 51, 234, 0.4);
+    filter: brightness(1.1);
+    
+    /* Remove ellipsis and enable animation */
+    text-overflow: clip;
+    overflow: hidden;
+    animation: scroll-text-left 3s linear infinite;
+    padding-right: 40px; /* Extra space for smooth loop */
+}
+
+.grade-promotion-btn.selective:hover {
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+}
+
+.grade-promotion-btn:active {
+    transform: translateY(0);
+}
+
+/* Horizontal scrolling animation */
+@keyframes scroll-text-left {
+    0% {
+        text-indent: 0;
+    }
+    100% {
+        text-indent: -100%;
+    }
+}
+
+/* Alternative: Marquee-style continuous scroll */
+.grade-promotion-btn:hover::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 100%;
+    white-space: nowrap;
+    animation: marquee 3s linear infinite;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Responsive sizing */
+@media (max-width: 768px) {
+    .grade-promotion-container {
+        max-width: 250px;
+    }
+    
+    .grade-promotion-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        max-width: 100px;
+    }
+}
+
+/* Pause animation when button is being clicked */
+.grade-promotion-btn:active {
+    animation-play-state: paused;
+}
+
+/* Smooth transition for shadow effects */
+.grade-promotion-btn {
+    transition: box-shadow 0.3s ease, filter 0.3s ease, transform 0.2s ease;
+}
+        .pagination-btn {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .pagination-btn:hover {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .pagination-btn.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .student-image {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .modal-student-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        tr.cursor-pointer:not(.no-hover) td:not(.action-buttons) {
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        tr.cursor-pointer:not(.no-hover):hover td:not(.action-buttons) {
+            background-color: #dbeafe !important;
+            transform: scale(1.01);
+        }
+        .action-buttons {
+            background-color: transparent !important;
+            transform: none !important;
+        }
+        .chart-container {
+            max-height: 200px;
+            margin-bottom: 1rem;
+        }
+        .grade-toggle-btn, .export-btn {
+            padding: 4px 8px;
+            margin: 0 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .grade-toggle-btn.active, .export-btn:hover {
+            background-color: #040405;
+            color: #ffffff;
+        }
+        .grade-toggle-btn:hover, .export-btn {
+            background-color: #ff0f0f;
+            color: #ffffff;
+        }
+        .grade-toggle-btn:hover, .export-btn:hover {
+            background-color: #0f23ff;
+
+        }
+        .grade-toggle-btn:hover, .export-btn:hover {
+            background-color: #0f23ff;
+
+        }
+  

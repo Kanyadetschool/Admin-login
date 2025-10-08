@@ -72,7 +72,7 @@
         }
 
         button {
-            padding: 10px 20px;
+            padding: 10px 20px !important;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -128,7 +128,7 @@
 
         select, input[type="text"] {
             width: 100%;
-            padding: 12px;
+            padding: 12px !important;
             border: 2px solid #bdc3c7;
             border-radius: 8px;
             font-size: 14px;

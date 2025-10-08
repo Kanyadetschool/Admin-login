@@ -1,11 +1,11 @@
-<!-- deletes sect class and saves in deteled students -->
+<!--Missing undo button and features from All-Deleted-Students.html  -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Data Dashboard</title>
+    <title>Deleted Results</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,15 +17,13 @@
     <script src="https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-app-compat.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-app-compat.js"></script>
 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-auth-compat.js"></script>
 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
 	 <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/swalOnly.css">
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
 
     <style>
         body {
@@ -39,7 +37,7 @@
             transition: background-color 0.2s, transform 0.2s;
         }
         [data-filter-field]:hover {
-            background-color: #bec1c4;
+            background-color: #f1f5f9;
             transform: translateX(4px);
         }
         .pagination-btn {
@@ -104,49 +102,24 @@
             transition: background-color 0.2s, color 0.2s;
         }
         .grade-toggle-btn.active, .export-btn:hover {
-            background-color: #040405;
-            color: #ffffff;
-        }
-        .grade-toggle-btn:hover, .export-btn {
-            background-color: #ff0f0f;
+            background-color: #3b82f6;
             color: #ffffff;
         }
         .grade-toggle-btn:hover, .export-btn:hover {
-            background-color: #0f23ff;
-
-        }
-        .grade-toggle-btn:hover, .export-btn:hover {
-            background-color: #0f23ff;
-
+            background-color: #dbeafe;
         }
     </style>
   
 </head>
 <body class="bg-gray-100">
      <div id="main_container" style="display:none;"></div> 
-<div id="loader" class="fixed inset-0 flex items-center justify-center z-50 bg-white/40 backdrop-blur-[50px]">
+
+    <div id="loader" class="fixed inset-0 flex items-center justify-center z-500 bg-white/40 backdrop-blur-md">
         <div class="relative h-16 w-16">
             <div class="absolute inset-0 rounded-full border-4 border-gray-200"></div>
-            <div class="absolute inset-0 rounded-full border-4 border-t-blue-500 border-transparent animate-spin"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-t-blue-500 border-r-red-500 border-b-yellow-500 border-l-green-500 animate-spin"></div>
         </div>
     </div>
-
-    
-<!-- Toggle Button (just the icon button) -->
-<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-    </svg>
-</button>
-
-<!-- Modal wrapper (empty, JS will fill content) -->
-<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
-    <div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full transform">
-        <!-- JS will inject modal content here -->
-    </div>
-</div>
-
-
 
     <div class="w-full mx-auto p-4 md:p-8">
         <header class="flex justify-between items-center mb-6">
@@ -157,13 +130,13 @@
   <!-- Text Section -->
   <div class="text-center md:text-left">
     <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
-      Active students Management System
+    Deleted Students Results
     </h1>
     <p class="text-gray-500 text-sm md:text-base">
-      Manage and analyze student information efficiently.
+      Manage and analyze deleted student results efficiently.
     </p>
   </div>
-</div
+</div>
 
             <div class="flex flex-wrap items-center space-x-4">
                 <span id="user-id-display" class="text-sm text-gray-600"></span>
@@ -191,10 +164,23 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
 
+<!-- Toggle Button (just the icon button) -->
+<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+</button>
+
+<!-- Modal wrapper (empty, JS will fill content) -->
+<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
+    <div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full transform">
+        <!-- JS will inject modal content here -->
+    </div>
+</div>
 
 
 
-                <section id="excel-upload-section" class="bg-white p-6 rounded-lg shadow-md"  >
+                <section id="excel-upload-section" class="bg-white p-6 rounded-lg shadow-md hidden">
                     <h2 class="text-xl font-semibold mb-4 text-gray-700">Upload Excel File</h2>
                     <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                         <label for="file-input" class="cursor-pointer text-blue-600 hover:text-blue-800">
@@ -207,13 +193,13 @@
                     <p id="status-message" class="mt-4 text-center hidden"></p>
                 </section>
 
-                <section id="manual-entry-section" class="bg-white p-6 rounded-lg shadow-md" >
+                <section id="manual-entry-section" class="bg-white p-6 rounded-lg shadow-md hidden">
                     <h2 class="text-xl font-semibold mb-4 text-gray-700">Add Student Manually</h2>
                     <form id="manual-form" class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input type="text" name="assessmentNo" placeholder="Assessment No (Required)" required class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <input type="text" name="studentName" placeholder="Official Student Name" class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <input type="text" name="studentClass" placeholder="Class Of (Year of graduation eg 2025)" class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="text" name="studentClass" placeholder="Class" class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <input type="text" name="studentGrade" placeholder="Grade" class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div id="custom-fields-container"></div>
@@ -225,7 +211,7 @@
                 </section>
             </div>
 
-            <section id="stats-section" class="mb-8" hidden >
+            <section id="stats-section" class="mb-8">
             </section>
 
             <div class="bg-white p-6 rounded-lg shadow-md">
@@ -250,8 +236,7 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-4 w-full md:w-auto">
-                        <input id="search-input" type="text" placeholder="Search anything..." onfocus="this.select()" class="p-2 border border-gray-300 rounded-md w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
+                        <input id="search-input" type="text" placeholder="Search anything..." class="p-2 border border-gray-300 rounded-md w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <select id="grade-filter-select" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">All Grades</option>
                         </select>
@@ -290,94 +275,31 @@
         </div>
     </div>
 
-  <!-- Modal HTML -->
-<div id="pdf-modal-backdrop" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl h-[80vh] flex flex-col">
-        <div class="flex justify-between items-center mb-4">
-            <div class="flex items-center space-x-4">
-                <img id="pdf-modal-student-image" class="w-24 h-24 object-cover" src="" alt="Student Image">
-                <div>
+    <div id="pdf-modal-backdrop" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center space-x-4">
+                    <img id="pdf-modal-student-image" class="modal-student-image" src="" alt="Student Image">
                     <h3 id="pdf-modal-student-name" class="text-lg font-semibold text-gray-700"></h3>
                     <h2 class="text-lg font-semibold text-gray-700">Birth Certificate</h2>
                 </div>
+                <button id="close-pdf-modal-btn" class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
-            <button id="close-pdf-modal-btn" class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-        <div id="pdf-content" class="flex-1 w-full relative">
-            <iframe id="pdf-iframe" class="w-full h-full rounded-lg" src=""></iframe>
+            <iframe id="pdf-iframe" class="flex-1 w-full rounded-lg" src=""></iframe>
         </div>
     </div>
-</div>
-    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthfireBase.js"></script>
-    <!-- <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script> -->
+     <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthfireBase.js"></script>
+    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>
           <script src="./image-popup.js" ></script>
-                <script src="./js/image-popup.js" ></script>
-                  <script src="./js/HamburgerToggle.js" ></script>
-                  <script src="./js/HamburgerToggle.js" ></script>
-                  <!-- <script src="./js/tabblock.js" ></script>| -->
-                  
+         <script src="https://kanyadet-school-admin.web.app/Print-Individual-Results/js/Toggle.js" ></script>
+
+
 
       <script type="module">
-
-
-
-// Get the grid element
-const grid = document.querySelector('.grid');
-
-// Hide grid by default
-grid.style.display = 'none';
-
-// Create toggle button
-const toggleBtn = document.createElement('button');
-toggleBtn.textContent = 'Show Content';
-toggleBtn.style.cssText = `
-  padding: 10px 20px;
-  margin-left: 20px ! important;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: background 0.3s;
-`;
-
-toggleBtn.addEventListener('mouseenter', () => {
-  toggleBtn.style.background = '#2563eb';
-});
-
-toggleBtn.addEventListener('mouseleave', () => {
-  toggleBtn.style.background = '#3b82f6';
-});
-
-// Insert button before grid
-grid.parentNode.insertBefore(toggleBtn, grid);
-
-// Toggle function
-let isVisible = false;
-
-toggleBtn.addEventListener('click', () => {
-  if (isVisible) {
-    // Hide content
-    grid.style.display = 'none';
-    toggleBtn.textContent = 'Show Content';
-  } else {
-    // Show content
-    grid.style.display = 'grid';
-    toggleBtn.textContent = 'Hide Content';
-  }
-  isVisible = !isVisible;
-});
-
-
-
-
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithCustomToken, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getDatabase, ref, set, onValue, remove, update,get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -441,10 +363,6 @@ toggleBtn.addEventListener('click', () => {
         const showModal = (message) => {
             modalText.textContent = message;
             modal.classList.remove('hidden');
-            // Auto-close after 2 seconds
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 1500);
         };
 
         studentsPerPageSelect.addEventListener('change', (e) => {
@@ -601,7 +519,7 @@ toggleBtn.addEventListener('click', () => {
                         signInSection.classList.add('hidden');
                         dataSection.classList.remove('hidden');
 
-                        const studentsRef = ref(db, `artifacts/${sanitizedAppId}/students`);
+                        const studentsRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/`);
                         onValue(studentsRef, (snapshot) => {
                             const students = [];
                             const data = snapshot.val();
@@ -718,7 +636,7 @@ gradeFilterSelect.addEventListener('change', () => {
                 }
                 const assessmentNoIndex = headers.indexOf("Assessment No");
 
-                const studentsRef = ref(db, `artifacts/${sanitizedAppId}/students`);
+                const studentsRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/`);
                 for (const row of studentData) {
                     const assessmentNo = row[assessmentNoIndex];
                     if (!assessmentNo) {
@@ -730,7 +648,7 @@ gradeFilterSelect.addEventListener('change', () => {
                     headers.forEach((header, index) => {
                         studentObj[header] = row[index];
                     });
-                    await set(ref(db, `artifacts/${sanitizedAppId}/students/${studentDocKey}`), studentObj);
+                    await set(ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${studentDocKey}`), studentObj);
                 }
 
                 statusMessage.textContent = 'Data uploaded successfully!';
@@ -801,7 +719,7 @@ gradeFilterSelect.addEventListener('change', () => {
 
             try {
                 const studentDocKey = String(studentData['Assessment No']);
-                const studentsRef = ref(db, `artifacts/${sanitizedAppId}/students/${studentDocKey}`);
+                const studentsRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${studentDocKey}`);
                 await set(studentsRef, studentData);
                 showModal('Student data added successfully!');
                 manualForm.reset();
@@ -812,7 +730,6 @@ gradeFilterSelect.addEventListener('change', () => {
             }
         });
 
-        
         const exportGradeGenderData = (gradeGenderData) => {
             const headers = ['Grade', 'Male', 'Female', 'Other'];
             const csvRows = [headers.join(',')];
@@ -888,7 +805,7 @@ gradeFilterSelect.addEventListener('change', () => {
                 const grade = student.Grade || 'N/A';
                 const gender = student.Gender ? student.Gender.toLowerCase() : 'other';
                 if (!gradeGenderData[grade]) {
-                    gradeGenderData[grade] = { Male: 0, Female: 0, totalSum: 0 };
+                    gradeGenderData[grade] = { Male: 0, Female: 0, Other: 0 };
                 }
                 gradeGenderData[grade][gender.charAt(0).toUpperCase() + gender.slice(1)]++;
             });
@@ -962,8 +879,8 @@ gradeFilterSelect.addEventListener('change', () => {
             };
 
             let totalStudentsChartHTML = `
-                <div class="bg-white p-4 rounded-lg shadow-md" hidden>
-                    <h3 class="font-semibold text-blue-800 mb-2">Total Students: ${totalStudentsInDB}</h3>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h3 class="font-semibold text-blue-800 mb-2">Total Students Deleted: ${totalStudentsInDB}</h3>
                     <div class="chart-container">
                         <canvas id="total-students-chart"></canvas>
                     </div>
@@ -1021,8 +938,8 @@ gradeFilterSelect.addEventListener('change', () => {
             }).join('');
 
             let uniqueGradesChartHTML = `
-                <div class="bg-white p-4 rounded-lg shadow-md" hidden>
-                    <h3 class="font-semibold text-green-800 mb-2">Unique Grades: ${gradeDistribution ? Object.keys(gradeDistribution).length : 0}</h3>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h3 class="font-semibold text-green-800 mb-2">Total Grades with Deletion: ${gradeDistribution ? Object.keys(gradeDistribution).length : 0}</h3>
                     <div class="flex flex-wrap gap-2 mb-2">
                         <button class="grade-toggle-btn active" data-grade="all">All Grades</button>
                         ${Object.keys(gradeDistribution || {}).map(grade => `
@@ -1054,8 +971,8 @@ gradeFilterSelect.addEventListener('change', () => {
             };
 
             let dataCompletenessChartHTML = `
-                <div class="bg-white p-4 rounded-lg shadow-md" hidden>
-                    <h3 class="font-semibold text-orange-800 mb-2">Data Completeness: ${completenessPercentage}%</h3>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h3 class="font-semibold text-orange-800 mb-2">Sucessful : ${completenessPercentage}%</h3>
                     <div class="chart-container">
                         <canvas id="data-completeness-chart"></canvas>
                     </div>
@@ -1067,7 +984,8 @@ gradeFilterSelect.addEventListener('change', () => {
 
             // Active Filter Chart and Summary
             let activeFilterChartHTML = `
-                <div class="bg-white p-4 rounded-lg shadow-md" hidden>
+                <div class="bg-white p-4 rounded-lg shadow-2xl fixed top-[5px] right-[5px]  ">
+
                     <h3 class="font-semibold text-red-800 mb-2">${activeFilter ? `${activeFilter.field}: ${activeFilter.value}` : 'Active Filter: None'}</h3>
                     ${activeFilter ? `
                         <div class="chart-container">
@@ -1094,15 +1012,15 @@ gradeFilterSelect.addEventListener('change', () => {
             `;
 
             statsSection.innerHTML = `
-                <div class="flex flex-wrap gap-4 mb-6" hidden>
+                <div class="flex flex-wrap gap-4 mb-6">
                     ${totalStudentsChartHTML}
                     ${uniqueGradesChartHTML}
                     ${dataCompletenessChartHTML}
                     ${activeFilterChartHTML}
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" hiddden> 
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     ${generateDistributionHTML('Grade Distribution', gradeDistribution, 'Grade', 'bg-blue-500')}
-                    ${generateDistributionHTML('Graduation Years', classDistribution, 'Class', 'bg-green-500')}
+                    ${generateDistributionHTML('Class Distribution', classDistribution, 'Class', 'bg-green-500')}
                     ${generateDistributionHTML('Gender Distribution', genderDistribution, 'Gender', 'bg-purple-500')}
                 </div>
             `;
@@ -1155,21 +1073,21 @@ gradeFilterSelect.addEventListener('change', () => {
                     }
                 });
             }
-// Render Active Filter Chart
+
+            // Render Active Filter Chart
             if (activeFilter) {
                 const activeFilterChartCanvas = document.getElementById('active-filter-chart');
                 if (activeFilterChartCanvas) {
-                    const totalSum = (filterGenderData.Male || 0) + (filterGenderData.Female || 0) + (filterGenderData.Other || 0);
                     new Chart(activeFilterChartCanvas, {
                         type: 'bar',
                         data: {
-                            labels: ['Male', 'Female', 'Total'],
+                            labels: ['Male', 'Female', 'Other'],
                             datasets: [{
-                                label: `  ${activeFilter.value}`,
+                                label: `Gender in ${activeFilter.field}: ${activeFilter.value}`,
                                 data: [
                                     filterGenderData.Male || 0,
                                     filterGenderData.Female || 0,
-                                    totalSum
+                                    filterGenderData.Other || 0
                                 ],
                                 backgroundColor: ['#3b82f6', '#ec4899', '#6b7280']
                             }]
@@ -1182,6 +1100,7 @@ gradeFilterSelect.addEventListener('change', () => {
                     });
                 }
             }
+
             // Grade Toggle Buttons
             document.querySelectorAll('.grade-toggle-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1268,48 +1187,10 @@ gradeFilterSelect.addEventListener('change', () => {
             renderStudents(filteredStudents, { field: 'Search', value: searchTerm });
         };
 
-      searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value;
-    const selectedGrade = gradeFilterSelect.value;
-    
-    if (!searchTerm) {
-        // If search is empty, show filtered by grade or all students
-        if (selectedGrade) {
-            const filteredStudents = studentsData.filter(student => student.Grade === selectedGrade);
-            currentPage = 1;
-            renderStudents(filteredStudents, { field: 'Grade', value: selectedGrade });
-        } else {
-            currentPage = 1;
-            renderStudents(studentsData);
-        }
-        return;
-    }
-
-    const searchTermLower = searchTerm.toLowerCase();
-    
-    // Filter by grade first (if selected), then by search term
-    let filteredStudents = selectedGrade 
-        ? studentsData.filter(student => student.Grade === selectedGrade)
-        : studentsData;
-    
-    filteredStudents = filteredStudents.filter(student => {
-        return Object.entries(student).some(([key, value]) => {
-            if (key === 'id') return false;
-            return String(value).toLowerCase().includes(searchTermLower);
+        searchInput.addEventListener('input', (e) => {
+            searchStudents(e.target.value);
+            gradeFilterSelect.value = '';
         });
-    });
-
-    currentPage = 1;
-    
-    // Set appropriate filter context
-    if (selectedGrade) {
-        renderStudents(filteredStudents, { field: 'Grade + Search', value: `${selectedGrade} - "${searchTerm}"` });
-    } else {
-        renderStudents(filteredStudents, { field: 'Search', value: searchTerm });
-    }
-});
-
-        
 
         const renderPagination = (totalStudents, students, activeFilter = null) => {
             const totalPages = Math.ceil(totalStudents / studentsPerPage);
@@ -1408,117 +1289,53 @@ gradeFilterSelect.addEventListener('change', () => {
             return ['Image', ...priorityHeaders, ...otherHeaders];
         };
 
+     
+window.openLocalPDF = function(assessmentNo, studentName) {
+    const pdfPath = `https://kanyadet-school-admin.web.app/New-Students-Database/birth_certificates/${assessmentNo}.pdf`; // Replace with your server URL
+    const imagePath = studentName 
+        ? `https://kanyadet-school-admin.web.app/New-Students-Database/student_images/${encodeURIComponent(studentName)}.jpg` 
+        : 'https://kanyadet-school-admin.web.app/New-Students-Database/student_images/default.jpg'; // Replace with your server URL
+    const googleDocsUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfPath)}&embedded=true`;
 
-
-        
-     // Ensure pdf.js is included in your project
-// You can include it via CDN or npm
-
-window.openLocalPDF = async function(assessmentNo, studentName) {
-    // Convert relative PDF path to absolute URL
-    const baseUrl = window.location.origin; // e.g., http://localhost:3000
-    const pdfRelativePath = `./New-Students-Database/birth_certificates/${assessmentNo}.pdf`;
-    const pdfPath = new URL(pdfRelativePath, baseUrl).href; // Absolute URL
-    const imagePath = studentName ? `./student_images/${encodeURIComponent(studentName)}.jpg` : './student_images/default.jpg';
-    
-    console.log('Opening PDF:', { assessmentNo, studentName, pdfPath, imagePath });
-    
     try {
+        // Validate DOM elements
+        if (!pdfIframe || !pdfModalStudentImage || !pdfModalStudentName || !pdfModalBackdrop) {
+            throw new Error('Required DOM elements are missing');
+        }
+
+        // Set iframe source to Google Docs Viewer
+        pdfIframe.src = googleDocsUrl;
+        console.log('Iframe src set for all devices:', googleDocsUrl);
+
         // Set student image and name
-        const studentImage = document.getElementById('pdf-modal-student-image');
-        const studentNameElement = document.getElementById('pdf-modal-student-name');
-        if (!studentImage || !studentNameElement) {
-            throw new Error('Modal elements (student image or name) not found');
-        }
-        studentImage.src = imagePath;
-        studentNameElement.textContent = studentName || 'Unknown Student';
-        console.log('Set student image and name:', { imagePath, studentName });
-
-        // Check if PDF file exists
-        const response = await fetch(pdfPath, { method: 'HEAD' });
-        if (!response.ok) {
-            throw new Error(`PDF not found at ${pdfPath} (Status: ${response.status})`);
-        }
-        console.log('PDF file exists:', pdfPath);
-
-        // Check screen width to determine device type
-        const isPC = window.innerWidth > 1024; // PCs have screen width > 1024px
-        const pdfIframe = document.getElementById('pdf-iframe');
-        if (!pdfIframe) {
-            throw new Error('Iframe element not found');
-        }
-        
-        if (isPC) {
-            // PC: Load PDF directly in iframe
-            pdfIframe.src = pdfPath + '#view=FitH'; // Fit horizontally
-            console.log('Iframe src set for PC:', pdfIframe.src);
-        } else {
-            // Tablets/Smartphones: Use Google Docs Viewer
-            const googleDocsUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfPath)}&embedded=true`;
-            pdfIframe.src = googleDocsUrl;
-            console.log('Iframe src set for mobile/tablet:', googleDocsUrl);
-        }
-
-        // Verify iframe load
-        pdfIframe.onload = () => {
-            console.log('Iframe loaded successfully:', pdfIframe.src);
-        };
-        pdfIframe.onerror = () => {
-            console.error('Iframe failed to load:', pdfIframe.src);
-        };
+        pdfModalStudentImage.src = imagePath;
+        pdfModalStudentName.textContent = studentName || 'Unknown Student';
 
         // Show modal
-        const pdfModalBackdrop = document.getElementById('pdf-modal-backdrop');
-        if (!pdfModalBackdrop) {
-            throw new Error('Modal backdrop not found');
-        }
         pdfModalBackdrop.classList.remove('hidden');
         pdfModalBackdrop.classList.add('flex');
-        console.log('Modal displayed');
 
-        // Add outside click handler
+        // Add outside click handler for modal
         const closeModalOnOutsideClick = function(event) {
             if (event.target === pdfModalBackdrop) {
-                closeModal();
+                pdfModalBackdrop.classList.add('hidden');
+                pdfModalBackdrop.classList.remove('flex');
+                pdfIframe.src = ''; // Clear iframe source
+                pdfModalBackdrop.removeEventListener('click', closeModalOnOutsideClick);
             }
         };
-
-        // Add close button handler
-        const closeButton = document.getElementById('close-pdf-modal-btn');
-        if (!closeButton) {
-            throw new Error('Close button not found');
-        }
-        const closeButtonHandler = function() {
-            closeModal();
-        };
-
-        // Close modal function
-        function closeModal() {
-            const pdfModalBackdrop = document.getElementById('pdf-modal-backdrop');
-            pdfModalBackdrop.classList.add('hidden');
-            pdfModalBackdrop.classList.remove('flex');
-            pdfIframe.src = ''; // Clear iframe
-            pdfIframe.onload = null; // Remove event listeners
-            pdfIframe.onerror = null;
-            console.log('Iframe cleared');
-            pdfModalBackdrop.removeEventListener('click', closeModalOnOutsideClick);
-            closeButton.removeEventListener('click', closeButtonHandler);
-        }
-
+        
         pdfModalBackdrop.addEventListener('click', closeModalOnOutsideClick);
-        closeButton.addEventListener('click', closeButtonHandler);
 
     } catch (e) {
-        console.error('Error opening PDF:', e);
-        showModal(`Failed to open birth certificate: ${e.message}. Ensure the file exists at ./birth_certificates/${assessmentNo}.pdf`);
+        console.error("Error opening PDF:", e);
+        showModal(`Failed to open birth certificate: ${e.message}. Ensure the file exists at ${pdfPath}`);
     }
 };
 
 
 
-
-
-const renderStudents = (students, activeFilter = null) => {
+        const renderStudents = (students, activeFilter = null) => {
             dataDisplay.innerHTML = '';
             updateAnalyticsDashboard(students, activeFilter);
 
@@ -1541,11 +1358,11 @@ const renderStudents = (students, activeFilter = null) => {
             const table = document.createElement('table');
             table.id = 'student-table';
             table.className = "min-w-full bg-white rounded-lg shadow-md overflow-hidden";
-            let tableHTML =  `<thead style="background-color: rgb(41, 128, 185);"><tr>`;
+            let tableHTML = `<thead class="bg-gray-100"><tr>`;
             headers.forEach(header => {
-                tableHTML += `<th class="py-3 px-4 text-left font-semibold text-white w-full border-collapse" style="font-family: Helvetica, Arial, sans-serif;">${header}</th>`;
+                tableHTML += `<th class="py-3 px-4 text-left font-semibold text-gray-700">${header}</th>`;
             });
-            tableHTML += `<th class="py-3 px-4 text-left font-semibold text-white">Actions</th></tr></thead>`;
+            tableHTML += `<th class="py-3 px-4 text-left font-semibold text-gray-700">Actions</th></tr></thead>`;
             tableHTML += `<tbody class="divide-y divide-gray-200">`;
 
             paginatedStudents.forEach(student => {
@@ -1569,6 +1386,8 @@ const renderStudents = (students, activeFilter = null) => {
                     <td class="py-2 px-4 whitespace-nowrap flex items-center space-x-2 action-buttons">
                         <button onclick="editStudent('${student.id}')" class="edit-btn p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">Edit</button>
                         <button onclick="deleteStudent('${student.id}')" class="delete-btn p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-300">Delete</button>
+                        <button onclick="undoStudent('${student.id}')" class="undo-btn p-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-300">Undo</button>
+
                     </td>
                 `;
                 tableHTML += `</tr>`;
@@ -1629,7 +1448,7 @@ const renderStudents = (students, activeFilter = null) => {
             }
 
             try {
-                const studentRef = ref(db, `artifacts/${sanitizedAppId}/students/${id}`);
+                const studentRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${id}`);
                 await update(studentRef, updatedData);
                 showModal('Student record updated successfully!');
 
@@ -1684,6 +1503,8 @@ const renderStudents = (students, activeFilter = null) => {
             actionButtons.innerHTML = `
                 <button onclick="editStudent('${id}')" class="edit-btn p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300">Edit</button>
                 <button onclick="deleteStudent('${id}')" class="delete-btn p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-300">Delete</button>
+                <button onclick="undoStudent('${id}')" class="undo-btn p-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-300">Undo</button>
+
             `;
             row.setAttribute('onclick', `if(!event.target.closest('.action-buttons') && !event.target.classList.contains('student-image')) openLocalPDF('${originalValues['Assessment No']}', '${originalValues['Official Student Name'] || ''}')`);
         };
@@ -1695,8 +1516,8 @@ window.deleteStudent = async (id) => {
     }
 
     try {
-        const studentRef = ref(db, `artifacts/${sanitizedAppId}/students/${id}`);
-        const deletedStudentRef = ref(db, `Deletedstudents/${sanitizedAppId}/artifacts/${id}`);
+        const studentRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${id}`);
+        const deletedStudentRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${id}`);
 
         const snapshot = await get(studentRef);
         if (snapshot.exists()) {
@@ -1710,7 +1531,7 @@ window.deleteStudent = async (id) => {
         }
 
         await remove(studentRef);
-        showModal('Student record deleted successfully and moved to Deletedstudents.');
+        showModal('Student record deleted successfully and moved to DeletedResults.');
         // Remove totalStudents-- and replace fetchAndRenderStudents with renderStudents
         renderStudents(studentsData);
     } catch (e) {
@@ -1721,6 +1542,59 @@ window.deleteStudent = async (id) => {
 
 
 
+     window.undoStudent = async (id) => {
+    if (!confirm('Are you sure you want to undo the deletion of this student record? This will restore it to the main database.')) {
+        return;
+    }
+    try {
+        const deletedStudentRef = ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${id}`);
+        const studentRef = ref(db, `Results/${sanitizedAppId}/students/${id}`);
+
+        // Use 'get' for a one-time read (returns a promise with DataSnapshot)
+        const snapshot = await get(deletedStudentRef);
+
+        // Check if data exists
+        if (!snapshot.exists()) {
+            showModal('Error: Student data not found in deleted records.');
+            return;
+        }
+
+        const studentData = snapshot.val();
+
+        // Restore to main database
+        await set(studentRef, studentData);
+
+        // Remove from deleted records
+        await remove(deletedStudentRef);
+
+        showModal('Student record restored successfully.');
+
+        // Update local data and re-render
+        studentsData = studentsData.filter(student => student.id !== id);
+        currentPage = Math.min(currentPage, Math.ceil(studentsData.length / studentsPerPage)) || 1;
+        const selectedGrade = gradeFilterSelect.value;
+        const searchTerm = searchInput.value;
+        let filteredStudents = studentsData;
+        if (selectedGrade) {
+            filteredStudents = studentsData.filter(student => student.Grade === selectedGrade);
+            renderStudents(filteredStudents, { field: 'Grade', value: selectedGrade });
+        } else if (searchTerm) {
+            const searchTermLower = searchTerm.toLowerCase();
+            filteredStudents = studentsData.filter(student => 
+                Object.values(student).some(value => 
+                    String(value).toLowerCase().includes(searchTermLower)
+                )
+            );
+            renderStudents(filteredStudents, { field: 'Search', value: searchTerm });
+        } else {
+            renderStudents(studentsData);
+        }
+    } catch (e) {
+        console.error("Error undoing student deletion:", e);
+        showModal(`Error restoring record: ${e.message}. Check Firebase rules and network.`);
+    }
+};
+        
 
 
 
@@ -1734,36 +1608,20 @@ deleteGradeBtn.addEventListener('click', async () => {
     if (confirm(`Are you sure you want to delete all students in ${selectedGrade}? This action cannot be undone.`)) {
         showModal(`Deleting all students in ${selectedGrade}...`);
         const studentsInGrade = studentsData.filter(student => student.Grade === selectedGrade);
-        const userEmail = auth.currentUser ? auth.currentUser.email : 'unknown';
-
-        const deletionPromises = studentsInGrade.map(async (student) => {
-            const studentRef = ref(db, `artifacts/${sanitizedAppId}/students/${student.id}`);
-            const deletedStudentRef = ref(db, `Deletedstudents/${sanitizedAppId}/artifacts/${student.id}`);
-
-            // Save student data to Deletedstudents
-            await set(deletedStudentRef, {
-                ...student,
-                deletedAt: new Date().toISOString(),
-                deletedBy: userEmail
-            });
-
-            // Remove student from main database
-            return remove(studentRef);
+        const deletionPromises = studentsInGrade.map(student => {
+            return remove(ref(db, `DeletedResults/${sanitizedAppId}/artifacts/${student.id}`));
         });
 
         try {
             await Promise.all(deletionPromises);
-            showModal(`Successfully deleted all students from ${selectedGrade} and moved to Deletedstudents.`);
-            // Update studentsData and re-render
-            studentsData = studentsData.filter(student => student.Grade !== selectedGrade);
-            gradeFilterSelect.value = '';
-            renderStudents(studentsData);
+            showModal(`Successfully deleted all students from ${selectedGrade}.`);
         } catch (error) {
             console.error("Error deleting grade:", error);
             showModal(`Error deleting grade: ${error.message}`);
         }
     }
 });
+
         const exportToExcel = () => {
             const selectedGrade = gradeFilterSelect.value;
             const dataToExport = selectedGrade ? studentsData.filter(s => s.Grade === selectedGrade) : studentsData;
@@ -1789,226 +1647,37 @@ deleteGradeBtn.addEventListener('click', async () => {
             printModal.classList.add('hidden');
         };
 
+        const exportToPdf = async () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
+            const selectedGrade = gradeFilterSelect.value;
+            const dataToExport = selectedGrade ? studentsData.filter(s => s.Grade === selectedGrade) : studentsData;
+            const title = `Student Data (${selectedGrade || 'All Grades'})`;
+            doc.text(title, 14, 16);
 
-
-const exportToPdf = async () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('landscape');
-
-    const selectedGrade = gradeFilterSelect.value;
-    const dataToExport = selectedGrade ? studentsData.filter(s => s.Grade === selectedGrade) : studentsData;
-    const title = `Student Data Report`;
-    const subtitle = `Print for: ${selectedGrade || 'All Grades'}`;
-    const totalStudents = dataToExport.length;
-    
-    // Load and process logo image with gray-white filter
-    const logoImg = new Image();
-    logoImg.src = '../images/logo.png';
-    logoImg.crossOrigin = 'anonymous';
-    
-    // Wait for logo to load and apply filter
-    await new Promise((resolve, reject) => {
-        logoImg.onload = () => {
-            // Create canvas to apply gray-white filter
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = logoImg.width;
-            canvas.height = logoImg.height;
-            
-            // Draw original image
-            ctx.drawImage(logoImg, 0, 0);
-            
-            // Get image data
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imageData.data;
-            
-            // Apply gray-white filter (desaturate and lighten)
-            for (let i = 0; i < data.length; i += 4) {
-                // Convert to grayscale
-                const gray = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
-                
-                // Lighten and shift towards white
-                const lightened = gray + (255 - gray) * 0.6; // Adjust 0.6 for more/less white
-                
-                data[i] = lightened;     // Red
-                data[i + 1] = lightened; // Green
-                data[i + 2] = lightened; // Blue
-                // Alpha channel (data[i + 3]) remains unchanged
+            if (dataToExport.length === 0) {
+                showModal('No data to export.');
+                return;
             }
-            
-            // Put modified image data back
-            ctx.putImageData(imageData, 0, 0);
-            
-            // Update logoImg with filtered version
-            logoImg.src = canvas.toDataURL();
-            resolve();
+
+            const headers = getOrderedHeaders(dataToExport).filter(header => header !== 'Image');
+            const body = dataToExport.map(student => 
+                headers.map(header => String(student[header] || '-'))
+            );
+
+            doc.autoTable({
+                head: [headers],
+                body: body,
+                startY: 25,
+                styles: { fontSize: 8, cellPadding: 2 },
+                headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0] },
+                alternateRowStyles: { fillColor: [245, 245, 245] },
+            });
+
+            doc.save(`student_data_${selectedGrade || 'all'}.pdf`);
+            printModal.classList.add('hidden');
         };
-        logoImg.onerror = reject;
-    });
-    
-    // Select only essential columns (now with No. column)
-    const essentialColumns = [
-        'No.',
-        'Official Student Name', 
-        'Assessment No', 
-        'UPI',
-        'Gender', 
-        'DOB', 
-        'Birth Entry',
-        'Father',
-        'Mother',
-        'Home phone',
-    ];
-    
-    const headers = essentialColumns;
-    const body = dataToExport.map((student, index) => {
-        const row = headers.map(header => {
-            if (header === 'No.') {
-                return String(index + 1); // Sequential numbering
-            }
-            return String(student[header] || '-');
-        });
-        return row;
-    });
-
-    // Premium Header Function
-    const addHeader = (data) => {
-        const pageWidth = doc.internal.pageSize.width;
-        
-        // Header background with same color as table header [41, 128, 185]
-        doc.setFillColor(41, 128, 185);
-        doc.rect(0, 0, pageWidth, 20, 'F');
-        
-        // Add filtered logo (left side)
-        const logoWidth = 15;
-        const logoHeight = 15;
-        const logoX = 14;
-        const logoY = 2.5;
-        doc.addImage(logoImg, 'PNG', logoX, logoY, logoWidth, logoHeight);
-        
-        // School/Organization Name (adjusted for logo)
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(16);
-        doc.setFont(undefined, 'bold');
-        doc.text('KANYADET PRI & JUNIOR SCHOOL', logoX + logoWidth + 5, 10);
-        
-        // Report Title (adjusted for logo)
-        doc.setFontSize(12);
-        doc.text(title, logoX + logoWidth + 5, 16);
-        
-        // Date and Grade Info (Right aligned)
-        doc.setFontSize(9);
-        doc.setFont(undefined, 'normal');
-        const dateText = `Date: ${new Date().toLocaleDateString()}`;
-        const gradeText = subtitle;
-        const studentCount = `Total Students: ${totalStudents}`;
-        doc.text(dateText, pageWidth - 14, 8, { align: 'right' });
-        doc.text(gradeText, pageWidth - 14, 13, { align: 'right' });
-        doc.text(studentCount, pageWidth - 14, 18, { align: 'right' });
-        
-        // Decorative line under header
-        doc.setDrawColor(41, 128, 185);
-        doc.setLineWidth(0.5);
-        doc.line(0, 20, pageWidth, 20);
-    };
-
-    // Premium Footer Function (now accepts totalPages parameter)
-    const addFooter = (data, totalPages) => {
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-        const footerY = pageHeight - 15;
-        
-        // Footer background (light gray)
-        doc.setFillColor(245, 245, 245);
-        doc.rect(0, footerY - 5, pageWidth, 20, 'F');
-        
-        // Top border line
-        doc.setDrawColor(41, 128, 185);
-        doc.setLineWidth(0.3);
-        doc.line(0, footerY - 5, pageWidth, footerY - 5);
-        
-        doc.setTextColor(60, 60, 60);
-        doc.setFontSize(8);
-        
-        // Left section - Prepared by
-        doc.setFont(undefined, 'bold');
-        doc.text('Prepared by:', 14, footerY);
-        doc.setFont(undefined, 'normal');
-        doc.text('_________________', 14, footerY + 4);
-        doc.setFontSize(7);
-        doc.text('Signature & Date', 14, footerY + 8);
-        
-        // Center section - Page number (now with correct total)
-        doc.setFontSize(9);
-        doc.setFont(undefined, 'normal');
-        const pageText = `Page ${data.pageNumber} of ${totalPages}`;
-        doc.text(pageText, pageWidth / 2, footerY + 2, { align: 'center' });
-        
-        // Right section - Verified stamp
-        doc.setFontSize(8);
-        doc.setFont(undefined, 'bold');
-        doc.text('Verified by:', pageWidth - 14, footerY, { align: 'right' });
-        doc.setFont(undefined, 'normal');
-        doc.text('_________________', pageWidth - 14, footerY + 4, { align: 'right' });
-        doc.setFontSize(7);
-        doc.text('Signature & Stamp', pageWidth - 14, footerY + 8, { align: 'right' });
-        
-        // Stamp box outline (right side)
-        doc.setDrawColor(41, 128, 185);
-        doc.setLineWidth(0.2);
-        doc.rect(pageWidth - 85, footerY - 3, 28, 10);
-        doc.setFontSize(6);
-        doc.setTextColor(150, 150, 150);
-        doc.text('OFFICIAL', pageWidth - 71, footerY + 2, { align: 'center' });
-        doc.text('STAMP', pageWidth - 71, footerY + 5, { align: 'center' });
-    };
-
-    // Generate table with header and footer on each page
-    doc.autoTable({
-        head: [headers],
-        body: body,
-        startY: 25,
-        styles: { 
-            fontSize: 9,
-            cellPadding: 3,
-            overflow: 'linebreak',
-            cellWidth: 'auto'
-        },
-        columnStyles: {
-            0: { cellWidth: 15 } // Fixed width for No. column
-        },
-        headStyles: { 
-            fillColor: [41, 128, 185], 
-            textColor: [255, 255, 255],
-            fontStyle: 'bold'
-        },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-        margin: { top: 25, right: 10, bottom: 20, left: 10 },
-        didDrawPage: function(data) {
-            // Only add header during generation
-            addHeader(data);
-        }
-    });
-
-    // NOW get the total page count after table is generated
-    const totalPages = doc.internal.getNumberOfPages();
-    
-    // Second pass: Add footers with correct page count
-    for (let i = 1; i <= totalPages; i++) {
-        doc.setPage(i);
-        addFooter({ pageNumber: i }, totalPages);
-    }
-
-    doc.save(`student_data_${selectedGrade || 'all'}_${new Date().toISOString().split('T')[0]}.pdf`);
-    printModal.classList.add('hidden');
-};
-
-
-
-
-
-
 
         const exportToWord = () => {
             const { Document, Packer, Paragraph, Table, TableCell, TableRow } = window.docx;
