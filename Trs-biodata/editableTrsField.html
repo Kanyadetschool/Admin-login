@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers Database</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
+    <link rel="stylesheet" href="TeachersBiodata.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Teachers Database</h1>
+            <p>Teacher Information Management System</p>
+            <div id="connectionStatus" class="connection-status disconnected">Disconnected</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="teachers-list">Teachers List</button>
+            <button class="tab" data-tab="add-teacher">Add Teacher</button>
+        </div>
+
+        <div id="add-teacher" class="tab-content">
+            <div class="form-container">
+                <h2>➕ Add New Teacher</h2>
+                <form id="teacherForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="teacherId">TSC NO *</label>
+                            <input type="text" id="teacherId" name="teacherId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department *</label>
+                            <select id="department" name="department" required>
+                                <option value="">Select Department</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="English">English</option>
+                                <option value="Science">Science</option>
+                                <option value="History">History</option>
+                                <option value="Physical Education">Physical Education</option>
+                                <option value="Arts">Arts</option>
+                                <option value="Computer Science">Computer Science</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="position">Position</label>
+                            <input type="text" id="position" name="position" placeholder="e.g., Senior Teacher, HOD">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone2">Phone 2</label>
+                            <input type="tel" id="phone2" name="phone2">
+                        </div>
+                        <div class="form-group">
+                            <label for="experience">Experience (Years)</label>
+                            <input type="number" id="experience" name="experience" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="qualification">Qualification</label>
+                            <input type="text" id="qualification" name="qualification" placeholder="e.g., M.Ed, B.Ed">
+                        </div>
+                        <div class="form-group">
+                            <label for="joiningDate">Joining Date</label>
+                            <input type="date" id="joiningDate" name="joiningDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="On Leave">On Leave</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" placeholder="Full Address"></textarea>
+                    </div>
+
+                    <div class="custom-fields">
+                        <h3>Custom Fields</h3>
+                        <div id="customFieldsContainer"></div>
+                        <button type="button" class="btn btn-secondary btn-small" onclick="addCustomField()">+ Add Custom Field</button>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 25px;">
+                        <button type="submit" class="btn btn-primary">
+                            <span id="addTeacherBtnText">Add Teacher</span>
+                            <span id="addTeacherLoader" class="loading" style="display: none;"></span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="teachers-list" class="tab-content active">
+            <div class="form-container">
+                <h2>👨‍🏫 Teachers Directory</h2>
+                <div class="search-filter">
+                    <input type="text" id="searchInput" placeholder="Search teachers..." onkeyup="filterTeachers()">
+                    <select id="departmentFilter" onchange="filterTeachers()">
+                        <option value="">All Departments</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English">English</option>
+                        <option value="Science">Science</option>
+                        <option value="History">History</option>
+                        <option value="Physical Education">Physical Education</option>
+                        <option value="Arts">Arts</option>
+                        <option value="Computer Science">Computer Science</option>
+                    </select>
+                    <select id="statusFilter" onchange="filterTeachers()">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="On Leave">On Leave</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="teachers-list">
+                <div id="teachersContainer">
+                    <p style="text-align: center; color: #666;">Loading teachers...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+    authDomain: "kanyadet-school-admin.firebaseapp.com",
+    databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com/",
+    projectId: "kanyadet-school-admin",
+    storageBucket: "kanyadet-school-admin.appspot.com",
+    messagingSenderId: "409708360032",
+    appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+    measurementId: "G-Y4C0ZRRL52"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const teachersRef = database.ref('teachers');
+
+// Global variables
+let teachersData = {};
+let editingField = null;
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', function() {
+    setupFirebaseListeners();
+});
+
+// Firebase Connection Status
+function setupFirebaseListeners() {
+    const connectedRef = database.ref('.info/connected');
+    connectedRef.on('value', function(snapshot) {
+        const connected = snapshot.val();
+        const statusElement = document.getElementById('connectionStatus');
+        if (connected) {
+            statusElement.textContent = 'Connected';
+            statusElement.className = 'connection-status connected';
+        } else {
+            statusElement.textContent = 'Disconnected';
+            statusElement.className = 'connection-status disconnected';
+        }
+    });
+
+    // Listen for teachers data changes
+    teachersRef.on('value', function(snapshot) {
+        teachersData = snapshot.val() || {};
+        renderTeachersList();
+    });
+}
+
+// Make field editable
+function makeEditable(element, teacherId, fieldName, isCustomField = false, customFieldKey = null) {
+    // Prevent multiple edits at once
+    if (editingField && editingField !== element) {
+        return;
+    }
+    
+    editingField = element;
+    const currentValue = element.textContent;
+    const teacher = teachersData[teacherId];
+    
+    // Special handling for status field (dropdown)
+    if (fieldName === 'status') {
+        const select = document.createElement('select');
+        select.className = 'inline-edit-select';
+        select.innerHTML = `
+            <option value="Active" ${currentValue === 'Active' ? 'selected' : ''}>Active</option>
+            <option value="Inactive" ${currentValue === 'Inactive' ? 'selected' : ''}>Inactive</option>
+            <option value="On Leave" ${currentValue === 'On Leave' ? 'selected' : ''}>On Leave</option>
+        `;
+        
+        element.textContent = '';
+        element.appendChild(select);
+        select.focus();
+        
+        const saveSelect = () => {
+            const newValue = select.value;
+            updateField(teacherId, fieldName, newValue, isCustomField, customFieldKey);
+            editingField = null;
+        };
+        
+        select.addEventListener('blur', saveSelect);
+        select.addEventListener('change', saveSelect);
+        return;
+    }
+    
+    // Special handling for department field (dropdown)
+    if (fieldName === 'department') {
+        const select = document.createElement('select');
+        select.className = 'inline-edit-select';
+        select.innerHTML = `
+            <option value="">Select Department</option>
+            <option value="Mathematics" ${currentValue === 'Mathematics' ? 'selected' : ''}>Mathematics</option>
+            <option value="English" ${currentValue === 'English' ? 'selected' : ''}>English</option>
+            <option value="Science" ${currentValue === 'Science' ? 'selected' : ''}>Science</option>
+            <option value="History" ${currentValue === 'History' ? 'selected' : ''}>History</option>
+            <option value="Physical Education" ${currentValue === 'Physical Education' ? 'selected' : ''}>Physical Education</option>
+            <option value="Arts" ${currentValue === 'Arts' ? 'selected' : ''}>Arts</option>
+            <option value="Computer Science" ${currentValue === 'Computer Science' ? 'selected' : ''}>Computer Science</option>
+        `;
+        
+        element.textContent = '';
+        element.appendChild(select);
+        select.focus();
+        
+        const saveSelect = () => {
+            const newValue = select.value;
+            updateField(teacherId, fieldName, newValue, isCustomField, customFieldKey);
+            editingField = null;
+        };
+        
+        select.addEventListener('blur', saveSelect);
+        select.addEventListener('change', saveSelect);
+        return;
+    }
+    
+    // For text fields
+    const input = document.createElement('input');
+    input.type = fieldName === 'email' ? 'email' : 
+                 fieldName === 'phone' || fieldName === 'phone2' ? 'tel' : 
+                 fieldName === 'experience' ? 'number' :
+                 fieldName === 'joiningDate' ? 'date' : 'text';
+    input.className = 'inline-edit-input';
+    input.value = currentValue === 'N/A' ? '' : currentValue;
+    
+    element.textContent = '';
+    element.appendChild(input);
+    input.focus();
+    input.select();
+    
+    const saveEdit = () => {
+        const newValue = input.value.trim();
+        updateField(teacherId, fieldName, newValue, isCustomField, customFieldKey);
+        editingField = null;
+    };
+    
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            saveEdit();
+        }
+    });
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            element.textContent = currentValue;
+            editingField = null;
+        }
+    });
+}
+
+// Update field in Firebase
+function updateField(teacherId, fieldName, newValue, isCustomField = false, customFieldKey = null) {
+    const updateData = {};
+    
+    if (isCustomField) {
+        // Update custom field
+        updateData[`customFields/${customFieldKey}`] = newValue;
+    } else {
+        // Update standard field
+        updateData[fieldName] = newValue;
+    }
+    
+    updateData.updatedAt = new Date().toISOString();
+    
+    teachersRef.child(teacherId).update(updateData)
+        .then(() => {
+            showNotification('Field updated successfully!', 'success');
+        })
+        .catch((error) => {
+            showNotification('Error updating field: ' + error.message, 'error');
+        });
+}
+
+// Render Teachers List
+function renderTeachersList() {
+    const container = document.getElementById('teachersContainer');
+    const teachers = Object.entries(teachersData);
+
+    if (teachers.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666;">No teachers found</p>';
+        return;
+    }
+
+    let html = '';
+    teachers.forEach(([teacherId, teacher]) => {
+        html += `
+            <div class="teacher-card" data-teacher-id="${teacherId}">
+                <div class="teacher-card-header">
+                    <h3 class="teacher-name">
+                        <span class="editable-field" onclick="makeEditable(this, '${teacherId}', 'firstName')">${teacher.firstName || 'N/A'}</span>
+                        <span class="editable-field" onclick="makeEditable(this, '${teacherId}', 'lastName')">${teacher.lastName || 'N/A'}</span>
+                    </h3>
+                    <span class="teacher-id">${teacher.teacherId}</span>
+                </div>
+                <div class="teacher-info">
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'email')">${teacher.email || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Department:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'department')">${teacher.department || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Position:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'position')">${teacher.position || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'status')" style="color: ${teacher.status === 'Active' ? '#27ae60' : '#e74c3c'}">${teacher.status || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Experience:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'experience')">${teacher.experience || '0'}</span> years
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'phone')">${teacher.phone || 'N/A'}</span>
+                    </div>
+                    ${teacher.phone2 ? `
+                    <div class="info-item">
+                        <span class="info-label">Phone 2:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'phone2')">${teacher.phone2}</span>
+                    </div>
+                    ` : ''}
+                    ${teacher.qualification ? `
+                    <div class="info-item">
+                        <span class="info-label">Qualification:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'qualification')">${teacher.qualification}</span>
+                    </div>
+                    ` : ''}
+                    ${teacher.joiningDate ? `
+                    <div class="info-item">
+                        <span class="info-label">Joining Date:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'joiningDate')">${teacher.joiningDate}</span>
+                    </div>
+                    ` : ''}
+                    ${teacher.address ? `
+                    <div class="info-item">
+                        <span class="info-label">Address:</span>
+                        <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'address')">${teacher.address}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                ${teacher.customFields ? renderCustomFieldsDisplay(teacher.customFields, teacherId) : ''}
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+// Render Custom Fields Display
+function renderCustomFieldsDisplay(customFields, teacherId) {
+    let html = '<div class="teacher-info" style="margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px;">';
+    for (const [key, value] of Object.entries(customFields)) {
+        html += `
+            <div class="info-item">
+                <span class="info-label">${key}:</span>
+                <span class="info-value editable-field" onclick="makeEditable(this, '${teacherId}', 'customField', true, '${key}')">${value}</span>
+            </div>
+        `;
+    }
+    html += '</div>';
+    return html;
+}
+
+// Filter Teachers
+function filterTeachers() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+
+    const teacherCards = document.querySelectorAll('.teacher-card');
+    
+    teacherCards.forEach(card => {
+        const teacherId = card.getAttribute('data-teacher-id');
+        const teacher = teachersData[teacherId];
+        
+        if (!teacher) return;
+        
+        const matchesSearch = !searchTerm || 
+            `${teacher.firstName} ${teacher.lastName}`.toLowerCase().includes(searchTerm) ||
+            (teacher.email && teacher.email.toLowerCase().includes(searchTerm)) ||
+            (teacher.teacherId && teacher.teacherId.toLowerCase().includes(searchTerm));
+        
+        const matchesDepartment = !departmentFilter || teacher.department === departmentFilter;
+        const matchesStatus = !statusFilter || teacher.status === statusFilter;
+        
+        if (matchesSearch && matchesDepartment && matchesStatus) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// Show Notification
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => document.body.removeChild(notification), 300);
+    }, 4000);
+}
+
+    </script>
+</body>
+</html>

@@ -3,112 +3,506 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Birth Certificate Database</title>
+    <title>Birth Certificates</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/Print-Individual-Results/css/toggle.css">
+
     
-
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-app-compat.js"></script>
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-auth-compat.js"></script>
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.0/firebase-firestore-compat.js"></script>
-	 <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/swalOnly.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-        }
-        .container-bg {
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .student-item {
-            transition: all 0.3s ease;
-        }
-        .student-item.hidden {
-            display: none;
-        }
-        .highlight {
-            background-color: #fef3c7;
-            padding: 0 2px;
-            border-radius: 2px;
-        }
-    </style>
+    
+  
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
-         <div id="main_container" style="display:none;"></div> 
-
+<body class="gradient-mesh min-h-screen">
     
-    <!-- Authentication Section -->
-    <div id="auth-container" class="container-bg w-full max-w-md p-6 sm:p-8 lg:p-10 hidden">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Sign In / Sign Up</h1>
-        <form id="auth-form" class="space-y-4">
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email" required>
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <!-- Auth Container (Sign In/Sign Up) -->
+    <div id="auth-container" class="min-h-screen flex items-center justify-center px-4">
+        <div class="max-w-md w-full glass-morph rounded-2xl shadow-2xl p-8 float">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-black">Birth Certificates Management system</h2>
+                <p class="text-gray-600 dark:text-gray-300 mt-2">Secure access to your dashboard</p>
             </div>
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your password" required>
-            </div>
-            <button type="submit" id="signin-btn" class="w-full px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Sign In</button>
-            <div class="flex items-center justify-center text-sm text-gray-600">
-                <span class="mr-2">Don't have an account?</span>
-                <a href="#" id="signup-link" class="text-blue-600 font-medium hover:underline">Sign up here</a>
-            </div>
-        </form>
+            
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <div class="relative">
+                        <input type="email" id="email" required
+                               class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" required
+                               class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <button type="submit" id="signin-btn"
+                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    Sign In
+                </button>
+                
+                <p class="text-center text-sm text-gray-600 dark:text-gray-300 mt-4">
+                    <a href="#" id="signup-link" class="text-blue-600 hover:underline font-medium">
+                        Don't have an account? Sign up here
+                    </a>
+                </p>
+            </form>
+        </div>
     </div>
+    
+    <!-- Sidebar Navigation - Always Visible -->
+    <div id="sidebar" class="hidden fixed left-0 top-0 h-full w-64 glass-morph transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-40 overflow-y-auto">
+        <div class="p-6 h-full flex flex-col">
+            <!-- Logo Section -->
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center float">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold gradient-text">KANYADET</h2>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Student Portal</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="space-y-2 flex-1">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white micro-interact">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <span>All Students</span>
+                </a>
+                
+                <a href="#" onclick="document.getElementById('show-with-pdf').click(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>With Documents</span>
+                </a>
+                
+                <a href="#" onclick="document.getElementById('show-without-pdf').click(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Without Documents</span>
+                </a>
+                
+                <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                    <a href="#" onclick="handleExportEnhanced(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Export Data</span>
+                    </a>
+                    
+                    <a href="#" onclick="printStudentList(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                        </svg>
+                        <span>Print List</span>
+                    </a>
+                    
+                    <a href="#" onclick="refreshData(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span>Refresh Data</span>
+                    </a>
+                    
+                    <a href="#" onclick="handleBulkCheck(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Check All PDFs</span>
+                    </a>
+                </div>
 
-    <!-- Main App Section -->
-    <div id="main-app-container" class="container-bg w-full p-[50px] hidden">
-        <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
-              <!-- Logo -->
-            <img src="../images/logo.png" alt="School Logo" class="w-20 h-20 md:w-28 md:h-28 object-contain">
-
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 text-center sm:text-center">Students Birth Certificates <br> Database</h1>
-            <div class="mt-4 sm:mt-0 text-center sm:text-right">
-                <p class="text-sm text-gray-500">Signed in with user ID:</p>
-                <span id="user-id" class="font-mono text-gray-700 break-all">Loading...</span>
-                <button id="sign-out-btn" class="mt-2 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">Sign Out</button>
+                
+                <!-- Add this in the sidebar, before the Toggle Theme section -->
+<div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+    <a href="#" onclick="showAdvancedAnalytics(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <span>Advanced Analytics</span>
+    </a>
+</div>
+                
+                <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                    <a href="#" onclick="toggleTheme(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                        <span>Toggle Theme</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- User Profile Section -->
+            <div class="mt-auto pt-4">
+                <div class="neuro-card p-4">
+                    <!-- Change to this -->
+                      <div class="flex items-center gap-3 mb-3">
+                          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold" id="user-avatar">
+                              A
+                          </div>
+                          <div class="flex-1">
+                              <p class="text-sm font-semibold text-gray-800 dark:text-white" id="user-display-name" title="">Admin User</p>
+                              <p class="text-xs text-gray-500" id="user-role">Portal Admin</p>
+                          </div>
+                      </div>
+                    <button id="sign-out-btn" class="w-full px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white text-sm rounded-lg hover:from-red-600 hover:to-rose-700 transition-all micro-interact flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+   <!-- To this - removes the left margin when sidebar is hidden -->
+<div id="main-app-container" class="hidden p-4 lg:p-8">
+        <!-- Top Bar -->
+        <div class="glass-morph rounded-2xl p-4 mb-6 flex items-center justify-between">
+            <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg hover:bg-white/50 micro-interact">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            
+            <div class="flex-1 max-w-2xl mx-4">
+                <div class="search-bar relative">
+                    <input type="text" id="live-filter" placeholder="Search students, records..." class="w-full px-12 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-transparent focus:border-transparent focus:outline-none">
+                    <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <button id="clear-filter" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-white/50 micro-interact tooltip" data-tooltip="Toggle Theme">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+                
+                <button onclick="refreshData()" class="p-2 rounded-lg hover:bg-white/50 micro-interact tooltip" data-tooltip="Refresh">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
             </div>
         </div>
         
-        <!-- Search Student Module -->
-        <div class="border-b pb-6 mb-6">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Search Student Details</h2>
-            <div class="flex flex-col sm:flex-row gap-4 items-end">
-                <div class="flex-grow w-full">
-                    <label for="search-type" class="block text-sm font-medium text-gray-700 mb-1">Search By:</label>
-                    <select id="search-type" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="assessmentNo">Assessment No.</option>
-                        <option value="officialStudentName">Student Name</option>
-                    </select>
+        <!-- Insights Container -->
+        <div id="insights-container" class="mb-6 space-y-2"></div>
+        
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="neuro-card p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Students</p>
+                        <h3 id="total-count" class="text-3xl font-bold stat-number gradient-text">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </div>
                 </div>
-
-                <div class="flex-grow w-full">
-                    <label for="search-input" class="block text-sm font-medium text-gray-700 mb-1">Search Term</label>
-                    <input type="text" id="search-input" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter Assessment No.">
-                </div>
-                <button id="search-btn" class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Search</button>
             </div>
-           
+            
+            <div class="neuro-card p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">With Documents</p>
+                        <h3 id="pdf-count" class="text-3xl font-bold stat-number gradient-text">0 (0%)</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="neuro-card p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Pending</p>
+                        <h3 id="no-pdf-count" class="text-3xl font-bold stat-number gradient-text">0 (0%)</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="neuro-card p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Filtered Results</p>
+                        <h3 id="filtered-count" class="text-3xl font-bold stat-number gradient-text">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
         </div>
-   
-              <div id="grade-stats-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4" style="display: none;"> <!-- Your grade stats content goes here --></div>
 
 
-        <!-- Student List Module with Live Filtering -->
-        <div>
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
-                <h2 class="text-2xl font-semibold text-gray-700">All Student Records</h2>
-                <div class="mt-2 sm:mt-0 flex items-center space-x-4">
-<div class="mt-4 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+
+
+
+
+<!-- Analytics Modal Backdrop -->
+<div id="analytics-modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 items-center justify-center p-4">
+    <!-- Analytics Modal Container -->
+    <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden animate-modal-in">
+        <!-- Modal Header -->
+        <div class="sticky top-0 z-10 bg-gradient-to-r from-indigo-600 to-purple-600 p-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Advanced Analytics</h2>
+                    <p class="text-sm text-indigo-100">Comprehensive document tracking insights</p>
+                </div>
+            </div>
+            <button id="analytics-modal-close-btn" class="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div class="overflow-y-auto max-h-[calc(90vh-100px)] p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <div id="analytics-content">
+                <!-- Analytics content will be dynamically inserted here by JavaScript -->
+                <div class="flex items-center justify-center py-20">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                        <p class="text-gray-600 dark:text-gray-400">Loading analytics...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+        
+  <!-- Quick Actions - UPDATED VERSION -->
+<div class="glass-morph rounded-2xl mb-6 overflow-hidden">
+    <button onclick="toggleQuickActions()" class="w-full p-4 flex items-center justify-between hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Quick Actions</h3>
+                <p class="text-xs text-gray-500">Frequently used actions</p>
+            </div>
+        </div>
+        <svg id="quick-actions-icon" class="w-6 h-6 text-gray-600 dark:text-gray-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+
+        <button onclick="forceRefreshPdfs()" 
+        class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg shadow-md transition-all flex items-center gap-2  ">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+    </svg>
+    Refresh PDFs
+</button>
+    </button>
+    
+    <div id="quick-actions-content" class="collapsible open">
+        <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <button id="show-all" class="btn-premium filter-btn p-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </span>
+                    <span class="text-sm font-semibold">All Students</span>
+                </button>
+                
+                <button id="show-with-pdf" class="btn-premium filter-btn p-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </span>
+                    With Birth Certificate
+                </button>
+                
+                <button id="show-without-pdf" class="btn-premium filter-btn p-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </span>
+                    Without Birth Certificate
+                </button>
+
+                <button onclick="handleExportEnhanced()" class="btn-premium p-4 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span class="text-sm font-semibold">Export</span>
+                    </span>
+                </button>
+                
+                <button id="bulk-check-btn" onclick="handleBulkCheck()" class="btn-premium p-4 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span class="text-sm font-semibold">Check All</span>
+                    </span>
+                </button>
+
+                <button onclick="resetAllFilters()" class="hidden btn-premium p-4 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <span class="text-sm font-semibold">Clear Filters</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+        
+        <!-- Advanced Filters -->
+        <div class="glass-morph rounded-2xl mb-6 overflow-hidden">
+            <button onclick="toggleFilters()" class="w-full p-4 flex items-center justify-between hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white">Advanced Filters</h3>
+                        <p class="text-xs text-gray-500">Refine your search results</p>
+                    </div>
+                </div>
+                <svg id="filter-icon" class="w-6 h-6 text-gray-600 dark:text-gray-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            
+            <div id="filter-content" class="collapsible">
+                <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Search Type</label>
+                            <select id="search-type" class="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:outline-none transition-all">
+                                <option value="name">Student Name</option>
+                                <option value="assessmentNo">Assessment No</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                       
+                    
+                    <div class="flex gap-3">
+                        <input type="text" id="search-input" placeholder="Enter search term..." class="flex-1 px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:outline-none transition-all" onclick="this.focus" >
+                        <button id="search-btn" class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        
+        <!-- Students Table -->
+        <div class="glass-morph rounded-2xl overflow-hidden mb-6">
+            <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                  
+
+                     <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Items Per Page</label>
+                            <select id="items-per-page" class="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:outline-none transition-all">
+                                <option value="10" selected>10 items</option>
+                                <option value="40">40 items</option>
+                                <option value="60" >60 items</option>
+                                <option value="100">100 items</option>
+                                <option value="200">200 items</option>
+                                <option value="600">600 items</option>
+                            </select>
+                        </div>
+
+<div class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
     <label for="grade-filter" class="font-medium text-gray-700">Filter</label>
-    <select id="grade-filter" class="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <select id="grade-filter" class="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:outline-none transition-all">
         <option value="all">All Grades</option>
         <option value="Grade 1">Grade 1</option>
         <option value="Grade 2">Grade 2</option>
@@ -121,147 +515,174 @@
         </select>
 </div>
 
+        <!-- LIVE SEARCH INPUT - Add this inside your filter-content div -->
+<div class="mb-6">
+    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        Live Search
+    </label>
+    <div class="relative">
+        <input 
+            type="text" 
+            id="advanced-search-filter" 
+            placeholder="Type to filter by name or assessment number..." 
+            class="w-full px-4 py-3 pl-12 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:outline-none transition-all shadow-sm"
+        >
+        <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <button 
+            onclick="document.getElementById('advanced-search-filter').value=''; document.getElementById('advanced-search-filter').dispatchEvent(new Event('input'));" 
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+        💡 Filters automatically as you type
+    </p>
+</div>
 
-                    <div class="relative">
-                        <input type="text" id="live-filter" class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Filter students...">
-                        <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+
+
+                    <button onclick="exportToPdfEnhanced()" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg hover:shadow-lg micro-interact flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                         </svg>
-                    </div>
-                    <button id="clear-filter" class="px-3 py-2 text-gray-600 hover:text-gray-800 transition-colors">Clear</button>
+                        Print
+                    </button>
+                        <h3 id="filtered-count2" class="text-3xl font-bold stat-number gradient-text">0</h3>
+
                 </div>
             </div>
             
-            <!-- Statistics Bar -->
-            <div class="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
-                <div class="flex flex-wrap justify-between items-center text-sm">
-                    <span class="text-blue-800">
-                        Total Records: <span id="total-count" class="font-semibold">0</span>
-                    </span>
-                    <span class="text-blue-800">
-                        With PDF: <span id="pdf-count" class="font-semibold">0</span>
-                    </span>
-                    <span class="text-blue-800">
-                      <p>Students Without PDF: <span id="no-pdf-count">0</span></p>
-                    </span>
-                    <span class="text-blue-800">
-                        Filtered: <span id="filtered-count" class="font-semibold">0</span>
-                    </span>
-                </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700" onclick="sortStudents('id')" data-sort="id">
+                                # <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700" onclick="sortStudents('name')" data-sort="name">
+                                Name <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700" onclick="sortStudents('assessmentNo')" data-sort="assessmentNo">
+                                Assessment No <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
+                                UPI
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700" onclick="sortStudents('grade')" data-sort="grade">
+                                Grade <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700" onclick="sortStudents('pdf')" data-sort="pdf">
+                                Status <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <!-- Student rows will be inserted here -->
+                    </tbody>
+                </table>
             </div>
             
-
-            <!-- Filter Options -->
-            <div class="mb-4 flex flex-wrap gap-2">
-                <button id="show-all" class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors filter-btn active">
-                    Show All
-                </button>
-                <button id="show-with-pdf" class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors filter-btn">
-                    With PDF Only
-                </button>
-                <button id="show-without-pdf" class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors filter-btn">
-                    Without PDF Only
-                </button>
-                     <button id="toggleStatsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Toggle Grade Stats</button>
-                     
-
-                <script>
-    const toggleBtn = document.getElementById("toggleStatsBtn");
-    const statsContainer = document.getElementById("grade-stats-container");
-
-    toggleBtn.addEventListener("click", () => {
-        // if popup is hidden, show it
-        if (statsContainer.style.display === "none") {
-            Swal.fire({
-                title: "📊 Grade Stats",
-                html: statsContainer, // use the div itself
-                width: "800px",
-                showCloseButton: true,
-                showConfirmButton: false,
-                didOpen: () => {
-                    statsContainer.style.display = "grid"; // render inside popup
-                },
-                willClose: () => {
-                    statsContainer.style.display = "none"; // hide when popup closes
-                }
-            });
-        }
-    });
-
-</script>
+            <!-- No Students Message -->
+            <div id="no-students-message" class="hidden text-center py-12">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-gray-500 dark:text-gray-400 text-lg font-semibold">No students found</p>
+                <p class="text-gray-400 dark:text-gray-500 text-sm mt-2">Try adjusting your filters</p>
             </div>
+            
+            <!-- Pagination -->
+            <div id="pagination-controls" class="hidden p-4 border-t border-gray-200/50 dark:border-gray-700/50">
+                <div class="flex items-center justify-between">
+                    <button id="prev-page" class="px-6 py-3 bg-white/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-white/80 dark:hover:bg-gray-800/80 micro-interact disabled:opacity-50">
+                        Previous
+                    </button>
+                    <div id="page-numbers" class="flex gap-2"></div>
+                    <button id="next-page" class="px-6 py-3 bg-white/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-white/80 dark:hover:bg-gray-800/80 micro-interact disabled:opacity-50">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+        
 
 
-<div id="pdf-modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl h-[90vh] flex flex-col">
-        <div class="flex justify-between items-center p-4 border-b">
-            <h3 class="text-xl font-semibold">Student Certificate</h3>
-            <button id="pdf-modal-close-btn" class="text-gray-500 hover:text-gray-800 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <!-- Grade Statistics -->
+        <div class="glass-morph rounded-2xl overflow-hidden">
+            <button onclick="toggleGradeStats()" class="w-full p-4 flex items-center justify-between hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Grade Statistics</h3>
+                </div>
+                <svg id="grade-stats-toggle-icon" class="w-6 h-6 text-gray-600 dark:text-gray-300 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
-        </div>
-        <div class="flex-grow p-4">
-            <iframe id="pdf-iframe" class="w-full h-full border-none"></iframe>
-        </div>
-    </div>
-</div>
-
-
-          <div class="overflow-x-auto">
-    <table id="student-list-table" class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-            <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assessment No.</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">UPI</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate Status</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-        </thead>
-        <tbody id="student-table-body" class="bg-white divide-y divide-gray-200">
-            </tbody>
-    </table>
-    <p id="no-students-message" class="text-center text-gray-500 mt-4 hidden">No student records found based on your filters.</p>
-</div>
-
-  <div id="pagination-controls" class="flex flex-col sm:flex-row items-center justify-between mt-4">
-    <div class="flex items-center space-x-2 mb-2 sm:mb-0">
-        <label for="items-per-page" class="text-sm text-gray-700">Items per page:</label>
-        <select id="items-per-page" class="border rounded-md p-1 text-sm">
-            <option value="60">60</option>
-            <option value="100">100</option>
-            <option value="200">200</option>
-            <option value="300">300</option>
-            <option value="500">500</option>
-        </select>
-    </div>
-
-    <div class="flex items-center space-x-2">
-        <button id="prev-page" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
-        <div id="page-numbers" class="flex space-x-2">
+            
+            <div id="grade-stats-content" class="collapsible open">
+                <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50">
+                    <div id="grade-stats-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Grade stats will be inserted here -->
+                    </div>
+                </div>
             </div>
-        <button id="next-page" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
-    </div>
-</div>
-    </div>
-
-    
-</div>
-    <!-- Modal for messages -->
-    <div id="modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center p-4">
-        <div id="modal-content" class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
-            <h3 id="modal-title" class="text-xl font-semibold mb-2"></h3>
-            <p id="modal-message" class="text-gray-700 mb-4"></p>
-            <button id="modal-close-btn" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">OK</button>
         </div>
     </div>
+    
+    <!-- PDF Modal -->
+    <div id="pdf-modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-60 z-40 items-center justify-center p-4 backdrop-blur-sm">
+        <div class="glass-morph rounded-2xl shadow-2xl max-w-5xl w-full h-5/6 flex flex-col">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-500 to-purple-600">
+                <h3 class="text-2xl font-bold text-white">Birth Certificate</h3>
+                <button id="pdf-modal-close-btn" class="text-white hover:text-gray-200 text-3xl font-bold">×</button>
+            </div>
+            <div class="flex-1 overflow-hidden bg-gray-100 dark:bg-gray-900">
+                <iframe id="pdf-iframe" class="w-full h-full" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Generic Modal -->
+    <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 items-center justify-center p-4 backdrop-blur-sm ">
+        <div class="glass-morph rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-500 to-purple-600">
+                <h3 id="modal-title" class="text-2xl font-bold text-white"></h3>
+            </div>
+            <div class="p-6  h-80 overflow-y-auto">
+                <div id="modal-message" class="text-gray-700 dark:text-gray-300 mb-6"></div>
+                <button id="modal-close-btn" class="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-xl font-semibold micro-interact">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- Your Firebase Script -->
+    <script src="sidebar colapse quick actions.js"></script>
+    <!-- <script type="module" src="main script.js"></script> -->
+    <script type="module" src="your-updated-firebase-script.js"></script>
+   <script src="https://kanyadet-school-admin.web.app/New-Students-Database/js/image-popup.js" ></script>
 
 
+
+
+                  
     <!-- Toggle Button (just the icon button) -->
-<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg">
+    <script src="https://cdn.tailwindcss.com"></script>
+<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg h-16 w-16">
     <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
     </svg>
@@ -269,574 +690,12 @@
 
 <!-- Modal wrapper (empty, JS will fill content) -->
 <div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
-    <div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full transform">
+<div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full h-[80vh] overflow-y-scroll [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden transform">
+	<div class="modal-header flex justify-between items-center mb-4 h-12">
         <!-- JS will inject modal content here -->
     </div>
 </div>
- <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthfireBase.js"></script>
-    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>
-          <script src="./image-popup.js" ></script>
-                  <script src="./js/HamburgerToggle.js" ></script>
+   <script src="https://kanyadet-school-admin.web.app/Print-Individual-Results/js/Toggle.js" ></script>
 
-    <script type="module">
-
-// Auto-clear on focus for all inputs
-searchInput.addEventListener('input', handleSearch);
-
-document.addEventListener('focus', function(e) {
-    if (e.target.tagName === 'INPUT' && 
-        (e.target.type === 'text' || e.target.type === 'search')) {
-        if (e.target.value) {
-            e.target.value = '';
-            e.target.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    }
-}, true);
-
-
-
-   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-    getAuth,
-    onAuthStateChanged,
-    signOut,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-// Global variables provided by the environment
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-
-
-// Custom config from user prompt
-const customFirebaseConfig = {
-    apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
-    authDomain: "kanyadet-school-admin.firebaseapp.com",
-    projectId: "kanyadet-school-admin",
-    databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com",
-    storageBucket: "kanyadet-school-admin.firebasestorage.app",
-    messagingSenderId: "409708360032",
-    appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
-    measurementId: "G-Y4C0ZRRL52"
-};
-
-// Merge provided config with user's custom config
-const mergedConfig = { ...customFirebaseConfig, ...firebaseConfig };
-
-// Initialize Firebase
-const app = initializeApp(mergedConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-
-let userId = 'anonymous';
-const userIdEl = document.getElementById('user-id');
-
-// Sanitize the appId to remove invalid characters for database paths
-const sanitizedAppId = appId.replace(/[.#$[\]]/g, '_');
-
-// Global variables for filtering and pagination
-let allStudents = [];
-let currentFilter = 'all';
-let currentSearchTerm = '';
-let currentGrade = 'all';
-let filteredStudents = [];
-let currentPage = 1;
-let itemsPerPage = 60;
-
-// UI elements
-/* Add this line at the top with your other UI element declarations */
-/* Add these new UI element declarations at the top with the others */
-const pdfModalBackdrop = document.getElementById('pdf-modal-backdrop');
-const pdfModalCloseBtn = document.getElementById('pdf-modal-close-btn');
-const pdfIframe = document.getElementById('pdf-iframe');
-const itemsPerPageSelect = document.getElementById('items-per-page');
-const authContainer = document.getElementById('auth-container');
-const mainAppContainer = document.getElementById('main-app-container');
-const authForm = document.getElementById('auth-form');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const signinBtn = document.getElementById('signin-btn');
-const signupLink = document.getElementById('signup-link');
-const searchInput = document.getElementById('search-input');
-const searchTypeSelect = document.getElementById('search-type');
-const liveFilterInput = document.getElementById('live-filter');
-const studentListDiv = document.getElementById('student-list');
-const paginationControls = document.getElementById('pagination-controls');
-const prevPageBtn = document.getElementById('prev-page');
-const nextPageBtn = document.getElementById('next-page');
-const pageNumbersDiv = document.getElementById('page-numbers');
-const gradeFilterSelect = document.getElementById('grade-filter');
-const gradeStatsContainer = document.getElementById('grade-stats-container');
-    const grades = [
-        "Grade 1", "Grade 2", "Grade 3", 
-        "Grade 4", "Grade 5", "Grade 6", 
-        "Grade 7", "Grade 8", "Grade 9"
-    ];
-window.openLocalPDF = function(studentName, studentGrade) {
-    const pdfPath = `./birth_certificates/${studentGrade}/${studentName}.PDF`;
-    
-    // Set the source of the iframe
-    pdfIframe.src = pdfPath;
-    
-    // Display the modal
-    pdfModalBackdrop.classList.remove('hidden');
-    pdfModalBackdrop.classList.add('flex');
-    
-    // Add outside click listener (one-time setup if not already added)
-    if (!pdfModalBackdrop.dataset.outsideClickAdded) {
-        pdfModalBackdrop.addEventListener('click', function(event) {
-            // Close if click is on the backdrop itself (outside the modal content/iframe)
-            if (event.target === pdfModalBackdrop) {
-                closePDFModal();
-            }
-        });
-        pdfModalBackdrop.dataset.outsideClickAdded = 'true'; // Prevent re-adding
-    }
-};
-
-
-
-
-function closePDFModal() {
-    pdfModalBackdrop.classList.remove('flex');
-    pdfModalBackdrop.classList.add('hidden');
-    // Optional: Reset iframe src to avoid caching issues
-    pdfIframe.src = '';
-}
-
-
-
-
-// Ensure the script runs after the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('.open-pdf-button');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            const studentName = this.getAttribute('data-student-name');
-            const studentGrade = this.getAttribute('data-student-grade');
-            if (studentName && studentGrade) {
-                window.openLocalPDF(studentName, studentGrade);
-            } else {
-                console.error('No student name or grade provided for PDF button.');
-                alert('Error: No student name or grade provided.');
-            }
-        });
-    });
-});
-// Add event listener to close the PDF modal
-pdfModalCloseBtn.addEventListener('click', () => {
-    pdfModalBackdrop.classList.add('hidden');
-    pdfModalBackdrop.classList.remove('flex');
-    // Stop the iframe content from loading/playing (e.g., if it's a video)
-    pdfIframe.src = '';
-});
-
-// New event listener for the grade filter dropdown
-gradeFilterSelect.addEventListener('change', (e) => {
-    currentGrade = e.target.value;
-    applyFiltersAndRender();
-});
-/* Add this new event listener block anywhere in your main script body */
-itemsPerPageSelect.addEventListener('change', (e) => {
-    // Update the global variable with the new value from the dropdown
-    itemsPerPage = parseInt(e.target.value, 10);
-    // Reset to the first page and re-render the student list
-    currentPage = 1;
-    applyFiltersAndRender();
-});
-// Helper function to show a custom modal instead of alert()
-function showModal(title, message) {
-    document.getElementById('modal-title').textContent = title;
-    document.getElementById('modal-message').textContent = message;
-    document.getElementById('modal-backdrop').classList.remove('hidden');
-    document.getElementById('modal-backdrop').classList.add('flex');
-}
-
-document.getElementById('modal-close-btn').addEventListener('click', () => {
-    document.getElementById('modal-backdrop').classList.add('hidden');
-    document.getElementById('modal-backdrop').classList.remove('flex');
-});
-
-// Authentication state observer
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // User is signed in
-        userId = user.uid;
-        userIdEl.textContent = userId;
-        authContainer.classList.add('hidden');
-        mainAppContainer.classList.remove('hidden');
-        // Start the real-time listener instead of fetching once
-        startRealtimeListener();
-    } else {
-        // User is signed out
-        userId = 'anonymous';
-        userIdEl.textContent = userId;
-        mainAppContainer.classList.add('hidden');
-        authContainer.classList.remove('hidden');
-    }
-});
-
-// Sign in / Sign up form logic
-let isSigningUp = false;
-signupLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    isSigningUp = true;
-    signinBtn.textContent = 'Sign Up';
-    signupLink.textContent = 'Already have an account? Sign in here';
-});
-
-authForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = emailInput.value;
-    const password = passwordInput.value;
-
-    if (isSigningUp) {
-        try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            showModal("Success", "Account created successfully! You are now signed in.");
-            isSigningUp = false;
-            signinBtn.textContent = 'Sign In';
-            signupLink.textContent = 'Don\'t have an account? Sign up here';
-        } catch (error) {
-            console.error("Sign up failed:", error);
-            showModal("Sign Up Failed", error.message);
-        }
-    } else {
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            showModal("Success", "Signed in successfully!");
-        } catch (error) {
-            console.error("Sign in failed:", error);
-            showModal("Sign In Failed", error.message);
-        }
-    }
-});
-
-// Sign out functionality
-document.getElementById('sign-out-btn').addEventListener('click', async () => {
-    try {
-        await signOut(auth);
-    } catch (error) {
-        console.error("Sign out failed:", error);
-        showModal("Sign Out Error", "Failed to sign out. Please try again.");
-    }
-});
-
-// Update placeholder based on search type
-searchTypeSelect.addEventListener('change', (event) => {
-    const selectedType = event.target.value;
-    if (selectedType === 'assessmentNo') {
-        searchInput.placeholder = 'Enter Assessment No.';
-    } else {
-        searchInput.placeholder = 'Enter Student Name';
-    }
-});
-
-
-
-
-// Search functionality (re-purposed to be a full-list search)
-document.getElementById('search-btn').addEventListener('click', () => {
-    const searchTerm = searchInput.value.trim();
-    if (searchTerm) {
-        currentSearchTerm = searchTerm;
-        applyFiltersAndRender();
-    } else {
-        showModal("Validation Error", "Please enter a search term.");
-    }
-});
-
-// Function to check if a local PDF file exists for a given student
-async function checkLocalPdfExists(studentName, studentGrade) {
-    try {
-        const pdfPath = `./birth_certificates/${studentGrade}/${studentName}.PDF`;
-        console.log(`Checking PDF path: ${pdfPath}`); // Debug log
-        
-        const response = await fetch(pdfPath, { method: 'HEAD' });
-        console.log(`PDF check result for ${studentName} (${studentGrade}): ${response.ok}`); // Debug log
-        
-        return response.ok;
-    } catch (e) {
-        console.error(`Error checking PDF for ${studentName} (${studentGrade}):`, e);
-        return false;
-    }
-}
-
-// Function to highlight search terms in text
-function highlightText(text, searchTerm) {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.replace(regex, '<span class="highlight">$1</span>');
-}
-
-// Function to update statistics with percentages and grade breakdown
-function updateStatistics() {
-    const total = allStudents.length;
-    const withPdfCount = allStudents.filter(s => s.hasPdf).length;
-    const withoutPdfCount = total - withPdfCount;
-    const withPdfPercentage = total > 0 ? ((withPdfCount / total) * 100).toFixed(2) : 0;
-    const withoutPdfPercentage = total > 0 ? ((withoutPdfCount / total) * 100).toFixed(2) : 0;
-
-    document.getElementById('total-count').textContent = total;
-    document.getElementById('pdf-count').textContent = `${withPdfCount} (${withPdfPercentage}%)`;
-    document.getElementById('no-pdf-count').textContent = `${withoutPdfCount} (${withoutPdfPercentage}%)`;
-    document.getElementById('filtered-count').textContent = filteredStudents.length;
-
-    // Grade-specific statistics
-    const gradeStats = {};
-    allStudents.forEach(student => {
-        const grade = student.grade || 'N/A';
-        if (!gradeStats[grade]) {
-            gradeStats[grade] = {
-                total: 0,
-                withPdf: 0,
-                withoutPdf: 0
-            };
-        }
-        gradeStats[grade].total++;
-        if (student.hasPdf) {
-            gradeStats[grade].withPdf++;
-        } else {
-            gradeStats[grade].withoutPdf++;
-        }
-    });
-
-    gradeStatsContainer.innerHTML = '';
-    const sortedGrades = Object.keys(gradeStats).sort();
-
-    sortedGrades.forEach(grade => {
-        const stats = gradeStats[grade];
-        const gradeTotal = stats.total;
-        const withPdfPercent = gradeTotal > 0 ? ((stats.withPdf / gradeTotal) * 100).toFixed(2) : 0;
-        const withoutPdfPercent = gradeTotal > 0 ? ((stats.withoutPdf / gradeTotal) * 100).toFixed(2) : 0;
-
-        const gradeStatHtml = `
-            <div class="p-4 bg-white rounded-md shadow-md mb-2">
-                <h4 class="font-bold text-md text-gray-800">${grade} (${gradeTotal} students)</h4>
-                <p class="text-sm text-green-600">With PDF: ${stats.withPdf} (${withPdfPercent}%)</p>
-                <p class="text-sm text-red-600">Without PDF: ${stats.withoutPdf} (${withoutPdfPercent}%)</p>
-            </div>
-        `;
-        gradeStatsContainer.innerHTML += gradeStatHtml;
-    });
-}
-
-// Get a reference to the table body
-const studentTableBody = document.getElementById('student-table-body');
-const noStudentsMessage = document.getElementById('no-students-message');
-
-function renderStudents() {
-    // Clear the existing table rows and hide the 'no students' message
-    studentTableBody.innerHTML = '';
-    noStudentsMessage.classList.add('hidden');
-
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const studentsToDisplay = filteredStudents.slice(start, end);
-
-    if (studentsToDisplay.length === 0) {
-        noStudentsMessage.classList.remove('hidden');
-        paginationControls.classList.add('hidden');
-        return;
-    }
-
-    studentsToDisplay.forEach(student => {
-        const row = document.createElement('tr');
-        row.className = 'hover:bg-gray-100 transition-colors duration-200';
-
-        const pdfStatus = student.hasPdf ?
-            '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Has PDF</span>' :
-            '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">No PDF</span>';
-
-        row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${highlightText(student.name, currentSearchTerm)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${highlightText(student.assessmentNo, currentSearchTerm)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.upi || 'N/A'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.grade || 'N/A'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${pdfStatus}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-<button onclick="openLocalPDF('${student.name}', '${student.grade}')"
-    class="px-4 py-2 text-white font-semibold rounded-md shadow-md transition-colors ${student.hasPdf
-        ? 'bg-blue-600 hover:bg-blue-700'
-        : 'bg-gray-400 cursor-not-allowed'}"
-    ${!student.hasPdf ? 'disabled' : ''}>
-    View
-</button>
-            </td>
-        `;
-        studentTableBody.appendChild(row);
-    });
-
-    updatePaginationControls();
-    updateStatistics();
-}
-
-
-
-// Function to update pagination buttons
-function updatePaginationControls() {
-    pageNumbersDiv.innerHTML = '';
-    const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
-
-    if (totalPages > 1) {
-        paginationControls.classList.remove('hidden');
-        prevPageBtn.disabled = currentPage === 1;
-        nextPageBtn.disabled = currentPage === totalPages;
-
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i;
-            pageButton.className = `px-3 py-1 text-sm font-medium rounded-md ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
-            pageButton.addEventListener('click', () => {
-                currentPage = i;
-                renderStudents();
-            });
-            pageNumbersDiv.appendChild(pageButton);
-        }
-    } else {
-        paginationControls.classList.add('hidden');
-    }
-}
-
-// Event listeners for pagination
-prevPageBtn.addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        renderStudents();
-    }
-});
-
-nextPageBtn.addEventListener('click', () => {
-    const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
-    if (currentPage < totalPages) {
-        currentPage++;
-        renderStudents();
-    }
-});
-
-// Function to apply filters and render the first page
-function applyFiltersAndRender() {
-    filteredStudents = allStudents.filter(student => {
-        const name = student.name.toLowerCase();
-        const assessmentNo = student.assessmentNo.toLowerCase();
-        const hasPdf = student.hasPdf;
-        const studentGrade = student.grade;
-
-        const matchesSearch = currentSearchTerm === '' ||
-            name.includes(currentSearchTerm.toLowerCase()) ||
-            assessmentNo.includes(currentSearchTerm.toLowerCase());
-
-        const matchesPdfFilter = currentFilter === 'all' ||
-            (currentFilter === 'with-pdf' && hasPdf) ||
-            (currentFilter === 'without-pdf' && !hasPdf);
-
-        const matchesGrade = currentGrade === 'all' ||
-            studentGrade === currentGrade;
-
-        return matchesSearch && matchesPdfFilter && matchesGrade;
-    });
-
-    currentPage = 1; // Reset to first page on new filter/search
-    renderStudents();
-}
-
-// Live filter event listeners
-liveFilterInput.addEventListener('input', (e) => {
-    currentSearchTerm = e.target.value;
-    applyFiltersAndRender();
-});
-
-document.getElementById('clear-filter').addEventListener('click', () => {
-    liveFilterInput.value = '';
-    currentSearchTerm = '';
-    applyFiltersAndRender();
-});
-
-// Filter button event listeners
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.filter-btn').forEach(b => {
-            b.classList.remove('active', 'bg-blue-500', 'text-white');
-            b.classList.add('bg-gray-200', 'text-gray-700');
-        });
-
-        e.target.classList.add('active', 'bg-blue-500', 'text-white');
-        e.target.classList.remove('bg-gray-200', 'text-gray-700');
-
-        currentFilter = e.target.id.replace('show-', '').replace('-', '-');
-        applyFiltersAndRender();
-    });
-});
-
-// New function to handle the real-time data listener
-function startRealtimeListener() {
-    const dbPath = `artifacts/${sanitizedAppId}/students`;
-    const studentsRef = ref(db, dbPath);
-
-    onValue(studentsRef, async (snapshot) => {
-        studentTableBody.innerHTML =  `<p class="text-center text-gray-500">Loading student records...</p>`;
-
-        if (snapshot.exists()) {
-            allStudents = [];
-            const studentsData = snapshot.val();
-            const studentEntries = Object.entries(studentsData);
-
-const pdfExistenceChecks = studentEntries.map(async ([assessmentNo, student]) => {
-    const studentName = student['Official Student Name'];
-    const studentGrade = student.Grade;
-    const hasPdf = await checkLocalPdfExists(studentName, studentGrade);
-    return {
-        assessmentNo,
-        name: studentName,
-        upi: student.UPI,
-        grade: studentGrade,
-        hasPdf
-    };
-});
-
-            allStudents = await Promise.all(pdfExistenceChecks);
-
-            if (allStudents.length === 0) {
-                studentTableBody.innerHTML =  `<p class="text-center text-gray-500">No student records found in the database.</p>`;
-                paginationControls.classList.add('hidden');
-            } else {
-                applyFiltersAndRender();
-            }
-        } else {
-            allStudents = [];
-            studentTableBody.innerHTML =  `<p class="text-center text-gray-500">No student records found in the database.</p>`;
-            paginationControls.classList.add('hidden');
-        }
-    }, (error) => {
-        console.error("Error retrieving student records:", error);
-        studentTableBody.innerHTML =  `<p class="text-center text-red-500">An error occurred while fetching data. Check the console for details.</p>`;
-    });
-}
-    </script>
-
-
-
-
-    
-    <style>
-        .filter-btn.active {
-            background-color: #3B82F6 !important;
-            color: white !important;
-        }
-        
-        .student-item[data-has-pdf="false"] {
-            opacity: 0.8;
-        }
-        
-        .student-item button:disabled {
-            cursor: not-allowed;
-        }
-        
-        #live-filter:focus {
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-    </style>
 </body>
 </html>

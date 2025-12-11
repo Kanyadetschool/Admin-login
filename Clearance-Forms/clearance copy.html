@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Clearance Form</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="form-container">
+            <div class="school-logo">
+    <img src="../images/logo.png" alt="Kanyadet School Logo">
+</div>
+        <div class="header">
+            <h1>KANYADET PRIMARY & JUNIOR SCHOOL</h1>
+            <h2>STUDENT CLEARANCE FORM</h2>
+            <p style="margin: 10px 0; font-size: 14px;">P.O. Box 45 - 40139 AKALA, Siaya, Kenya</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">STUDENT INFORMATION</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student Name:</label>
+                    <input type="text" >
+                </div>
+                <div class="form-group">
+                    <label>Admission Number:</label>
+                    <input type="text" ">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Grade/Class:</label>
+                    <select>
+                        <option value=""></option>
+                        <option value="grade6">Grade 6</option>
+                        <option value="grade9">Grade 9</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Year:</label>
+                    <input type="text" >
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Parent/Guardian Name:</label>
+                    <input type="text" >
+                </div>
+                <div class="form-group">
+                    <label>Contact Number:</label>
+                    <input type="text" >
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Reason for Clearance:</label>
+                    <select>
+                        <option value="completion">Course Completion</option>
+                        <option value="">Select Reason</option>
+                        <option value="transfer">Transfer to Another School</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date of Clearance:</label>
+                    <input type="date">
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">CLEARANCE CHECKLIST</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 35%;">Department</th>
+                        <th style="width: 35%;">Status/Comments</th>
+                        <th style="width: 30%;">Signature & Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Class Teacher</strong><br><small>Academic records, conduct</small></td>
+                       <td><input type="text"></td>
+                        <td><input type="text" ></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Library</strong><br><small>Return of books/materials</small></td>
+                       <td><input type="text"></td>
+                        <td><input type="text" ></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accounts/Bursar</strong><br><small>Fee payment status</small></td>
+                        <td><input type="text"></td>
+                        <td><input type="text" ></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sports Department</strong><br><small>Sports equipment/uniform</small></td>
+                       <td><input type="text"></td>
+                        <td><input type="text" ></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stores/Property</strong><br><small>School property/uniform</small></td>
+                       <td><input type="text"></td>
+                        <td><input type="text" ></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ICT/Computer Lab</strong><br><small>Equipment/login accounts</small></td>
+                       <td><input type="text"></td>
+                        <td><input type="text" ></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Discipline Master/Mistress</strong><br><small>Conduct records</small></td>
+                       <td><input type="text"></td>
+                        <td><input type="text" ></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">FINAL AUTHORIZATION</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Head Teacher's Comments:</label>
+                    <input type="text" placeholder="Comments">
+                    <label style="margin-top: 10px;">Signature:</label>
+                    <div class="signature-box"></div>
+                    <label style="margin-top: 10px;">Date:</label>
+                    <input type="date">
+                </div>
+            </div>
+            <p style="margin-top: 15px; font-size: 13px; color: #7f8c8d; font-style: italic;">
+                <strong>Note:</strong> This clearance form must be fully completed and signed by all relevant departments before any official documents can be released to the student.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #ecf0f1;">
+            <p style="font-size: 12px; color: #7f8c8d;">
+                School Stamp: _____________________ | Official Receipt No: _____________________
+            </p>
+        </div>
+
+        <button class="print-button" onclick="window.print()">Print Clearance Form</button>
+    </div>
+</body>
+</html>

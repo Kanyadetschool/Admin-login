@@ -39,11 +39,12 @@
 
 	<!-- My CSS -->
 	<link rel="stylesheet" href="./css/dashboard style.css">
+	<link rel="stylesheet" href="./css/mainToggle.css">
 	<link rel="stylesheet" href="./css/swalOnly.css">
 	
 	<!-- <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/dashboard style.css">
     <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/swalOnly.css">  -->
-	<title>Kanyadet</title>
+	<title>Admins-Kanyadet-School</title>
 	
 </head>
 
@@ -69,9 +70,34 @@
   </li>
 
   <li>
+    <a href="track.html" target="_blank">,
+      <i class='bx bxs-user-detail'></i>
+      <span class="text">Cyber Security</span>
+    </a>
+  </li>
+  <li>
+    <a href="./Report-Cards/All-Report-cards.html" target="_blank">
+      <i class='bx bxs-user-detail'></i>
+      <span class="text">All-levels-Report-Cards</span>
+    </a>
+  </li>
+  <li>
     <a href="./New-Students-Database/Active-Students-Database.html" target="_blank">
       <i class='bx bxs-user-detail'></i>
       <span class="text">Active Students..</span>
+    </a>
+  </li>
+   <li>
+    <a href="./New-Students-Database/All-Deleted-Students-Database.html" target="_blank">
+      <i class='bx bxs-user-x'></i>
+      <span class="text">Deleted Students</span>
+    </a>
+  </li>
+  <li>
+    <a href="./Knec-Uploading/BirthSuperbase.html" target="_blank">
+      <i class='bx bxs-user-detail'></i>
+            <span class="text">Birth Certificates</span>
+
     </a>
   </li>
   <li>
@@ -81,35 +107,58 @@
     </a>
   </li>
   <li>
-    <a href="./Print-Individual-Results/Results.html" target="_blank">
+    <a href="./Report-Cards/Results.html" target="_blank">
       <i class='bx bxs-school'></i>
       <span class="text">Students Results</span>
     </a>
   </li>
-
-  <li>
-    <a href="./New-Students-Database/All-Deleted-Students.html" target="_blank">
-      <i class='bx bxs-user-x'></i>
-      <span class="text">Deleted Students</span>
+  <li id="toggleBtn" class="toggle-btn">
+    <a href="#">
+      <i class='bx bxs-school'></i>
+      <span class="text">Report Cards</span>
     </a>
   </li>
+	  <!-- <button id="toggleBtn" class="toggle-btn">	
+    <a href="./Report-Cards/" target="_blank">
+      <i class='bx bxs-school'></i>
+      <span class="text">Report Cards</span>
+    </a>
+  </li>
+  </button> -->
 
+
+<!-- Toggle Button -->
+<!-- <button id="toggleBtn" class="toggle-btn"> 
+      <i class='bx bxs-file'></i>
+	<span class="text">Report Cards</span>
+    </button> -->
+
+
+
+ 
+<!-- 
   <li>
     <a href="./New-Students-Database/Birth-certificates.html" target="_blank">
       <i class='bx bxs-file'></i>
       <span class="text">Birth Certificates</span>
     </a>
-  </li>
+  </li> -->
 
   <li>
-    <a href="https://kanyadet-school-portal.web.app/Internal Results/index.html" target="_blank">
+    <a href="./Clearance-Forms/clearance.html" target="_blank">
       <i class='bx bxs-graduation'></i>
-      <span class="text">Academics</span>
+      <span class="text">Clearance Form</span>
+    </a>
+  </li>
+  <li>
+    <a href="./Knec-Uploading/KnecUploads.html" target="_blank">
+      <i class='bx bxs-graduation'></i>
+      <span class="text">Knec Uploads</span>
     </a>
   </li>
 
   <li>
-    <a href="./Trs-biodata/claude.html" target="_blank">
+    <a href="./Trs-biodata/TeachersBiodata.html" target="_blank">
       <i class='bx bxs-chalkboard'></i>
       <span class="text">Teachers Biodata</span>
     </a>
@@ -163,7 +212,7 @@
 	<section id="content">
 		<!-- NAVBAR -->
 		<nav>
-			<a href="#" class="nav-link">Categories..</a>
+			<a href="#" class="nav-link">Categories</a>
 			<form action="#">
 				<div class="form-input">
 					<input type="search" placeholder="Search...">
@@ -234,19 +283,19 @@
 
     <div class="summary-box">
         <h3>Gender Distribution</h3>
-        <canvas id="genderChart" style="max-height: 300px;"></canvas>
+        <canvas id="genderChart" style="box-sizing: border-box; display: block; height: 287px; width: 574px;"></canvas>
     </div>
 	<div class="summary-box">
         <h3>Students by Grade</h3>
-        <canvas id="gradeChart" style="max-height: 300px;"></canvas>
+        <canvas id="gradeChart" style="box-sizing: border-box; display: block; height: 287px; width: 574px;"></canvas>
     </div>
     <div class="summary-box">
         <h3>Disability Statistics</h3>
-        <canvas id="disabilityChart" style="max-height: 300px;"></canvas>
+        <canvas id="disabilityChart" style="box-sizing: border-box; display: block; height: 287px; width: 574px;"></canvas>
     </div>
     <div class="summary-box">
         <h3>Admission Trends</h3>
-       <canvas id="admissionChart" style="max-height: 3000px; box-sizing: border-box; display: block; height: 1104px; width: 229px;" width="458" height="229"></canvas>
+       <canvas id="admissionChart" style="box-sizing: border-box; display: block; height: 287px; width: 574px;"></canvas>
     </div>
     <div id="summaryDashboard"></div>
 
@@ -347,28 +396,28 @@
 		</main>
 		
 		<!-- MAIN -->
-	</setion>
+	</section>
 	<!-- CONTENT -->
-<!-- Toggle Button (just the icon button) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg h-16 w-16">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-    </svg>
-</button>
+<!-- Toggle Button -->
+    <!-- <button id="toggleBtn" class="toggle-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button> -->
 
-<!-- Modal wrapper (empty, JS will fill content) -->
-<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
-    <div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full  h-1/2 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500" transform">
-        <!-- JS will inject modal content here -->
+    <!-- Modal wrapper -->
+    <div id="linkModal" class="modal-overlay hidden">
+        <div id="modalContent" class="modal-content">
+            <!-- JS will inject modal content here -->
+        </div>
     </div>
-</div>
 
 
     <script type="module" src="./js/Counter ADVANCE QUALITY CHECK.js"></script>
     <script  src="./js/dashboard script.js"></script> 
-	<script src="./js/GoogleAuthfireBase.js"></script>
-    <script src="./js/GoogleAuthmain.js"></script>
+	<script src="./js/GoogleAuthfireBase.js"></script>    `
+    <script src="./js/GoogleAuthmain.js"></script> -->
+    <script src="./js/intergratedAuthLoginTracker copy.js"></script>
 
 
     <!-- <script  src="https://kanyadet-school-admin.web.app/js/dashboard script.js"></script>
@@ -377,7 +426,7 @@
     <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>  -->
 
 
-   <script src="https://kanyadet-school-admin.web.app/Print-Individual-Results/js/Toggle.js" ></script>
+   <script src="./js/mainToggle.js" ></script>
 
 
 

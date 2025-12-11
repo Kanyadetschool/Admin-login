@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Security Login Tracker</title>
+    
+    <!-- Firebase SDK v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Chart.js for analytics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <!-- Enhanced Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="Track.css">
+  
+</head>
+<body>
+    <div class="container">
+      <div class="header">
+    <div class="header-content">
+        <div>
+            <h1>Security Command Center</h1>
+            <p style="color: #94a3b8; margin-top: 10px;">Real-time authentication monitoring & threat detection</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                <span style="font-weight: 600; color: #10b981;">LIVE</span>
+            </div>
+            <button id="logoutBtn" style="
+                padding: 10px 20px;
+                background: linear-gradient(135deg, #ef4444, #dc2626);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+                box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(239, 68, 68, 0.4)'" 
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(239, 68, 68, 0.3)'">
+                🚪 Logout
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 10px 20px; text-align: center; color: white; font-size: 13px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <span id="sessionStatus">🔐 Session Active</span> • 
+    <span id="userEmail"></span> • 
+    <span id="sessionTimer"></span>
+</div>
+
+        <div class="stats-grid">
+            <div class="stat-card success">
+                <div class="stat-header">
+                    <h3>Total Logins</h3>
+                    <span class="stat-icon">📈</span>
+                </div>
+                <div class="stat-value" id="totalLogins">0</div>
+                <div class="stat-change positive" id="totalChange">↗ +0% from last hour</div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-header">
+                    <h3>Successful</h3>
+                    <span class="stat-icon">✅</span>
+                </div>
+                <div class="stat-value" id="successfulLogins">0</div>
+                <div class="stat-change positive" id="successChange">↗ +0% success rate</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-header">
+                    <h3>Failed Attempts</h3>
+                    <span class="stat-icon">⚠️</span>
+                </div>
+                <div class="stat-value" id="failedLogins">0</div>
+                <div class="stat-change negative" id="failedChange">↘ 0 in last hour</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-header">
+                    <h3>Unique Users</h3>
+                    <span class="stat-icon">👥</span>
+                </div>
+                <div class="stat-value" id="uniqueUsers">0</div>
+                <div class="stat-change" id="uniqueChange">Active today</div>
+            </div>
+        </div>
+
+        <div class="analytics-section">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>Login Analytics</h2>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-period="24h">24H</button>
+                        <button class="chart-tab" data-period="7d">7D</button>
+                        <button class="chart-tab" data-period="30d">30D</button>
+                    </div>
+                </div>
+                <canvas id="loginChart" height="80"></canvas>
+            </div>
+
+            <div class="recent-activity">
+                <h3>🔔 Real-time Activity</h3>
+                <div id="recentActivityList"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by email, IP, location...">
+            </div>
+            <div class="filter-buttons">
+                <button class="btn btn-secondary active" data-filter="all">All</button>
+                <button class="btn btn-secondary" data-filter="success">Success</button>
+                <button class="btn btn-secondary" data-filter="failed">Failed</button>
+                <button class="btn btn-secondary" data-filter="today">Today</button>
+            </div>
+            <button class="btn btn-primary" id="refreshBtn">🔄 Refresh</button>
+        </div>
+
+        <!-- Security Analytics Modal -->
+<div id="securityModal" class="security-modal">
+    <div class="security-modal-content">
+        <span class="security-modal-close" onclick="closeSecurityModal()">&times;</span>
+        <div id="securityModalBody"></div>
+    </div>
+</div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Login History</h2>
+                <button class="export-btn" id="exportBtn">📥 Export Data</button>
+            </div>
+            
+            <div id="loadingState" class="loading">Loading security data...</div>
+            
+            <div id="tableContent" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User Email</th>
+                            <th>Status</th>
+                            <th>IP Address</th>
+                            <th>Location</th>
+                            <th>Device / Browser</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loginTable"></tbody>
+                </table>
+                
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Showing <span id="pageStart">0</span> to <span id="pageEnd">0</span> of <span id="totalRecords">0</span> records
+                    </div>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn" id="prevBtn">← Previous</button>
+                        <button class="pagination-btn" id="nextBtn">Next →</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <h3>No login records found</h3>
+                <p>Authentication activity will appear here</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this section to your HTML file -->
+<!-- Place it after your existing dashboard content -->
+
+<!-- ============================================================ -->
+<!-- ADVANCED SECURITY ANALYTICS PANELS -->
+<!-- ============================================================ -->
+<div style="margin-top: 30px;">
+    <!-- Threats Panel -->
+    <div id="threatsPanelContainer"></div>
+    
+    <!-- User Profiles Panel -->
+    <div id="userProfilesContainer"></div>
+    
+    <!-- Geographic Analysis Panel -->
+    <div id="geographicContainer"></div>
+    
+    <!-- Security Report Panel -->
+    <div id="securityReportContainer"></div>
+</div>
+
+    <!-- Export Modal -->
+    <div class="export-modal" id="exportModal">
+        <div class="export-modal-content">
+            <div class="export-modal-header">
+                <h3>Export Login Data</h3>
+                <button class="export-modal-close" onclick="closeExportModal()">×</button>
+            </div>
+            <div id="exportOptions"></div>
+        </div>
+    </div>
+
+
+<script src="Maintrack.js"></script>
+<script src="track.js"></script>
+
+
+</body>
+</html>

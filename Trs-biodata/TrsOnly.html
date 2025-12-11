@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers Database</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
+    <link rel="stylesheet" href="Trs.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Teachers Database</h1>
+            <p>Teacher Information Management System</p>
+            <div id="connectionStatus" class="connection-status disconnected">Disconnected</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="teachers-list">Teachers List</button>
+            <button class="tab" data-tab="add-teacher">Add Teacher</button>
+        </div>
+
+        <div id="add-teacher" class="tab-content">
+            <div class="form-container">
+                <h2>➕ Add New Teacher</h2>
+                <form id="teacherForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="teacherId">TSC NO *</label>
+                            <input type="text" id="teacherId" name="teacherId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department *</label>
+                            <select id="department" name="department" required>
+                                <option value="">Select Department</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="English">English</option>
+                                <option value="Science">Science</option>
+                                <option value="History">History</option>
+                                <option value="Physical Education">Physical Education</option>
+                                <option value="Arts">Arts</option>
+                                <option value="Computer Science">Computer Science</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="position">Position</label>
+                            <input type="text" id="position" name="position" placeholder="e.g., Senior Teacher, HOD">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone2">Phone 2</label>
+                            <input type="tel" id="phone2" name="phone2">
+                        </div>
+                        <div class="form-group">
+                            <label for="experience">Experience (Years)</label>
+                            <input type="number" id="experience" name="experience" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="qualification">Qualification</label>
+                            <input type="text" id="qualification" name="qualification" placeholder="e.g., M.Ed, B.Ed">
+                        </div>
+                        <div class="form-group">
+                            <label for="joiningDate">Joining Date</label>
+                            <input type="date" id="joiningDate" name="joiningDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="On Leave">On Leave</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" placeholder="Full Address"></textarea>
+                    </div>
+
+                    <div class="custom-fields">
+                        <h3>Custom Fields</h3>
+                        <div id="customFieldsContainer"></div>
+                        <button type="button" class="btn btn-secondary btn-small" onclick="addCustomField()">+ Add Custom Field</button>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 25px;">
+                        <button type="submit" class="btn btn-primary">
+                            <span id="addTeacherBtnText">Add Teacher</span>
+                            <span id="addTeacherLoader" class="loading" style="display: none;"></span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="teachers-list" class="tab-content active">
+            <div class="form-container">
+                <h2>👨‍🏫 Teachers Directory</h2>
+                <div class="search-filter">
+                    <input type="text" id="searchInput" placeholder="Search teachers..." onkeyup="filterTeachers()">
+                    <select id="departmentFilter" onchange="filterTeachers()">
+                        <option value="">All Departments</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English">English</option>
+                        <option value="Science">Science</option>
+                        <option value="History">History</option>
+                        <option value="Physical Education">Physical Education</option>
+                        <option value="Arts">Arts</option>
+                        <option value="Computer Science">Computer Science</option>
+                    </select>
+                    <select id="statusFilter" onchange="filterTeachers()">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="On Leave">On Leave</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="teachers-list">
+                <div id="teachersContainer">
+                    <p style="text-align: center; color: #666;">Loading teachers...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+    authDomain: "kanyadet-school-admin.firebaseapp.com",
+    databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com/",
+    projectId: "kanyadet-school-admin",
+    storageBucket: "kanyadet-school-admin.appspot.com",
+    messagingSenderId: "409708360032",
+    appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+    measurementId: "G-Y4C0ZRRL52"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const teachersRef = database.ref('teachers');
+
+// Global variables
+let teachersData = {};
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', function() {
+    setupFirebaseListeners();
+    setupEventListeners();
+});
+
+// Firebase Connection Status
+function setupFirebaseListeners() {
+    const connectedRef = database.ref('.info/connected');
+    connectedRef.on('value', function(snapshot) {
+        const connected = snapshot.val();
+        const statusElement = document.getElementById('connectionStatus');
+        if (connected) {
+            statusElement.textContent = 'Connected';
+            statusElement.className = 'connection-status connected';
+        } else {
+            statusElement.textContent = 'Disconnected';
+            statusElement.className = 'connection-status disconnected';
+        }
+    });
+
+    // Listen for teachers data changes
+    teachersRef.on('value', function(snapshot) {
+        teachersData = snapshot.val() || {};
+        renderTeachersList();
+    });
+
+    // Listen for child added (new teacher)
+    teachersRef.on('child_added', function(snapshot) {
+        const teacher = snapshot.val();
+        showNotification(`New teacher ${teacher.firstName} ${teacher.lastName} added!`, 'success');
+    });
+}
+
+// Setup Event Listeners
+function setupEventListeners() {
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            switchTab(tabId);
+        });
+    });
+
+    // Teacher form submission
+    document.getElementById('teacherForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        addTeacher();
+    });
+}
+
+// Tab Switching
+function switchTab(tabId) {
+    // Update tab buttons
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+}
+
+// Add Teacher
+function addTeacher() {
+    const form = document.getElementById('teacherForm');
+    const formData = new FormData(form);
+    const teacherData = {};
+
+    // Get standard form fields
+    for (let [key, value] of formData.entries()) {
+        teacherData[key] = value;
+    }
+
+    // Get custom fields
+    const customFields = {};
+    document.querySelectorAll('.custom-field-item').forEach(item => {
+        const keyInput = item.querySelector('input[placeholder="Field Name"]');
+        const valueInput = item.querySelector('input[placeholder="Field Value"]');
+        if (keyInput.value && valueInput.value) {
+            customFields[keyInput.value] = valueInput.value;
+        }
+    });
+
+    if (Object.keys(customFields).length > 0) {
+        teacherData.customFields = customFields;
+    }
+
+    // Add metadata
+    teacherData.createdAt = new Date().toISOString();
+    teacherData.updatedAt = new Date().toISOString();
+    teacherData.createdBy = 'admin';
+
+    // Show loading
+    const btnText = document.getElementById('addTeacherBtnText');
+    const btnLoader = document.getElementById('addTeacherLoader');
+    btnText.style.display = 'none';
+    btnLoader.style.display = 'inline-block';
+
+    // Save to Firebase
+    teachersRef.child(teacherData.teacherId).set(teacherData)
+        .then(() => {
+            showNotification('Teacher added successfully!', 'success');
+            resetForm();
+            switchTab('teachers-list');
+        })
+        .catch((error) => {
+            showNotification('Error adding teacher: ' + error.message, 'error');
+        })
+        .finally(() => {
+            btnText.style.display = 'inline-block';
+            btnLoader.style.display = 'none';
+        });
+}
+
+// Add Custom Field
+function addCustomField() {
+    const container = document.getElementById('customFieldsContainer');
+    const fieldItem = document.createElement('div');
+    fieldItem.className = 'custom-field-item';
+    fieldItem.innerHTML = `
+        <input type="text" placeholder="Field Name">
+        <input type="text" placeholder="Field Value">
+        <button type="button" class="btn btn-danger btn-small" onclick="removeCustomField(this)">Remove</button>
+    `;
+    container.appendChild(fieldItem);
+}
+
+// Remove Custom Field
+function removeCustomField(button) {
+    button.parentElement.remove();
+}
+
+// Reset Form
+function resetForm() {
+    document.getElementById('teacherForm').reset();
+    document.getElementById('customFieldsContainer').innerHTML = '';
+}
+
+// Render Teachers List
+function renderTeachersList() {
+    const container = document.getElementById('teachersContainer');
+    const teachers = Object.entries(teachersData);
+
+    if (teachers.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666;">No teachers found</p>';
+        return;
+    }
+
+    let html = '';
+    teachers.forEach(([teacherId, teacher]) => {
+        html += `
+            <div class="teacher-card" data-teacher-id="${teacherId}">
+                <div class="teacher-card-header">
+                    <h3 class="teacher-name">${teacher.firstName} ${teacher.lastName}</h3>
+                    <span class="teacher-id">${teacher.teacherId}</span>
+                </div>
+                <div class="teacher-info">
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">${teacher.email || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Department:</span>
+                        <span class="info-value">${teacher.department || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Position:</span>
+                        <span class="info-value">${teacher.position || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status:</span>
+                        <span class="info-value" style="color: ${teacher.status === 'Active' ? '#27ae60' : '#e74c3c'}">${teacher.status || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Experience:</span>
+                        <span class="info-value">${teacher.experience || '0'} years</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value">${teacher.phone || 'N/A'}</span>
+                    </div>
+                    ${teacher.phone2 ? `
+                    <div class="info-item">
+                        <span class="info-label">Phone 2:</span>
+                        <span class="info-value">${teacher.phone2}</span>
+                    </div>
+                    ` : ''}
+                    ${teacher.qualification ? `
+                    <div class="info-item">
+                        <span class="info-label">Qualification:</span>
+                        <span class="info-value">${teacher.qualification}</span>
+                    </div>
+                    ` : ''}
+                    ${teacher.joiningDate ? `
+                    <div class="info-item">
+                        <span class="info-label">Joining Date:</span>
+                        <span class="info-value">${teacher.joiningDate}</span>
+                    </div>
+                    ` : ''}
+                    ${teacher.address ? `
+                    <div class="info-item">
+                        <span class="info-label">Address:</span>
+                        <span class="info-value">${teacher.address}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                ${teacher.customFields ? renderCustomFieldsDisplay(teacher.customFields) : ''}
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+// Render Custom Fields Display
+function renderCustomFieldsDisplay(customFields) {
+    let html = '<div class="teacher-info" style="margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px;">';
+    for (const [key, value] of Object.entries(customFields)) {
+        html += `
+            <div class="info-item">
+                <span class="info-label">${key}:</span>
+                <span class="info-value">${value}</span>
+            </div>
+        `;
+    }
+    html += '</div>';
+    return html;
+}
+
+// Filter Teachers
+function filterTeachers() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+
+    const teacherCards = document.querySelectorAll('.teacher-card');
+    
+    teacherCards.forEach(card => {
+        const teacherId = card.getAttribute('data-teacher-id');
+        const teacher = teachersData[teacherId];
+        
+        if (!teacher) return;
+        
+        const matchesSearch = !searchTerm || 
+            `${teacher.firstName} ${teacher.lastName}`.toLowerCase().includes(searchTerm) ||
+            (teacher.email && teacher.email.toLowerCase().includes(searchTerm)) ||
+            (teacher.teacherId && teacher.teacherId.toLowerCase().includes(searchTerm));
+        
+        const matchesDepartment = !departmentFilter || teacher.department === departmentFilter;
+        const matchesStatus = !statusFilter || teacher.status === statusFilter;
+        
+        if (matchesSearch && matchesDepartment && matchesStatus) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// Show Notification
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => document.body.removeChild(notification), 300);
+    }, 4000);
+}
+
+// Auto-generate Teacher ID
+function generateTeacherId() {
+    const teachers = Object.values(teachersData);
+    const existingIds = teachers.map(t => t.teacherId).filter(id => id.startsWith('T'));
+    let maxNumber = 0;
+    
+    existingIds.forEach(id => {
+        const number = parseInt(id.replace('T', ''));
+        if (number > maxNumber) {
+            maxNumber = number;
+        }
+    });
+    
+    return 'T' + String(maxNumber + 1).padStart(3, '0');
+}
+
+// Focus on Teacher ID field and suggest auto-generated ID
+document.getElementById('teacherId').addEventListener('focus', function() {
+    if (!this.value) {
+        this.placeholder = generateTeacherId();
+    }
+});
+
+// Use suggested ID on double click
+document.getElementById('teacherId').addEventListener('dblclick', function() {
+    if (!this.value) {
+        this.value = generateTeacherId();
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl+N for new teacher
+    if (e.ctrlKey && e.key === 'b') {
+        e.preventDefault();
+        switchTab('add-teacher');
+        document.getElementById('teacherId').focus();
+    }
+});
+
+    </script>
+</body>
+</html>

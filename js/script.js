@@ -6,41 +6,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password');
     const togglePassword = document.querySelector('.toggle-password');
     const submitBtn = document.querySelector('.submit-btn');
+    const resetBtn = document.getElementById('resetPasswordBtn');
 
     // Toggle password visibility
-    togglePassword.addEventListener('click', () => {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        togglePassword.classList.toggle('fa-eye');
-        togglePassword.classList.toggle('fa-eye-slash');
-    });
+    if (togglePassword) {
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.classList.toggle('fa-eye');
+            togglePassword.classList.toggle('fa-eye-slash');
+        });
+    }
 
     // Form validation and submission
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        // ✅ CHECK COOLDOWN BEFORE ATTEMPTING LOGIN
+        const cooldownCheck = checkLoginCooldown();
+        if (cooldownCheck.inCooldown) {
+            showError(null, `Too many failed attempts. Please wait ${cooldownCheck.remainingTime} seconds before trying again.`);
+            return;
+        }
+
+        // Show loading state
+        const btnSpan = submitBtn.querySelector('span');
+        const btnSpinner = submitBtn.querySelector('.spinner');
+        
+        if (btnSpan) btnSpan.style.opacity = '0';
+        if (btnSpinner) btnSpinner.style.display = 'block';
+        submitBtn.disabled = true;
+
+        const email = emailInput.value.trim().toLowerCase();
+        const password = passwordInput.value;
+
         try {
-            submitBtn.querySelector('span').style.opacity = '0';
-            submitBtn.querySelector('.spinner').style.display = 'block';
-            submitBtn.disabled = true;
-
-            const email = emailInput.value.trim().toLowerCase();
-            const password = passwordInput.value;
-
-            try {
-                const { user, teacherData } = await authenticateTeacher(email, password);
-                await handleSuccessfulLogin(user, teacherData);
-            } catch (error) {
-                showError(null, error.message);
-                console.error('Login error:', error);
+            const { user, teacherData } = await authenticateTeacher(email, password);
+            
+            // ✅ RESET attempts on successful login
+            resetLoginAttempts();
+            
+            // ✅ HIDE reset button on successful login
+            if (resetBtn) {
+                resetBtn.style.display = 'none';
             }
-        } finally {
-            resetButton();
+            
+            await handleSuccessfulLogin(user, teacherData);
+            
+        } catch (error) {
+            // ✅ RECORD failed attempt
+            const cooldownActivated = recordFailedAttempt();
+            
+            // ✅ SHOW reset button on failed login
+            if (resetBtn) {
+                resetBtn.style.display = 'block';
+            }
+            
+            // ✅ RESET BUTTON STATE IMMEDIATELY ON ERROR
+            if (btnSpan) btnSpan.style.opacity = '1';
+            if (btnSpinner) btnSpinner.style.display = 'none';
+            submitBtn.disabled = false;
+            
+            // Show appropriate error message
+            if (cooldownActivated) {
+                showError(null, `Too many failed attempts. Please wait 30 seconds before trying again.`);
+            } else {
+                const attemptsLeft = maxAttempts - loginAttempts;
+                const attemptWarning = attemptsLeft <= 1 ? ` (${attemptsLeft} attempt remaining)` : ` (${attemptsLeft} attempts remaining)`;
+                showError(null, error.message + attemptWarning);
+            }
+            
+            console.error('Login error:', error);
         }
     });
 
     async function handleSuccessfulLogin(user, teacherData) {
-        console.log('Teacher data received:', teacherData); // Debug log
+        console.log('Teacher data received:', teacherData);
         
         const authToken = {
             token: user.uid,
@@ -68,23 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1500);
     }
 
-    // Simulate login API call
-    function simulateLogin() {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                if (Math.random() > 0.5) {
-                    resolve();
-                } else {
-                    reject(new Error('Invalid credentials'));
-                }
-            }, 1500);
-        });
-    }
-
     // Show error message
     function showError(input, message) {
         const notification = createNotification(message, 'error');
-        document.body.appendChild(notification);
         
         if (input) {
             input.classList.add('error');
@@ -92,20 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.classList.remove('error');
             }, { once: true });
         }
-
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
     }
 
     // Show success message
     function showSuccess(message) {
-        const notification = createNotification(message, 'success');
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
+        createNotification(message, 'success');
     }
 
     // Create notification element
@@ -126,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             removeNotification(notification);
         });
 
-        // Auto-remove after 5 seconds
+        // Auto-remove after 10 seconds
         setTimeout(() => {
             removeNotification(notification);
         }, 10000);
@@ -147,19 +165,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Reset button state
+    // Reset button state (helper function - now rarely needed)
     function resetButton() {
-        const resetBtn = document.getElementById('resetPasswordBtn');
-        if (resetBtn) {
-            resetBtn.style.display = 'block';
+        if (submitBtn) {
+            const btnSpan = submitBtn.querySelector('span');
+            const btnSpinner = submitBtn.querySelector('.spinner');
+            
+            if (btnSpan) btnSpan.style.opacity = '1';
+            if (btnSpinner) btnSpinner.style.display = 'none';
+            submitBtn.disabled = false;
         }
-        submitBtn.querySelector('span').style.opacity = '1';
-        submitBtn.querySelector('.spinner').style.display = 'none';
-        submitBtn.disabled = false;
     }
 
     // Add floating animation to background elements
-    document.querySelectorAll('.floating-element').forEach(element => {
+    const floatingElements = document.querySelectorAll('.floating-element');
+    floatingElements.forEach(element => {
         element.style.animation = `float ${15 + Math.random() * 10}s infinite`;
     });
 
@@ -181,33 +201,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Enhanced security
-    function enhanceSecurity() {
-        const maxAttempts = 3;
-        let attempts = 0;
-        const cooldownTime = 30000; // 30 seconds
+    // Enhanced security with attempt tracking
+    const maxAttempts = 3;
+    let loginAttempts = 0;
+    const cooldownTime = 30000; // 30 seconds
+    
+    function checkLoginCooldown() {
+        const cooldownUntil = localStorage.getItem('cooldownUntil');
+        if (cooldownUntil) {
+            const remainingTime = Math.ceil((parseInt(cooldownUntil) - Date.now()) / 1000);
+            if (remainingTime > 0) {
+                return { 
+                    inCooldown: true, 
+                    remainingTime 
+                };
+            } else {
+                // Cooldown expired, clear it
+                localStorage.removeItem('cooldownUntil');
+                loginAttempts = 0;
+            }
+        }
+        return { inCooldown: false };
+    }
+    
+    function recordFailedAttempt() {
+        loginAttempts++;
+        console.log(`Failed login attempt ${loginAttempts}/${maxAttempts}`);
         
-        return async function(credentials) {
-            if (attempts >= maxAttempts) {
-                const remainingTime = Math.ceil((localStorage.getItem('cooldownUntil') - Date.now()) / 1000);
-                if (remainingTime > 0) {
-                    throw new Error(`Too many attempts. Please wait ${remainingTime} seconds.`);
-                }
-                attempts = 0;
-            }
-
-            try {
-                const result = await simulateLogin(credentials);
-                attempts = 0;
-                return result;
-            } catch (error) {
-                attempts++;
-                if (attempts >= maxAttempts) {
-                    localStorage.setItem('cooldownUntil', Date.now() + cooldownTime);
-                }
-                throw error;
-            }
-        };
+        if (loginAttempts >= maxAttempts) {
+            const cooldownUntil = Date.now() + cooldownTime;
+            localStorage.setItem('cooldownUntil', cooldownUntil.toString());
+            console.log('Max attempts reached. Cooldown activated.');
+            return true; // Cooldown activated
+        }
+        return false; // Still has attempts left
+    }
+    
+    function resetLoginAttempts() {
+        loginAttempts = 0;
+        localStorage.removeItem('cooldownUntil');
+        console.log('Login attempts reset');
     }
 
     // Password strength checker
@@ -227,16 +260,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize advanced features
-    document.addEventListener('DOMContentLoaded', () => {
-        createParticles();
-        const secureLogin = enhanceSecurity();
-
-        // Add password strength indicator
+    createParticles();
+    
+    // Add password strength indicator
+    if (passwordInput) {
         passwordInput.addEventListener('input', (e) => {
             const strength = checkPasswordStrength(e.target.value);
             const strengthBar = document.querySelector('.strength-bar');
-            strengthBar.style.width = (strength.score * 20) + '%';
-            strengthBar.style.backgroundColor = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD'][strength.score - 1];
+            
+            if (strengthBar) {
+                strengthBar.style.width = (strength.score * 20) + '%';
+                const colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD'];
+                strengthBar.style.backgroundColor = colors[strength.score - 1] || '#ff4444';
+            }
         });
-    });
+    }
 });

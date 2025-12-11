@@ -1,0 +1,112 @@
+/* Toast Container - Right Side of Screen */
+#toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    width: 90%;
+    max-width: 400px;
+    pointer-events: none;
+}
+
+/* Individual Toast Notification */
+.toast-notification {
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease-in-out;
+    pointer-events: auto;
+}
+
+/* Toast Content Box */
+.toast-notification > div {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+/* Success Toast - Green */
+.toast-notification .bg-green-500 {
+    background-color: #10b981;
+}
+
+/* Error Toast - Red */
+.toast-notification .bg-red-500 {
+    background-color: #ef4444;
+}
+
+/* Warning Toast - Yellow */
+.toast-notification .bg-yellow-500 {
+    background-color: #f59e0b;
+}
+
+/* Info Toast - Blue */
+.toast-notification .bg-blue-500 {
+    background-color: #3b82f6;
+}
+
+/* Text Styling */
+.toast-notification .text-white {
+    color: white;
+}
+
+.toast-notification .text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.toast-notification .font-medium {
+    font-weight: 500;
+}
+
+/* Slide Animation - From Right */
+.toast-notification.translate-x-full {
+    transform: translateX(calc(100% + 1rem));
+}
+
+.toast-notification:not(.translate-x-full) {
+    transform: translateX(0);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    #toast-container {
+        width: calc(100% - 2rem);
+        max-width: none;
+        right: 1rem;
+        left: 1rem;
+    }
+    
+    .toast-notification > div {
+        padding: 0.875rem 1.25rem;
+        gap: 0.625rem;
+    }
+    
+    .toast-notification .text-xl {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+}
+
+/* Stacking Multiple Toasts */
+.toast-notification:not(:last-child) {
+    margin-bottom: 0.5rem;
+}
+
+/* Hover Effect (Optional) */
+.toast-notification:hover {
+    transform: translateX(-4px);
+}
+
+.toast-notification.translate-x-full:hover {
+    transform: translateX(calc(100% + 1rem));
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    .toast-notification > div {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+}

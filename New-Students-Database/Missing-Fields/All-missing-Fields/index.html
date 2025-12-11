@@ -8,6 +8,9 @@
   
 </head>
 <body>
+
+
+
     <div id="loader">
         <div class="spinner"></div>
     </div>
@@ -53,7 +56,7 @@
             <div class="control-group">
                 <label for="items-per-page">📄 Items Per Page</label>
                 <select id="items-per-page">
-                    <option value="10">10 per page</option>
+                    <option value="10">1 per page</option>
                     <option value="25">25 per page</option>
                     <option value="50">50 per page</option>
                     <option value="100">100 per page</option>
@@ -124,8 +127,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
+
+
+    <!-- Toggle Button (just the icon button) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg h-16 w-16">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+</button>
+
+<!-- Modal wrapper (empty, JS will fill content) -->
+<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
+<div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full h-[80vh] overflow-y-scroll [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden transform">
+	<div class="modal-header flex justify-between items-center mb-4 h-12">
+        <!-- JS will inject modal content here -->
+    </div>
+</div>
+   <script src="https://kanyadet-school-admin.web.app/Print-Individual-Results/js/Toggle.js" ></script>
+
+
     <!-- Your Application Script -->
     <script src="script.js"></script>
+    <script src="https://kanyadet-school-admin.web.app/Report-Cards/js/Toggle.js"></script>
+
     
     <style>
         /* Additional styles for Save All button hover effect */

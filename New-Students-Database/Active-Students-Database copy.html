@@ -43,6 +43,37 @@
             transform: translateX(4px);
         }
 
+
+
+        #filter-group{
+    width: auto;
+    display: grid !important;
+    justify-content: center !important;
+     box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(45deg, #2e374b, #ff1cac) !important;
+    color: #fff !important;
+    border-radius: 10px !important;
+    background-color: #ffff !important;
+    -webkit-box-shadow: inset 6px 6px 8px rgba(97, 97, 97, 0.075), 6px 6px 6px rgba(63, 61, 61, 0.781);
+    box-shadow: inset 6px 6px 8px rgba(97, 97, 97, 0.075), 6px 6px 6px rgba(205, 204, 204, 0.781);
+    border: 3px solid #fafafa;
+    border-top-right-radius: 0 ;
+}
+select#students-per-page {
+    color: #ffff !important;
+    font-weight: 600 !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    padding-right: 20px !important;
+    cursor: pointer !important;
+}
+option {
+    color: #ffff!important;
+    font-weight: 600 !important;
+    background-color: #040405 !important;
+}
         /* Compact Promotion Buttons with Scrolling Text on Hover */
 
 .grade-promotion-container {
@@ -338,17 +369,21 @@
 
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-                    <h2 class="text-xl font-semibold text-gray-700">Student Records</h2>
+                    <h6 class="text-xl font-semibold text-gray-700">Student Records</h6>
+
+
+
+
 
 
 
 
                     
-                    <div class="flex flex-row items-center justify-between mt-4 mx-4">
-                        <div class="flex items-center space-x-2">
-                            <label for="students-per-page" class="text-sm text-gray-600">Students per page:</label>
-                            <select id="students-per-page" class="p-2 border border-gray-300 rounded-md">
-                                <option value="10">10</option>
+
+                     <div id="filter-group" >
+                            <label for="students-per-page" class="block text-sm font-semibold text-white-700 dark:text-white-300 mb-2  px-1">Students per page:</label>
+                            <select id="students-per-page" class="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:outline-none transition-all">
+                               <option value="10" selected>10</option>
                                 <option value="100">100</option>
                                 <option value="200">200</option>
                                 <option value="300">300</option>
@@ -356,9 +391,11 @@
                                 <option value="500">500</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="flex items-center space-x-4 w-full md:w-auto">
-                        <input id="search-input" type="text" placeholder="Search anything..." onfocus="this.select()" class="p-2 border border-gray-300 rounded-md w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    
+                  
+                    <div class="flex items-center space-x-4 w-full md:w-auto" >
+                        <input id="search-input" type="text" placeholder="Search anything..." onfocus="this.select()" class="p-2 border border-gray-300 rounded-md w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500" >
 
                         <select id="grade-filter-select" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">All Grades</option>
@@ -421,7 +458,7 @@
     </div>
 </div>
     <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthfireBase.js"></script>
-    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>
+    <!-- <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script> -->
           <script src="./image-popup.js" ></script>
                 <script src="./js/image-popup.js" ></script>
                   <script src="./js/HamburgerToggle.js" ></script>

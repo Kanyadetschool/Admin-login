@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birth Certificates</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="tailwind.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="BirthSuperbase.css">
+    <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/Print-Individual-Results/css/toggle.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    
+    
+  
+</head>
+<body class="gradient-mesh min-h-screen">
+    
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <!-- Auth Container (Sign In/Sign Up) -->
+    <div id="auth-container" class="min-h-screen mx-auto flex items-center justify-center px-4">
+        <div class="max-w-md w-full glass-morph rounded-2xl shadow-2xl p-8 float">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-gradient-to-br from-lavender-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <img src="../images/logo.png" alt="">
+
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-black">Birth Certificates</h2>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Students Management System</p>
+            </div>
+            
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold font-semibold text-black-700 dark:text-black-300 mb-2">Email</label>
+                    <div class="relative">
+                        <input type="email" id="email" required
+                               class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                                 autocomplete="email" placeholder="📧">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-black-300 mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" required
+                          autocomplete="current-password"
+                          placeholder="🔐" 
+                               class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
+                     
+                    </div>
+                </div>
+                
+                <button type="submit" id="signin-btn"
+                        class="w-full px-4 py-2  bg-gradient-to-tr from-[#2e374b] to-[#ff1cac] to-rose-600 text-white text-sm rounded-lg hover:from-red-600 hover:to-rose-700 transition-all micro-interact flex items-center justify-center gap-2">
+                    Sign In
+                </button>
+                
+                <p class="text-center text-sm text-gray-600 dark:text-gray-300 mt-4">
+                    <a href="#" id="signup-link" class="text-blue-600 hover:underline font-medium">
+                        Don't have an account? Sign up here
+                    </a>
+                </p>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Sidebar Navigation - Always Visible -->
+    <div id="sidebar" class="hidden fixed left-0 top-0 h-full w-64 glass-morph transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-40 overflow-y-auto">
+        <div class="p-6 h-full flex flex-col">
+            <!-- Logo Section -->
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-black-500 to-lavender-600 flex items-center justify-center ">
+                    <img src="../images/logo.png" alt="">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold gradient-text">KANYADET</h2>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Student Portal</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="space-y-2 flex-1">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white micro-interact" id="filter-group" >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white-700 dark:text-white-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <span>All Students</span>
+                </a>
+                
+                <a href="#" onclick="document.getElementById('show-with-pdf').click(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white-700 dark:text-white-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>With Documents</span>
+                </a>
+                
+                <a href="#" onclick="document.getElementById('show-without-pdf').click(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white-700 dark:text-white-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Without Documents</span>
+                </a>
+                
+                <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                    <a href="#" onclick="handleExportEnhanced(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white-700 dark:text-white-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Export Data</span>
+                    </a>
+                    
+            
+                    
+                    <a href="#" onclick="refreshData(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white-700 dark:text-white-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span>Refresh Data</span>
+                    </a>
+                    
+                    
+                </div>
+
+                
+                <!-- Add this in the sidebar, before the Toggle Theme section -->
+<div class="pt-4 border-t  border-gray-200 dark:border-gray-700 mt-4">
+    <a href="#" onclick="showAdvancedAnalytics(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white-700 dark:text-white-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <span  >Advanced Analytics</span>
+    </a>
+</div>
+                
+                <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                    <a href="#" onclick="toggleTheme(); return false;" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white-700 dark:text-white-300 hover:bg-white/50 dark:hover:bg-gray-800/50 micro-interact">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                        <span>Toggle Theme</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- User Profile Section -->
+            <div class="mt-auto pt-4">
+                <div class="neuro-card p-4">
+                    <!-- Change to this -->
+                      <div class="flex items-center gap-3 mb-3">
+                          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold" id="user-avatar">
+                              A
+                          </div>
+                          <div class="flex-1">
+                              <p class="text-sm font-semibold text-gray-800 dark:text-white" id="user-display-name" title="">Admin User</p>
+                              <p class="text-xs text-gray-500" id="user-role">Portal Admin</p>
+                          </div>
+                      </div>
+                    <button id="sign-out-btn" class="w-full px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white text-sm rounded-lg hover:from-red-600 hover:to-rose-700 transition-all micro-interact flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+   <!-- To this - removes the left margin when sidebar is hidden -->
+<div id="main-app-container" class="hidden p-4 lg:p-8">
+        <!-- Top Bar -->
+        <div class="glass-morph rounded-2xl p-4 mb-6 flex items-center justify-between">
+            <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg hover:bg-white/50 micro-interact">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            
+            <div class="flex-1 max-w-2xl mx-4">
+                <div class="search-bar relative">
+                    <input type="text" id="live-filter" placeholder="Search students, records..." class="w-full px-12 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-transparent focus:border-transparent focus:outline-none">
+                    <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <button id="clear-filter" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-black-500 to-lavender-600 flex items-center justify-center dark:bg-red-800  ">
+                    <img src="../images/logo.png" alt="">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-white/50 micro-interact tooltip" data-tooltip="Toggle Theme">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+                
+                <button onclick="refreshData()" class="p-2 rounded-lg hover:bg-white/50 micro-interact tooltip" data-tooltip="Refresh">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Insights Container -->
+        <div id="insights-container" class="mb-6 space-y-2"></div>
+        
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="neuro-card p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Students</p>
+                        <h3 id="total-count" class="text-3xl font-bold stat-number gradient-text">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="neuro-card p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">With Documents</p>
+                        <h3 id="pdf-count" class="text-3xl font-bold stat-number gradient-text">0 (0%)</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="neuro-card p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Pending</p>
+                        <h3 id="no-pdf-count" class="text-3xl font-bold stat-number gradient-text">0 (0%)</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="neuro-card p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Filtered Results</p>
+                        <h3 id="filtered-count" class="text-3xl font-bold stat-number gradient-text">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+<!-- Analytics Modal Backdrop -->
+<div id="analytics-modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 items-center justify-center p-4">
+    <!-- Analytics Modal Container -->
+    <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-hidden animate-modal-in">
+        <!-- Modal Header -->
+        <div class="sticky top-0 z-10 bg-gradient-to-r from-indigo-600 to-purple-600 p-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Advanced Analytics</h2>
+                    <p class="text-sm text-indigo-100">Comprehensive document tracking insights</p>
+                </div>
+            </div>
+            <button id="analytics-modal-close-btn" class="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div class="overflow-y-auto max-h-[calc(90vh-100px)] p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+            <div id="analytics-content">
+                <!-- Analytics content will be dynamically inserted here by JavaScript -->
+                <div class="flex items-center justify-center py-20">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                        <p class="text-gray-600 dark:text-gray-400">Loading analytics...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+        
+  <!-- Quick Actions - UPDATED VERSION -->
+<div class="glass-morph rounded-2xl mb-6 overflow-hidden">
+    <button onclick="toggleQuickActions()"  class="w-full p-4 flex items-center justify-between hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all">
+        <div class="flex items-center gap-3"  >
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <div >
+                <h3 class="text-lg font-bold text-[#3498db] text-blue-600">Quick Actions</h3>
+                <p class="text-xs text-gray-500">Frequently used actions</p>
+            </div>
+        </div>
+        <svg id="quick-actions-icon" class="w-6 h-6 text-white-600 dark:text-white-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </button>
+    
+    <div id="quick-actions-content" class="collapsible open">
+        <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <button id="show-all" class="btn-premium filter-btn p-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </span>
+                    <span class="text-sm font-semibold">All Students</span>
+                </button>
+                
+                <button id="show-with-pdf" class="btn-premium filter-btn p-4 bg-green-200 dark:bg-green-700 text-white-700 dark:text-white-300 rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </span>
+                    With Birth Certificate
+                </button>
+                
+                <button id="show-without-pdf" class="btn-premium filter-btn p-4 bg-red-200 dark:bg-red-700 text-white-700 dark:text-white-300 rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </span>
+                    Without Birth Certificate
+                </button>
+
+                <button onclick="handleExportEnhanced()" class="btn-premium p-4 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span class="text-sm font-semibold">Export</span>
+                    </span>
+                </button>
+                
+                <button id="bulk-check-btn" onclick="handleBulkCheck()" class="btn-premium p-4 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span class="text-sm font-semibold">Check All</span>
+                    </span>
+                </button>
+
+                <button onclick="resetAllFilters()" class="hidden btn-premium p-4 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:shadow-xl micro-interact">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <span class="text-sm font-semibold">Clear Filters</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+        
+        <!-- Advanced Filters -->
+        <div class="glass-morph rounded-2xl mb-6 overflow-hidden">
+            <button onclick="toggleFilters()" class="w-full p-4 flex items-center justify-between hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-orange-600">Advanced Filters</h3>
+                        <p class="text-xs text-gray-500">Refine your search results</p>
+                    </div>
+                </div>
+                <svg id="filter-icon" class="w-6 h-6 text-gray-600 dark:text-gray-300 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            
+            <div id="filter-content" class="collapsible">
+                <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50">
+                    <div class="grid grid-cols-1  gap-4 mb-4">
+                        
+                        <!-- LIVE SEARCH INPUT - Add this inside your filter-content div -->
+<div id="filter-group" class="m-30" >
+    <label class="block text-sm font-semibold text-white-700 py-1 dark:text-white-300 mb-2">
+        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        Live Search
+    </label>
+    <div class="relative">
+        <input 
+            type="text" 
+            id="live-filter2" 
+            placeholder="Type to filter by name or assessment number..." 
+            class="w-full px-4 py-3 pl-12 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:outline-none transition-all shadow-sm"
+        >
+       
+        <button 
+            onclick="document.getElementById('live-filter2').value=''; document.getElementById('live-filter2').dispatchEvent(new Event('input'));" 
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+   
+</div>
+                        
+                    </div>
+                       
+                    
+                   
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        
+        <!-- Students Table -->
+        <div class="glass-morph rounded-2xl overflow-hidden mb-6">
+            <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                  
+
+                     <div id="filter-group" >
+                            <label class="block text-sm font-semibold text-white-700 dark:text-white-300 mb-2  px-1">Items Per Page</label>
+                            <select id="items-per-page" class="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:outline-none transition-all">
+                                <option value="10" selected>10 items</option>
+                                <option value="40">40 items</option>
+                                <option value="60" >60 items</option>
+                                <option value="100">100 items</option>
+                                <option value="200">200 items</option>
+                                <option value="600">600 items</option>
+                            </select>
+                        </div>
+
+
+
+                        
+
+<div class="block text-sm font-semibold text-white-700 dark:text-white-300 mb-2" id="filter-group" >
+    <label for="grade-filter" class="font-medium text-white-700 px-1">Filter by Grade</label>
+    <select id="grade-filter" class="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-none border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:outline-none transition-all">
+        <option value="all">All Grades</option>
+        <option value="Grade 1">Grade 1</option>
+        <option value="Grade 2">Grade 2</option>
+        <option value="Grade 3">Grade 3</option>
+        <option value="Grade 4">Grade 4</option>
+        <option value="Grade 5">Grade 5</option>
+        <option value="Grade 6">Grade 6</option>
+        <option value="Grade 7">Grade 7</option>
+        <option value="Grade 8">Grade 8</option>
+        <option value="Grade 9">Grade 9</option>
+        </select>
+</div>
+
+      
+<div id="filter-group">
+    <label class="block text-sm font-semibold text-white-700 dark:text-white-300 mb-2 px-1">UPI Status</label>
+    <select id="upi-filter" class="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:outline-none transition-all">
+        <option value="all" selected>All Students</option>
+        <option value="with-upi">With Valid UPI</option>
+        <option value="without-upi">Without Valid UPI (---)</option>
+    </select>
+</div>
+
+
+                  <div class="filter-group" id="filter-group" >
+                                <label for="gradeSelect">Print Current Filter</label>
+
+                                
+                                         <button onclick="exportToPdfEnhanced()" class="px-4 py-2 bg-white border-gray-200 text-orange-600 rounded-lg shadow-lg micro-interact flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                    </svg>
+                                    Click to Export
+                                   </button>
+                                
+                            </div>
+                              
+                      <div id="filter-group">
+                     <label for="gradeSelect">Count Per Filter</label>
+
+                     <select id="filterSelect" class="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border-none focus:border-indigo-500 focus:outline-none transition-all">
+                    <option id="filtered-count2" value="">0</option>
+                    </select>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full rounded-lg overflow-hidden">
+                  <thead class="bg-gradient-to-r from-blue-500 to-cyan-600 text-white hover:shadow-lg transition-shadow dark:from-gray-800 dark:to-gray-900">
+                        <tr class="border-b border-[#3498db]">
+                            <th class="px-6 py-4 text-left  text-xs font-bold text-white-700 dark:text-white-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-400" onclick="sortStudents('id')" data-sort="id">
+                                # <span class="sort-indicator"></span>
+                            </th>
+                           <th class="px-6 py-4 text-left text-xs font-bold text-white-700 dark:text-white-300 uppercase cursor-pointer hover:bg-gray-200 hover:text-orange-500 dark:hover:bg-black-700 dark:hover:text-orange-400" onclick="sortStudents('name')" data-sort="name">
+                                Name <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-white-700 dark:text-white-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-400" onclick="sortStudents('assessmentNo')" data-sort="assessmentNo">
+                                Assessment No <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-white-700 dark:text-white-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-400" onclick="sortStudents('UPI')" data-sort="UPI">
+                                UPI <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-white-700 dark:text-white-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-400" onclick="sortStudents('grade')" data-sort="grade">
+                                Grade <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-white-700 dark:text-white-300 uppercase cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-400" onclick="sortStudents('pdf')" data-sort="pdf">
+                                Status <span class="sort-indicator"></span>
+                            </th>
+                            <th class="px-6 py-4 text-right text-xs font-bold text-white-700 dark:text-white-300 uppercase">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <!-- Student rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- No Students Message -->
+            <div id="no-students-message" class="hidden text-center py-12">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-gray-500 dark:text-gray-400 text-lg font-semibold">No students found</p>
+                <p class="text-gray-400 dark:text-gray-500 text-sm mt-2">Try adjusting your filters</p>
+            </div>
+            
+            <!-- Pagination -->
+             <div class="pagination-section" style="margin-top: 20px; padding: 20px; display: flex; justify-content: center; align-items: center; border-top: 1px solid #e5e7eb; background-color: #f9fafb; dark:bg-gray-800; dark:border-gray-700;">
+                <div id="pagination-info"></div>
+                <div id="pagination-controls"></div>
+            </div>
+        </div>
+        
+
+
+        <!-- Grade Statistics -->
+      <!-- Grade Statistics -->
+<div class="glass-morph rounded-2xl overflow-hidden">
+    <button onclick="toggleGradeStats()" class="w-full p-4 flex items-center justify-between hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all">
+        <div class="flex items-center gap-3">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Grade Statistics</h3>
+        </div>
+        <svg id="grade-stats-toggle-icon" class="w-6 h-6 text-gray-600 dark:text-gray-300 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </button>
+    
+    <div id="grade-stats-content" class="collapsible open">
+        <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50">
+            <!-- ✅ ADD CHART CONTROLS -->
+            <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
+               <h4 id="chart-title" class="text-lg font-semibold text-gray-800 dark:text-white">Grade-wise Trends (Line)</h4>
+                <div class="flex gap-2">
+                <button id="btn-chart-line" onclick="toggleGradeChart('line')" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all">
+                Line
+            </button>
+             <button id="btn-chart-bar" onclick="toggleGradeChart('bar')" class="px-4 py-2 bg-White-200 text-orange-700 rounded-lg font-semibold hover:bg-gray-300 transition-all">
+            Bar
+            </button>
+           
+                    <button id="btn-chart-pie" onclick="toggleGradeChart('pie')" class="px-4 py-2 bg-white-200 text-blue-700 rounded-lg font-semibold hover:bg-gray-300 transition-all">
+                        Pie
+                    </button>
+                    <button id="btn-chart-radar" onclick="toggleGradeChart('radar')" class="px-4 py-2 bg-white-200 text-blue-700 rounded-lg font-semibold hover:bg-gray-300 transition-all">
+                        Radar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ✅ ADD CHART CANVAS -->
+            <div class="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-inner" style="height: 400px;">
+                <canvas id="gradeStatsChart"></canvas>
+            </div>
+            
+            <!-- Grade stat cards below -->
+            <div id="grade-stats-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Grade stats will be inserted here -->
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+
+
+    
+    <!-- PDF Modal -->
+    <div id="pdf-modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-60 z-40 items-center justify-center p-4 backdrop-blur-sm">
+        <div class="glass-morph rounded-2xl shadow-2xl max-w-5xl w-full h-full flex flex-col">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200 bg-blue-700 rounded-t-2xl inset-0 dark:border-gray-700 ">
+                <h3 class="text-2xl font-bold text-white">Birth Certificate</h3>
+                <button id="pdf-modal-close-btn" class="text-white hover:text-gray-200 text-3xl font-bold">×</button>
+            </div>
+            <div class="flex-1 overflow-hidden bg-gray-100 dark:bg-gray-900">
+                <div id="pdf-iframe" class="w-full h-full" frameborder="0"></div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <!-- Generic Modal -->
+   <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 items-center justify-center p-4 backdrop-blur-sm" >
+    <div   class="glass-morph bg-white-900 rounded-2xl shadow-2xl max-w-md w-full border-2 "> <!-- Added border to modal card -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h3 id="modal-title" class="text-2xl font-bold text-[#3498db] border-2 border-[#3498db] inline-block px-3 py-1 rounded-md">
+                <!-- Modal Title -->
+            </h3>
+        </div>
+        <div class="p-6 h-80 overflow-y-auto">
+            <div id="modal-message" class="text-white-700 dark:text-white-300 mb-6"></div>
+        </div>
+    </div>
+</div>
+
+ 
+    <!-- Your Firebase Script -->
+    <script src="sidebar colapse quick actions.js"></script>
+    <script type="module" src="BirthSuperbase.js"></script>
+
+
+
+
+                  
+    <!-- Toggle Button (just the icon button) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg h-16 w-16">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+</button>
+
+<!-- Modal wrapper (empty, JS will fill content) -->
+<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
+<div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full h-[80vh] overflow-y-scroll [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden transform">
+	<div class="modal-header flex justify-between items-center mb-4 h-12">
+        <!-- JS will inject modal content here -->
+    </div>
+</div>
+       <script src="https://kanyadet-school-admin.web.app/Report-Cards/js/Toggle.js"></script>
+
+
+</body>
+</html>

@@ -13,6 +13,46 @@
             transform: translateX(4px);
         }
 
+
+        
+    /* WORKING Sticky Table Header */
+    #data-display {
+        max-height: 70vh;
+        overflow-y: auto;
+        overflow-x: auto;
+        position: relative;
+    }
+    
+    #student-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        
+    }
+    
+    #student-table thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-radius: 6px;
+
+        
+    }
+    
+    #student-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: rgb(41, 128, 185) !important;
+        border-bottom: 2px solid rgb(31, 108, 165);
+
+    }
+    
+    /* Adjust for bulk mode toolbar */
+    body.bulk-mode-active #data-display {
+        max-height: calc(70vh - 70px);
+    }
+
+
         /* Compact Promotion Buttons with Scrolling Text on Hover */
 
 .grade-promotion-container {

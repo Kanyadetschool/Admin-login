@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Clearance Form</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --success: #10b981;
+            --dark: #0f172a;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: backgroundMove 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes backgroundMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .form-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3), 
+                        0 0 0 1px rgba(255, 255, 255, 0.1),
+                        inset 0 0 100px rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .school-badge {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h2 {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .content-wrapper {
+            padding: 50px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-700) 100%);
+            color: white;
+            padding: 20px 30px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(to bottom, var(--accent), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .section-content {
+            padding: 35px 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        input[type="text"]:hover,
+        input[type="date"]:hover,
+        select:hover,
+        textarea:hover {
+            border-color: var(--gray-300);
+            background: white;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1),
+                        0 4px 12px rgba(99, 102, 241, 0.15);
+            transform: translateY(-1px);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23475569' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 45px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-50) 100%);
+        }
+
+        th {
+            padding: 18px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--gray-300);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--gray-200);
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--gray-50);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 20px 16px;
+            vertical-align: top;
+        }
+
+        td strong {
+            color: var(--gray-800);
+            font-size: 14px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        td small {
+            color: var(--gray-600);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        td input[type="text"] {
+            padding: 10px 14px;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .signature-box {
+            height: 120px;
+            border: 2px dashed var(--gray-300);
+            border-radius: 12px;
+            background: var(--gray-50);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-600);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signature-box:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            color: var(--primary);
+        }
+
+        .signature-box::before {
+            content: '✍️';
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .note-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin-top: 25px;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+        }
+
+        .note-box strong {
+            color: #92400e;
+            font-weight: 700;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .note-box p {
+            color: #78350f;
+            font-size: 13px;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .footer {
+            background: var(--gray-50);
+            padding: 30px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .footer-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-group label {
+            font-size: 11px;
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        .footer-group input {
+            padding: 10px 16px;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            padding: 40px 50px;
+            background: var(--gray-50);
+        }
+
+        .btn {
+            padding: 16px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 2px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-800);
+            color: white;
+            border-color: var(--gray-800);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            body::before {
+                display: none;
+            }
+
+            .form-container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .header {
+                background: white;
+                color: black;
+                border-bottom: 3px solid black;
+            }
+
+            .header::before {
+                display: none;
+            }
+
+            .header h1,
+            .header h2,
+            .header p {
+                color: black;
+                text-shadow: none;
+            }
+
+            .school-badge {
+                background: white;
+                border-color: black;
+            }
+
+            .content-wrapper {
+                padding: 20px;
+            }
+
+            .section {
+                box-shadow: none;
+                border: 1px solid black;
+                page-break-inside: avoid;
+            }
+
+            .section-title {
+                background: black;
+                color: white;
+            }
+
+            .button-container,
+            .btn {
+                display: none;
+            }
+
+            input,
+            select,
+            textarea {
+                border: none;
+                border-bottom: 1px solid black;
+                border-radius: 0;
+                background: transparent;
+                padding: 4px 0;
+            }
+
+            table {
+                border: 1px solid black;
+            }
+
+            th,
+            td {
+                border: 1px solid black;
+            }
+
+            .signature-box {
+                border: 1px solid black;
+                background: transparent;
+            }
+
+            .signature-box::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 30px 20px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                padding: 30px 20px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="school-badge">🎓</div>
+                <h1>Kanyadet Primary & Junior School</h1>
+                <h2>Student Clearance Form</h2>
+                <p>P.O. Box 45 - 40139 AKALA, Siaya, Kenya</p>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="section">
+                <div class="section-title">Student Information</div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Student Name</label>
+                            <input type="text" id="studentName">
+                        </div>
+                        <div class="form-group">
+                            <label>Admission Number</label>
+                            <input type="text" id="admNo">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Grade/Class</label>
+                            <select id="grade">
+                                <option value=""></option>
+                                <option value="Grade 6">Grade 6</option>
+                                <option value="Grade 7">Grade 7</option>
+                                <option value="Grade 8">Grade 8</option>
+                                <option value="Grade 9">Grade 9</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Academic Year</label>
+                            <input type="text" id="year" value="2025">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Parent/Guardian Name</label>
+                            <input type="text" id="parentName">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" id="contactNo">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Reason for Clearance</label>
+                            <select id="reason">
+                                <option value=""></option>
+                                <option value="Course Completion">Course Completion</option>
+                                <option value="Transfer to Another School">Transfer to Another School</option>
+                                <option value="Relocation">Relocation</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Clearance</label>
+                            <input type="date" id="clearanceDate">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Departmental Clearance Checklist</div>
+                <div class="section-content">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 35%;">Department</th>
+                                    <th style="width: 35%;">Status/Comments</th>
+                                    <th style="width: 30%;">Signature & Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Class Teacher</strong>
+                                        <small>Academic records, conduct</small>
+                                    </td>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Library</strong>
+                                        <small>Return of books/materials</small>
+                                    </td>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Accounts/Bursar</strong>
+                                        <small>Fee payment status</small>
+                                    </td>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Sports Department</strong>
+                                        <small>Sports equipment/uniform</small>
+                                    </td>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Stores/Property</strong>
+                                        <small>School property/uniform</small>
+                                    </td>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>ICT/Computer Lab</strong>
+                                        <small>Equipment/login accounts</small>
+                                    </td>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Discipline Master/Mistress</strong>
+                                        <small>Conduct records</small>
+                                    </td>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Final Authorization</div>
+                <div class="section-content">
+                    <div class="form-group full-width">
+                        <label>Head Teacher's Comments</label>
+                        <textarea id="headComments"></textarea>
+                    </div>
+                    <div class="form-row" style="margin-top: 25px;">
+                        <div class="form-group">
+                            <label>Head Teacher's Signature</label>
+                            <div class="signature-box">
+                                <span>Click to sign</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Authorization Date</label>
+                            <input type="date" id="authDate">
+                        </div>
+                    </div>
+                    <div class="note-box">
+                        <strong>⚠️ Important Notice</strong>
+                        <p>This clearance form must be fully completed and signed by all relevant departments before any official documents can be released to the student. Incomplete forms will not be processed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-group">
+                <label>School Official Stamp</label>
+                <input type="text">
+            </div>
+            <div class="footer-group">
+                <label>Official Receipt Number</label>
+                <input type="text">
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button class="btn btn-primary" onclick="window.print()">
+                <span>🖨️</span>
+                <span>Print Form</span>
+            </button>
+            <button class="btn btn-secondary" onclick="clearForm()">
+                <span>🔄</span>
+                <span>Clear All</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function clearForm() {
+            if (confirm('Are you sure you want to clear all form data? This action cannot be undone.')) {
+                document.querySelectorAll('input[type="text"], input[type="date"], select, textarea').forEach(input => {
+                    input.value = '';
+                });
+                document.getElementById('year').value = '2025';
+                setDefaultDates();
+            }
+        }
+
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('clearanceDate').value = today;
+            document.getElementById('authDate').value = today;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setDefaultDates();
+            
+            // Add smooth animations on input focus
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

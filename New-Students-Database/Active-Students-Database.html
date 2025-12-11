@@ -41,14 +41,14 @@
 
     
 <!-- Toggle Button (just the icon button) -->
-<button id="toggleBtn" class="fixed bottom-6 right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg">
+<button id="toggleBtn" class="fixed top-[-26] right-6 flex items-center justify-center w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg z-50 focus:outline-none ">
     <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
     </svg>
 </button>
 
 <!-- Modal wrapper (empty, JS will fill content) -->
-<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-70 hidden">
+<div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[rgba(117,138,138,0.4)] hidden">
     <div id="modalContent" class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl max-w-lg w-full transform">
         <!-- JS will inject modal content here -->
     </div>
@@ -224,8 +224,8 @@
     <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>
           <script src="./image-popup.js" ></script>
                 <script src="./js/image-popup.js" ></script>
-                  <script src="./js/HamburgerToggle.js" ></script>
-                  <script src="./js/HamburgerToggle.js" ></script>
+                   <script src="https://kanyadet-school-admin.web.app/Report-Cards/js/Toggle.js"></script>
+
                   <!-- <script src="./js/tabblock.js" ></script>| -->
                   
 <!-- Add this AFTER your main script but keep it as type="module" -->
@@ -579,7 +579,7 @@ toggleBtn.addEventListener('click', () => {
         };
 
       // Update the gradeFilterSelect event listener to show the delete button
-gradeFilterSelect.addEventListener('change', () => {
+    gradeFilterSelect.addEventListener('change', () => {
     const selectedGrade = gradeFilterSelect.value;
     searchInput.value = '';
     currentPage = 1;
@@ -594,6 +594,11 @@ gradeFilterSelect.addEventListener('change', () => {
         deleteGradeBtn.classList.add('hidden'); // Hide the delete button
     }
 });
+
+
+
+
+
 
         const readFileAsArrayBuffer = (file) => {
             return new Promise((resolve, reject) => {
@@ -1353,7 +1358,8 @@ if (bulkSelectMode) {
 
             const table = document.createElement('table');
             table.id = 'student-table';
-            table.className = "min-w-full bg-white rounded-lg shadow-md overflow-hidden";
+            // table.className = "min-w-full bg-white rounded-lg shadow-md overflow-hidden";
+            table.className = "min-w-full bg-white rounded-lg shadow-md";
             let tableHTML =  `<thead style="background-color: rgb(41, 128, 185);"><tr>`;
             headers.forEach(header => {
                 tableHTML += `<th class="py-3 px-4 text-left font-semibold text-white w-full border-collapse" style="font-family: Helvetica, Arial, sans-serif;">${header}</th>`;

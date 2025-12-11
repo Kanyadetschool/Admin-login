@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </svg>
                 </button>
             </div>
-            <div id="linksContainer" class="grid gap-4 grid-cols-1 md:grid-cols-2"></div>
+            <div id="linksContainer" class="grid gap-4 grid-cols-1 md:grid-cols-2 overflow-y-auto max-h-60"></div>
             <div id="summarySection" class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
                 <p class="font-semibold text-lg mb-2 text-gray-800">Summary ✨</p>
                 <p class="text-gray-600 text-sm">Click a link to view its content and resources.</p>

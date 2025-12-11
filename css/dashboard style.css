@@ -423,7 +423,7 @@ body {
 	background: var(--light-orange);
 	color: var(--orange);
 }
-#content main .box-info li .text h3 {
+#content main .box-info li .text h3d {
 	
 	font-size: 3em;
     font-weight: bold;
@@ -431,6 +431,11 @@ body {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+ 
+        li:active{
+            transform: scale(0.8);
+		
+        }
 
 
 

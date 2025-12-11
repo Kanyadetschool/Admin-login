@@ -12,7 +12,7 @@ let pendingUpdates = new Map(); // Track all pending changes across students
 
 // Pagination and search state
 let currentPage = 1;
-let itemsPerPage = 10;
+let itemsPerPage = 1;
 let filteredAndSearchedStudents = [];
 let searchQuery = '';
 
@@ -592,16 +592,16 @@ function renderStudentRow(student, globalIndex) {
     
     const row = tableBody.insertRow();
     row.dataset.studentId = student.id;
-    row.style.cssText = 'border-bottom: 3px solid #e0e0e0; background: white;';
+    row.style.cssText = 'border-bottom: 4px solid #064671ff; background: white;';
     
     // Index
     const indexCell = row.insertCell(0);
     indexCell.textContent = (globalIndex + 1).toString();
-    indexCell.style.cssText = 'font-weight: bold; vertical-align: top; padding-top: 20px;';
+    indexCell.style.cssText = 'font-weight: bold; vertical-align: top; padding-top: 20px; border-right: 1px solid #ecf0f1;';
     
     // Student Info
     const infoCell = row.insertCell(1);
-    infoCell.style.cssText = 'vertical-align: top; padding-top: 20px;';
+    infoCell.style.cssText = 'vertical-align: top; padding-top: 20px; border-right: 1px solid #ecf0f1;';
     infoCell.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 4px;">
             <div style="font-weight: 600; font-size: 14px; color: #2c3e50;">${student['Official Student Name'] || 'N/A'}</div>
@@ -615,7 +615,7 @@ function renderStudentRow(student, globalIndex) {
     
     // Missing Fields Count
     const countCell = row.insertCell(2);
-    countCell.style.cssText = 'vertical-align: top; padding-top: 20px;';
+    countCell.style.cssText = 'vertical-align: top; padding-top: 20px; border-right: 1px solid #ecf0f1;';
     countCell.innerHTML = `
         <div style="
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
@@ -633,14 +633,14 @@ function renderStudentRow(student, globalIndex) {
     
     // Missing Fields List with Inputs
     const fieldsCell = row.insertCell(3);
-    fieldsCell.style.cssText = 'padding: 16px 12px; background: #f8f9fa; border-left: 3px solid #3498db;';
+    fieldsCell.style.cssText = 'padding: 16px 12px; background: #fafbfc; border-right: 1px solid #ecf0f1;';
     
     const fieldsContainer = document.createElement('div');
     fieldsContainer.style.cssText = 'display: flex; flex-direction: column; gap: 12px;';
     
     missingFields.forEach((fieldName, index) => {
         const fieldRow = document.createElement('div');
-        fieldRow.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
+        fieldRow.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #95a5a6;  border-right: 4px solid #95a5a6;';
         
         const label = document.createElement('div');
         label.style.cssText = 'min-width: 150px; font-weight: 500; font-size: 13px; color: #2c3e50;';
