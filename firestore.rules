@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Authorized Users Collection - Allow reads to verify email before login, write for admins only
+    match /authorized_users/{email} {
+      allow read: if true;  // Allow reading to check if email is authorized (before login)
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Login Activity Collection - Read/Write for authenticated users
+    match /login_activity/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // Students Collection - Read access for authenticated users
+    match /Students/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Activities Collection - Read access for authenticated users
+    match /Activities/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Teachers Collection - Read access for all, write for admins
+    match /teachers/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Subjects Collection - Read access for authenticated users
+    match /subjects/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Submissions Collection - Read/Write for authenticated users
+    match /submissions/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // Teacher Submissions - Read/Write for authenticated users
+    match /teacherSubmissions/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // Books Collection - Read access for all, write for admins
+    match /books/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Issuance Collection - Read access for authenticated users
+    match /issuance/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Messages Collection - Read/Write for all
+    match /messages/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Message Threads - Read/Write for all
+    match /message_threads/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Audit Logs - Read/Write for authenticated users
+    match /auditLogs/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // Results Database
+    match /Results/{appId}/students/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Junior School Results Database
+    match /JuniorSchoolResultsDatabase/{appId}/students/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Deleted Results
+    match /DeletedResults/{appId}/artifacts/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Junior School Deleted Results
+    match /JuniorSchoolDeletedResults/{appId}/artifacts/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Deleted Students
+    match /Deletedstudents/{appId}/artifacts/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Artifacts
+    match /artifacts/{appId}/students/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+    
+    // Helper functions
+    function isAdmin() {
+      let userDoc = get(/databases/$(database)/documents/authorized_users/$(request.auth.token.email));
+      return userDoc.data.role == 'admin';
+    }
+  }
+}

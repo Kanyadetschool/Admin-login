@@ -1,0 +1,3478 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<fet version="7.6.4">
+  <Mode>Official</Mode>
+  <Institution_Name>KANYADET JUNIOR SCHOOL TERM I 2026 CLASS TIMETABLE</Institution_Name>
+  <Comments>
+</Comments>
+  <Days_List>
+    <Number_of_Days>5</Number_of_Days>
+    <Day>
+      <Name>Monday</Name>
+      <Long_Name></Long_Name>
+    </Day>
+    <Day>
+      <Name>Tuesday</Name>
+      <Long_Name></Long_Name>
+    </Day>
+    <Day>
+      <Name>Wednesday</Name>
+      <Long_Name></Long_Name>
+    </Day>
+    <Day>
+      <Name>Thursday</Name>
+      <Long_Name></Long_Name>
+    </Day>
+    <Day>
+      <Name>Friday</Name>
+      <Long_Name></Long_Name>
+    </Day>
+  </Days_List>
+  <Hours_List>
+    <Number_of_Hours>13</Number_of_Hours>
+    <Hour>
+      <Name>08:00am 08:20am</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>08:20am 09:00am</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>09:00am 09:40am</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>09:40am 09:50am</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>09:50am 10:20am</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>10:520am 11:00am</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>11:00am 11:30am</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>11:30am 12:10pm</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>12:10pm 12:50pm</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>12:50pm 02:00pm</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>02:00pm 2:40pm</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>02:40pm 03:20pm</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+    <Hour>
+      <Name>03:20pm 4:10pm</Name>
+      <Long_Name></Long_Name>
+    </Hour>
+  </Hours_List>
+  <Subjects_List>
+    <Subject>
+      <Name>ENG</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>KISW</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>MATH</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>CRE</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>SCI</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>AGRI</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>SST</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>C / A</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>P.P.I 🔖</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>IND</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>ENVIR</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>Pre-Tech</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+    <Subject>
+      <Name>-----</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Comments></Comments>
+    </Subject>
+  </Subjects_List>
+  <Activity_Tags_List>
+  </Activity_Tags_List>
+  <Teachers_List>
+    <Teacher>
+      <Name>Mr. Owuor</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Target_Number_of_Hours>0</Target_Number_of_Hours>
+      <Qualified_Subjects>
+        <Qualified_Subject>ENG</Qualified_Subject>
+        <Qualified_Subject>CRE</Qualified_Subject>
+        <Qualified_Subject>C / A</Qualified_Subject>
+      </Qualified_Subjects>
+      <Comments></Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Md. Janet</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Target_Number_of_Hours>0</Target_Number_of_Hours>
+      <Qualified_Subjects>
+        <Qualified_Subject>ENG</Qualified_Subject>
+      </Qualified_Subjects>
+      <Comments></Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Mr. Owino</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Target_Number_of_Hours>0</Target_Number_of_Hours>
+      <Qualified_Subjects>
+      </Qualified_Subjects>
+      <Comments></Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Mr. Stephen</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Target_Number_of_Hours>0</Target_Number_of_Hours>
+      <Qualified_Subjects>
+      </Qualified_Subjects>
+      <Comments></Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Md. Beryl</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Target_Number_of_Hours>0</Target_Number_of_Hours>
+      <Qualified_Subjects>
+      </Qualified_Subjects>
+      <Comments></Comments>
+    </Teacher>
+    <Teacher>
+      <Name>Mr Francis</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Target_Number_of_Hours>0</Target_Number_of_Hours>
+      <Qualified_Subjects>
+      </Qualified_Subjects>
+      <Comments></Comments>
+    </Teacher>
+  </Teachers_List>
+  <Students_List>
+    <Year>
+      <Name>2025</Name>
+      <Long_Name></Long_Name>
+      <Code></Code>
+      <Number_of_Students>0</Number_of_Students>
+      <Comments></Comments>
+      <!-- The information regarding categories, divisions of each category, and separator is only used in the divide year automatically by categories dialog. -->
+      <Number_of_Categories>0</Number_of_Categories>
+      <First_Category_Is_Permanent>false</First_Category_Is_Permanent>
+      <Separator> </Separator>
+      <Group>
+        <Name>GRADE 7</Name>
+        <Long_Name></Long_Name>
+        <Code></Code>
+        <Number_of_Students>0</Number_of_Students>
+        <Comments></Comments>
+      </Group>
+      <Group>
+        <Name>GRADE 8</Name>
+        <Long_Name></Long_Name>
+        <Code></Code>
+        <Number_of_Students>0</Number_of_Students>
+        <Comments></Comments>
+      </Group>
+      <Group>
+        <Name>GRADE 9</Name>
+        <Long_Name></Long_Name>
+        <Code></Code>
+        <Number_of_Students>0</Number_of_Students>
+        <Comments></Comments>
+      </Group>
+    </Year>
+  </Students_List>
+  <Activities_List>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>245</Id>
+      <Activity_Group_Id>245</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>246</Id>
+      <Activity_Group_Id>245</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>247</Id>
+      <Activity_Group_Id>245</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>248</Id>
+      <Activity_Group_Id>245</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>249</Id>
+      <Activity_Group_Id>245</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>250</Id>
+      <Activity_Group_Id>250</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>251</Id>
+      <Activity_Group_Id>250</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>252</Id>
+      <Activity_Group_Id>250</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>253</Id>
+      <Activity_Group_Id>250</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>254</Id>
+      <Activity_Group_Id>254</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>255</Id>
+      <Activity_Group_Id>254</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>256</Id>
+      <Activity_Group_Id>254</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>257</Id>
+      <Activity_Group_Id>254</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>258</Id>
+      <Activity_Group_Id>254</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>259</Id>
+      <Activity_Group_Id>259</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>260</Id>
+      <Activity_Group_Id>259</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>261</Id>
+      <Activity_Group_Id>259</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>262</Id>
+      <Activity_Group_Id>259</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>263</Id>
+      <Activity_Group_Id>263</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>264</Id>
+      <Activity_Group_Id>263</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>265</Id>
+      <Activity_Group_Id>263</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>266</Id>
+      <Activity_Group_Id>263</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>267</Id>
+      <Activity_Group_Id>263</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>268</Id>
+      <Activity_Group_Id>268</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>269</Id>
+      <Activity_Group_Id>268</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>270</Id>
+      <Activity_Group_Id>268</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>271</Id>
+      <Activity_Group_Id>268</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>272</Id>
+      <Activity_Group_Id>272</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>273</Id>
+      <Activity_Group_Id>272</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>274</Id>
+      <Activity_Group_Id>272</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>275</Id>
+      <Activity_Group_Id>272</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>276</Id>
+      <Activity_Group_Id>276</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>277</Id>
+      <Activity_Group_Id>276</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>278</Id>
+      <Activity_Group_Id>276</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>279</Id>
+      <Activity_Group_Id>276</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>280</Id>
+      <Activity_Group_Id>276</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>281</Id>
+      <Activity_Group_Id>281</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>282</Id>
+      <Activity_Group_Id>281</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>283</Id>
+      <Activity_Group_Id>281</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 7</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>284</Id>
+      <Activity_Group_Id>281</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>285</Id>
+      <Activity_Group_Id>285</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>286</Id>
+      <Activity_Group_Id>285</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>287</Id>
+      <Activity_Group_Id>285</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>288</Id>
+      <Activity_Group_Id>285</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>289</Id>
+      <Activity_Group_Id>285</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>290</Id>
+      <Activity_Group_Id>290</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>291</Id>
+      <Activity_Group_Id>290</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>292</Id>
+      <Activity_Group_Id>290</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>293</Id>
+      <Activity_Group_Id>290</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>294</Id>
+      <Activity_Group_Id>294</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>295</Id>
+      <Activity_Group_Id>294</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>296</Id>
+      <Activity_Group_Id>294</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>297</Id>
+      <Activity_Group_Id>294</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>298</Id>
+      <Activity_Group_Id>294</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>299</Id>
+      <Activity_Group_Id>299</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>300</Id>
+      <Activity_Group_Id>299</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>301</Id>
+      <Activity_Group_Id>299</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>302</Id>
+      <Activity_Group_Id>299</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>303</Id>
+      <Activity_Group_Id>303</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>304</Id>
+      <Activity_Group_Id>303</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>305</Id>
+      <Activity_Group_Id>303</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>306</Id>
+      <Activity_Group_Id>303</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>307</Id>
+      <Activity_Group_Id>303</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>308</Id>
+      <Activity_Group_Id>308</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>309</Id>
+      <Activity_Group_Id>308</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>310</Id>
+      <Activity_Group_Id>308</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>311</Id>
+      <Activity_Group_Id>308</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>312</Id>
+      <Activity_Group_Id>312</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>313</Id>
+      <Activity_Group_Id>312</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>314</Id>
+      <Activity_Group_Id>312</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>315</Id>
+      <Activity_Group_Id>312</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>316</Id>
+      <Activity_Group_Id>316</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>317</Id>
+      <Activity_Group_Id>316</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>318</Id>
+      <Activity_Group_Id>316</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>319</Id>
+      <Activity_Group_Id>316</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>320</Id>
+      <Activity_Group_Id>316</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>321</Id>
+      <Activity_Group_Id>321</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>322</Id>
+      <Activity_Group_Id>321</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>323</Id>
+      <Activity_Group_Id>321</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 8</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>324</Id>
+      <Activity_Group_Id>321</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>325</Id>
+      <Activity_Group_Id>325</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>326</Id>
+      <Activity_Group_Id>325</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>327</Id>
+      <Activity_Group_Id>325</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>328</Id>
+      <Activity_Group_Id>325</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owuor</Teacher>
+      <Subject>ENG</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>329</Id>
+      <Activity_Group_Id>325</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>330</Id>
+      <Activity_Group_Id>330</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>331</Id>
+      <Activity_Group_Id>330</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>332</Id>
+      <Activity_Group_Id>330</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>KISW</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>333</Id>
+      <Activity_Group_Id>330</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>334</Id>
+      <Activity_Group_Id>334</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>335</Id>
+      <Activity_Group_Id>334</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>336</Id>
+      <Activity_Group_Id>334</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>337</Id>
+      <Activity_Group_Id>334</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>MATH</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>338</Id>
+      <Activity_Group_Id>334</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>339</Id>
+      <Activity_Group_Id>339</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>340</Id>
+      <Activity_Group_Id>339</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>341</Id>
+      <Activity_Group_Id>339</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Md. Janet</Teacher>
+      <Subject>CRE</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>342</Id>
+      <Activity_Group_Id>339</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>343</Id>
+      <Activity_Group_Id>343</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>344</Id>
+      <Activity_Group_Id>343</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>345</Id>
+      <Activity_Group_Id>343</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>346</Id>
+      <Activity_Group_Id>343</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Stephen</Teacher>
+      <Subject>SCI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>347</Id>
+      <Activity_Group_Id>343</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>348</Id>
+      <Activity_Group_Id>348</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>349</Id>
+      <Activity_Group_Id>348</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>350</Id>
+      <Activity_Group_Id>348</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>AGRI</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>351</Id>
+      <Activity_Group_Id>348</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>352</Id>
+      <Activity_Group_Id>352</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>353</Id>
+      <Activity_Group_Id>352</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>354</Id>
+      <Activity_Group_Id>352</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>SST</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>355</Id>
+      <Activity_Group_Id>352</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>362</Id>
+      <Activity_Group_Id>362</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>363</Id>
+      <Activity_Group_Id>362</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>364</Id>
+      <Activity_Group_Id>362</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>365</Id>
+      <Activity_Group_Id>362</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr. Owino</Teacher>
+      <Subject>C / A</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>5</Total_Duration>
+      <Id>366</Id>
+      <Activity_Group_Id>362</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>367</Id>
+      <Activity_Group_Id>367</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>368</Id>
+      <Activity_Group_Id>367</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>369</Id>
+      <Activity_Group_Id>367</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+    <Activity>
+      <Teacher>Mr Francis</Teacher>
+      <Subject>Pre-Tech</Subject>
+      <Students>GRADE 9</Students>
+      <Duration>1</Duration>
+      <Total_Duration>4</Total_Duration>
+      <Id>370</Id>
+      <Activity_Group_Id>367</Activity_Group_Id>
+      <Active>true</Active>
+      <Comments></Comments>
+    </Activity>
+  </Activities_List>
+  <Buildings_List>
+  </Buildings_List>
+  <Rooms_List>
+  </Rooms_List>
+  <Time_Constraints_List>
+    <ConstraintBasicCompulsoryTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintBasicCompulsoryTime>
+    <ConstraintBreakTimes>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Number_of_Break_Times>25</Number_of_Break_Times>
+      <Break_Time>
+        <Day>Monday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Monday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Monday</Day>
+        <Hour>11:00am 11:30am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Monday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Monday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Tuesday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Tuesday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Tuesday</Day>
+        <Hour>11:00am 11:30am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Tuesday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Tuesday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Wednesday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Wednesday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Wednesday</Day>
+        <Hour>11:00am 11:30am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Wednesday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Wednesday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Thursday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Thursday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Thursday</Day>
+        <Hour>11:00am 11:30am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Thursday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Thursday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Friday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Friday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Friday</Day>
+        <Hour>11:00am 11:30am</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Friday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Break_Time>
+      <Break_Time>
+        <Day>Friday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Break_Time>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintBreakTimes>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>245</Activity_Id>
+      <Activity_Id>246</Activity_Id>
+      <Activity_Id>247</Activity_Id>
+      <Activity_Id>248</Activity_Id>
+      <Activity_Id>249</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>250</Activity_Id>
+      <Activity_Id>251</Activity_Id>
+      <Activity_Id>252</Activity_Id>
+      <Activity_Id>253</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>254</Activity_Id>
+      <Activity_Id>255</Activity_Id>
+      <Activity_Id>256</Activity_Id>
+      <Activity_Id>257</Activity_Id>
+      <Activity_Id>258</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>259</Activity_Id>
+      <Activity_Id>260</Activity_Id>
+      <Activity_Id>261</Activity_Id>
+      <Activity_Id>262</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>263</Activity_Id>
+      <Activity_Id>264</Activity_Id>
+      <Activity_Id>265</Activity_Id>
+      <Activity_Id>266</Activity_Id>
+      <Activity_Id>267</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>268</Activity_Id>
+      <Activity_Id>269</Activity_Id>
+      <Activity_Id>270</Activity_Id>
+      <Activity_Id>271</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>272</Activity_Id>
+      <Activity_Id>273</Activity_Id>
+      <Activity_Id>274</Activity_Id>
+      <Activity_Id>275</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>276</Activity_Id>
+      <Activity_Id>277</Activity_Id>
+      <Activity_Id>278</Activity_Id>
+      <Activity_Id>279</Activity_Id>
+      <Activity_Id>280</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>281</Activity_Id>
+      <Activity_Id>282</Activity_Id>
+      <Activity_Id>283</Activity_Id>
+      <Activity_Id>284</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>285</Activity_Id>
+      <Activity_Id>286</Activity_Id>
+      <Activity_Id>287</Activity_Id>
+      <Activity_Id>288</Activity_Id>
+      <Activity_Id>289</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>290</Activity_Id>
+      <Activity_Id>291</Activity_Id>
+      <Activity_Id>292</Activity_Id>
+      <Activity_Id>293</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>294</Activity_Id>
+      <Activity_Id>295</Activity_Id>
+      <Activity_Id>296</Activity_Id>
+      <Activity_Id>297</Activity_Id>
+      <Activity_Id>298</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>299</Activity_Id>
+      <Activity_Id>300</Activity_Id>
+      <Activity_Id>301</Activity_Id>
+      <Activity_Id>302</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>303</Activity_Id>
+      <Activity_Id>304</Activity_Id>
+      <Activity_Id>305</Activity_Id>
+      <Activity_Id>306</Activity_Id>
+      <Activity_Id>307</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>308</Activity_Id>
+      <Activity_Id>309</Activity_Id>
+      <Activity_Id>310</Activity_Id>
+      <Activity_Id>311</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>312</Activity_Id>
+      <Activity_Id>313</Activity_Id>
+      <Activity_Id>314</Activity_Id>
+      <Activity_Id>315</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>316</Activity_Id>
+      <Activity_Id>317</Activity_Id>
+      <Activity_Id>318</Activity_Id>
+      <Activity_Id>319</Activity_Id>
+      <Activity_Id>320</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>321</Activity_Id>
+      <Activity_Id>322</Activity_Id>
+      <Activity_Id>323</Activity_Id>
+      <Activity_Id>324</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>325</Activity_Id>
+      <Activity_Id>326</Activity_Id>
+      <Activity_Id>327</Activity_Id>
+      <Activity_Id>328</Activity_Id>
+      <Activity_Id>329</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>330</Activity_Id>
+      <Activity_Id>331</Activity_Id>
+      <Activity_Id>332</Activity_Id>
+      <Activity_Id>333</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>334</Activity_Id>
+      <Activity_Id>335</Activity_Id>
+      <Activity_Id>336</Activity_Id>
+      <Activity_Id>337</Activity_Id>
+      <Activity_Id>338</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>339</Activity_Id>
+      <Activity_Id>340</Activity_Id>
+      <Activity_Id>341</Activity_Id>
+      <Activity_Id>342</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>343</Activity_Id>
+      <Activity_Id>344</Activity_Id>
+      <Activity_Id>345</Activity_Id>
+      <Activity_Id>346</Activity_Id>
+      <Activity_Id>347</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>348</Activity_Id>
+      <Activity_Id>349</Activity_Id>
+      <Activity_Id>350</Activity_Id>
+      <Activity_Id>351</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>352</Activity_Id>
+      <Activity_Id>353</Activity_Id>
+      <Activity_Id>354</Activity_Id>
+      <Activity_Id>355</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>5</Number_of_Activities>
+      <Activity_Id>362</Activity_Id>
+      <Activity_Id>363</Activity_Id>
+      <Activity_Id>364</Activity_Id>
+      <Activity_Id>365</Activity_Id>
+      <Activity_Id>366</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintMinDaysBetweenActivities>
+      <Weight_Percentage>95</Weight_Percentage>
+      <Consecutive_If_Same_Day>true</Consecutive_If_Same_Day>
+      <Number_of_Activities>4</Number_of_Activities>
+      <Activity_Id>367</Activity_Id>
+      <Activity_Id>368</Activity_Id>
+      <Activity_Id>369</Activity_Id>
+      <Activity_Id>370</Activity_Id>
+      <MinDays>1</MinDays>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintMinDaysBetweenActivities>
+    <ConstraintActivitiesPreferredStartingTimes>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Teacher></Teacher>
+      <Students></Students>
+      <Subject>MATH</Subject>
+      <Activity_Tag></Activity_Tag>
+      <Duration></Duration>
+      <Number_of_Preferred_Starting_Times>30</Number_of_Preferred_Starting_Times>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>08:20am 09:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>09:00am 09:40am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>09:50am 10:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>10:520am 11:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>08:20am 09:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>09:00am 09:40am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>09:50am 10:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>10:520am 11:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>08:20am 09:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>09:00am 09:40am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>09:50am 10:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>10:520am 11:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>08:20am 09:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>09:00am 09:40am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>09:50am 10:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>10:520am 11:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>08:00am 08:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>08:20am 09:00am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>09:00am 09:40am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>09:40am 09:50am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>09:50am 10:20am</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>10:520am 11:00am</Hour>
+      </Preferred_Starting_Time>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivitiesPreferredStartingTimes>
+    <ConstraintActivitiesPreferredStartingTimes>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Teacher></Teacher>
+      <Students></Students>
+      <Subject>SST</Subject>
+      <Activity_Tag></Activity_Tag>
+      <Duration></Duration>
+      <Number_of_Preferred_Starting_Times>30</Number_of_Preferred_Starting_Times>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>11:30am 12:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>12:10pm 12:50pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>11:30am 12:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>12:10pm 12:50pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>11:30am 12:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>12:10pm 12:50pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>11:30am 12:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>12:10pm 12:50pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>11:30am 12:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>12:10pm 12:50pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivitiesPreferredStartingTimes>
+    <ConstraintActivitiesPreferredStartingTimes>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Teacher></Teacher>
+      <Students></Students>
+      <Subject>SCI</Subject>
+      <Activity_Tag></Activity_Tag>
+      <Duration></Duration>
+      <Number_of_Preferred_Starting_Times>20</Number_of_Preferred_Starting_Times>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Monday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Tuesday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Wednesday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Thursday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>12:50pm 02:00pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>02:00pm 2:40pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>02:40pm 03:20pm</Hour>
+      </Preferred_Starting_Time>
+      <Preferred_Starting_Time>
+        <Day>Friday</Day>
+        <Hour>03:20pm 4:10pm</Hour>
+      </Preferred_Starting_Time>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivitiesPreferredStartingTimes>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>245</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>246</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>247</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>248</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>249</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>250</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>251</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>252</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>253</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>254</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>255</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>256</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>257</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>258</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>259</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>260</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>261</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>262</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>263</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>264</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>265</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>266</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>267</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>268</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>269</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>270</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>271</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>272</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>273</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>274</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>275</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>276</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>277</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>278</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>279</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>280</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>281</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>282</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>283</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>284</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>285</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>286</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>287</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>288</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>289</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>290</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>291</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>292</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>293</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>294</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>295</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>296</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>297</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>298</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>299</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>300</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>301</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>302</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>303</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>304</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>305</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>306</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>307</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>308</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>309</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>310</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>311</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>312</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>313</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>314</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>315</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>316</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>317</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>318</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>319</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>320</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>321</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>322</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>323</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>324</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>325</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>326</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>327</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>328</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>329</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>330</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>331</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>332</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>333</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>334</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>335</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>336</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>337</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>338</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>339</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>340</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>341</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>342</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>343</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>344</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>345</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>346</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>347</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>02:40pm 03:20pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>348</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>349</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>350</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>10:520am 11:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>351</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>352</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>353</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>354</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>355</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>02:00pm 2:40pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>362</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>363</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>364</Activity_Id>
+      <Day>Thursday</Day>
+      <Hour>11:30am 12:10pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>365</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>366</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>09:50am 10:20am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>367</Activity_Id>
+      <Day>Wednesday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>368</Activity_Id>
+      <Day>Friday</Day>
+      <Hour>09:00am 09:40am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>369</Activity_Id>
+      <Day>Monday</Day>
+      <Hour>08:20am 09:00am</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+    <ConstraintActivityPreferredStartingTime>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Activity_Id>370</Activity_Id>
+      <Day>Tuesday</Day>
+      <Hour>12:10pm 12:50pm</Hour>
+      <Permanently_Locked>false</Permanently_Locked>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintActivityPreferredStartingTime>
+  </Time_Constraints_List>
+  <Space_Constraints_List>
+    <ConstraintBasicCompulsorySpace>
+      <Weight_Percentage>100</Weight_Percentage>
+      <Active>true</Active>
+      <Comments></Comments>
+    </ConstraintBasicCompulsorySpace>
+  </Space_Constraints_List>
+  <Timetable_Generation_Options_List>
+  </Timetable_Generation_Options_List>
+</fet>

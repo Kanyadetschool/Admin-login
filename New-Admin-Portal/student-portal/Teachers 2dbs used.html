@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanyadet Teacher Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Teachers.css">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getDatabase, ref, get, onValue, set, update, remove, off } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+            authDomain: "kanyadet-school-admin.firebaseapp.com",
+            projectId: "kanyadet-school-admin",
+            databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com",
+            storageBucket: "kanyadet-school-admin.firebasestorage.app",
+            messagingSenderId: "409708360032",
+            appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+            measurementId: "G-Y4C0ZRRL52"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+
+        window.firebaseServices = {
+            database,
+            auth,
+            ref,
+            get,
+            onValue,
+            set,
+            update,
+            remove,
+            off,
+            signInWithEmailAndPassword
+        };
+
+        console.log("Firebase initialized for Teacher Portal");
+    </script>
+</head>
+<body>
+
+<!-- LOGIN SECTION -->
+<div id="loginSection" class="login-container">
+    <div class="login-left">
+              <div class="login-logo">🎓</div>
+
+        <h1>Kanyadet School</h1>
+        <p>Teacher Portal - Manage & Monitor Student Progress</p>
+    </div>
+    <div class="login-right">
+        <div class="login-form">
+            <h2>Teacher Login</h2>
+            <p>Access the teacher management system</p>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="emailInput" placeholder="teacher@kanyadet.ac.ke" value="Oduor@kanyadet.ac.ke">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="passwordInput" placeholder="Enter your password" value="887314">
+            </div>
+            <button class="login-btn" onclick="login()">Sign In</button>
+            <div class="demo-login">
+                <strong>Demo Login:</strong><br>
+                Email: teacher@kanyadet.ac.ke<br>
+                Password: password123
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PORTAL SECTION -->
+<div id="portalSection" class="portal-hidden">
+    <!-- Add these two lines -->
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    
+    <div class="portal-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar" style="padding: 20px; " >
+            <div class="sidebar-logo">
+                <span style="font-size: 20px;">👨‍🏫</span>
+                <span>Kanyadet</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a class="menu-item active" onclick="showSection('dashboard',this)"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+                <li><a class="menu-item" onclick="showSection('students',this)"><span class="sidebar-menu-icon">👥</span> Students</a></li>
+                <li><a class="menu-item" onclick="showSection('grades',this)"><span class="sidebar-menu-icon">📈</span> Grades</a></li>
+                <li><a class="menu-item" onclick="showSection('assignments',this)"><span class="sidebar-menu-icon">📝</span> Assignments</a></li>
+                <li><a class="menu-item" onclick="showSection('attendance',this)"><span class="sidebar-menu-icon">✓</span> Attendance</a></li>
+                <li><a class="menu-item" onclick="showSection('messages',this)"><span class="sidebar-menu-icon">💬</span> Messages</a></li>
+                <li><a class="menu-item" onclick="showSection('profile',this)"><span class="sidebar-menu-icon">👤</span> Profile</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <div class="welcome-text">
+                    <h1 id="teacherName">Welcome, Teacher</h1>
+                    <p id="currentDate">Today is a great day to teach</p>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar" id="teacherInitials">TR</div>
+                    <div class="profile-info">
+                        <p id="teacherNameSmall">Teacher Name</p>
+                        <p id="teacherSubject">Subject</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="section active">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Students</div>
+                        <div class="stat-value" id="totalStudents">0</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--accent);">
+                        <div class="stat-label">Classes Today</div>
+                        <div class="stat-value" style="color: var(--accent);" id="classesToday">0</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--warning);">
+                        <div class="stat-label">Pending Grades</div>
+                        <div class="stat-value" style="color: var(--warning);" id="pendingGrades">0</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--danger);">
+                        <div class="stat-label">Pending Assignments</div>
+                        <div class="stat-value" style="color: var(--danger);" id="pendingAssignments">0</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 18px; margin-bottom: 16px; margin-top: 32px;">Quick Actions</h3>
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Create Assignment</h3>
+                            <div class="card-icon">📝</div>
+                        </div>
+                        <p>Add new assignments for your class</p>
+                        <button class="btn btn-primary" onclick="openCreateAssignment()" style="width: 100%; margin-top: 12px;">Create Assignment</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Update Grades</h3>
+                            <div class="card-icon">📈</div>
+                        </div>
+                        <p>Enter or update student grades</p>
+                        <button class="btn btn-primary" onclick="viewGradesSection()" style="width: 100%; margin-top: 12px;">View Grades</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Send Message</h3>
+                            <div class="card-icon">💬</div>
+                        </div>
+                        <p>Communicate with students and parents</p>
+                        <button class="btn btn-primary" onclick="openSendMessage()" style="width: 100%; margin-top: 12px;">Send Message</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STUDENTS -->
+            <section id="students" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">My Students</h2>
+                <div class="search-bar">
+                    <input type="text" id="studentSearch" placeholder="Search by name or ID..." onkeyup="filterStudents()">
+                    <select id="itemsPerPage" onchange="resetPagination(); displayStudents()" style="padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <option value="10">10 per page</option>
+                        <option value="20" selected>20 per page</option>
+                        <option value="50">50 per page</option>
+                        <option value="100">100 per page</option>
+                    </select>
+                </div>
+                <div class="student-list" id="studentsList">
+                    <div style="padding: 40px; text-align: center; color: var(--gray-500);">Loading students...</div>
+                </div>
+                <div id="paginationControls" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+                    <button class="btn btn-secondary" onclick="previousPage()" id="prevBtn" style="padding: 8px 16px;">← Previous</button>
+                    <span id="pageInfo" style="color: var(--gray-700); font-weight: 600;">Page 1</span>
+                    <button class="btn btn-secondary" onclick="nextPage()" id="nextBtn" style="padding: 8px 16px;">Next →</button>
+                </div>
+            </section>
+
+            <!-- GRADES -->
+            <section id="grades" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Student Grades</h2>
+                <div class="search-bar">
+                    <input type="text" id="gradeSearch" placeholder="Search by student name..." onkeyup="filterGrades()">
+                    <button class="btn btn-primary" onclick="openGradeModal()">+ Add Grade</button>
+                </div>
+<div class="table-responsive" id="gradesTableContainer">
+    <table>
+        <thead>
+            <!-- Headers will be dynamically generated -->
+        </thead>
+        <tbody id="gradesTable">
+            </section>
+
+            <!-- ASSIGNMENTS -->
+      <section id="assignments" class="section">
+    <h2 style="font-size: 24px; margin-bottom: 24px;">My Assignments</h2>
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button class="btn btn-primary" onclick="openCreateAssignment()">+ Create Assignment</button>
+        <button class="btn" style="background: #f39c12; color: white;" onclick="deleteAllAssignments()">Delete All (Individual)</button>
+        <button class="btn" style="background: #c0392b; color: white;" onclick="deleteAllAssignmentsAtOnce()">⚡ Delete All (Bulk)</button>
+    </div>
+    <div id="assignmentsList" class="cards-grid"></div>
+</section>
+
+            <!-- ATTENDANCE -->
+            <section id="attendance" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Mark Attendance</h2>
+                <div class="search-bar">
+                    <input type="date" id="attendanceDate" value="">
+                </div>
+                <div class="student-list" id="attendanceList">
+                    <div style="padding: 40px; text-align: center; color: var(--gray-500);">Loading students...</div>
+                </div>
+            </section>
+
+            <!-- MESSAGES -->
+            <section id="messages" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Messages</h2>
+                <button class="btn btn-primary" onclick="openSendMessage()" style="margin-bottom: 20px;">+ Send Message</button>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>To</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTable">
+                            <tr><td colspan="4" style="text-align: center; padding: 40px;">No messages sent yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PROFILE -->
+            <section id="profile" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">My Profile</h2>
+                <div class="cards-grid" style="grid-template-columns: 1fr;">
+                    <div class="card">
+                        <h3 style="margin-bottom: 24px;">Professional Information</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Full Name</p>
+                                <p style="font-weight: 600;" id="profileName">Teacher Name</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Email</p>
+                                <p style="font-weight: 600;" id="profileEmail">teacher@kanyadet.ac.ke</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Subject(s)</p>
+                                <p style="font-weight: 600;" id="profileSubject">Mathematics</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Grade Classes</p>
+                                <p style="font-weight: 600;" id="profileGrades">7A, 7B</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Phone</p>
+                                <p style="font-weight: 600;" id="profilePhone">+254 712 345 678</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Employment Status</p>
+                                <p style="font-weight: 600;" id="profileStatus">Full-time</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<div id="gradeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add/Edit Grade</h2>
+            <button class="close-btn" onclick="closeModal('gradeModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Student</label>
+                <select id="gradeStudent" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option>Select student...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="gradeSubject" placeholder="e.g., Mathematics">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                <div class="form-group">
+                    <label>Term 1</label>
+                    <input type="number" id="gradeTerm1" min="0" max="100" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Term 2</label>
+                    <input type="number" id="gradeTerm2" min="0" max="100" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Term 3</label>
+                    <input type="number" id="gradeTerm3" min="0" max="100" placeholder="0">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="saveGrade()">Save Grade</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('gradeModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="assignmentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create Assignment</h2>
+            <button class="close-btn" onclick="closeModal('assignmentModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="assignmentTitle" placeholder="Assignment title">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="assignmentDesc" placeholder="Assignment description" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; min-height: 100px;"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="assignmentSubject" placeholder="e.g., Mathematics">
+            </div>
+            <div class="form-group">
+                <label>Due Date</label>
+                <input type="date" id="assignmentDueDate">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="saveAssignment()">Create Assignment</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('assignmentModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="messageModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Send Message</h2>
+            <button class="close-btn" onclick="closeModal('messageModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Send To (Student ID)</label>
+                <input type="text" id="messageStudentId" placeholder="Student ID or Assessment No">
+            </div>
+            <div class="form-group">
+                <label>Message Type</label>
+                <select id="messageType" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option value="reminder">Reminder</option>
+                    <option value="success">Success/Praise</option>
+                    <option value="concern">Concern</option>
+                    <option value="general">General</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="messageContent" placeholder="Type your message here..." style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; min-height: 120px;"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="sendMessage()">Send Message</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('messageModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- STUDENT EDIT MODAL -->
+<div id="studentEditModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Student Information</h2>
+            <button class="close-btn" onclick="closeModal('studentEditModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Official Student Name</label>
+                <input type="text" id="editStudentName" placeholder="Full name">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="editStudentEmail" placeholder="email@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="editStudentPhone" placeholder="+254 712 345 678">
+            </div>
+            <div class="form-group">
+                <label>Grade</label>
+                <input type="text" id="editStudentGrade" placeholder="e.g., 7A">
+            </div>
+            <div class="form-group">
+                <label>Assessment No</label>
+                <input type="text" id="editStudentAssessment" placeholder="Assessment number">
+            </div>
+            <div class="form-group">
+                <label>Parent Name</label>
+                <input type="text" id="editStudentParent" placeholder="Parent/Guardian name">
+            </div>
+            <div class="form-group">
+                <label>Parent Phone</label>
+                <input type="tel" id="editStudentParentPhone" placeholder="+254 712 345 678">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="saveStudentChanges()">Save Changes</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('studentEditModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ASSIGNMENT EDIT MODAL -->
+<div id="assignmentEditModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Assignment</h2>
+            <button class="close-btn" onclick="closeModal('assignmentEditModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="editAssignmentTitle" placeholder="Assignment title">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="editAssignmentDesc" placeholder="Assignment description" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; min-height: 100px;"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="editAssignmentSubject" placeholder="e.g., Mathematics">
+            </div>
+            <div class="form-group">
+                <label>Due Date</label>
+                <input type="date" id="editAssignmentDueDate">
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="editAssignmentStatus" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option value="pending">Pending</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="graded">Graded</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="saveAssignmentChanges()">Save Changes</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('assignmentEditModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentEditingAssignmentId = null;
+let currentEditingAssignmentStudentId = null;
+    let currentEditingStudentId = null;
+let currentTeacher = null;
+let allStudents = [];
+let allGrades = [];
+let allAssignments = [];
+let currentPage = 1;
+let filteredStudents = [];
+
+async function login() {
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+    
+    if (!email || !password) {
+        alert('Please enter email and password');
+        return;
+    }
+
+    const { database, auth, ref, get, set, signInWithEmailAndPassword } = window.firebaseServices;
+    
+    try {
+        // Authenticate the user
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const uid = userCredential.user.uid;
+        console.log('✅ Authenticated with Firebase, UID:', uid);
+        
+        // Try to find teacher in students database
+        const studentsRef = ref(database, 'artifacts/default-app-id/students');
+        const snapshot = await get(studentsRef);
+        
+        let foundTeacher = null;
+        let teacherId = null;
+        
+        if (snapshot.exists()) {
+            const allRecords = snapshot.val();
+            
+            // Search for teacher record by email
+            Object.keys(allRecords).forEach(key => {
+                const record = allRecords[key];
+                if ((record.Email || record.email) === email && (record.Role === 'teacher' || record.role === 'teacher')) {
+                    foundTeacher = record;
+                    teacherId = key;
+                }
+            });
+        }
+        
+        // If not found in students, try to create/load from teachers path
+        if (!foundTeacher) {
+            const teachersRef = ref(database, 'artifacts/default-app-id/teachers');
+            
+            try {
+                const teacherSnapshot = await get(teachersRef);
+                
+                if (teacherSnapshot.exists()) {
+                    const teachers = teacherSnapshot.val();
+                    console.log('✅ Teachers data found:', teachers);
+                    
+                    // Search in teachers collection - case insensitive
+                    const emailLower = email.toLowerCase();
+                    console.log('🔍 Searching for email:', emailLower);
+                    
+                    Object.keys(teachers).forEach(key => {
+                        const teacher = teachers[key];
+                        const teacherEmail = (teacher.Email || teacher.email || '').toLowerCase();
+                        console.log('Checking:', key, '→', teacherEmail);
+                        
+                        if (teacherEmail === emailLower) {
+                            foundTeacher = teacher;
+                            teacherId = key;
+                            console.log('✅ Found teacher:', teacher.Name);
+                        }
+                    });
+                } else {
+                    console.warn('⚠️ Teachers node does not exist at: artifacts/default-app-id/teachers');
+                }
+            } catch (teacherError) {
+                console.warn('⚠️ Error reading teachers:', teacherError);
+            }
+            
+            // If still not found, use in-memory teacher object
+            if (!foundTeacher) {
+                console.warn('⚠️ Teacher not found in database, creating in-memory record');
+                const newTeacher = {
+                    'Name': 'Teacher',
+                    'Email': email,
+                    'Subject': 'Not Set',
+                    'Grades': 'Not Set',
+                    'Phone': 'Not Set',
+                    'Status': 'Full-time',
+                    'Role': 'teacher',
+                    'UID': uid
+                };
+                foundTeacher = newTeacher;
+                teacherId = 'teacher_' + uid;
+            }
+        }
+        
+        if (foundTeacher) {
+            currentTeacher = { id: teacherId, ...foundTeacher };
+            
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('portalSection').classList.remove('portal-hidden');
+            
+            await initializePortal(foundTeacher, teacherId);
+            console.log('✅ Teacher portal initialized successfully');
+        } else {
+            alert('Could not find or create teacher account.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        if (error.code === 'auth/user-not-found') {
+            alert('No account found with this email. Please contact administrator.');
+        } else if (error.code === 'auth/wrong-password') {
+            alert('Incorrect password.');
+        } else {
+            alert('Login error: ' + error.message);
+        }
+    }
+}
+
+function logout() {
+    currentTeacher = null;
+    document.getElementById('loginSection').style.display = 'flex';
+    document.getElementById('portalSection').classList.add('portal-hidden');
+    document.getElementById('emailInput').value = 'teacher@kanyadet.ac.ke';
+    document.getElementById('passwordInput').value = 'password123';
+}
+
+function showSection(sectionId, clickedElement) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+    
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    if (clickedElement) {
+        clickedElement.classList.add('active');
+    }
+    
+    // Close sidebar on mobile after clicking menu item
+    if (window.innerWidth <= 768) {
+        closeSidebar();
+    }
+}
+
+// Toggle sidebar open/close
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const hamburger = document.querySelector('.hamburger-menu');
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+    hamburger.classList.toggle('active');
+    
+    // Show/hide overlay
+    if (overlay.classList.contains('active')) {
+        overlay.style.display = 'block';
+    } else {
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 300);
+    }
+}
+
+// Close sidebar
+function closeSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const hamburger = document.querySelector('.hamburger-menu');
+    
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    hamburger.classList.remove('active');
+    
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 300);
+}
+
+function viewGradesSection() {
+    const gradesMenuItem = document.querySelector('.sidebar-menu li:nth-child(3) .menu-item');
+    showSection('grades', gradesMenuItem);
+}
+
+async function initializePortal(teacher, teacherId) {
+    const date = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', options);
+    
+    const teacherName = teacher['Name'] || teacher['name'] || 'Teacher';
+    document.getElementById('teacherName').textContent = `Welcome, ${teacherName}!`;
+    document.getElementById('teacherNameSmall').textContent = teacherName;
+    document.getElementById('teacherSubject').textContent = teacher['Subject'] || teacher['subject'] || 'Multi-subject';
+    
+    const nameParts = teacherName.split(' ');
+    const initials = nameParts.map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    document.getElementById('teacherInitials').textContent = initials;
+    
+    document.getElementById('profileName').textContent = teacherName;
+    document.getElementById('profileEmail').textContent = teacher['Email'] || teacher['email'] || '';
+    document.getElementById('profileSubject').textContent = teacher['Subject'] || 'Not specified';
+    document.getElementById('profileGrades').textContent = teacher['Grades'] || teacher['grades'] || 'N/A';
+    document.getElementById('profilePhone').textContent = teacher['Phone'] || teacher['phone'] || '';
+    document.getElementById('profileStatus').textContent = teacher['Status'] || 'Full-time';
+    
+    await loadAllStudents(teacherId);
+    await loadAllGrades(teacherId);
+    await loadAllAssignments(teacherId);
+    
+  // Set attendance date safely
+const attendanceDateInput = document.getElementById('attendanceDate');
+if (attendanceDateInput) {
+    attendanceDateInput.valueAsDate = new Date();
+}
+    loadAttendanceStudents();
+}
+
+async function loadAllStudents(teacherId) {
+    const { database, ref, get } = window.firebaseServices;
+    
+    try {
+        const studentsRef = ref(database, 'artifacts/default-app-id/students');
+        const snapshot = await get(studentsRef);
+        
+        if (snapshot.exists()) {
+            allStudents = [];
+            const students = snapshot.val();
+            Object.keys(students).forEach(key => {
+                allStudents.push({ id: key, ...students[key] });
+            });
+            
+            displayStudents();
+            updateDashboard();
+            populateStudentSelects();
+            console.log('✅ Students loaded:', allStudents.length);
+        }
+    } catch (error) {
+        console.error('Error loading students:', error);
+    }
+}
+
+function displayStudents() {
+    const list = document.getElementById('studentsList');
+    list.innerHTML = '';
+    
+    // Use filtered students if search is active, otherwise use all students
+    const studentsToDisplay = filteredStudents.length > 0 ? filteredStudents : allStudents;
+    
+    if (studentsToDisplay.length === 0) {
+        list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--gray-500);">No students found</div>';
+        document.getElementById('paginationControls').style.display = 'none';
+        return;
+    }
+    
+    // Get items per page
+    const itemsPerPage = parseInt(document.getElementById('itemsPerPage').value) || 20;
+    const totalPages = Math.ceil(studentsToDisplay.length / itemsPerPage);
+    
+    // Validate current page
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+    
+    // Calculate start and end indices
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedStudents = studentsToDisplay.slice(startIndex, endIndex);
+    
+    // Display students for current page
+    paginatedStudents.forEach(student => {
+        const studentName = student['Official Student Name'] || student['Student Name'] || 'Unknown';
+        const assessmentNo = student['Assessment No'] || student.id;
+        
+        const item = document.createElement('div');
+        item.className = 'student-item';
+        item.innerHTML = `
+            <div class="student-info">
+                <h4>${studentName}</h4>
+                <p>Assessment No: ${assessmentNo} | Grade: ${student['Grade'] || 'N/A'}</p>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="viewStudentDetails('${student.id}')">View</button>
+<button class="btn" style="background: #3498db; color: white;" onclick="openEditStudentModal('${student.id}')">Edit</button>
+<button class="btn" style="background: #e74c3c; color: white;" onclick="deleteStudent('${student.id}')">Delete</button>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+    
+    // Update pagination controls
+    document.getElementById('paginationControls').style.display = 'flex';
+    document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} (${studentsToDisplay.length} students)`;
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = currentPage === totalPages;
+}
+
+function filterStudents() {
+    const search = document.getElementById('studentSearch').value.toLowerCase();
+    filteredStudents = allStudents.filter(s => 
+        (s['Official Student Name'] || s['Student Name'] || '').toLowerCase().includes(search) ||
+        (s['Assessment No'] || s.id).toString().includes(search)
+    );
+    
+    currentPage = 1; // Reset to first page
+    displayStudents();
+}
+
+function resetPagination() {
+    currentPage = 1;
+    filteredStudents = [];
+}
+
+function nextPage() {
+    const itemsPerPage = parseInt(document.getElementById('itemsPerPage').value) || 20;
+    const studentsToDisplay = filteredStudents.length > 0 ? filteredStudents : allStudents;
+    const totalPages = Math.ceil(studentsToDisplay.length / itemsPerPage);
+    
+    if (currentPage < totalPages) {
+        currentPage++;
+        displayStudents();
+    }
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        displayStudents();
+    }
+}
+
+function viewStudentDetails(studentId) {
+    const student = allStudents.find(s => s.id === studentId);
+    if (student) {
+        alert(`Student: ${student['Official Student Name'] || 'Unknown'}\nAssessment No: ${student['Assessment No'] || studentId}\nGrade: ${student['Grade'] || 'N/A'}\nEmail: ${student['Email'] || 'N/A'}`);
+    }
+}
+
+function openEditStudentModal(studentId) {
+    const student = allStudents.find(s => s.id === studentId);
+    if (!student) {
+        alert('Student not found');
+        return;
+    }
+    
+    currentEditingStudentId = studentId;
+    
+    // Populate form fields
+    document.getElementById('editStudentName').value = student['Official Student Name'] || '';
+    document.getElementById('editStudentEmail').value = student['Email'] || '';
+    document.getElementById('editStudentPhone').value = student['Phone'] || '';
+    document.getElementById('editStudentGrade').value = student['Grade'] || '';
+    document.getElementById('editStudentAssessment').value = student['Assessment No'] || '';
+    document.getElementById('editStudentParent').value = student['Parent Name'] || '';
+    document.getElementById('editStudentParentPhone').value = student['Parent Phone'] || '';
+    
+    document.getElementById('studentEditModal').classList.add('active');
+}
+
+
+
+async function saveStudentChanges() {
+    if (!currentEditingStudentId) {
+        alert('No student selected');
+        return;
+    }
+    
+    const { database, ref, update } = window.firebaseServices;
+    
+    const updatedData = {
+        'Official Student Name': document.getElementById('editStudentName').value,
+        'Email': document.getElementById('editStudentEmail').value,
+        'Phone': document.getElementById('editStudentPhone').value,
+        'Grade': document.getElementById('editStudentGrade').value,
+        'Assessment No': document.getElementById('editStudentAssessment').value,
+        'Parent Name': document.getElementById('editStudentParent').value,
+        'Parent Phone': document.getElementById('editStudentParentPhone').value
+    };
+    
+    try {
+        const studentRef = ref(database, `artifacts/default-app-id/students/${currentEditingStudentId}`);
+        await update(studentRef, updatedData);
+        
+        console.log('✅ Student updated:', currentEditingStudentId);
+        
+        closeModal('studentEditModal');
+        currentEditingStudentId = null;
+        
+        // Reload students
+        await loadAllStudents(currentTeacher.id);
+        alert('✅ Student information updated successfully!');
+    } catch (error) {
+        console.error('❌ Error updating student:', error);
+        alert('Error updating student:\n' + error.message);
+    }
+}
+
+
+function editAssignment(assignmentId, studentId) {
+    const assignment = allAssignments.find(a => a.id === assignmentId && a.studentId === studentId);
+    if (!assignment) {
+        alert('Assignment not found');
+        return;
+    }
+    
+    currentEditingAssignmentId = assignmentId;
+    currentEditingAssignmentStudentId = studentId;
+    
+    // Populate form fields
+    document.getElementById('editAssignmentTitle').value = assignment.title || '';
+    document.getElementById('editAssignmentDesc').value = assignment.description || '';
+    document.getElementById('editAssignmentSubject').value = assignment.subject || '';
+    document.getElementById('editAssignmentDueDate').value = assignment.dueDate || '';
+    document.getElementById('editAssignmentStatus').value = assignment.status || 'pending';
+    
+    document.getElementById('assignmentEditModal').classList.add('active');
+}
+
+
+
+
+async function saveAssignmentChanges() {
+    if (!currentEditingAssignmentId || !currentEditingAssignmentStudentId) {
+        alert('No assignment selected');
+        return;
+    }
+    
+    const { database, ref, update } = window.firebaseServices;
+    
+    const updatedData = {
+        title: document.getElementById('editAssignmentTitle').value,
+        description: document.getElementById('editAssignmentDesc').value,
+        subject: document.getElementById('editAssignmentSubject').value,
+        dueDate: document.getElementById('editAssignmentDueDate').value,
+        status: document.getElementById('editAssignmentStatus').value,
+        lastModified: new Date().toISOString()
+    };
+    
+    try {
+        const assignmentRef = ref(database, `artifacts/default-app-id/assignments/${currentEditingAssignmentStudentId}/${currentEditingAssignmentId}`);
+        await update(assignmentRef, updatedData);
+        
+        console.log('✅ Assignment updated:', currentEditingAssignmentId);
+        
+        closeModal('assignmentEditModal');
+        currentEditingAssignmentId = null;
+        currentEditingAssignmentStudentId = null;
+        
+        // Reload assignments
+        await loadAllAssignments(currentTeacher.id);
+        alert('✅ Assignment updated successfully!');
+    } catch (error) {
+        console.error('❌ Error updating assignment:', error);
+        alert('Error updating assignment:\n' + error.message);
+    }
+}
+
+
+async function deleteAssignment(assignmentId, studentId) {
+    const assignment = allAssignments.find(a => a.id === assignmentId && a.studentId === studentId);
+    if (!assignment) {
+        alert('Assignment not found');
+        return;
+    }
+    
+    const title = assignment.title || 'Assignment';
+    const confirmDelete = confirm(`⚠️ Are you sure you want to DELETE "${title}"?\n\nThis will delete it from all students' records!\n\nThis action cannot be undone!`);
+    
+    if (!confirmDelete) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        // Delete from all students
+        let deleteCount = 0;
+        let failureCount = 0;
+        
+        for (const student of allStudents) {
+            try {
+                const assignmentRef = ref(database, `artifacts/default-app-id/assignments/${student.id}/${assignmentId}`);
+                await remove(assignmentRef);
+                deleteCount++;
+            } catch (e) {
+                console.warn(`Could not delete for student ${student.id}`);
+                failureCount++;
+            }
+        }
+        
+        console.log(`✅ Assignment deleted from ${deleteCount} students`);
+        
+        // Reload assignments
+        await loadAllAssignments(currentTeacher.id);
+        alert(`✅ Assignment "${title}" deleted successfully!\nRemoved from ${deleteCount} students`);
+    } catch (error) {
+        console.error('❌ Error deleting assignment:', error);
+        alert('Error deleting assignment:\n' + error.message);
+    }
+}
+
+
+
+async function deleteStudent(studentId) {
+    const student = allStudents.find(s => s.id === studentId);
+    if (!student) {
+        alert('Student not found');
+        return;
+    }
+    
+    const studentName = student['Official Student Name'] || 'Unknown';
+    const confirmDelete = confirm(`⚠️ Are you sure you want to DELETE ${studentName}?\n\nThis action cannot be undone!`);
+    
+    if (!confirmDelete) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        const studentRef = ref(database, `artifacts/default-app-id/students/${studentId}`);
+        await remove(studentRef);
+        
+        console.log('✅ Student deleted:', studentId);
+        
+        // Also delete associated data (optional but recommended)
+        try {
+            const gradesRef = ref(database, `artifacts/default-app-id/grades/${studentId}`);
+            await remove(gradesRef);
+        } catch (e) {
+            console.warn('Could not delete grades for student');
+        }
+        
+        try {
+            const assignmentsRef = ref(database, `artifacts/default-app-id/assignments/${studentId}`);
+            await remove(assignmentsRef);
+        } catch (e) {
+            console.warn('Could not delete assignments for student');
+        }
+        
+        // Reload students
+        await loadAllStudents(currentTeacher.id);
+        alert('✅ Student deleted successfully!');
+    } catch (error) {
+        console.error('❌ Error deleting student:', error);
+        alert('Error deleting student:\n' + error.message);
+    }
+}
+
+
+// async function loadAllGrades(teacherId) {
+//     const { database, ref, get } = window.firebaseServices;
+    
+//     try {
+//         console.log('📊 Loading grades for', allStudents.length, 'students...');
+        
+//         allGrades = [];
+//         const gradesRef = ref(database, `artifacts/default-app-id/grades`);
+//         const snapshot = await get(gradesRef);
+        
+//         if (snapshot.exists()) {
+//             const allGradesData = snapshot.val();
+            
+//             // Load all grades at once instead of per student
+//             Object.keys(allGradesData).forEach(studentId => {
+//                 const studentGrades = allGradesData[studentId];
+//                 if (typeof studentGrades === 'object') {
+//                     const student = allStudents.find(s => s.id === studentId);
+//                     const studentName = student ? (student['Official Student Name'] || 'Unknown') : 'Unknown';
+                    
+//                     Object.keys(studentGrades).forEach(subject => {
+//                         allGrades.push({
+//                             studentId: studentId,
+//                             studentName: studentName,
+//                             subject: subject,
+//                             ...studentGrades[subject]
+//                         });
+//                     });
+//                 }
+//             });
+//         }
+        
+//         displayGrades();
+//         console.log('✅ Grades loaded:', allGrades.length, 'entries');
+//     } catch (error) {
+//         console.error('Error loading grades:', error);
+//     }
+// }
+
+
+
+async function loadAllGrades(teacherId) {
+    const { database, ref, get } = window.firebaseServices;
+    
+    try {
+        console.log('📊 Loading grades from database...');
+        
+        allGrades = [];
+        const sanitizedAppId = 'default-app-id';
+        
+        // Read from Results/{sanitizedAppId}/students path
+        const resultsRef = ref(database, `Results/${sanitizedAppId}/students`);
+        const snapshot = await get(resultsRef);
+        
+        if (snapshot.exists()) {
+            const allStudentsData = snapshot.val();
+            console.log('✅ Found data:', Object.keys(allStudentsData).length, 'student records');
+            
+            // Collect all unique fields from the database
+            const allFields = new Set();
+            const metadataFields = ['Official Student Name', 'Grade', 'Assessment No', 'UPI', 'Gender', 'Class', 'id', 'Position', 'Class Teacher Comment', 'Head Teacher\'s Comment', 'Level', 'Perc Avrg', 'Total Marks'];
+            
+            // First pass: collect all field names
+            Object.keys(allStudentsData).forEach(studentId => {
+                const studentData = allStudentsData[studentId];
+                Object.keys(studentData).forEach(key => {
+                    allFields.add(key);
+                });
+            });
+            
+            // Separate metadata fields from subject fields (subjects are numeric scores)
+            const subjectFields = Array.from(allFields).filter(field => 
+                !metadataFields.includes(field) && field !== 'Term'
+            );
+            
+            // Store the discovered headers
+            window.gradeTableHeaders = {
+                metadata: metadataFields,
+                subjects: subjectFields,
+                all: Array.from(allFields)
+            };
+            
+            console.log('📋 Discovered fields:', {
+                metadata: metadataFields.length,
+                subjects: subjectFields.length,
+                total: allFields.size
+            });
+            
+            // Convert to student-centric format (one row per student record)
+            Object.keys(allStudentsData).forEach(studentId => {
+                const studentData = allStudentsData[studentId];
+                
+                // Create a student record with all their data
+                const studentRecord = {
+                    studentId: studentId,
+                    assessmentNo: studentData['Assessment No'] || studentId,
+                    studentName: studentData['Official Student Name'] || 'Unknown',
+                    grade: studentData['Grade'] || 'N/A',
+                    gender: studentData['Gender'] || 'N/A',
+                    class: studentData['Class'] || 'N/A',
+                    subjects: {}
+                };
+                
+                // Add all subject scores
+                subjectFields.forEach(subject => {
+                    const value = studentData[subject];
+                    const score = parseFloat(value);
+                    studentRecord.subjects[subject] = !isNaN(score) ? score : value || '-';
+                });
+                
+                allGrades.push(studentRecord);
+            });
+            
+            console.log('✅ Student records loaded:', allGrades.length);
+            
+        } else {
+            console.warn('⚠️ No data found at Results path');
+        }
+        
+        // Display the grades with dynamic headers
+        displayGrades();
+        
+    } catch (error) {
+        console.error('❌ Error loading grades:', error);
+    }
+}
+
+// Function to build table headers from database fields
+function buildTableHeaders() {
+    const headers = window.gradeTableHeaders;
+    
+    if (!headers) {
+        return ['#', 'Assessment No', 'Student Name', 'Grade', 'Class'];
+    }
+    
+    // Build headers: metadata first, then all subject columns
+    const tableHeaders = [
+        '#',
+        'Assessment No',
+        'Student Name',
+        'Grade',
+        'Gender',
+        'Class',
+        ...headers.subjects
+    ];
+    
+    return tableHeaders;
+}
+
+
+
+
+function displayGrades() {
+    const tbody = document.getElementById('gradesTable');
+    const thead = document.querySelector('#gradesTableContainer thead');
+    
+    // Clear existing content
+    tbody.innerHTML = '';
+    if (thead) thead.innerHTML = '';
+    
+    if (allGrades.length === 0) {
+        const headers = buildTableHeaders();
+        tbody.innerHTML = `<tr><td colspan="${headers.length + 1}" style="text-align: center; padding: 40px;">No grades entered yet</td></tr>`;
+        return;
+    }
+    
+    // Build dynamic table headers
+    const headers = buildTableHeaders();
+    const subjects = window.gradeTableHeaders?.subjects || [];
+    
+    // Create header row
+    if (thead) {
+        const headerRow = document.createElement('tr');
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
+        });
+        // Add actions column
+        const actionTh = document.createElement('th');
+        actionTh.textContent = 'Actions';
+        headerRow.appendChild(actionTh);
+        thead.appendChild(headerRow);
+    }
+    
+    // Display each student record as a row
+    allGrades.forEach((studentRecord, index) => {
+        const row = document.createElement('tr');
+        
+        // Row number
+        const numCell = document.createElement('td');
+        numCell.textContent = index + 1;
+        row.appendChild(numCell);
+        
+        // Assessment No
+        const assessmentCell = document.createElement('td');
+        assessmentCell.textContent = studentRecord.assessmentNo;
+        row.appendChild(assessmentCell);
+        
+        // Student Name
+        const nameCell = document.createElement('td');
+        nameCell.textContent = studentRecord.studentName;
+        row.appendChild(nameCell);
+        
+        // Grade
+        const gradeCell = document.createElement('td');
+        gradeCell.textContent = studentRecord.grade;
+        row.appendChild(gradeCell);
+        
+        // Gender
+        const genderCell = document.createElement('td');
+        genderCell.textContent = studentRecord.gender;
+        row.appendChild(genderCell);
+        
+        // Class
+        const classCell = document.createElement('td');
+        classCell.textContent = studentRecord.class;
+        row.appendChild(classCell);
+        
+        // Add all subject scores
+        subjects.forEach(subject => {
+            const subjectCell = document.createElement('td');
+            const score = studentRecord.subjects[subject];
+            subjectCell.textContent = score !== undefined ? score : '-';
+            subjectCell.style.textAlign = 'center';
+            row.appendChild(subjectCell);
+        });
+        
+        // Actions column
+        const actionsCell = document.createElement('td');
+        actionsCell.innerHTML = `
+            <button class="btn btn-secondary" onclick="editStudent('${studentRecord.studentId}')">Edit</button>
+        `;
+        row.appendChild(actionsCell);
+        
+        tbody.appendChild(row);
+    });
+    
+    console.log('✅ Table displayed with', allGrades.length, 'student records');
+}
+function filterGrades() {
+    const search = document.getElementById('gradeSearch').value.toLowerCase();
+    const filtered = allGrades.filter(g => g.studentName.toLowerCase().includes(search));
+    
+    const tbody = document.getElementById('gradesTable');
+    tbody.innerHTML = '';
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No grades found</td></tr>';
+        return;
+    }
+    
+    filtered.forEach(grade => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${grade.studentName}</td>
+            <td>${grade.subject}</td>
+            <td>${grade.term1 || '-'}</td>
+            <td>${grade.term2 || '-'}</td>
+            <td>${grade.term3 || '-'}</td>
+            <td>${grade.average || '-'}</td>
+            <td>
+                <button class="btn btn-secondary" onclick="editGrade('${grade.studentId}', '${grade.subject}')">Edit</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function populateStudentSelects() {
+    const select = document.getElementById('gradeStudent');
+    select.innerHTML = '<option>Select student...</option>';
+    
+    allStudents.forEach(student => {
+        const option = document.createElement('option');
+        option.value = student.id;
+        option.textContent = student['Official Student Name'] || 'Unknown';
+        select.appendChild(option);
+    });
+}
+
+function openGradeModal() {
+    document.getElementById('gradeModal').classList.add('active');
+}
+
+function openCreateAssignment() {
+    console.log('📝 Opening assignment modal');
+    document.getElementById('assignmentModal').classList.add('active');
+    document.getElementById('assignmentTitle').focus();
+}
+
+function openSendMessage() {
+    document.getElementById('messageModal').classList.add('active');
+}
+
+function closeModal(modalId) {
+    console.log('Closing modal:', modalId);
+    document.getElementById(modalId).classList.remove('active');
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+});
+
+async function saveGrade() {
+    const studentId = document.getElementById('gradeStudent').value;
+    const subject = document.getElementById('gradeSubject').value;
+    const term1 = document.getElementById('gradeTerm1').value ? parseFloat(document.getElementById('gradeTerm1').value) : 0;
+    const term2 = document.getElementById('gradeTerm2').value ? parseFloat(document.getElementById('gradeTerm2').value) : 0;
+    const term3 = document.getElementById('gradeTerm3').value ? parseFloat(document.getElementById('gradeTerm3').value) : 0;
+    
+    if (!studentId || !subject) {
+        alert('Please select student and enter subject');
+        return;
+    }
+    
+    const average = ((term1 + term2 + term3) / 3).toFixed(1);
+    let letterGrade = 'F';
+    if (average >= 90) letterGrade = 'A';
+    else if (average >= 80) letterGrade = 'B+';
+    else if (average >= 70) letterGrade = 'B';
+    else if (average >= 60) letterGrade = 'C';
+    
+    const { database, ref, set } = window.firebaseServices;
+    
+    try {
+        const gradeRef = ref(database, `artifacts/default-app-id/grades/${studentId}/${subject}`);
+        const gradeData = {
+            term1: term1 || 0,
+            term2: term2 || 0,
+            term3: term3 || 0,
+            average: parseFloat(average),
+            grade: letterGrade
+        };
+        
+        console.log('💾 Saving grade to:', `artifacts/default-app-id/grades/${studentId}/${subject}`);
+        console.log('📊 Grade data:', gradeData);
+        
+        await set(gradeRef, gradeData);
+        
+        console.log('✅ Grade saved successfully!');
+        
+        closeModal('gradeModal');
+        
+        // Clear form
+        document.getElementById('gradeStudent').value = '';
+        document.getElementById('gradeSubject').value = '';
+        document.getElementById('gradeTerm1').value = '';
+        document.getElementById('gradeTerm2').value = '';
+        document.getElementById('gradeTerm3').value = '';
+        
+        await loadAllGrades(currentTeacher.id);
+        alert('✅ Grade saved successfully!');
+    } catch (error) {
+        console.error('❌ Error saving grade:', error);
+        alert('Error saving grade:\n' + error.message + '\n\nMake sure you have write permissions in Firebase');
+    }
+}
+
+async function editGrade(studentId, subject) {
+    const grade = allGrades.find(g => g.studentId === studentId && g.subject === subject);
+    
+    if (grade) {
+        document.getElementById('gradeStudent').value = studentId;
+        document.getElementById('gradeSubject').value = subject;
+        document.getElementById('gradeTerm1').value = grade.term1 || '';
+        document.getElementById('gradeTerm2').value = grade.term2 || '';
+        document.getElementById('gradeTerm3').value = grade.term3 || '';
+        
+        document.getElementById('gradeModal').classList.add('active');
+    }
+}
+
+async function loadAllAssignments(teacherId) {
+    const { database, ref, get } = window.firebaseServices;
+    
+    try {
+        const assignRef = ref(database, 'artifacts/default-app-id/assignments');
+        const snapshot = await get(assignRef);
+        
+        allAssignments = [];
+        if (snapshot.exists()) {
+            const allData = snapshot.val();
+            Object.keys(allData).forEach(studentId => {
+                const studentAssignments = allData[studentId];
+                if (typeof studentAssignments === 'object') {
+                    Object.keys(studentAssignments).forEach(assignId => {
+                        allAssignments.push({
+                            id: assignId,
+                            studentId: studentId,
+                            ...studentAssignments[assignId]
+                        });
+                    });
+                }
+            });
+        }
+        
+        displayAssignments();
+        console.log('✅ Assignments loaded');
+    } catch (error) {
+        console.error('Error loading assignments:', error);
+    }
+}
+
+function displayAssignments() {
+    const list = document.getElementById('assignmentsList');
+    list.innerHTML = '';
+    
+    if (allAssignments.length === 0) {
+        list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--gray-500);">No assignments created yet</div>';
+        return;
+    }
+    
+    allAssignments.forEach(assignment => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        
+        const statusBadge = assignment.status === 'graded' 
+            ? `<span class="badge badge-graded">Graded: ${assignment.score}</span>`
+            : `<span class="badge badge-${assignment.status || 'pending'}">${(assignment.status || 'pending').charAt(0).toUpperCase() + (assignment.status || 'pending').slice(1)}</span>`;
+        
+      card.innerHTML = `
+    <div class="card-header">
+        <div>
+            <h3>${assignment.title || 'Untitled'}</h3>
+            <p style="font-size: 12px; color: var(--gray-500);">${assignment.subject || 'No subject'}</p>
+        </div>
+        <div class="card-icon">📝</div>
+    </div>
+    <p>${assignment.description || 'No description'}</p>
+    <p style="font-size: 12px; color: var(--gray-500); margin-top: 8px;">Due: ${assignment.dueDate || 'N/A'}</p>
+    <div style="margin-top: 12px;">${statusBadge}</div>
+    <div style="margin-top: 16px; display: flex; gap: 8px;">
+        <button class="btn btn-secondary" onclick="editAssignment('${assignment.id}', '${assignment.studentId}')" style="flex: 1;">Edit</button>
+        <button class="btn" style="background: #e74c3c; color: white; flex: 1;" onclick="deleteAssignment('${assignment.id}', '${assignment.studentId}')">Delete</button>
+    </div>
+`;
+        
+        
+        list.appendChild(card);
+    });
+}
+
+async function saveAssignment() {
+    const title = document.getElementById('assignmentTitle').value;
+    const description = document.getElementById('assignmentDesc').value;
+    const subject = document.getElementById('assignmentSubject').value;
+    const dueDate = document.getElementById('assignmentDueDate').value;
+    
+    if (!title || !subject) {
+        alert('Please enter title and subject');
+        return;
+    }
+    
+    const { database, ref, set } = window.firebaseServices;
+    
+    try {
+        const assignmentId = 'assign_' + Date.now();
+        
+        console.log('📝 Creating assignment for', allStudents.length, 'students');
+        console.log('📍 Path: artifacts/default-app-id/assignments/{studentId}/' + assignmentId);
+        
+        let successCount = 0;
+        let failureCount = 0;
+        
+        for (const student of allStudents) {
+            try {
+                const assignRef = ref(database, `artifacts/default-app-id/assignments/${student.id}/${assignmentId}`);
+                await set(assignRef, {
+                    title, 
+                    description, 
+                    subject, 
+                    dueDate,
+                    status: 'pending',
+                    createdBy: currentTeacher.id,
+                    createdDate: new Date().toISOString()
+                });
+                successCount++;
+            } catch (studentError) {
+                console.error('Failed for student', student.id, ':', studentError);
+                failureCount++;
+            }
+        }
+        
+        closeModal('assignmentModal');
+        await loadAllAssignments(currentTeacher.id);
+        
+        document.getElementById('assignmentTitle').value = '';
+        document.getElementById('assignmentDesc').value = '';
+        document.getElementById('assignmentSubject').value = '';
+        document.getElementById('assignmentDueDate').value = '';
+        
+        console.log(`✅ Assignment created: ${successCount} successful, ${failureCount} failed`);
+        alert(`✅ Assignment created!\nDistributed to ${successCount} students` + (failureCount > 0 ? `\n⚠️ Failed for ${failureCount} students` : ''));
+    } catch (error) {
+        console.error('❌ Error creating assignment:', error);
+        alert('Error creating assignment:\n' + error.message + '\n\nMake sure you have write permissions in Firebase');
+    }
+}
+
+
+async function deleteAllAssignments() {
+    if (allAssignments.length === 0) {
+        alert('❌ No assignments to delete!');
+        return;
+    }
+    
+    // First confirmation
+    const confirmFirst = confirm(`⚠️ You are about to DELETE ALL ${allAssignments.length} ASSIGNMENTS!\n\nAre you sure?`);
+    if (!confirmFirst) return;
+    
+    // Second confirmation (extra safety)
+    const confirmSecond = confirm(`🚨 FINAL WARNING!\n\nThis will DELETE ALL ASSIGNMENTS from ALL STUDENTS!\n\nType 'DELETE' in the next prompt to confirm.`);
+    if (!confirmSecond) return;
+    
+    const userInput = prompt('Type "DELETE" to confirm (all lowercase):');
+    if (userInput !== 'DELETE') {
+        alert('❌ Cancelled. Type was not correct.');
+        return;
+    }
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        console.log('🔴 Starting bulk delete of all assignments...');
+        let successCount = 0;
+        let failureCount = 0;
+        
+        // Delete from all students
+        for (const student of allStudents) {
+            for (const assignment of allAssignments) {
+                if (assignment.studentId === student.id) {
+                    try {
+                        const assignmentRef = ref(database, `artifacts/default-app-id/assignments/${student.id}/${assignment.id}`);
+                        await remove(assignmentRef);
+                        successCount++;
+                        console.log(`✅ Deleted: ${assignment.title} from ${student['Official Student Name']}`);
+                    } catch (e) {
+                        failureCount++;
+                        console.error(`❌ Failed to delete for student ${student.id}:`, e);
+                    }
+                }
+            }
+        }
+        
+        // Reload assignments
+        await loadAllAssignments(currentTeacher.id);
+        
+        console.log(`✅ Bulk delete complete: ${successCount} deleted, ${failureCount} failed`);
+        alert(`✅ SUCCESS!\n\n${successCount} assignments deleted\n${failureCount} failed\n\nAll assignments have been removed.`);
+        
+    } catch (error) {
+        console.error('❌ Error in bulk delete:', error);
+        alert('Error deleting assignments:\n' + error.message);
+    }
+}
+
+
+
+async function deleteAllAssignmentsAtOnce() {
+    if (allAssignments.length === 0) {
+        alert('❌ No assignments to delete!');
+        return;
+    }
+    
+    // Confirmations
+    const confirmFirst = confirm(`⚠️ DELETE ALL ${allAssignments.length} ASSIGNMENTS?\n\nAre you sure?`);
+    if (!confirmFirst) return;
+    
+    const confirmSecond = confirm(`🚨 FINAL WARNING!\n\nThis removes the entire assignments folder!\n\nType 'DELETE ALL' to confirm.`);
+    if (!confirmSecond) return;
+    
+    const userInput = prompt('Type "DELETE ALL" to confirm (exactly):');
+    if (userInput !== 'DELETE ALL') {
+        alert('❌ Cancelled.');
+        return;
+    }
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        console.log('🔴 Deleting entire assignments folder...');
+        const assignmentsRef = ref(database, 'artifacts/default-app-id/assignments');
+        await remove(assignmentsRef);
+        
+        console.log('✅ All assignments deleted!');
+        
+        // Reload
+        await loadAllAssignments(currentTeacher.id);
+        alert('✅ All assignments deleted successfully!');
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error:\n' + error.message);
+    }
+}
+
+function loadAttendanceStudents() {
+    const list = document.getElementById('attendanceList');
+    
+    // CHECK IF ELEMENT EXISTS FIRST
+    if (!list) {
+        console.error('❌ attendanceList element not found!');
+        return;
+    }
+    
+    list.innerHTML = '';
+    
+    if (allStudents.length === 0) {
+        list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--gray-500);">No students found</div>';
+        return;
+    }
+    
+    allStudents.forEach(student => {
+        const studentName = student['Official Student Name'] || 'Unknown';
+        const item = document.createElement('div');
+        item.className = 'student-item';
+        item.innerHTML = `
+            <div class="student-info">
+                <h4>${studentName}</h4>
+                <p>Assessment No: ${student['Assessment No'] || student.id}</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn" style="background: #d1fae5; color: #065f46;" onclick="markAttendance('${student.id}', 'present')">Present</button>
+                <button class="btn" style="background: #fee; color: var(--danger);" onclick="markAttendance('${student.id}', 'absent')">Absent</button>
+                <button class="btn" style="background: #fef3c7; color: #92400e;" onclick="markAttendance('${student.id}', 'late')">Late</button>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+}
+async function markAttendance(studentId, status) {
+    const { database, ref, set, get } = window.firebaseServices;
+    
+    // Get the selected date from the date input
+    const dateInput = document.getElementById('attendanceDate');
+    const date = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+    
+    if (!date) {
+        alert('Please select a date first');
+        return;
+    }
+    
+    try {
+        // Save attendance for the specific date
+        const attendanceRef = ref(database, `artifacts/default-app-id/attendance/${studentId}/${date}`);
+        await set(attendanceRef, {
+            status: status,
+            markedBy: currentTeacher.id,
+            markedAt: new Date().toISOString(),
+            date: date
+        });
+        
+        // Calculate and update overall attendance percentage
+        const allAttendanceRef = ref(database, `artifacts/default-app-id/attendance/${studentId}`);
+        const snapshot = await get(allAttendanceRef);
+        
+        if (snapshot.exists()) {
+            const attendanceData = snapshot.val();
+            let presentCount = 0;
+            let totalDays = 0;
+            
+            Object.keys(attendanceData).forEach(key => {
+                if (key !== 'overall' && attendanceData[key].status) {
+                    totalDays++;
+                    if (attendanceData[key].status === 'present') {
+                        presentCount++;
+                    } else if (attendanceData[key].status === 'late') {
+                        presentCount += 0.5; // Count late as half
+                    }
+                }
+            });
+            
+            const percentage = totalDays > 0 ? Math.round((presentCount / totalDays) * 100) : 100;
+            
+            // Update overall percentage
+            const overallRef = ref(database, `artifacts/default-app-id/attendance/${studentId}/overall`);
+            await set(overallRef, `${percentage}%`);
+        }
+        
+        const student = allStudents.find(s => s.id === studentId);
+        const studentName = student ? (student['Official Student Name'] || 'Student') : 'Student';
+        
+        console.log(`✅ Marked ${status} for ${studentName} on ${date}`);
+        alert(`✅ Marked ${status} for ${studentName} on ${date}`);
+        
+    } catch (error) {
+        console.error('Error marking attendance:', error);
+        alert('Error marking attendance:\n' + error.message);
+    }
+}
+async function sendMessage() {
+    const studentId = document.getElementById('messageStudentId').value;
+    const messageType = document.getElementById('messageType').value;
+    const messageContent = document.getElementById('messageContent').value;
+    
+    if (!studentId || !messageContent) {
+        alert('Please enter student ID and message');
+        return;
+    }
+    
+    const { database, ref, set } = window.firebaseServices;
+    
+    try {
+        const messageId = 'msg_' + Date.now();
+        const date = new Date().toLocaleDateString();
+        
+        const messageRef = ref(database, `artifacts/default-app-id/messages/${studentId}/${messageId}`);
+        await set(messageRef, {
+            from: currentTeacher['Name'] || 'Teacher',
+            message: messageContent,
+            type: messageType,
+            date: date,
+            subject: 'Message from ' + (currentTeacher['Subject'] || 'Teacher')
+        });
+        
+        closeModal('messageModal');
+        document.getElementById('messageStudentId').value = '';
+        document.getElementById('messageContent').value = '';
+        
+        alert('Message sent successfully!');
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Error sending message: ' + error.message);
+    }
+}
+
+function updateDashboard() {
+    document.getElementById('totalStudents').textContent = allStudents.length;
+    document.getElementById('classesToday').textContent = '3';
+    document.getElementById('pendingGrades').textContent = allStudents.length - allGrades.length;
+    document.getElementById('pendingAssignments').textContent = allAssignments.filter(a => a.status === 'pending').length;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const checkFirebase = setInterval(() => {
+        if (window.firebaseServices) {
+            clearInterval(checkFirebase);
+            console.log('✅ Teacher Portal Ready');
+        }
+    }, 100);
+});
+</script>
+
+</body>
+</html>

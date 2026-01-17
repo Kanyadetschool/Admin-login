@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kjsea-Teachers</title>
+ <link rel="stylesheet" href="./css/kjseaResultsTeachers.css">
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div id="loader">
+        <div class="spinner"></div>
+    <p style="background-color: #ffffffb8; border-radius: 3px; padding: auto; z-index: 9999999;">👨‍⚕️ We are establishing ERT awaiting Internet connection</p>
+</div>
+
+    <div class="container">
+        <div class="header">
+            <img src="../img/logo.png" alt="Logo" class="logo">
+                <h1>Kenya Junior School Education Assessment Results <br>Teachers Portal</h1>
+
+            <div class="report-header">
+                <div style="width: 60px;"></div>
+            </div>
+            <p>Parse, Store & Analyze Student Assessment Records</p>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalRecords">0</div>
+                    <div class="stat-label">Total Records</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalStudents">0</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="avgScore">0</div>
+                    <div class="stat-label">Avg Score</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-section" >
+            <h2>📄 Upload Assessment Data</h2>
+            <textarea id="rawData" placeholder="Paste the raw assessment data here...
+
+Example format:
+Assessment Number: A001150876
+Full Name: JOHN DOE
+Gender: M
+Centre Code: 12345
+Centre Name: Test Centre
+..."></textarea>
+            
+            <div class="button-group">
+                <button class="btn-primary" onclick="parseAndSave()">💾 Parse & Save</button>
+                <button class="btn-secondary" onclick="clearAll()">🗑️ Clear</button>
+            </div>
+
+            <div id="status" class="status"></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>🔍 Search</label>
+                <input type="text" id="searchInput" placeholder="Search by name, ID, centre..." oninput="performSearch()">
+            </div>
+            <div class="control-group">
+                <label>Gender</label>
+                <select id="filterGender" onchange="applyFilters()">
+                    <option value="">All</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Centre</label>
+                <select id="filterCentre" onchange="applyFilters()"></select>
+            </div>
+            <div class="control-group">
+                <label>Sort By</label>
+                <select id="sortBy" onchange="sortRecords()">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="score-high">Highest Score</option>
+                    <option value="score-low">Lowest Score</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <div class="report-summary" id="reportSummary">Showing all records</div>
+                    <!-- Print Reports Tab -->
+        <div id="printTab" class="tab-content">
+            <div class="print-options">
+                <!-- <h3>🖨️ PDF Report Options</h3>
+                <p style="color: #7f8c8d; margin-bottom: 20px;">Generate comprehensive PDF reports for assessment records:</p>
+                 -->
+                <div class="print-buttons">
+                    <button onclick="printAllRecords()" class="btn-primary">
+                        📄 Print All Records
+                    </button>
+                    <button onclick="printByYear()" class="btn-primary">
+                        📅 Print by Year
+                    </button>
+                </div>
+                
+<!--                 
+                <div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-radius: 8px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 10px;">💡 Quick Tips:</h4>
+                    <ul style="color: #34495e; line-height: 1.8; padding-left: 20px;">
+                        <li><strong>Individual Reports:</strong> Use the print button on each record card in the "View Records" tab</li>
+                        <li><strong>Year Reports:</strong> Click "Print by Year" to generate reports for a specific examination year</li>
+                        <li><strong>Complete Reports:</strong> Click "Print All Records" to generate a comprehensive PDF of all students</li>
+                        <li>All PDFs include school branding, detailed performance data, and pathway recommendations</li>
+                    </ul>
+                </div> -->
+            </div>
+            
+        </div>
+            <button class="export-btn" onclick="exportToCSV()">📥 Export to CSV</button>
+
+    </div>
+
+    <!-- <div id="loader" class="loader">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p>Processing... Please wait</p>
+        </div>
+    </div> -->
+        </div>
+
+        <div class="table-container">
+            <div id="recordsContent"><div class="loading">⏳ Connecting to database...</div></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+      const firebaseConfig = {
+    apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+    authDomain: "kanyadet-school-admin.firebaseapp.com",
+    databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com",
+    projectId: "kanyadet-school-admin",
+    storageBucket: "kanyadet-school-admin.firebasestorage.app",
+    messagingSenderId: "409708360032",
+    appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+    measurementId: "G-Y4C0ZRRL52"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+
+let allRecords = [];
+let filteredRecords = [];
+function showLoader(show = true) {
+    const loader = document.getElementById('loader');
+    if (show) {
+        loader.style.display = 'flex';  // flex to center content
+    } else {
+        loader.style.display = 'none';
+    }
+}
+
+function showStatus(message, type) {
+    const statusEl = document.getElementById('status');
+    statusEl.textContent = message;
+    statusEl.className = `status ${type}`;
+    statusEl.style.display = 'block';
+    setTimeout(() => statusEl.style.display = 'none', 5000);
+}
+
+function parseRawData(rawText) {
+    const lines = rawText.split('\n').map(line => line.trim()).filter(line => line);
+    const data = {
+        assessmentNumber: '',
+        fullName: '',
+        gender: '',
+        centreCode: '',
+        centreName: '',
+        subjects: [],
+        pathways: {}
+    };
+
+    let isSubjectSection = false;
+    let isPathwaySection = false;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        if (line.startsWith('Assessment Number:')) data.assessmentNumber = line.split(':')[1].trim();
+        else if (line.startsWith('Full Name:')) data.fullName = line.split(':')[1].trim();
+        else if (line.startsWith('Gender:')) data.gender = line.split(':')[1].trim();
+        else if (line.startsWith('Centre Code:')) data.centreCode = line.split(':')[1].trim();
+        else if (line.startsWith('Centre Name:')) data.centreName = line.split(':')[1].trim();
+        else if (line.includes('Learning Area Code') && line.includes('Learning Area Name')) { isSubjectSection = true; continue; }
+        else if (line === 'Pathways') { isSubjectSection = false; isPathwaySection = true; continue; }
+        else if (line.includes('© 2025 KNEC')) break;
+
+        if (isSubjectSection && !isPathwaySection) {
+            let parts = line.split('\t').filter(p => p.trim());
+            if (parts.length < 4) parts = line.split(/\s{2,}/).filter(p => p.trim());
+            if (parts.length < 4 && /\d/.test(line)) parts = line.split(/\s+/).filter(p => p.trim());
+
+            if (parts.length >= 4) {
+                let pointsIndex = -1;
+                for (let j = 0; j < parts.length; j++) {
+                    const val = parseInt(parts[j]);
+                    if (!isNaN(val) && val >= 0 && val <= 12) { pointsIndex = j; break; }
+                }
+                if (pointsIndex > 0) {
+                    const code = parts[0];
+                    const name = parts.slice(1, pointsIndex - 1).join(' ');
+                    const performanceLevel = parts[pointsIndex - 1] || '';
+                    const points = parseInt(parts[pointsIndex]);
+                    const description = parts.slice(pointsIndex + 1).join(' ');
+                    data.subjects.push({ code, name, performanceLevel, points, description });
+                }
+            }
+        }
+
+        if (isPathwaySection && line.includes('Pathway')) {
+            const pathwayName = line;
+            const scoreLine = lines[i + 1];
+            if (scoreLine && !isNaN(parseFloat(scoreLine))) {
+                data.pathways[pathwayName] = parseFloat(scoreLine);
+                i++;
+            }
+        }
+    }
+
+    data.timestamp = new Date().toISOString();
+    data.totalPoints = data.subjects.reduce((sum, s) => sum + (s.points || 0), 0);
+    data.avgPoints = data.subjects.length > 0 ? (data.totalPoints / data.subjects.length).toFixed(2) : 0;
+
+    return data;
+}
+
+async function parseAndSave() {
+    const rawData = document.getElementById('rawData').value.trim();
+    if (!rawData) {
+        showStatus('❌ Please paste assessment data first!', 'error');
+        return;
+    }
+
+    try {
+        showLoader(true);
+        showStatus('🔄 Parsing data...', 'info');
+        const parsedData = parseRawData(rawData);
+
+        if (!parsedData.assessmentNumber) {
+            showStatus('❌ Invalid data format.', 'error');
+            showLoader(false);
+            return;
+        }
+
+        showStatus('💾 Saving to database...', 'info');
+        await db.ref('adminPortal/assessments/' + parsedData.assessmentNumber).set(parsedData);
+
+        showStatus('✅ Record saved successfully!', 'success');
+        document.getElementById('rawData').value = '';
+        showLoader(false);
+    } catch (error) {
+        console.error(error);
+        showStatus('❌ Error: ' + error.message, 'error');
+        showLoader(false);
+    }
+}
+
+function createRecordCard(data) {
+    let savedOn = 'N/A';
+    if (data.timestamp) {
+        const date = new Date(data.timestamp);
+        savedOn = date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) + 
+                  ' ' + 
+                  date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+
+    const card = document.createElement('div');
+    card.className = 'record-card';
+    card.innerHTML = `
+        <div class="record-header">
+            <div class="record-title">${data.fullName || 'N/A'}</div>
+            <div class="record-badge">${data.gender || 'N/A'}</div>
+
+             <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; justify-content: flex-end;">
+            <button onclick="printIndividualRecord('${data.assessmentNumber}')" style="padding: 10px 20px; background: red; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+                🖨️ Print Individual Report
+            </button>
+        </div>
+        </div>
+        <div class="info-grid">
+            <div class="info-item"><div class="info-label">Assessment Number</div><div class="info-value">${data.assessmentNumber || 'N/A'}</div></div>
+            <div class="info-item"><div class="info-label">Centre Code</div><div class="info-value">${data.centreCode || 'N/A'}</div></div>
+            <div class="info-item"><div class="info-label">Centre Name</div><div class="info-value">${data.centreName || 'N/A'}</div></div>
+            <div class="info-item"><div class="info-label">Examination Year</div><div class="info-value">${data.examYear || 'N/A'}</div></div>
+            <div class="info-item"><div class="info-label">Uploaded On</div><div class="info-value">${savedOn}</div></div>
+            <div class="info-item"><div class="info-label">Total Points</div><div class="info-value">${data.totalPoints || 0}</div></div>
+            <div class="info-item"><div class="info-label">Average Points</div><div class="info-value">${data.avgPoints || 0}</div></div>
+        </div>
+        <h3 style="margin: 25px 0 15px; color: #2c3e50; font-size: 18px;">📚 Learning Areas</h3>
+        <table class="subjects-table">
+            <thead><tr><th>Code</th><th>Learning Areas</th><th>Performance</th><th>Points</th><th>Description</th></tr></thead>
+            <tbody>
+                ${data.subjects?.map(s => `<tr><td>${s.code}</td><td><strong>${s.name}</strong></td><td>${s.performanceLevel}</td><td><strong>${s.points}</strong></td><td>${s.description}</td></tr>`).join('') ||
+                '<tr><td colspan="5" style="text-align:center; color:#95a5a6;">No Learning Areas available</td></tr>'}
+            </tbody>
+        </table>
+        <h3 style="margin: 25px 0 15px; color: #2c3e50; font-size: 18px;">🎯 Pathways</h3>
+        <div class="pathways-grid">
+            ${Object.entries(data.pathways || {}).sort((a,b) => b[1]-a[1]).map(([p,s]) =>
+                `<div class="pathway-card"><div class="pathway-name">${p}</div><div class="pathway-score">${s}</div></div>`
+            ).join('') || '<div style="grid-column:1/-1; text-align:center; color:#95a5a6;">No pathway data</div>'}
+        </div>
+       
+    `;
+    return card;
+}
+
+function displayRecords(records) {
+    const container = document.getElementById('recordsContent');
+    container.innerHTML = '';
+    if (records.length === 0) {
+        container.innerHTML = '<div class="no-data">🔍 No records match your search criteria.</div>';
+        return;
+    }
+    records.forEach(record => container.appendChild(createRecordCard(record)));
+}
+
+function refreshDisplay() {
+    filteredRecords = [...allRecords];
+    populateCentreFilter();
+    performSearch();
+    updateStats();
+    updateSummary();
+}
+function startRealTimeListeners() {
+    // Show full-screen loader immediately
+    showLoader(true);
+
+    const container = document.getElementById('recordsContent');
+    container.innerHTML = '';  // Clear any old content
+
+    allRecords = [];
+    const assessmentsRef = db.ref('adminPortal/assessments');
+
+    let initialLoadComplete = false;
+
+    // When all initial data is loaded (first snapshot)
+    assessmentsRef.once('value').then((snapshot) => {
+        // This runs once when all current data is fetched
+        const data = snapshot.val();
+        if (data) {
+            allRecords = Object.values(data);
+        }
+        // Now refresh display and hide loader
+        refreshDisplay();
+        showLoader(false);  // Hide loader only after initial data is loaded
+    });
+
+    // Then continue listening for real-time updates
+    assessmentsRef.on('child_added', (snapshot) => {
+        const data = snapshot.val();
+        if (data && !allRecords.find(r => r.assessmentNumber === data.assessmentNumber)) {
+            allRecords.push(data);
+            if (initialLoadComplete) {
+                refreshDisplay();
+            }
+        }
+    });
+
+    assessmentsRef.on('child_changed', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            const index = allRecords.findIndex(r => r.assessmentNumber === data.assessmentNumber);
+            if (index !== -1) allRecords[index] = data;
+            else allRecords.push(data);
+            refreshDisplay();
+        }
+    });
+
+    assessmentsRef.on('child_removed', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            allRecords = allRecords.filter(r => r.assessmentNumber !== data.assessmentNumber);
+            refreshDisplay();
+        }
+    });
+
+    // Mark initial load as complete after first full snapshot
+    assessmentsRef.once('value').then(() => {
+        initialLoadComplete = true;
+    });
+}
+function populateCentreFilter() {
+    const centres = [...new Set(allRecords.map(r => r.centreName).filter(Boolean))].sort();
+    const select = document.getElementById('filterCentre');
+    select.innerHTML = '<option value="">All Centres</option>';
+    centres.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
+}
+
+function performSearch() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    filteredRecords = allRecords.filter(r =>
+        !query ||
+        (r.fullName?.toLowerCase().includes(query)) ||
+        (r.assessmentNumber?.toLowerCase().includes(query)) ||
+        (r.centreName?.toLowerCase().includes(query)) ||
+        (r.centreCode?.toLowerCase().includes(query))
+    );
+    applyFilters();
+}
+
+function applyFilters() {
+    const gender = document.getElementById('filterGender').value;
+    const centre = document.getElementById('filterCentre').value;
+
+    filteredRecords = filteredRecords.filter(r =>
+        (!gender || r.gender === gender) &&
+        (!centre || r.centreName === centre)
+    );
+    sortRecords();
+}
+
+function sortRecords() {
+    const sortBy = document.getElementById('sortBy').value;
+    filteredRecords.sort((a, b) => {
+        switch(sortBy) {
+            case 'newest': return new Date(b.timestamp) - new Date(a.timestamp);
+            case 'oldest': return new Date(a.timestamp) - new Date(b.timestamp);
+            case 'name-asc': return (a.fullName || '').localeCompare(b.fullName || '');
+            case 'name-desc': return (b.fullName || '').localeCompare(a.fullName || '');
+            case 'score-high': return (b.avgPoints || 0) - (a.avgPoints || 0);
+            case 'score-low': return (a.avgPoints || 0) - (b.avgPoints || 0);
+            default: return 0;
+        }
+    });
+    displayRecords(filteredRecords);
+}
+
+function updateStats() {
+    document.getElementById('totalRecords').textContent = allRecords.length;
+    document.getElementById('totalStudents').textContent = allRecords.length;
+    if (allRecords.length > 0) {
+        const avg = (allRecords.reduce((s, r) => s + parseFloat(r.avgPoints || 0), 0) / allRecords.length).toFixed(1);
+        document.getElementById('avgScore').textContent = avg;
+    } else {
+        document.getElementById('avgScore').textContent = '0';
+    }
+}
+
+function updateSummary() {
+    const el = document.getElementById('reportSummary');
+    el.textContent = filteredRecords.length === allRecords.length
+        ? `Showing all ${allRecords.length} records`
+        : `Showing ${filteredRecords.length} of ${allRecords.length} records`;
+}
+
+function exportToCSV() {
+    if (filteredRecords.length === 0) return alert('No records to export!');
+    let csv = 'Assessment Number,Full Name,Gender,Centre Code,Centre Name,Total Points,Average Points\n';
+    filteredRecords.forEach(r => {
+        csv += `${r.assessmentNumber || ''},${r.fullName || ''},${r.gender || ''},${r.centreCode || ''},${r.centreName || ''},${r.totalPoints || 0},${r.avgPoints || 0}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `assessment-records-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function clearAll() {
+    document.getElementById('rawData').value = '';
+    document.getElementById('status').style.display = 'none';
+}
+
+// ==================== MODERN PDF PRINTING SYSTEM ====================
+
+async function printIndividualRecord(assessmentNumber) {
+    const record = allRecords.find(r => r.assessmentNumber === assessmentNumber);
+    if (!record) {
+        alert('Record not found!');
+        return;
+    }
+
+    showLoader(true);
+    showStatus('🖨️ Generating PDF...', 'info');
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('portrait');
+
+        await addPDFHeader(doc);
+        let yPos = 45;
+
+        yPos = addStudentInfoSection(doc, record, yPos);
+        yPos = addSubjectsTable(doc, record, yPos);
+        yPos = addPathwaysSection(doc, record, yPos);
+        yPos = addSummaryStats(doc, record, yPos);
+
+        addPDFFooter(doc, 1, 1);
+
+        doc.save(`Assessment_Report_${record.fullName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`);
+        
+        showStatus('✅ PDF generated successfully!', 'success');
+    } catch (error) {
+        console.error(error);
+        showStatus('❌ Error generating PDF: ' + error.message, 'error');
+    } finally {
+        showLoader(false);
+    }
+}
+async function printByYear() {
+    const yearInput = prompt('Enter the examination year (e.g., 2024, 2025):');
+    if (!yearInput) return;
+
+    const year = yearInput.trim();
+    const recordsByYear = filteredRecords.filter(r => r.examYear === year);
+
+    if (recordsByYear.length === 0) {
+        alert(`No records found for year ${year} with current filters`);
+        return;
+    }
+
+    showLoader(true);
+    showStatus(`🖨️ Generating PDF for ${recordsByYear.length} records...`, 'info');
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('portrait');
+
+        // ========== PAGE 1: SUMMARY PAGE ==========
+        await addPDFHeader(doc, `Assessment Reports - Year ${year}`);
+        
+        let yPos = 50;
+        
+        // Add filter info
+        yPos = addFilterInfoToPDF(doc, yPos);
+        
+        yPos += 5;
+        
+        // Year Summary Statistics
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(41, 128, 185);
+        doc.text(`Year ${year} - Summary Statistics`, 14, yPos);
+        
+        yPos += 12;
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        const totalStudents = recordsByYear.length;
+        const avgScore = (recordsByYear.reduce((s, r) => s + parseFloat(r.avgPoints || 0), 0) / totalStudents).toFixed(2);
+        const totalPoints = recordsByYear.reduce((s, r) => s + (r.totalPoints || 0), 0);
+        
+        // Stats box
+        doc.setFillColor(245, 247, 250);
+        doc.roundedRect(14, yPos, 182, 50, 3, 3, 'F');
+        
+        yPos += 12;
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text('Total Students:', 20, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(String(totalStudents), 80, yPos);
+        
+        yPos += 12;
+        doc.setFont(undefined, 'bold');
+        doc.text('Average Score:', 20, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(`${avgScore} points`, 80, yPos);
+        
+        yPos += 12;
+        doc.setFont(undefined, 'bold');
+        doc.text('Total Points:', 20, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(String(totalPoints), 80, yPos);
+        
+        yPos += 20;
+        
+        // Gender distribution - FIXED
+        const maleCount = recordsByYear.filter(r => {
+            const gender = (r.gender || '').toLowerCase();
+            return gender === 'male' || gender === 'm';
+        }).length;
+        
+        const femaleCount = recordsByYear.filter(r => {
+            const gender = (r.gender || '').toLowerCase();
+            return gender === 'female' || gender === 'f';
+        }).length;
+        
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(41, 128, 185);
+        doc.text('Distribution Summary', 14, yPos);
+        
+        yPos += 10;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        doc.text(`Male Students: ${maleCount}`, 20, yPos);
+        yPos += 6;
+        doc.text(`Female Students: ${femaleCount}`, 20, yPos);
+        yPos += 10;
+        
+        // Top 5 performers for this year
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(41, 128, 185);
+        doc.text(`Top 5 Performers - Year ${year}`, 14, yPos);
+        
+        yPos += 10;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        const topPerformers = [...recordsByYear]
+            .sort((a, b) => (b.avgPoints || 0) - (a.avgPoints || 0))
+            .slice(0, 5);
+        
+        topPerformers.forEach((record, index) => {
+            doc.setFont(undefined, 'bold');
+            doc.text(`${index + 1}.`, 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(`${record.fullName} - ${record.avgPoints} points (${record.centreName})`, 28, yPos);
+            yPos += 6;
+        });
+
+        // ========== PAGE 2 onwards: INDIVIDUAL RECORDS ==========
+        for (let i = 0; i < recordsByYear.length; i++) {
+            const record = recordsByYear[i];
+            
+            // Add new page for each record
+            doc.addPage();
+            await addPDFHeader(doc, `Assessment Reports - Year ${year}`);
+            yPos = 45;
+
+            yPos = addStudentInfoSection(doc, record, yPos);
+            yPos = addSubjectsTable(doc, record, yPos);
+            yPos = addPathwaysSection(doc, record, yPos);
+            yPos = addSummaryStats(doc, record, yPos);
+        }
+
+        // Add page numbers
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            addPDFFooter(doc, i, totalPages);
+        }
+
+        doc.save(`Assessment_Reports_Year_${year}_${new Date().toISOString().split('T')[0]}.pdf`);
+        
+        showStatus('✅ PDF generated successfully!', 'success');
+    } catch (error) {
+        console.error(error);
+        showStatus('❌ Error generating PDF: ' + error.message, 'error');
+    } finally {
+        showLoader(false);
+    }
+}
+
+function addFilterInfoToPDF(doc, yPos) {
+    const activeFilters = [];
+    
+    const gender = document.getElementById('filterGender').value;
+    const centre = document.getElementById('filterCentre').value;
+    const sortBy = document.getElementById('sortBy').value;
+    const searchQuery = document.getElementById('searchInput').value;
+    
+    if (gender) activeFilters.push(`Gender: ${gender}`);
+    if (centre) activeFilters.push(`Centre: ${centre}`);
+    if (searchQuery) activeFilters.push(`Search: "${searchQuery}"`);
+    
+    const sortLabels = {
+        'newest': 'Newest First',
+        'oldest': 'Oldest First',
+        'name-asc': 'Name (A-Z)',
+        'name-desc': 'Name (Z-A)',
+        'score-high': 'Highest Score First',
+        'score-low': 'Lowest Score First'
+    };
+    
+    if (sortBy) activeFilters.push(`Sort: ${sortLabels[sortBy] || sortBy}`);
+    
+    if (activeFilters.length > 0) {
+        doc.setFontSize(9);
+        doc.setTextColor(100, 100, 100);
+        doc.setFont(undefined, 'italic');
+        doc.text('Active Filters: ' + activeFilters.join(' | '), 14, yPos);
+        return yPos + 8;
+    }
+    
+    return yPos;
+}
+
+async function printAllRecords() {
+    if (filteredRecords.length === 0) {
+        alert('No records available to print!');
+        return;
+    }
+
+    const confirmed = confirm(`Generate PDF for ${filteredRecords.length} filtered/sorted records? This may take a while.`);
+    if (!confirmed) return;
+
+    showLoader(true);
+    showStatus(`🖨️ Generating PDF for ${filteredRecords.length} records...`, 'info');
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('portrait');
+
+        // ========== PAGE 1: SUMMARY PAGE ==========
+        await addPDFHeader(doc, 'Complete Assessment Reports');
+        
+        let yPos = 50;
+        
+        // Add filter info
+        yPos = addFilterInfoToPDF(doc, yPos);
+        
+        yPos += 5; // Add some spacing
+        
+        // Overall Statistics Section
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(41, 128, 185);
+        doc.text('Overall Statistics', 14, yPos);
+        
+        yPos += 12;
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        const avgScore = (filteredRecords.reduce((s, r) => s + parseFloat(r.avgPoints || 0), 0) / filteredRecords.length).toFixed(2);
+        const totalPoints = filteredRecords.reduce((s, r) => s + (r.totalPoints || 0), 0);
+        
+        // Create a nice stats box
+        doc.setFillColor(245, 247, 250);
+        doc.roundedRect(14, yPos, 182, 50, 3, 3, 'F');
+        
+        yPos += 12;
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text('Total Students:', 20, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(String(filteredRecords.length), 80, yPos);
+        
+        yPos += 12;
+        doc.setFont(undefined, 'bold');
+        doc.text('Average Score:', 20, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(`${avgScore} points`, 80, yPos);
+        
+        yPos += 12;
+        doc.setFont(undefined, 'bold');
+        doc.text('Total Points:', 20, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(String(totalPoints), 80, yPos);
+        
+        yPos += 20;
+        
+        // Additional summary statistics
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(41, 128, 185);
+        doc.text('Distribution Summary', 14, yPos);
+        
+        yPos += 10;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        // Calculate gender distribution - FIXED
+        const maleCount = filteredRecords.filter(r => {
+            const gender = (r.gender || '').toLowerCase();
+            return gender === 'male' || gender === 'm';
+        }).length;
+        
+        const femaleCount = filteredRecords.filter(r => {
+            const gender = (r.gender || '').toLowerCase();
+            return gender === 'female' || gender === 'f';
+        }).length;
+        
+        doc.text(`Male Students: ${maleCount}`, 20, yPos);
+        yPos += 6;
+        doc.text(`Female Students: ${femaleCount}`, 20, yPos);
+        yPos += 10;
+        
+        // Calculate score ranges
+        const scores = filteredRecords.map(r => parseFloat(r.avgPoints || 0));
+        const highestScore = Math.max(...scores).toFixed(2);
+        const lowestScore = Math.min(...scores).toFixed(2);
+        
+        doc.text(`Highest Average Score: ${highestScore} points`, 20, yPos);
+        yPos += 6;
+        doc.text(`Lowest Average Score: ${lowestScore} points`, 20, yPos);
+        yPos += 10;
+        
+        // Centre distribution
+        const centres = {};
+        filteredRecords.forEach(r => {
+            const centre = r.centreName || 'Unknown';
+            centres[centre] = (centres[centre] || 0) + 1;
+        });
+        
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(41, 128, 185);
+        doc.text('Students by Centre', 14, yPos);
+        
+        yPos += 10;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        Object.entries(centres)
+            .sort((a, b) => b[1] - a[1])
+            .forEach(([centre, count]) => {
+                doc.text(`${centre}: ${count} student${count > 1 ? 's' : ''}`, 20, yPos);
+                yPos += 6;
+            });
+        
+        yPos += 5;
+        
+        // Top 5 performers
+        doc.setFontSize(14);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(41, 128, 185);
+        doc.text('Top 5 Performers', 14, yPos);
+        
+        yPos += 10;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        const topPerformers = [...filteredRecords]
+            .sort((a, b) => (b.avgPoints || 0) - (a.avgPoints || 0))
+            .slice(0, 5);
+        
+        topPerformers.forEach((record, index) => {
+            doc.setFont(undefined, 'bold');
+            doc.text(`${index + 1}.`, 20, yPos);
+            doc.setFont(undefined, 'normal');
+            doc.text(`${record.fullName} - ${record.avgPoints} points (${record.centreName})`, 28, yPos);
+            yPos += 6;
+        });
+
+        // ========== PAGE 2 onwards: INDIVIDUAL RECORDS ==========
+        for (let i = 0; i < filteredRecords.length; i++) {
+            const record = filteredRecords[i];
+            
+            // Add new page for each record
+            doc.addPage();
+            await addPDFHeader(doc, 'Complete Assessment Reports');
+            yPos = 45;
+
+            yPos = addStudentInfoSection(doc, record, yPos);
+            yPos = addSubjectsTable(doc, record, yPos);
+            yPos = addPathwaysSection(doc, record, yPos);
+            yPos = addSummaryStats(doc, record, yPos);
+        }
+
+        // Add page numbers to all pages
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            addPDFFooter(doc, i, totalPages);
+        }
+
+        doc.save(`Filtered_Assessment_Reports_${new Date().toISOString().split('T')[0]}.pdf`);
+        
+        showStatus('✅ PDF generated successfully!', 'success');
+    } catch (error) {
+        console.error(error);
+        showStatus('❌ Error generating PDF: ' + error.message, 'error');
+    } finally {
+        showLoader(false);
+    }
+}
+
+
+// Helper Functions for PDF Generation
+
+async function addPDFHeader(doc, subtitle = 'Student Assessment Report') {
+    const pageWidth = doc.internal.pageSize.width;
+    
+    doc.setFillColor(41, 128, 185);
+    doc.rect(0, 0, pageWidth, 35, 'F');
+    
+    try {
+        const logoImg = new Image();
+        logoImg.src = '../images/logo.png';
+        logoImg.crossOrigin = 'anonymous';
+        
+        await new Promise((resolve) => {
+            logoImg.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = logoImg.width;
+                canvas.height = logoImg.height;
+                ctx.drawImage(logoImg, 0, 0);
+                
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i + 3] > 0) {
+                        data[i] = 255;
+                        data[i + 1] = 255;
+                        data[i + 2] = 255;
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                doc.addImage(canvas.toDataURL(), 'PNG', 14, 7.5, 20, 20);
+                resolve();
+            };
+            logoImg.onerror = () => resolve();
+        });
+    } catch (e) {
+        console.log('Logo not available');
+    }
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont(undefined, 'bold');
+    doc.text('KANYADET PRIMARY & JUNIOR SCHOOL', pageWidth / 2, 15, { align: 'center' });
+    
+    doc.setFontSize(14);
+    doc.text(subtitle, pageWidth / 2, 22, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('P.O. Box 45 - 40139 AKALA, Siaya, Kenya', pageWidth / 2, 29, { align: 'center' });
+    
+    doc.setDrawColor(41, 128, 185);
+    doc.setLineWidth(0.5);
+    doc.line(0, 35, pageWidth, 35);
+}
+
+function addPDFFooter(doc, pageNum, totalPages) {
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    const footerY = pageHeight - 15;
+    
+    doc.setFillColor(245, 245, 245);
+    doc.rect(0, footerY - 5, pageWidth, 20, 'F');
+    
+    doc.setDrawColor(41, 128, 185);
+    doc.setLineWidth(0.3);
+    doc.line(0, footerY - 5, pageWidth, footerY - 5);
+    
+    doc.setTextColor(60, 60, 60);
+    doc.setFontSize(8);
+    doc.setFont(undefined, 'bold');
+    doc.text('Generated by:', 14, footerY);
+    doc.setFont(undefined, 'normal');
+    doc.text('Automated School System', 14, footerY + 4);
+    
+    doc.setFontSize(9);
+    const pageText = `Page ${pageNum} of ${totalPages}`;
+    doc.text(pageText, pageWidth / 2, footerY + 2, { align: 'center' });
+    
+    doc.setFontSize(7);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth - 14, footerY + 2, { align: 'right' });
+}
+
+function addStudentInfoSection(doc, record, yPos) {
+    const pageWidth = doc.internal.pageSize.width;
+    
+    doc.setFillColor(41, 128, 185);
+    doc.rect(14, yPos, pageWidth - 28, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('STUDENT INFORMATION', 16, yPos + 5.5);
+    
+    yPos += 12;
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    
+    const infoData = [
+        ['Full Name:', record.fullName || 'N/A', 'Gender:', record.gender || 'N/A'],
+        ['Assessment No:', record.assessmentNumber || 'N/A', 'Exam Year:', record.examYear || 'N/A'],
+        ['Centre Code:', record.centreCode || 'N/A', 'Centre Name:', record.centreName || 'N/A'],
+        ['Total Points:', String(record.totalPoints || 0), 'Average Points:', String(record.avgPoints || 0)]
+    ];
+    
+    infoData.forEach(row => {
+        doc.setFont(undefined, 'bold');
+        doc.text(row[0], 16, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(row[1], 50, yPos);
+        
+        doc.setFont(undefined, 'bold');
+        doc.text(row[2], 110, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(row[3], 145, yPos);
+        
+        yPos += 6;
+    });
+
+    return yPos + 5;
+}
+
+function addSubjectsTable(doc, record, yPos) {
+    const pageWidth = doc.internal.pageSize.width;
+    
+    doc.setFillColor(41, 128, 185);
+    doc.rect(14, yPos, pageWidth - 28, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('LEARNING AREAS PERFORMANCE', 16, yPos + 5.5);
+    
+    yPos += 12;
+
+    const subjectsData = (record.subjects || []).map(s => [
+        s.code || '-',
+        s.name || '-',
+        s.performanceLevel || '-',
+        String(s.points || 0),
+        s.description || '-'
+    ]);
+
+    doc.autoTable({
+        head: [['Code', 'Learning Areas', 'Performance', 'Points', 'Description']],
+        body: subjectsData.length > 0 ? subjectsData : [['No Learning Areas data available', '', '', '', '']],
+        startY: yPos,
+        styles: { 
+            fontSize: 9,
+            cellPadding: 3
+        },
+        headStyles: { 
+            fillColor: [41, 128, 185],
+            textColor: [255, 255, 255],
+            fontStyle: 'bold'
+        },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { left: 14, right: 14 }
+    });
+
+    return doc.lastAutoTable.finalY + 10;
+}
+
+function addPathwaysSection(doc, record, yPos) {
+    const pageWidth = doc.internal.pageSize.width;
+    
+    doc.setFillColor(41, 128, 185);
+    doc.rect(14, yPos, pageWidth - 28, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('CAREER PATHWAYS', 16, yPos + 5.5);
+    yPos += 12;
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+
+    const pathwaysData = Object.entries(record.pathways || {})
+        .sort((a, b) => b[1] - a[1])
+        .map(([pathway, score]) => [pathway, String(score)]);
+
+    if (pathwaysData.length > 0) {
+        doc.autoTable({
+            head: [['Pathway', 'Score']],
+            body: pathwaysData,
+            startY: yPos,
+            styles: { 
+                fontSize: 9,
+                cellPadding: 3
+            },
+            headStyles: { 
+                fillColor: [41, 128, 185],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold'
+            },
+            alternateRowStyles: { fillColor: [245, 245, 245] },
+            margin: { left: 14, right: 14 },
+            columnStyles: {
+                0: { cellWidth: 140 },
+                1: { cellWidth: 40, halign: 'center' }
+            }
+        });
+        return doc.lastAutoTable.finalY + 10;
+    } else {
+        doc.setFont(undefined, 'normal');
+        doc.text('No pathway data available', 16, yPos);
+        return yPos + 10;
+    }
+}
+
+function addSummaryStats(doc, record, yPos) {
+    const pageWidth = doc.internal.pageSize.width;
+    
+    if (yPos > 240) {
+        doc.addPage();
+        yPos = 20;
+    }
+    
+    doc.setFillColor(41, 128, 185);
+    doc.rect(14, yPos, pageWidth - 28, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('PERFORMANCE SUMMARY', 16, yPos + 5.5);
+    
+    yPos += 12;
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    
+    const subjectCount = (record.subjects || []).length;
+    const topSubjects = (record.subjects || [])
+        .sort((a, b) => b.points - a.points)
+        .slice(0, 3);
+    
+    doc.setFont(undefined, 'bold');
+    doc.text('Total Learning Areas Taken:', 16, yPos);
+    doc.setFont(undefined, 'normal');
+    doc.text(String(subjectCount), 65, yPos);
+    
+    yPos += 8;
+    doc.setFont(undefined, 'bold');
+    doc.text('Top 3 Learning Areas:', 16, yPos);
+    yPos += 6;
+    
+    doc.setFont(undefined, 'normal');
+    if (topSubjects.length > 0) {
+        topSubjects.forEach((subject, index) => {
+            doc.text(`${index + 1}. ${subject.name} - ${subject.points} points (${subject.performanceLevel})`, 20, yPos);
+            yPos += 5;
+        });
+    } else {
+        doc.text('No Learning Areas available', 20, yPos);
+        yPos += 5;
+    }
+    
+    yPos += 5;
+    const timestamp = record.timestamp ? new Date(record.timestamp).toLocaleString() : 'N/A';
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Report generated on: ${timestamp}`, 16, yPos);
+    
+    return yPos + 10;
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    startRealTimeListeners();
+    
+    document.getElementById('searchInput').addEventListener('input', performSearch);
+    document.getElementById('filterGender').addEventListener('change', performSearch);
+    document.getElementById('filterCentre').addEventListener('change', performSearch);
+    document.getElementById('sortBy').addEventListener('change', sortRecords);
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,2456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanyadet Admin Portal</title>
+    <!-- FIXED: Replaced Google Fonts with system fonts (no external JS loads) -->
+    <style>
+        /* System font stack mimicking Inter/Poppins */
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .sidebar-logo span, h1, h2, h3 { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', sans-serif; font-weight: 600; }
+    </style>
+            <link rel="stylesheet" href="../student-portal/Teachers.css">
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getDatabase, ref, get, onValue, set, update, remove, off } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+            authDomain: "kanyadet-school-admin.firebaseapp.com",
+            projectId: "kanyadet-school-admin",
+            databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com",
+            storageBucket: "kanyadet-school-admin.firebasestorage.app",
+            messagingSenderId: "409708360032",
+            appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+            measurementId: "G-Y4C0ZRRL52"
+        };
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+        window.firebaseServices = {
+            database, auth, ref, get, onValue, set, update, remove, off, signInWithEmailAndPassword
+        };
+        console.log("Firebase initialized for Admin Portal");
+    </script>
+</head>
+<body>
+<!-- LOGIN SECTION - FIXED: Wrapped in <form> for password autofill & accessibility -->
+<div id="loginSection" class="login-container">
+    <div class="login-left">
+            <form id="loginForm" onsubmit="login(); return false;">
+            <div class="login-logo">👑</div>
+            <h1>Kanyadet School</h1>
+            <p>Admin Portal - Manage School Operations & Oversight</p>
+        </div>
+        <div class="login-right">
+            <div class="login-form">
+                <h2>Admin Login</h2>
+                <p>Access the administrative management system</p>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="emailInput" placeholder="admin@kanyadet.ac.ke" value="admin@kanyadet.ac.ke" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="passwordInput" placeholder="Enter your password" value="admin123" required>
+                </div>
+                <button type="submit" class="login-btn">Sign In</button>
+                <div class="demo-login">
+                    <strong>Demo Login:</strong><br>
+                    Email: admin@kanyadet.ac.ke<br>
+                    Password: admin123
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- PORTAL SECTION -->
+<div id="portalSection" class="portal-hidden">
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+   
+    <div class="portal-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar" style="padding: 20px; " >
+            <div class="sidebar-logo">
+                <span style="font-size: 20px;">👑</span>
+                <span>Kanyadet</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a class="menu-item active" onclick="showSection('dashboard',this)"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+                <li><a class="menu-item" onclick="showSection('analytics',this)"><span class="sidebar-menu-icon">📈</span> Analytics</a></li>
+                <li><a class="menu-item" onclick="showSection('teachers',this)"><span class="sidebar-menu-icon">👨‍🏫</span> Teachers</a></li>
+                <li><a class="menu-item" onclick="showSection('students',this)"><span class="sidebar-menu-icon">👥</span> Students</a></li>
+                <li><a class="menu-item" onclick="showSection('reports',this)"><span class="sidebar-menu-icon">📋</span> Reports</a></li>
+                <li><a class="menu-item" onclick="showSection('grades',this)"><span class="sidebar-menu-icon">📊</span> Grades</a></li>
+                <li><a class="menu-item" onclick="showSection('attendance',this)"><span class="sidebar-menu-icon">📋</span> Attendance</a></li>
+                <li><a class="menu-item" onclick="showSection('messages',this)"><span class="sidebar-menu-icon">💬</span> Messages</a></li>
+                <li><a class="menu-item" onclick="showSection('notifications',this)"><span class="sidebar-menu-icon">🔔</span> Notifications</a></li>
+                <li><a class="menu-item" onclick="showSection('profile',this)"><span class="sidebar-menu-icon">👤</span> Profile</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <div class="welcome-text">
+                    <h1 id="adminName">Welcome, Admin</h1>
+                    <p id="currentDate">Today is a great day to manage</p>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar" id="adminInitials">AD</div>
+                    <div class="profile-info">
+                        <p id="adminNameSmall">Admin Name</p>
+                        <p id="adminRole">Administrator</p>
+                    </div>
+                </div>
+            </div>
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="section active">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Students</div>
+                        <div class="stat-value" id="totalStudents">0</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--accent);">
+                        <div class="stat-label">Total Teachers</div>
+                        <div class="stat-value" style="color: var(--accent);" id="totalTeachers">0</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--warning);">
+                        <div class="stat-label">Pending Reports</div>
+                        <div class="stat-value" style="color: var(--warning);" id="pendingReports">0</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--danger);">
+                        <div class="stat-label">System Alerts</div>
+                        <div class="stat-value" style="color: var(--danger);" id="systemAlerts">0</div>
+                    </div>
+                </div>
+                <h3 style="font-size: 18px; margin-bottom: 16px; margin-top: 32px;">Quick Actions</h3>
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Add Teacher</h3>
+                            <div class="card-icon">👨‍🏫</div>
+                        </div>
+                        <p>Add new teachers to the system</p>
+                        <button class="btn btn-primary" onclick="openCreateTeacherModal()" style="width: 100%; margin-top: 12px;">Add Teacher</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Generate Report</h3>
+                            <div class="card-icon">📈</div>
+                        </div>
+                        <p>Create school-wide reports</p>
+                        <button class="btn btn-primary" onclick="generateNewReport()" style="width: 100%; margin-top: 12px;">Generate Report</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Broadcast Message</h3>
+                            <div class="card-icon">💬</div>
+                        </div>
+                        <p>Send announcements to all users</p>
+                        <button class="btn btn-primary" onclick="openSendSystemMessage()" style="width: 100%; margin-top: 12px;">Broadcast</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Bulk Import</h3>
+                            <div class="card-icon">📁</div>
+                        </div>
+                        <p>Import students or teachers from CSV</p>
+                        <button class="btn btn-primary" onclick="openBulkImportModal()" style="width: 100%; margin-top: 12px;">Import Data</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Export Data</h3>
+                            <div class="card-icon">📤</div>
+                        </div>
+                        <p>Export users or reports to CSV</p>
+                        <button class="btn btn-primary" onclick="exportDataToCSV()" style="width: 100%; margin-top: 12px;">Export CSV</button>
+                    </div>
+                </div>
+                <h3 style="font-size: 18px; margin-bottom: 16px; margin-top: 32px;">Recent Activity</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>User</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivityTable">
+                            <tr><td colspan="3" style="text-align: center; padding: 20px;">Loading activity...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- NEW: Debug button -->
+                <div class="card" style="margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="clearConsole()">🧹 Clear Console (Debug)</button>
+                </div>
+            </section>
+            <!-- ANALYTICS -->
+            <section id="analytics" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">School Analytics</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-bottom: 32px;">
+                    <div class="card">
+                        <h3>Attendance Trend</h3>
+                        <canvas id="attendanceChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>Grade Distribution</h3>
+                        <canvas id="gradesChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Average Attendance Rate</div>
+                        <div class="stat-value" id="avgAttendance">85%</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--accent);">
+                        <div class="stat-label">Overall GPA</div>
+                        <div class="stat-value" style="color: var(--accent);" id="overallGPA">3.2</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--warning);">
+                        <div class="stat-label">High Performers</div>
+                        <div class="stat-value" style="color: var(--warning);" id="highPerformers">45</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--danger);">
+                        <div class="stat-label">At-Risk Students</div>
+                        <div class="stat-value" style="color: var(--danger);" id="atRisk">12</div>
+                    </div>
+                </div>
+            </section>
+            <!-- TEACHERS -->
+            <section id="teachers" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">All Teachers</h2>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="openCreateTeacherModal()">+ Add Teacher</button>
+                    <button class="btn" style="background: #f39c12; color: white;" onclick="deleteAllTeachersIndividual()">Delete All (Individual)</button>
+                    <button class="btn" style="background: #c0392b; color: white;" onclick="deleteAllTeachersBulk()">⚡ Delete All (Bulk)</button>
+                    <button class="btn btn-secondary" onclick="exportTeachersToCSV()">Export CSV</button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="teacherSearch" placeholder="Search by name or ID..." onkeyup="filterTeachers()">
+                    <select id="teachersPerPage" onchange="resetTeachersPagination(); displayTeachers()" style="padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <option value="10">10 per page</option>
+                        <option value="20" selected>20 per page</option>
+                        <option value="50">50 per page</option>
+                        <option value="100">100 per page</option>
+                    </select>
+                </div>
+                <div class="student-list" id="teachersList">
+                    <div style="padding: 40px; text-align: center; color: var(--gray-500);">Loading teachers...</div>
+                </div>
+                <div id="teachersPaginationControls" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+                    <button class="btn btn-secondary" onclick="previousTeachersPage()" id="teachersPrevBtn" style="padding: 8px 16px;">← Previous</button>
+                    <span id="teachersPageInfo" style="color: var(--gray-700); font-weight: 600;">Page 1</span>
+                    <button class="btn btn-secondary" onclick="nextTeachersPage()" id="teachersNextBtn" style="padding: 8px 16px;">Next →</button>
+                </div>
+            </section>
+            <!-- STUDENTS -->
+            <section id="students" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">All Students</h2>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn" style="background: #f39c12; color: white;" onclick="deleteAllStudentsIndividual()">Delete All (Individual)</button>
+                    <button class="btn" style="background: #c0392b; color: white;" onclick="deleteAllStudentsBulk()">⚡ Delete All (Bulk)</button>
+                    <button class="btn btn-secondary" onclick="exportStudentsToCSV()">Export CSV</button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="studentSearch" placeholder="Search by name or ID..." onkeyup="filterStudents()">
+                    <select id="studentsPerPage" onchange="resetStudentsPagination(); displayStudents()" style="padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <option value="10">10 per page</option>
+                        <option value="20" selected>20 per page</option>
+                        <option value="50">50 per page</option>
+                        <option value="100">100 per page</option>
+                    </select>
+                </div>
+                <div class="student-list" id="studentsList">
+                    <div style="padding: 40px; text-align: center; color: var(--gray-500);">Loading students...</div>
+                </div>
+                <div id="studentsPaginationControls" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+                    <button class="btn btn-secondary" onclick="previousStudentsPage()" id="studentsPrevBtn" style="padding: 8px 16px;">← Previous</button>
+                    <span id="studentsPageInfo" style="color: var(--gray-700); font-weight: 600;">Page 1</span>
+                    <button class="btn btn-secondary" onclick="nextStudentsPage()" id="studentsNextBtn" style="padding: 8px 16px;">Next →</button>
+                </div>
+            </section>
+            <!-- REPORTS -->
+            <section id="reports" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">School Reports</h2>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="generateNewReport()">+ Generate Report</button>
+                    <button class="btn" style="background: #c0392b; color: white;" onclick="deleteAllReports()">Delete All Reports</button>
+                    <button class="btn btn-secondary" onclick="exportReportsToCSV()">Export CSV</button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="reportSearch" placeholder="Search reports..." onkeyup="filterReports()">
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Report Type</th>
+                                <th>Generated On</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTable">
+                            <tr><td colspan="4" style="text-align: center; padding: 40px;">Loading reports...</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="reportsPaginationControls" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+                        <button class="btn btn-secondary" onclick="previousReportsPage()" id="reportsPrevBtn" style="padding: 8px 16px;">← Previous</button>
+                        <span id="reportsPageInfo" style="color: var(--gray-700); font-weight: 600;">Page 1</span>
+                        <button class="btn btn-secondary" onclick="nextReportsPage()" id="reportsNextBtn" style="padding: 8px 16px;">Next →</button>
+                    </div>
+                </div>
+            </section>
+            <!-- GRADES -->
+            <section id="grades" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">All Grades</h2>
+                <div class="search-bar">
+                    <input type="text" id="gradeSearch" placeholder="Search by student name..." onkeyup="filterAdminGrades()">
+                    <button class="btn btn-primary" onclick="openAdminGradeModal()">+ Add Grade</button>
+                    <button class="btn btn-secondary" onclick="exportGradesToCSV()">Export CSV</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Subject</th>
+                                <th>Term 1</th>
+                                <th>Term 2</th>
+                                <th>Term 3</th>
+                                <th>Average</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminGradesTable">
+                            <tr><td colspan="7" style="text-align: center; padding: 40px;">Loading grades...</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="adminGradesPaginationControls" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+                        <button class="btn btn-secondary" onclick="previousAdminGradesPage()" id="adminGradesPrevBtn" style="padding: 8px 16px;">← Previous</button>
+                        <span id="adminGradesPageInfo" style="color: var(--gray-700); font-weight: 600;">Page 1</span>
+                        <button class="btn btn-secondary" onclick="nextAdminGradesPage()" id="adminGradesNextBtn" style="padding: 8px 16px;">Next →</button>
+                    </div>
+                </div>
+            </section>
+            <!-- ATTENDANCE -->
+            <section id="attendance" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">School Attendance Overview</h2>
+                <div class="search-bar">
+                    <input type="date" id="adminAttendanceDate" value="" onchange="filterAdminAttendance()">
+                    <button class="btn btn-primary" onclick="generateAttendanceReport()">Generate Report</button>
+                    <button class="btn btn-secondary" onclick="exportAttendanceToCSV()">Export CSV</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminAttendanceTable">
+                            <tr><td colspan="4" style="text-align: center; padding: 40px;">Loading attendance...</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="adminAttendancePaginationControls" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+                        <button class="btn btn-secondary" onclick="previousAdminAttendancePage()" id="adminAttendancePrevBtn" style="padding: 8px 16px;">← Previous</button>
+                        <span id="adminAttendancePageInfo" style="color: var(--gray-700); font-weight: 600;">Page 1</span>
+                        <button class="btn btn-secondary" onclick="nextAdminAttendancePage()" id="adminAttendanceNextBtn" style="padding: 8px 16px;">Next →</button>
+                    </div>
+                </div>
+            </section>
+            <!-- MESSAGES -->
+            <section id="messages" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">System Messages</h2>
+                <button class="btn btn-primary" onclick="openSendSystemMessage()" style="margin-bottom: 20px;">+ Broadcast Message</button>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>To</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTable">
+                            <tr><td colspan="5" style="text-align: center; padding: 40px;">No messages sent yet</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="messagesPaginationControls" style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+                        <button class="btn btn-secondary" onclick="previousMessagesPage()" id="messagesPrevBtn" style="padding: 8px 16px;">← Previous</button>
+                        <span id="messagesPageInfo" style="color: var(--gray-700); font-weight: 600;">Page 1</span>
+                        <button class="btn btn-secondary" onclick="nextMessagesPage()" id="messagesNextBtn" style="padding: 8px 16px;">Next →</button>
+                    </div>
+                </div>
+            </section>
+            <!-- NOTIFICATIONS -->
+            <section id="notifications" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Notifications Center</h2>
+                <div class="search-bar">
+                    <input type="text" id="notificationSearch" placeholder="Search notifications..." onkeyup="filterNotifications()">
+                </div>
+                <div class="student-list" id="notificationsList">
+                    <div style="padding: 40px; text-align: center; color: var(--gray-500);">No notifications</div>
+                </div>
+                <button class="btn btn-primary" onclick="clearAllNotifications()" style="margin-top: 20px;">Clear All</button>
+            </section>
+            <!-- PROFILE -->
+            <section id="profile" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">My Profile</h2>
+                <div class="cards-grid" style="grid-template-columns: 1fr;">
+                    <div class="card">
+                        <h3 style="margin-bottom: 24px;">Administrative Information</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Full Name</p>
+                                <p style="font-weight: 600;" id="profileName">Admin Name</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Email</p>
+                                <p style="font-weight: 600;" id="profileEmail">admin@kanyadet.ac.ke</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Role</p>
+                                <p style="font-weight: 600;" id="profileRole">Administrator</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Phone</p>
+                                <p style="font-weight: 600;" id="profilePhone">+254 712 345 678</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Access Level</p>
+                                <p style="font-weight: 600;" id="profileAccess">Full Admin</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Status</p>
+                                <p style="font-weight: 600;" id="profileStatus">Active</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="updateProfile()" style="margin-top: 20px;">Update Profile</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<!-- TEACHER CREATE/EDIT MODAL -->
+<div id="teacherModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="teacherModalTitle">Add/Edit Teacher</h2>
+            <button class="close-btn" onclick="closeModal('teacherModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="teacherName" placeholder="Full name">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="teacherEmail" placeholder="email@kanyadet.ac.ke">
+            </div>
+            <div class="form-group">
+                <label>Subject(s)</label>
+                <input type="text" id="teacherSubject" placeholder="e.g., Mathematics, Science">
+            </div>
+            <div class="form-group">
+                <label>Grade Classes</label>
+                <input type="text" id="teacherGrades" placeholder="e.g., 7A, 7B">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="teacherPhone" placeholder="+254 712 345 678">
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="teacherStatus" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="saveTeacher()">Save Teacher</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('teacherModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- STUDENT EDIT MODAL -->
+<div id="studentEditModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Student Information</h2>
+            <button class="close-btn" onclick="closeModal('studentEditModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Official Student Name</label>
+                <input type="text" id="editStudentName" placeholder="Full name">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="editStudentEmail" placeholder="email@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="editStudentPhone" placeholder="+254 712 345 678">
+            </div>
+            <div class="form-group">
+                <label>Grade</label>
+                <input type="text" id="editStudentGrade" placeholder="e.g., 7A">
+            </div>
+            <div class="form-group">
+                <label>Assessment No</label>
+                <input type="text" id="editStudentAssessment" placeholder="Assessment number">
+            </div>
+            <div class="form-group">
+                <label>Parent Name</label>
+                <input type="text" id="editStudentParent" placeholder="Parent/Guardian name">
+            </div>
+            <div class="form-group">
+                <label>Parent Phone</label>
+                <input type="tel" id="editStudentParentPhone" placeholder="+254 712 345 678">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="saveStudentChanges()">Save Changes</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('studentEditModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- SYSTEM MESSAGE MODAL -->
+<div id="systemMessageModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Broadcast System Message</h2>
+            <button class="close-btn" onclick="closeModal('systemMessageModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Send To</label>
+                <select id="systemMessageTo" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option value="all">All Users</option>
+                    <option value="teachers">Teachers Only</option>
+                    <option value="students">Students Only</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Message Type</label>
+                <select id="systemMessageType" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option value="announcement">Announcement</option>
+                    <option value="alert">Alert</option>
+                    <option value="reminder">Reminder</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="systemMessageContent" placeholder="Type your system message here..." style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; min-height: 120px;"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="sendSystemMessage()">Broadcast</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('systemMessageModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- BULK IMPORT MODAL -->
+<div id="bulkImportModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Bulk Import</h2>
+            <button class="close-btn" onclick="closeModal('bulkImportModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Import Type</label>
+                <select id="importType" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option value="students">Students</option>
+                    <option value="teachers">Teachers</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>CSV File</label>
+                <input type="file" id="csvFile" accept=".csv" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="performBulkImport()">Import</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('bulkImportModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- ADMIN GRADE MODAL -->
+<div id="adminGradeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add/Edit Grade</h2>
+            <button class="close-btn" onclick="closeModal('adminGradeModal')">×</button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Student</label>
+                <select id="adminGradeStudent" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <option>Select student...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="adminGradeSubject" placeholder="e.g., Mathematics">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                <div class="form-group">
+                    <label>Term 1</label>
+                    <input type="number" id="adminGradeTerm1" min="0" max="100" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Term 2</label>
+                    <input type="number" id="adminGradeTerm2" min="0" max="100" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Term 3</label>
+                    <input type="number" id="adminGradeTerm3" min="0" max="100" placeholder="0">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary" onclick="saveAdminGrade()">Save Grade</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('adminGradeModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- ADD THIS MODAL TO YOUR HTML (after other modals) -->
+
+<div id="profileUpdateModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2>Edit Admin Profile</h2>
+            <button class="close-btn" onclick="closeModal('profileUpdateModal')">×</button>
+        </div>
+        <form id="profileUpdateForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="updateProfileName" placeholder="Full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="updateProfileEmail" placeholder="email@kanyadet.ac.ke" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="updateProfilePhone" placeholder="+254 712 345 678">
+                </div>
+                <div class="form-group">
+                    <label>Role/Title</label>
+                    <input type="text" id="updateProfileRole" placeholder="e.g., School Administrator" readonly style="background-color: #f5f5f5;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Access Level</label>
+                    <select id="updateProfileAccess" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <option value="Full Admin">Full Admin</option>
+                        <option value="Limited Admin">Limited Admin</option>
+                        <option value="Viewer">Viewer Only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="updateProfileStatus" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="On Leave">On Leave</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Department/School Section</label>
+                <input type="text" id="updateProfileDepartment" placeholder="e.g., Administration, Finance">
+            </div>
+
+            <div style="background-color: #f9f9f9; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                <h4 style="margin: 0 0 12px 0; color: var(--gray-700);">Security & Account Info</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; color: var(--gray-600);">
+                    <div>
+                        <strong>UID:</strong>
+                        <p id="updateProfileUID" style="margin: 4px 0; font-family: monospace; word-break: break-all;">—</p>
+                    </div>
+                    <div>
+                        <strong>Last Updated:</strong>
+                        <p id="updateProfileLastUpdated" style="margin: 4px 0;">—</p>
+                    </div>
+                    <div colspan="2">
+                        <strong>Account Created:</strong>
+                        <p id="updateProfileCreated" style="margin: 4px 0;">—</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background-color: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 16px 0;">
+                <p style="margin: 0; font-size: 13px; color: #856404;">
+                    <strong>ℹ️ Note:</strong> To change your email or password, please use the authentication settings or contact your system administrator.
+                </p>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-primary" onclick="saveProfileChanges(event)">Save Changes</button>
+                <button type="button" class="btn" style="background: #e5e7eb; color: var(--gray-700);" onclick="closeModal('profileUpdateModal')">Cancel</button>
+                <button type="button" class="btn" style="background: #6c757d; color: white;" onclick="resetProfileForm()">Reset Form</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Global variables
+let currentAdmin = null;
+let allStudents = [];
+let allTeachers = [];
+let allReports = [];
+let allGrades = [];
+let allAttendance = [];
+let allMessages = [];
+let allNotifications = [];
+let allActivity = [];
+let filteredTeachers = [];
+let filteredStudents = [];
+let filteredReports = [];
+let filteredAdminGrades = [];
+let filteredAdminAttendance = [];
+let filteredMessages = [];
+let filteredNotifications = [];
+const itemsPerPage = 10;
+let currentEditingTeacherId = null;
+let currentEditingStudentId = null;
+let currentEditingAdminGradeStudentId = null;
+let currentEditingAdminGradeSubject = null;
+
+
+
+
+
+
+// Profile Management Functions
+
+// Open the profile update modal and populate with current data
+function openProfileUpdateModal() {
+    if (!currentAdmin) {
+        alert('Admin data not loaded. Please refresh the page.');
+        return;
+    }
+
+    // Populate the form with current admin data
+    document.getElementById('updateProfileName').value = currentAdmin.Name || currentAdmin.name || 'Admin';
+    document.getElementById('updateProfileEmail').value = currentAdmin.Email || currentAdmin.email || '';
+    document.getElementById('updateProfilePhone').value = currentAdmin.Phone || currentAdmin.phone || '';
+    document.getElementById('updateProfileRole').value = currentAdmin.Role || 'Administrator';
+    document.getElementById('updateProfileAccess').value = currentAdmin.Access || 'Full Admin';
+    document.getElementById('updateProfileStatus').value = currentAdmin.Status || 'Active';
+    document.getElementById('updateProfileDepartment').value = currentAdmin.Department || currentAdmin.department || '';
+    
+    // Display security info
+    document.getElementById('updateProfileUID').textContent = currentAdmin.UID || currentAdmin.id || 'Not set';
+    
+    const lastUpdated = currentAdmin.updatedAt || currentAdmin.lastUpdated;
+    if (lastUpdated) {
+        const date = new Date(lastUpdated);
+        document.getElementById('updateProfileLastUpdated').textContent = date.toLocaleString();
+    } else {
+        document.getElementById('updateProfileLastUpdated').textContent = 'Never';
+    }
+    
+    const created = currentAdmin.createdAt;
+    if (created) {
+        const date = new Date(created);
+        document.getElementById('updateProfileCreated').textContent = date.toLocaleString();
+    } else {
+        document.getElementById('updateProfileCreated').textContent = 'Unknown';
+    }
+
+    document.getElementById('profileUpdateModal').classList.add('active');
+}
+
+// Save profile changes to Firebase
+async function saveProfileChanges(event) {
+    if (event) event.preventDefault();
+
+    const name = document.getElementById('updateProfileName').value.trim();
+    const email = document.getElementById('updateProfileEmail').value.trim();
+    const phone = document.getElementById('updateProfilePhone').value.trim();
+    const access = document.getElementById('updateProfileAccess').value;
+    const status = document.getElementById('updateProfileStatus').value;
+    const department = document.getElementById('updateProfileDepartment').value.trim();
+
+    // Validation
+    if (!name) {
+        alert('Full name is required!');
+        document.getElementById('updateProfileName').focus();
+        return;
+    }
+
+    if (!email) {
+        alert('Email address is required!');
+        document.getElementById('updateProfileEmail').focus();
+        return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert('Please enter a valid email address!');
+        document.getElementById('updateProfileEmail').focus();
+        return;
+    }
+
+    // Show loading state
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+
+    const { database, ref, update } = window.firebaseServices;
+
+    try {
+        // Update in Firebase
+        const adminRef = ref(database, `artifacts/default-app-id/teachers/${currentAdmin.id}`);
+        
+        const updateData = {
+            Name: name,
+            Email: email,
+            Phone: phone,
+            Access: access,
+            Status: status,
+            Department: department,
+            updatedAt: new Date().toISOString()
+        };
+
+        await update(adminRef, updateData);
+
+        // Update in-memory currentAdmin object
+        currentAdmin = {
+            ...currentAdmin,
+            ...updateData
+        };
+
+        // Update profile section display
+        updateProfileDisplay();
+
+        alert('✅ Profile updated successfully!');
+        closeModal('profileUpdateModal');
+
+        console.log('✅ Admin profile saved:', updateData);
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        alert('❌ Error saving profile:\n' + error.message);
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+// Reset the form to current values
+function resetProfileForm() {
+    openProfileUpdateModal(); // Re-populate with current data
+}
+
+// Update the profile section display
+function updateProfileDisplay() {
+    // Update top bar
+    const adminName = currentAdmin.Name || currentAdmin.name || 'Admin';
+    document.getElementById('adminName').textContent = `Welcome, ${adminName}!`;
+    document.getElementById('adminNameSmall').textContent = adminName;
+    document.getElementById('adminRole').textContent = currentAdmin.Role || 'Administrator';
+
+    // Update initials
+    const nameParts = adminName.split(' ');
+    const initials = nameParts.map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    document.getElementById('adminInitials').textContent = initials;
+
+    // Update profile section
+    document.getElementById('profileName').textContent = adminName;
+    document.getElementById('profileEmail').textContent = currentAdmin.Email || currentAdmin.email || '';
+    document.getElementById('profileRole').textContent = currentAdmin.Role || 'Administrator';
+    document.getElementById('profilePhone').textContent = currentAdmin.Phone || currentAdmin.phone || '';
+    document.getElementById('profileAccess').textContent = currentAdmin.Access || 'Full Admin';
+    document.getElementById('profileStatus').textContent = currentAdmin.Status || 'Active';
+}
+
+// Replace the old updateProfile function with this
+function updateProfile() {
+    openProfileUpdateModal();
+}
+
+console.log('✅ Profile update functions loaded successfully!');
+
+
+
+
+
+
+// FIXED: Enhanced login with form submission handling
+async function login(event) {
+    if (event) event.preventDefault(); // Prevent default form submit
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+    if (!email || !password) {
+        alert('Please enter email and password');
+        return;
+    }
+    const { database, auth, ref, get, signInWithEmailAndPassword } = window.firebaseServices;
+    document.querySelector('.login-btn').textContent = 'Signing In...';
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const uid = userCredential.user.uid;
+        console.log('✅ Authenticated with Firebase, UID:', uid);
+        const teachersRef = ref(database, 'artifacts/default-app-id/teachers');
+        const snapshot = await get(teachersRef);
+        let foundAdmin = null;
+        let adminId = null;
+        if (snapshot.exists()) {
+            const allRecords = snapshot.val();
+            Object.keys(allRecords).forEach(key => {
+                const record = allRecords[key];
+                if ((record.Email || record.email) === email && (record.Role === 'admin' || record.role === 'admin')) {
+                    foundAdmin = record;
+                    adminId = key;
+                }
+            });
+        }
+        if (!foundAdmin) {
+            console.warn('⚠️ Admin not found, creating in-memory record');
+            const newAdmin = {
+                'Name': 'Admin',
+                'Email': email,
+                'Role': 'Administrator',
+                'Phone': 'Not Set',
+                'Access': 'Full Admin',
+                'Status': 'Active',
+                'UID': uid
+            };
+            foundAdmin = newAdmin;
+            adminId = 'admin_' + uid;
+        }
+        if (foundAdmin) {
+            currentAdmin = { id: adminId, ...foundAdmin };
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('portalSection').classList.remove('portal-hidden');
+            await initializePortal(foundAdmin, adminId);
+            console.log('✅ Admin portal initialized successfully');
+        } else {
+            alert('Could not find or create admin account.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        if (error.code === 'auth/user-not-found') {
+            alert('No account found with this email. Please contact support.');
+        } else if (error.code === 'auth/wrong-password') {
+            alert('Incorrect password.');
+        } else {
+            alert('Login error: ' + error.message);
+        }
+    }
+    document.querySelector('.login-btn').textContent = 'Sign In';
+}
+
+function logout() {
+    currentAdmin = null;
+    localStorage.clear();
+    document.getElementById('loginSection').style.display = 'flex';
+    document.getElementById('portalSection').classList.add('portal-hidden');
+    document.getElementById('emailInput').value = 'admin@kanyadet.ac.ke';
+    document.getElementById('passwordInput').value = 'admin123';
+}
+
+function showSection(sectionId, clickedElement) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    if (clickedElement) clickedElement.classList.add('active');
+    if (window.innerWidth <= 768) closeSidebar();
+}
+
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const hamburger = document.querySelector('.hamburger-menu');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+    hamburger.classList.toggle('active');
+    if (overlay.classList.contains('active')) {
+        overlay.style.display = 'block';
+    } else {
+        setTimeout(() => { overlay.style.display = 'none'; }, 300);
+    }
+}
+
+function closeSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const hamburger = document.querySelector('.hamburger-menu');
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    hamburger.classList.remove('active');
+    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+}
+
+async function initializePortal(admin, adminId) {
+    const date = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', options);
+    const adminName = admin['Name'] || admin['name'] || 'Admin';
+    document.getElementById('adminName').textContent = `Welcome, ${adminName}!`;
+    document.getElementById('adminNameSmall').textContent = adminName;
+    document.getElementById('adminRole').textContent = admin['Role'] || 'Administrator';
+    const nameParts = adminName.split(' ');
+    const initials = nameParts.map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    document.getElementById('adminInitials').textContent = initials;
+    document.getElementById('profileName').textContent = adminName;
+    document.getElementById('profileEmail').textContent = admin['Email'] || admin['email'] || '';
+    document.getElementById('profileRole').textContent = admin['Role'] || 'Administrator';
+    document.getElementById('profilePhone').textContent = admin['Phone'] || admin['phone'] || '';
+    document.getElementById('profileAccess').textContent = admin['Access'] || 'Full Admin';
+    document.getElementById('profileStatus').textContent = admin['Status'] || 'Active';
+    await loadAllStudents(adminId);
+    await loadAllTeachers(adminId);
+    await loadAllReports(adminId);
+    await loadAllAdminGrades(adminId);
+    await loadAllAdminAttendance(adminId);
+    await loadAndDisplayMessages();
+    await loadNotifications();
+    await loadRecentActivity();
+    updateDashboard();
+    populateAdminStudentSelects();
+    initializeCharts();
+    setInterval(() => updateDashboard(), 30000); // Auto-refresh
+}
+
+// ... (Include all other functions from previous responses: loadAllStudents, displayStudents, filterStudents, etc., up to updateDashboard, closeModal, etc.)
+
+// FIXED: Delete All Teachers Individual - Use Promise.all for parallel deletes
+async function deleteAllTeachersIndividual() {
+    if (allTeachers.length === 0) return alert('No teachers to delete!');
+    const confirm1 = confirm(`Delete all ${allTeachers.length} teachers individually?`);
+    if (!confirm1) return;
+    const confirm2 = prompt('Type "DELETE" to confirm:');
+    if (confirm2 !== 'DELETE') return alert('Cancelled.');
+    try {
+        const deletePromises = allTeachers.map(teacher => deleteTeacher(teacher.id));
+        await Promise.all(deletePromises);
+        alert(`✅ All ${allTeachers.length} teachers deleted!`);
+        await loadAllTeachers(currentAdmin.id);
+    } catch (error) {
+        console.error('Bulk delete error:', error);
+        alert('Partial success - some deletes failed. Check console.');
+    }
+}
+
+// FIXED: Bulk delete - Add double confirmation and error handling
+async function deleteAllTeachersBulk() {
+    if (allTeachers.length === 0) return alert('No teachers to delete!');
+    const confirm1 = confirm(`⚡ Bulk delete ALL ${allTeachers.length} teachers? This removes the entire folder!`);
+    if (!confirm1) return;
+    const confirm2 = prompt('Type "BULK DELETE" to confirm:');
+    if (confirm2 !== 'BULK DELETE') return alert('Cancelled.');
+    const { database, ref, remove } = window.firebaseServices;
+    try {
+        const teachersRef = ref(database, 'artifacts/default-app-id/teachers');
+        await remove(teachersRef);
+        alert('✅ Bulk delete successful!');
+        await loadAllTeachers(currentAdmin.id);
+    } catch (error) {
+        console.error('Bulk delete error:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// Similar for students (from previous)
+async function deleteAllStudentsIndividual() {
+    if (allStudents.length === 0) return alert('No students to delete!');
+    const confirm1 = confirm(`Delete all ${allStudents.length} students individually?`);
+    if (!confirm1) return;
+    const confirm2 = prompt('Type "DELETE" to confirm:');
+    if (confirm2 !== 'DELETE') return alert('Cancelled.');
+    try {
+        const deletePromises = allStudents.map(student => deleteStudent(student.id));
+        await Promise.all(deletePromises);
+        alert(`✅ All ${allStudents.length} students deleted!`);
+        await loadAllStudents(currentAdmin.id);
+    } catch (error) {
+        console.error('Bulk delete error:', error);
+        alert('Partial success - some deletes failed. Check console.');
+    }
+}
+
+async function deleteAllStudentsBulk() {
+    if (allStudents.length === 0) return alert('No students to delete!');
+    const confirm1 = confirm(`⚡ Bulk delete ALL ${allStudents.length} students? This removes the entire folder!`);
+    if (!confirm1) return;
+    const confirm2 = prompt('Type "BULK DELETE" to confirm:');
+    if (confirm2 !== 'BULK DELETE') return alert('Cancelled.');
+    const { database, ref, remove } = window.firebaseServices;
+    try {
+        const studentsRef = ref(database, 'artifacts/default-app-id/students');
+        await remove(studentsRef);
+        alert('✅ Bulk delete successful!');
+        await loadAllStudents(currentAdmin.id);
+    } catch (error) {
+        console.error('Bulk delete error:', error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// Export functions
+function exportToCSV(data, filename, columns) {
+    const csvContent = [
+        columns.join(','),
+        ...data.map(row => columns.map(col => JSON.stringify(row[col] || '')).join(','))
+    ].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+
+function exportTeachersToCSV() {
+    if (allTeachers.length === 0) return alert('No data to export!');
+    exportToCSV(allTeachers, 'teachers.csv', ['Name', 'Email', 'Subject', 'Grades', 'Phone', 'Status']);
+}
+
+function exportStudentsToCSV() {
+    if (allStudents.length === 0) return alert('No data to export!');
+    exportToCSV(allStudents, 'students.csv', ['Official Student Name', 'Email', 'Grade', 'Assessment No', 'Parent Name']);
+}
+
+function exportReportsToCSV() {
+    if (allReports.length === 0) return alert('No data to export!');
+    exportToCSV(allReports, 'reports.csv', ['type', 'date', 'status']);
+}
+
+function exportGradesToCSV() {
+    if (allGrades.length === 0) return alert('No data to export!');
+    exportToCSV(allGrades, 'grades.csv', ['studentName', 'subject', 'term1', 'term2', 'term3', 'average']);
+}
+
+function exportAttendanceToCSV() {
+    if (allAttendance.length === 0) return alert('No data to export!');
+    exportToCSV(allAttendance, 'attendance.csv', ['studentName', 'status', 'date']);
+}
+
+function exportDataToCSV() {
+    const type = prompt('Export type (teachers/students/reports/grades/attendance):');
+    if (type === 'teachers') exportTeachersToCSV();
+    else if (type === 'students') exportStudentsToCSV();
+    else if (type === 'reports') exportReportsToCSV();
+    else if (type === 'grades') exportGradesToCSV();
+    else if (type === 'attendance') exportAttendanceToCSV();
+    else alert('Invalid type!');
+}
+
+// Charts
+function initializeCharts() {
+    const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+    new Chart(attendanceCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [{ label: 'Attendance %', data: [85, 88, 82, 90, 87], borderColor: 'rgb(75, 192, 192)' }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+    const gradesCtx = document.getElementById('gradesChart').getContext('2d');
+    new Chart(gradesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['A', 'B', 'C', 'D', 'F'],
+            datasets: [{ data: [20, 30, 25, 15, 10], backgroundColor: ['#4CAF50', '#2196F3', '#FF9800', '#F44336', '#9E9E9E'] }]
+        },
+        options: { responsive: true }
+    });
+}
+
+// Recent Activity
+async function loadRecentActivity() {
+    const sampleActivity = [
+        { action: 'Added Teacher', user: 'Admin', date: new Date().toLocaleString() },
+        { action: 'Generated Report', user: 'Admin', date: new Date(Date.now() - 3600000).toLocaleString() },
+        { action: 'Sent Message', user: 'Admin', date: new Date(Date.now() - 7200000).toLocaleString() }
+    ];
+    allActivity = sampleActivity;
+    displayRecentActivity();
+}
+
+function displayRecentActivity() {
+    const tbody = document.getElementById('recentActivityTable');
+    tbody.innerHTML = allActivity.slice(0, 5).map(activity => `
+        <tr>
+            <td>${activity.action}</td>
+            <td>${activity.user}</td>
+            <td>${activity.date}</td>
+        </tr>
+    `).join('');
+}
+
+// Notifications
+async function loadNotifications() {
+    allNotifications = [
+        { id: 1, title: 'New Student Enrolled', message: 'John Doe joined Grade 7A', type: 'info', date: new Date().toLocaleString() },
+        { id: 2, title: 'Low Attendance Alert', message: 'Class 8B below 80%', type: 'warning', date: new Date(Date.now() - 3600000).toLocaleString() },
+        { id: 3, title: 'Report Generated', message: 'Annual Attendance Report ready', type: 'success', date: new Date(Date.now() - 7200000).toLocaleString() }
+    ];
+    displayNotifications();
+}
+
+function displayNotifications() {
+    const list = document.getElementById('notificationsList');
+    list.innerHTML = allNotifications.map(notif => `
+        <div class="student-item">
+            <div class="student-info">
+                <h4>${notif.title}</h4>
+                <p>${notif.message}</p>
+                <span class="badge badge-${notif.type}">${notif.type.toUpperCase()}</span>
+            </div>
+            <button class="btn" style="background: #e74c3c; color: white;" onclick="deleteNotification('${notif.id}')">Dismiss</button>
+        </div>
+    `).join('') || '<div style="padding: 40px; text-align: center; color: var(--gray-500);">No notifications</div>';
+}
+
+function filterNotifications() {
+    const search = document.getElementById('notificationSearch').value.toLowerCase();
+    const filtered = allNotifications.filter(n => n.title.toLowerCase().includes(search) || n.message.toLowerCase().includes(search));
+    const list = document.getElementById('notificationsList');
+    list.innerHTML = filtered.map(notif => `
+        <div class="student-item">
+            <div class="student-info">
+                <h4>${notif.title}</h4>
+                <p>${notif.message}</p>
+                <span class="badge badge-${notif.type}">${notif.type.toUpperCase()}</span>
+            </div>
+            <button class="btn" style="background: #e74c3c; color: white;" onclick="deleteNotification('${notif.id}')">Dismiss</button>
+        </div>
+    `).join('') || '<div style="padding: 40px; text-align: center; color: var(--gray-500);">No notifications</div>';
+}
+
+async function clearAllNotifications() {
+    if (confirm('Clear all notifications?')) {
+        allNotifications = [];
+        displayNotifications();
+        alert('Notifications cleared!');
+    }
+}
+
+function deleteNotification(id) {
+    allNotifications = allNotifications.filter(n => n.id != id);
+    displayNotifications();
+}
+
+// Enhanced updateDashboard
+function updateDashboard() {
+    document.getElementById('totalStudents').textContent = allStudents.length;
+    document.getElementById('totalTeachers').textContent = allTeachers.length;
+    document.getElementById('pendingReports').textContent = allReports.filter(r => r.status === 'Pending').length;
+    document.getElementById('systemAlerts').textContent = allNotifications.filter(n => n.type === 'warning' || n.type === 'error').length;
+    const avgAttendance = allAttendance.length > 0 ? Math.round(allAttendance.filter(a => a.status === 'present').length / allAttendance.length * 100) : 0;
+    document.getElementById('avgAttendance').textContent = `${avgAttendance}%`;
+    const overallGPA = allGrades.length > 0 ? (allGrades.reduce((sum, g) => sum + (g.average || 0), 0) / allGrades.length).toFixed(1) : 0;
+    document.getElementById('overallGPA').textContent = overallGPA;
+    document.getElementById('highPerformers').textContent = allGrades.filter(g => (g.average || 0) >= 80).length;
+    document.getElementById('atRisk').textContent = allStudents.filter(s => allGrades.filter(g => g.studentId === s.id && (g.average || 0) < 60).length > 0).length;
+}
+
+function updateProfile() {
+    alert('Profile update feature - implement form for editing admin details');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+}
+
+document.addEventListener('click', function(event) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        if (event.target === modal) modal.classList.remove('active');
+    });
+});
+
+// FIXED: Storage event listener to suppress Google API warnings
+window.addEventListener('beforeload', (e) => {
+    if (e.url && e.url.includes('apis.google.com')) {
+        e.preventDefault();
+        console.warn('Blocked potential tracker load for privacy.');
+    }
+});
+
+// NEW: Clear console function for debugging
+function clearConsole() {
+    console.clear();
+    alert('Console cleared! Reload page to re-run logs.');
+}
+
+// ========================================
+// MISSING FUNCTIONS FOR ADMIN PORTAL
+// Add these to your <script> section
+// ========================================
+
+// ============ TEACHERS SECTION ============
+
+// Pagination variables for teachers
+let currentTeachersPage = 1;
+
+async function loadAllTeachers(adminId) {
+    const { database, ref, get } = window.firebaseServices;
+    try {
+        const teachersRef = ref(database, 'artifacts/default-app-id/teachers');
+        const snapshot = await get(teachersRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            allTeachers = Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            })).filter(t => t.Role !== 'admin' && t.role !== 'admin');
+        } else {
+            allTeachers = [];
+        }
+        
+        filteredTeachers = [...allTeachers];
+        displayTeachers();
+        console.log(`✅ Loaded ${allTeachers.length} teachers`);
+    } catch (error) {
+        console.error('Error loading teachers:', error);
+        allTeachers = [];
+        filteredTeachers = [];
+        displayTeachers();
+    }
+}
+
+function displayTeachers() {
+    const container = document.getElementById('teachersList');
+    const perPage = parseInt(document.getElementById('teachersPerPage').value) || 20;
+    const start = (currentTeachersPage - 1) * perPage;
+    const end = start + perPage;
+    const paginatedTeachers = filteredTeachers.slice(start, end);
+    
+    if (paginatedTeachers.length === 0) {
+        container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--gray-500);">No teachers found</div>';
+        updateTeachersPaginationControls();
+        return;
+    }
+    
+    container.innerHTML = paginatedTeachers.map(teacher => `
+        <div class="student-item">
+            <div class="student-info">
+                <h4>${teacher.Name || teacher.name || 'No Name'}</h4>
+                <p>📧 ${teacher.Email || teacher.email || 'No Email'}</p>
+                <p>📚 ${teacher.Subject || teacher.subject || 'No Subject'}</p>
+                <p>📞 ${teacher.Phone || teacher.phone || 'No Phone'}</p>
+                <span class="badge badge-${(teacher.Status || teacher.status || 'active').toLowerCase() === 'active' ? 'success' : 'warning'}">
+                    ${teacher.Status || teacher.status || 'Active'}
+                </span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-primary" onclick="editTeacher('${teacher.id}')">Edit</button>
+                <button class="btn" style="background: #e74c3c; color: white;" onclick="deleteTeacher('${teacher.id}')">Delete</button>
+            </div>
+        </div>
+    `).join('');
+    
+    updateTeachersPaginationControls();
+}
+
+function filterTeachers() {
+    const search = document.getElementById('teacherSearch').value.toLowerCase();
+    filteredTeachers = allTeachers.filter(teacher => {
+        const name = (teacher.Name || teacher.name || '').toLowerCase();
+        const email = (teacher.Email || teacher.email || '').toLowerCase();
+        const subject = (teacher.Subject || teacher.subject || '').toLowerCase();
+        return name.includes(search) || email.includes(search) || subject.includes(search);
+    });
+    resetTeachersPagination();
+    displayTeachers();
+}
+
+function resetTeachersPagination() {
+    currentTeachersPage = 1;
+}
+
+function updateTeachersPaginationControls() {
+    const perPage = parseInt(document.getElementById('teachersPerPage').value) || 20;
+    const totalPages = Math.ceil(filteredTeachers.length / perPage);
+    
+    document.getElementById('teachersPageInfo').textContent = 
+        `Page ${currentTeachersPage} of ${totalPages || 1} (${filteredTeachers.length} total)`;
+    
+    document.getElementById('teachersPrevBtn').disabled = currentTeachersPage === 1;
+    document.getElementById('teachersNextBtn').disabled = currentTeachersPage >= totalPages;
+}
+
+function previousTeachersPage() {
+    if (currentTeachersPage > 1) {
+        currentTeachersPage--;
+        displayTeachers();
+    }
+}
+
+function nextTeachersPage() {
+    const perPage = parseInt(document.getElementById('teachersPerPage').value) || 20;
+    const totalPages = Math.ceil(filteredTeachers.length / perPage);
+    if (currentTeachersPage < totalPages) {
+        currentTeachersPage++;
+        displayTeachers();
+    }
+}
+
+function openCreateTeacherModal() {
+    currentEditingTeacherId = null;
+    document.getElementById('teacherModalTitle').textContent = 'Add New Teacher';
+    document.getElementById('teacherName').value = '';
+    document.getElementById('teacherEmail').value = '';
+    document.getElementById('teacherSubject').value = '';
+    document.getElementById('teacherGrades').value = '';
+    document.getElementById('teacherPhone').value = '';
+    document.getElementById('teacherStatus').value = 'Active';
+    document.getElementById('teacherModal').classList.add('active');
+}
+
+function editTeacher(teacherId) {
+    const teacher = allTeachers.find(t => t.id === teacherId);
+    if (!teacher) return alert('Teacher not found!');
+    
+    currentEditingTeacherId = teacherId;
+    document.getElementById('teacherModalTitle').textContent = 'Edit Teacher';
+    document.getElementById('teacherName').value = teacher.Name || teacher.name || '';
+    document.getElementById('teacherEmail').value = teacher.Email || teacher.email || '';
+    document.getElementById('teacherSubject').value = teacher.Subject || teacher.subject || '';
+    document.getElementById('teacherGrades').value = teacher.Grades || teacher.grades || '';
+    document.getElementById('teacherPhone').value = teacher.Phone || teacher.phone || '';
+    document.getElementById('teacherStatus').value = teacher.Status || teacher.status || 'Active';
+    document.getElementById('teacherModal').classList.add('active');
+}
+
+async function saveTeacher() {
+    const name = document.getElementById('teacherName').value.trim();
+    const email = document.getElementById('teacherEmail').value.trim();
+    const subject = document.getElementById('teacherSubject').value.trim();
+    const grades = document.getElementById('teacherGrades').value.trim();
+    const phone = document.getElementById('teacherPhone').value.trim();
+    const status = document.getElementById('teacherStatus').value;
+    
+    if (!name || !email) return alert('Name and Email are required!');
+    
+    const { database, ref, set, update } = window.firebaseServices;
+    
+    try {
+        const teacherData = {
+            Name: name,
+            Email: email,
+            Subject: subject,
+            Grades: grades,
+            Phone: phone,
+            Status: status,
+            Role: 'teacher',
+            updatedAt: new Date().toISOString()
+        };
+        
+        if (currentEditingTeacherId) {
+            const teacherRef = ref(database, `artifacts/default-app-id/teachers/${currentEditingTeacherId}`);
+            await update(teacherRef, teacherData);
+            alert('✅ Teacher updated successfully!');
+        } else {
+            const newId = 'teacher_' + Date.now();
+            const teacherRef = ref(database, `artifacts/default-app-id/teachers/${newId}`);
+            teacherData.createdAt = new Date().toISOString();
+            await set(teacherRef, teacherData);
+            alert('✅ Teacher added successfully!');
+        }
+        
+        closeModal('teacherModal');
+        await loadAllTeachers(currentAdmin.id);
+    } catch (error) {
+        console.error('Error saving teacher:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+async function deleteTeacher(teacherId) {
+    if (!confirm('Delete this teacher?')) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        const teacherRef = ref(database, `artifacts/default-app-id/teachers/${teacherId}`);
+        await remove(teacherRef);
+        alert('✅ Teacher deleted!');
+        await loadAllTeachers(currentAdmin.id);
+    } catch (error) {
+        console.error('Error deleting teacher:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// ============ STUDENTS SECTION ============
+
+let currentStudentsPage = 1;
+
+async function loadAllStudents(adminId) {
+    const { database, ref, get } = window.firebaseServices;
+    try {
+        const studentsRef = ref(database, 'artifacts/default-app-id/students');
+        const snapshot = await get(studentsRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            allStudents = Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            }));
+        } else {
+            allStudents = [];
+        }
+        
+        filteredStudents = [...allStudents];
+        displayStudents();
+        console.log(`✅ Loaded ${allStudents.length} students`);
+    } catch (error) {
+        console.error('Error loading students:', error);
+        allStudents = [];
+        filteredStudents = [];
+        displayStudents();
+    }
+}
+
+function displayStudents() {
+    const container = document.getElementById('studentsList');
+    const perPage = parseInt(document.getElementById('studentsPerPage').value) || 20;
+    const start = (currentStudentsPage - 1) * perPage;
+    const end = start + perPage;
+    const paginatedStudents = filteredStudents.slice(start, end);
+    
+    if (paginatedStudents.length === 0) {
+        container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--gray-500);">No students found</div>';
+        updateStudentsPaginationControls();
+        return;
+    }
+    
+    container.innerHTML = paginatedStudents.map(student => `
+        <div class="student-item">
+            <div class="student-info">
+                <h4>${student['Official Student Name'] || student.name || 'No Name'}</h4>
+                <p>📧 ${student.Email || student.email || 'No Email'}</p>
+                <p>🎓 Grade: ${student.Grade || student.grade || 'N/A'}</p>
+                <p>📋 Assessment: ${student['Assessment No'] || student.assessmentNo || 'N/A'}</p>
+                <p>👤 Parent: ${student['Parent Name'] || student.parentName || 'N/A'}</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-primary" onclick="editStudent('${student.id}')">Edit</button>
+                <button class="btn" style="background: #e74c3c; color: white;" onclick="deleteStudent('${student.id}')">Delete</button>
+            </div>
+        </div>
+    `).join('');
+    
+    updateStudentsPaginationControls();
+}
+
+function filterStudents() {
+    const search = document.getElementById('studentSearch').value.toLowerCase();
+    filteredStudents = allStudents.filter(student => {
+        const name = (student['Official Student Name'] || student.name || '').toLowerCase();
+        const email = (student.Email || student.email || '').toLowerCase();
+        const grade = (student.Grade || student.grade || '').toLowerCase();
+        return name.includes(search) || email.includes(search) || grade.includes(search);
+    });
+    resetStudentsPagination();
+    displayStudents();
+}
+
+function resetStudentsPagination() {
+    currentStudentsPage = 1;
+}
+
+function updateStudentsPaginationControls() {
+    const perPage = parseInt(document.getElementById('studentsPerPage').value) || 20;
+    const totalPages = Math.ceil(filteredStudents.length / perPage);
+    
+    document.getElementById('studentsPageInfo').textContent = 
+        `Page ${currentStudentsPage} of ${totalPages || 1} (${filteredStudents.length} total)`;
+    
+    document.getElementById('studentsPrevBtn').disabled = currentStudentsPage === 1;
+    document.getElementById('studentsNextBtn').disabled = currentStudentsPage >= totalPages;
+}
+
+function previousStudentsPage() {
+    if (currentStudentsPage > 1) {
+        currentStudentsPage--;
+        displayStudents();
+    }
+}
+
+function nextStudentsPage() {
+    const perPage = parseInt(document.getElementById('studentsPerPage').value) || 20;
+    const totalPages = Math.ceil(filteredStudents.length / perPage);
+    if (currentStudentsPage < totalPages) {
+        currentStudentsPage++;
+        displayStudents();
+    }
+}
+
+function editStudent(studentId) {
+    const student = allStudents.find(s => s.id === studentId);
+    if (!student) return alert('Student not found!');
+    
+    currentEditingStudentId = studentId;
+    document.getElementById('editStudentName').value = student['Official Student Name'] || student.name || '';
+    document.getElementById('editStudentEmail').value = student.Email || student.email || '';
+    document.getElementById('editStudentPhone').value = student.Phone || student.phone || '';
+    document.getElementById('editStudentGrade').value = student.Grade || student.grade || '';
+    document.getElementById('editStudentAssessment').value = student['Assessment No'] || student.assessmentNo || '';
+    document.getElementById('editStudentParent').value = student['Parent Name'] || student.parentName || '';
+    document.getElementById('editStudentParentPhone').value = student['Parent Phone'] || student.parentPhone || '';
+    document.getElementById('studentEditModal').classList.add('active');
+}
+
+async function saveStudentChanges() {
+    const name = document.getElementById('editStudentName').value.trim();
+    const email = document.getElementById('editStudentEmail').value.trim();
+    const phone = document.getElementById('editStudentPhone').value.trim();
+    const grade = document.getElementById('editStudentGrade').value.trim();
+    const assessment = document.getElementById('editStudentAssessment').value.trim();
+    const parentName = document.getElementById('editStudentParent').value.trim();
+    const parentPhone = document.getElementById('editStudentParentPhone').value.trim();
+    
+    if (!name || !email) return alert('Name and Email are required!');
+    
+    const { database, ref, update } = window.firebaseServices;
+    
+    try {
+        const studentRef = ref(database, `artifacts/default-app-id/students/${currentEditingStudentId}`);
+        await update(studentRef, {
+            'Official Student Name': name,
+            'Email': email,
+            'Phone': phone,
+            'Grade': grade,
+            'Assessment No': assessment,
+            'Parent Name': parentName,
+            'Parent Phone': parentPhone,
+            'updatedAt': new Date().toISOString()
+        });
+        
+        alert('✅ Student updated successfully!');
+        closeModal('studentEditModal');
+        await loadAllStudents(currentAdmin.id);
+    } catch (error) {
+        console.error('Error updating student:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+async function deleteStudent(studentId) {
+    if (!confirm('Delete this student?')) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        const studentRef = ref(database, `artifacts/default-app-id/students/${studentId}`);
+        await remove(studentRef);
+        alert('✅ Student deleted!');
+        await loadAllStudents(currentAdmin.id);
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// ============ REPORTS SECTION ============
+
+let currentReportsPage = 1;
+
+async function loadAllReports(adminId) {
+    const { database, ref, get } = window.firebaseServices;
+    try {
+        const reportsRef = ref(database, 'artifacts/default-app-id/reports');
+        const snapshot = await get(reportsRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            allReports = Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            }));
+        } else {
+            allReports = [];
+        }
+        
+        filteredReports = [...allReports];
+        displayReports();
+        console.log(`✅ Loaded ${allReports.length} reports`);
+    } catch (error) {
+        console.error('Error loading reports:', error);
+        allReports = [];
+        filteredReports = [];
+        displayReports();
+    }
+}
+
+function displayReports() {
+    const tbody = document.getElementById('reportsTable');
+    const perPage = 10;
+    const start = (currentReportsPage - 1) * perPage;
+    const end = start + perPage;
+    const paginatedReports = filteredReports.slice(start, end);
+    
+    if (paginatedReports.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px;">No reports found</td></tr>';
+        updateReportsPaginationControls();
+        return;
+    }
+    
+    tbody.innerHTML = paginatedReports.map(report => `
+        <tr>
+            <td>${report.type || 'General Report'}</td>
+            <td>${report.date || new Date().toLocaleDateString()}</td>
+            <td><span class="badge badge-${report.status === 'Completed' ? 'success' : 'warning'}">${report.status || 'Pending'}</span></td>
+            <td>
+                <button class="btn btn-primary" onclick="viewReport('${report.id}')">View</button>
+                <button class="btn" style="background: #e74c3c; color: white;" onclick="deleteReport('${report.id}')">Delete</button>
+            </td>
+        </tr>
+    `).join('');
+    
+    updateReportsPaginationControls();
+}
+
+function filterReports() {
+    const search = document.getElementById('reportSearch').value.toLowerCase();
+    filteredReports = allReports.filter(report => {
+        const type = (report.type || '').toLowerCase();
+        const status = (report.status || '').toLowerCase();
+        return type.includes(search) || status.includes(search);
+    });
+    currentReportsPage = 1;
+    displayReports();
+}
+
+function updateReportsPaginationControls() {
+    const perPage = 10;
+    const totalPages = Math.ceil(filteredReports.length / perPage);
+    
+    document.getElementById('reportsPageInfo').textContent = 
+        `Page ${currentReportsPage} of ${totalPages || 1} (${filteredReports.length} total)`;
+    
+    document.getElementById('reportsPrevBtn').disabled = currentReportsPage === 1;
+    document.getElementById('reportsNextBtn').disabled = currentReportsPage >= totalPages;
+}
+
+function previousReportsPage() {
+    if (currentReportsPage > 1) {
+        currentReportsPage--;
+        displayReports();
+    }
+}
+
+function nextReportsPage() {
+    const perPage = 10;
+    const totalPages = Math.ceil(filteredReports.length / perPage);
+    if (currentReportsPage < totalPages) {
+        currentReportsPage++;
+        displayReports();
+    }
+}
+
+async function generateNewReport() {
+    const reportType = prompt('Report type (Attendance/Grades/General):') || 'General Report';
+    
+    const { database, ref, set } = window.firebaseServices;
+    
+    try {
+        const newId = 'report_' + Date.now();
+        const reportRef = ref(database, `artifacts/default-app-id/reports/${newId}`);
+        await set(reportRef, {
+            type: reportType,
+            date: new Date().toLocaleDateString(),
+            status: 'Completed',
+            createdAt: new Date().toISOString()
+        });
+        
+        alert('✅ Report generated successfully!');
+        await loadAllReports(currentAdmin.id);
+    } catch (error) {
+        console.error('Error generating report:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+function viewReport(reportId) {
+    const report = allReports.find(r => r.id === reportId);
+    if (!report) return alert('Report not found!');
+    
+    alert(`Report Details:\nType: ${report.type}\nDate: ${report.date}\nStatus: ${report.status}`);
+}
+
+async function deleteReport(reportId) {
+    if (!confirm('Delete this report?')) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        const reportRef = ref(database, `artifacts/default-app-id/reports/${reportId}`);
+        await remove(reportRef);
+        alert('✅ Report deleted!');
+        await loadAllReports(currentAdmin.id);
+    } catch (error) {
+        console.error('Error deleting report:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+async function deleteAllReports() {
+    if (allReports.length === 0) return alert('No reports to delete!');
+    if (!confirm(`Delete all ${allReports.length} reports?`)) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        const reportsRef = ref(database, 'artifacts/default-app-id/reports');
+        await remove(reportsRef);
+        alert('✅ All reports deleted!');
+        await loadAllReports(currentAdmin.id);
+    } catch (error) {
+        console.error('Error deleting reports:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// ============ GRADES SECTION ============
+
+let currentAdminGradesPage = 1;
+async function loadAllAdminGrades(adminId) {
+    const { database, ref, get } = window.firebaseServices;
+    try {
+        const gradesRef = ref(database, 'artifacts/default-app-id/grades');
+        const snapshot = await get(gradesRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            allGrades = [];
+            
+            Object.keys(data).forEach(studentId => {
+                const studentGrades = data[studentId];
+                // Look up the actual student from allStudents array
+                const student = allStudents.find(s => s.id === studentId);
+                const actualStudentName = student ? 
+                    (student['Official Student Name'] || student.name || 'Unknown Student') : 
+                    'Unknown Student';
+                
+                Object.keys(studentGrades).forEach(subject => {
+                    const gradeData = studentGrades[subject];
+                    allGrades.push({
+                        studentId,
+                        studentName: actualStudentName, // Use looked-up name instead of stored name
+                        subject,
+                        term1: gradeData.term1 || 0,
+                        term2: gradeData.term2 || 0,
+                        term3: gradeData.term3 || 0,
+                        average: gradeData.average || 0
+                    });
+                });
+            });
+        } else {
+            allGrades = [];
+        }
+        
+        filteredAdminGrades = [...allGrades];
+        displayAdminGrades();
+        console.log(`✅ Loaded ${allGrades.length} grades`);
+        
+        // Update chart with real data
+        if (typeof updateChartsWithRealData === 'function') {
+            updateChartsWithRealData();
+        }
+    } catch (error) {
+        console.error('Error loading grades:', error);
+        allGrades = [];
+        filteredAdminGrades = [];
+        displayAdminGrades();
+    }
+}
+function displayAdminGrades() {
+    const tbody = document.getElementById('adminGradesTable');
+    const perPage = 10;
+    const start = (currentAdminGradesPage - 1) * perPage;
+    const end = start + perPage;
+    const paginatedGrades = filteredAdminGrades.slice(start, end);
+    
+    if (paginatedGrades.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No grades found</td></tr>';
+        updateAdminGradesPaginationControls();
+        return;
+    }
+    
+    tbody.innerHTML = paginatedGrades.map(grade => `
+        <tr>
+            <td>${grade.studentName}</td>
+            <td>${grade.subject}</td>
+            <td>${grade.term1}</td>
+            <td>${grade.term2}</td>
+            <td>${grade.term3}</td>
+            <td><strong>${grade.average}</strong></td>
+            <td>
+                <button class="btn btn-primary" onclick="editAdminGrade('${grade.studentId}', '${grade.subject}')">Edit</button>
+                <button class="btn" style="background: #e74c3c; color: white;" onclick="deleteAdminGrade('${grade.studentId}', '${grade.subject}')">Delete</button>
+            </td>
+        </tr>
+    `).join('');
+    
+    updateAdminGradesPaginationControls();
+}
+
+function filterAdminGrades() {
+    const search = document.getElementById('gradeSearch').value.toLowerCase();
+    filteredAdminGrades = allGrades.filter(grade => {
+        return grade.studentName.toLowerCase().includes(search) || 
+               grade.subject.toLowerCase().includes(search);
+    });
+    currentAdminGradesPage = 1;
+    displayAdminGrades();
+}
+
+function updateAdminGradesPaginationControls() {
+    const perPage = 10;
+    const totalPages = Math.ceil(filteredAdminGrades.length / perPage);
+    
+    document.getElementById('adminGradesPageInfo').textContent = 
+        `Page ${currentAdminGradesPage} of ${totalPages || 1} (${filteredAdminGrades.length} total)`;
+    
+    document.getElementById('adminGradesPrevBtn').disabled = currentAdminGradesPage === 1;
+    document.getElementById('adminGradesNextBtn').disabled = currentAdminGradesPage >= totalPages;
+}
+
+function previousAdminGradesPage() {
+    if (currentAdminGradesPage > 1) {
+        currentAdminGradesPage--;
+        displayAdminGrades();
+    }
+}
+
+function nextAdminGradesPage() {
+    const perPage = 10;
+    const totalPages = Math.ceil(filteredAdminGrades.length / perPage);
+    if (currentAdminGradesPage < totalPages) {
+        currentAdminGradesPage++;
+        displayAdminGrades();
+    }
+}
+
+function populateAdminStudentSelects() {
+    const select = document.getElementById('adminGradeStudent');
+    select.innerHTML = '<option>Select student...</option>' + 
+        allStudents.map(s => `<option value="${s.id}">${s['Official Student Name'] || s.name}</option>`).join('');
+}
+
+function openAdminGradeModal() {
+    currentEditingAdminGradeStudentId = null;
+    currentEditingAdminGradeSubject = null;
+    document.getElementById('adminGradeStudent').value = '';
+    document.getElementById('adminGradeSubject').value = '';
+    document.getElementById('adminGradeTerm1').value = '';
+    document.getElementById('adminGradeTerm2').value = '';
+    document.getElementById('adminGradeTerm3').value = '';
+    document.getElementById('adminGradeModal').classList.add('active');
+}
+
+function editAdminGrade(studentId, subject) {
+    const grade = allGrades.find(g => g.studentId === studentId && g.subject === subject);
+    if (!grade) return alert('Grade not found!');
+    
+    currentEditingAdminGradeStudentId = studentId;
+    currentEditingAdminGradeSubject = subject;
+    document.getElementById('adminGradeStudent').value = studentId;
+    document.getElementById('adminGradeSubject').value = subject;
+    document.getElementById('adminGradeTerm1').value = grade.term1;
+    document.getElementById('adminGradeTerm2').value = grade.term2;
+    document.getElementById('adminGradeTerm3').value = grade.term3;
+    document.getElementById('adminGradeModal').classList.add('active');
+}
+
+async function saveAdminGrade() {
+    const studentId = document.getElementById('adminGradeStudent').value;
+    const subject = document.getElementById('adminGradeSubject').value.trim();
+    const term1 = parseFloat(document.getElementById('adminGradeTerm1').value) || 0;
+    const term2 = parseFloat(document.getElementById('adminGradeTerm2').value) || 0;
+    const term3 = parseFloat(document.getElementById('adminGradeTerm3').value) || 0;
+    
+    if (!studentId || !subject) return alert('Student and Subject are required!');
+    
+    const student = allStudents.find(s => s.id === studentId);
+    if (!student) return alert('Student not found!');
+    
+    const average = ((term1 + term2 + term3) / 3).toFixed(1);
+    
+    const { database, ref, set } = window.firebaseServices;
+    
+    try {
+        const gradeRef = ref(database, `artifacts/default-app-id/grades/${studentId}/${subject}`);
+        await set(gradeRef, {
+            studentName: student['Official Student Name'] || student.name,
+            subject,
+            term1,
+            term2,
+            term3,
+            average: parseFloat(average),
+            updatedAt: new Date().toISOString()
+        });
+        
+        alert('✅ Grade saved successfully!');
+        closeModal('adminGradeModal');
+        await loadAllAdminGrades(currentAdmin.id);
+    } catch (error) {
+        console.error('Error saving grade:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+async function deleteAdminGrade(studentId, subject) {
+    if (!confirm('Delete this grade?')) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        const gradeRef = ref(database, `artifacts/default-app-id/grades/${studentId}/${subject}`);
+        await remove(gradeRef);
+        alert('✅ Grade deleted!');
+        await loadAllAdminGrades(currentAdmin.id);
+    } catch (error) {
+        console.error('Error deleting grade:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// ============ ATTENDANCE SECTION ============
+
+let currentAdminAttendancePage = 1;
+
+// ========================================
+// ATTENDANCE & MESSAGES FUNCTIONS (Part 2)
+// Add these after the previous functions
+// ========================================
+
+// ============ ATTENDANCE SECTION (Continued) ============
+
+async function loadAllAdminAttendance(adminId) {
+    const { database, ref, get } = window.firebaseServices;
+    try {
+        const attendanceRef = ref(database, 'artifacts/default-app-id/attendance');
+        const snapshot = await get(attendanceRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            allAttendance = [];
+            
+            Object.keys(data).forEach(studentId => {
+                const studentAttendance = data[studentId];
+                
+                // FIXED: Find the actual student to get their name
+                const student = allStudents.find(s => s.id === studentId);
+                const studentName = student ? (student['Official Student Name'] || student.name || 'Unknown') : 'Unknown Student';
+                
+                Object.keys(studentAttendance).forEach(date => {
+                    const record = studentAttendance[date];
+                    allAttendance.push({
+                        studentId,
+                        studentName: studentName,  // FIXED: Use the looked-up student name
+                        status: record.status || 'absent',
+                        date: date
+                    });
+                });
+            });
+        } else {
+            allAttendance = [];
+        }
+        
+        filteredAdminAttendance = [...allAttendance];
+        displayAdminAttendance();
+        console.log(`✅ Loaded ${allAttendance.length} attendance records`);
+    } catch (error) {
+        console.error('Error loading attendance:', error);
+        allAttendance = [];
+        filteredAdminAttendance = [];
+        displayAdminAttendance();
+    }
+}
+function displayAdminAttendance() {
+    const tbody = document.getElementById('adminAttendanceTable');
+    const perPage = 10;
+    const start = (currentAdminAttendancePage - 1) * perPage;
+    const end = start + perPage;
+    const paginatedAttendance = filteredAdminAttendance.slice(start, end);
+    
+    if (paginatedAttendance.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px;">No attendance records found</td></tr>';
+        updateAdminAttendancePaginationControls();
+        return;
+    }
+    
+    tbody.innerHTML = paginatedAttendance.map(record => `
+        <tr>
+            <td>${record.studentName}</td>
+            <td><span class="badge badge-${record.status === 'present' ? 'success' : 'danger'}">${record.status.toUpperCase()}</span></td>
+            <td>${record.date}</td>
+            <td>
+                <button class="btn btn-primary" onclick="editAdminAttendance('${record.studentId}', '${record.date}')">Edit</button>
+                <button class="btn" style="background: #e74c3c; color: white;" onclick="deleteAdminAttendance('${record.studentId}', '${record.date}')">Delete</button>
+            </td>
+        </tr>
+    `).join('');
+    
+    updateAdminAttendancePaginationControls();
+}
+
+function filterAdminAttendance() {
+    const dateFilter = document.getElementById('adminAttendanceDate').value;
+    
+    if (!dateFilter) {
+        filteredAdminAttendance = [...allAttendance];
+    } else {
+        filteredAdminAttendance = allAttendance.filter(record => record.date === dateFilter);
+    }
+    
+    currentAdminAttendancePage = 1;
+    displayAdminAttendance();
+}
+
+function updateAdminAttendancePaginationControls() {
+    const perPage = 10;
+    const totalPages = Math.ceil(filteredAdminAttendance.length / perPage);
+    
+    document.getElementById('adminAttendancePageInfo').textContent = 
+        `Page ${currentAdminAttendancePage} of ${totalPages || 1} (${filteredAdminAttendance.length} total)`;
+    
+    document.getElementById('adminAttendancePrevBtn').disabled = currentAdminAttendancePage === 1;
+    document.getElementById('adminAttendanceNextBtn').disabled = currentAdminAttendancePage >= totalPages;
+}
+
+function previousAdminAttendancePage() {
+    if (currentAdminAttendancePage > 1) {
+        currentAdminAttendancePage--;
+        displayAdminAttendance();
+    }
+}
+
+function nextAdminAttendancePage() {
+    const perPage = 10;
+    const totalPages = Math.ceil(filteredAdminAttendance.length / perPage);
+    if (currentAdminAttendancePage < totalPages) {
+        currentAdminAttendancePage++;
+        displayAdminAttendance();
+    }
+}
+
+function editAdminAttendance(studentId, date) {
+    alert('Edit attendance feature - implement modal for changing attendance status');
+}
+
+async function deleteAdminAttendance(studentId, date) {
+    if (!confirm('Delete this attendance record?')) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        const attendanceRef = ref(database, `artifacts/default-app-id/attendance/${studentId}/${date}`);
+        await remove(attendanceRef);
+        alert('✅ Attendance record deleted!');
+        await loadAllAdminAttendance(currentAdmin.id);
+    } catch (error) {
+        console.error('Error deleting attendance:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+function generateAttendanceReport() {
+    const dateFilter = document.getElementById('adminAttendanceDate').value;
+    const data = dateFilter ? 
+        allAttendance.filter(r => r.date === dateFilter) : 
+        allAttendance;
+    
+    if (data.length === 0) return alert('No attendance data to report!');
+    
+    const present = data.filter(r => r.status === 'present').length;
+    const absent = data.filter(r => r.status === 'absent').length;
+    const rate = ((present / data.length) * 100).toFixed(1);
+    
+    alert(`Attendance Report\n\nTotal Records: ${data.length}\nPresent: ${present}\nAbsent: ${absent}\nAttendance Rate: ${rate}%`);
+}
+
+// ============ MESSAGES SECTION ============
+
+let currentMessagesPage = 1;
+
+async function loadAndDisplayMessages() {
+    const { database, ref, get } = window.firebaseServices;
+    try {
+        const messagesRef = ref(database, 'artifacts/default-app-id/messages');
+        const snapshot = await get(messagesRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            allMessages = Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            }));
+        } else {
+            allMessages = [];
+        }
+        
+        filteredMessages = [...allMessages];
+        displayMessages();
+        console.log(`✅ Loaded ${allMessages.length} messages`);
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        allMessages = [];
+        filteredMessages = [];
+        displayMessages();
+    }
+}
+
+function displayMessages() {
+    const tbody = document.getElementById('messagesTable');
+    const perPage = 10;
+    const start = (currentMessagesPage - 1) * perPage;
+    const end = start + perPage;
+    const paginatedMessages = filteredMessages.slice(start, end);
+    
+    if (paginatedMessages.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No messages sent yet</td></tr>';
+        updateMessagesPaginationControls();
+        return;
+    }
+    
+    tbody.innerHTML = paginatedMessages.map(message => `
+        <tr>
+            <td>${message.to || 'All Users'}</td>
+            <td>${message.content || ''}</td>
+            <td>${message.date || new Date().toLocaleDateString()}</td>
+            <td><span class="badge badge-info">${message.type || 'announcement'}</span></td>
+            <td>
+                <button class="btn" style="background: #e74c3c; color: white;" onclick="deleteMessage('${message.id}')">Delete</button>
+            </td>
+        </tr>
+    `).join('');
+    
+    updateMessagesPaginationControls();
+}
+
+function updateMessagesPaginationControls() {
+    const perPage = 10;
+    const totalPages = Math.ceil(filteredMessages.length / perPage);
+    
+    document.getElementById('messagesPageInfo').textContent = 
+        `Page ${currentMessagesPage} of ${totalPages || 1} (${filteredMessages.length} total)`;
+    
+    document.getElementById('messagesPrevBtn').disabled = currentMessagesPage === 1;
+    document.getElementById('messagesNextBtn').disabled = currentMessagesPage >= totalPages;
+}
+
+function previousMessagesPage() {
+    if (currentMessagesPage > 1) {
+        currentMessagesPage--;
+        displayMessages();
+    }
+}
+
+function nextMessagesPage() {
+    const perPage = 10;
+    const totalPages = Math.ceil(filteredMessages.length / perPage);
+    if (currentMessagesPage < totalPages) {
+        currentMessagesPage++;
+        displayMessages();
+    }
+}
+
+function openSendSystemMessage() {
+    document.getElementById('systemMessageTo').value = 'all';
+    document.getElementById('systemMessageType').value = 'announcement';
+    document.getElementById('systemMessageContent').value = '';
+    document.getElementById('systemMessageModal').classList.add('active');
+}
+
+async function sendSystemMessage() {
+    const to = document.getElementById('systemMessageTo').value;
+    const type = document.getElementById('systemMessageType').value;
+    const content = document.getElementById('systemMessageContent').value.trim();
+    
+    if (!content) return alert('Message content is required!');
+    
+    const { database, ref, set } = window.firebaseServices;
+    
+    try {
+        const newId = 'message_' + Date.now();
+        const messageRef = ref(database, `artifacts/default-app-id/messages/${newId}`);
+        await set(messageRef, {
+            to,
+            type,
+            content,
+            date: new Date().toLocaleDateString(),
+            timestamp: new Date().toISOString(),
+            from: currentAdmin.id
+        });
+        
+        alert('✅ Message broadcast successfully!');
+        closeModal('systemMessageModal');
+        await loadAndDisplayMessages();
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+async function deleteMessage(messageId) {
+    if (!confirm('Delete this message?')) return;
+    
+    const { database, ref, remove } = window.firebaseServices;
+    
+    try {
+        const messageRef = ref(database, `artifacts/default-app-id/messages/${messageId}`);
+        await remove(messageRef);
+        alert('✅ Message deleted!');
+        await loadAndDisplayMessages();
+    } catch (error) {
+        console.error('Error deleting message:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// ============ BULK IMPORT SECTION ============
+
+function openBulkImportModal() {
+    document.getElementById('importType').value = 'students';
+    document.getElementById('csvFile').value = '';
+    document.getElementById('bulkImportModal').classList.add('active');
+}
+
+async function performBulkImport() {
+    const type = document.getElementById('importType').value;
+    const fileInput = document.getElementById('csvFile');
+    
+    if (!fileInput.files || fileInput.files.length === 0) {
+        return alert('Please select a CSV file!');
+    }
+    
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = async function(e) {
+        try {
+            const text = e.target.result;
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            if (lines.length < 2) {
+                return alert('CSV file is empty or invalid!');
+            }
+            
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = values[index] || '';
+                });
+                data.push(obj);
+            }
+            
+            const { database, ref, set } = window.firebaseServices;
+            let successCount = 0;
+            
+            for (const item of data) {
+                try {
+                    const newId = `${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                    const itemRef = ref(database, `artifacts/default-app-id/${type}/${newId}`);
+                    await set(itemRef, {
+                        ...item,
+                        importedAt: new Date().toISOString()
+                    });
+                    successCount++;
+                } catch (error) {
+                    console.error(`Error importing item:`, error);
+                }
+            }
+            
+            alert(`✅ Successfully imported ${successCount} out of ${data.length} records!`);
+            closeModal('bulkImportModal');
+            
+            if (type === 'students') {
+                await loadAllStudents(currentAdmin.id);
+            } else if (type === 'teachers') {
+                await loadAllTeachers(currentAdmin.id);
+            }
+        } catch (error) {
+            console.error('Bulk import error:', error);
+            alert('Error importing CSV: ' + error.message);
+        }
+    };
+    
+    reader.readAsText(file);
+}
+
+// ============ UTILITY FUNCTIONS ============
+
+// Set today's date as default for attendance filter
+window.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('adminAttendanceDate');
+    if (dateInput) {
+        dateInput.value = today;
+    }
+});
+
+// Modal close on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal.active').forEach(modal => {
+            modal.classList.remove('active');
+        });
+    }
+});
+
+console.log('✅ All missing functions loaded successfully!');
+
+window.addEventListener('DOMContentLoaded', () => {
+    const checkFirebase = setInterval(() => {
+        if (window.firebaseServices) {
+            clearInterval(checkFirebase);
+            console.log('✅ Enhanced Admin Portal Ready - Powered by Grok!');
+        }
+    }, 100);
+});
+</script>
+</body>
+</html>

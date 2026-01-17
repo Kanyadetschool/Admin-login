@@ -1,0 +1,885 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Teachers_Timetable>
+  <Teacher name="Mr. Owuor">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Md. Janet">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Mr. Owino">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="354"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 9"></Students>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="314"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 8"></Students>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="353"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 9"></Students>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="312"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 8"></Students>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="315"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 8"></Students>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="274"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 7"></Students>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="273"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 7"></Students>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="352"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 9"></Students>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="313"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 8"></Students>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="355"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 9"></Students>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Mr. Stephen">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Md. Beryl">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Mr Francis">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+      </Hour>
+      <Hour name="09:00am 09:40am">
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+      </Hour>
+      <Hour name="10:520am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Teacher>
+</Teachers_Timetable>

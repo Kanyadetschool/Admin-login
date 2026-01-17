@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanyadet Primary & Junior School | CBC Excellence in Nairobi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --accent: #27ae60;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray-500: #7f8c8d;
+            --gray-600: #5d6d7b;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & NAVIGATION */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 102, 51, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--primary);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .logo-icon { font-size: 36px; }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-main { font-size: 18px; }
+        .logo-sub { 
+            font-size: 11px; 
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        nav a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover { color: var(--primary); }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after { width: 100%; }
+
+        .cta-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 102, 51, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn::after { display: none; }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 102, 51, 0.4);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--dark);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            margin-top: 70px;
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 100px 24px;
+            min-height: 650px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(52, 152, 219, 0.15);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            animation: blob 8s infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(44, 62, 80, 0.1);
+            border-radius: 50%;
+            bottom: -50px;
+            left: -50px;
+            animation: blob 10s infinite reverse;
+        }
+
+        @keyframes blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -20px) scale(1.1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 58px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInLeft 0.8s ease;
+        }
+
+        .hero-tagline {
+            font-size: 20px;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 16px;
+            animation: slideInLeft 0.8s ease 0.1s backwards;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            color: var(--gray-600);
+            margin-bottom: 32px;
+            animation: slideInLeft 0.8s ease 0.2s backwards;
+        }
+
+        .hero-benefits {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .hero-benefit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            animation: slideInLeft 0.8s ease backwards;
+        }
+
+        .hero-benefit:nth-child(1) { animation-delay: 0.3s; }
+        .hero-benefit:nth-child(2) { animation-delay: 0.4s; }
+        .hero-benefit:nth-child(3) { animation-delay: 0.5s; }
+
+        .hero-benefit::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--success) 0%, #229954 100%);
+            color: white;
+            border-radius: 50%;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            animation: slideInLeft 0.8s ease 0.6s backwards;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 36px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 102, 51, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 102, 51, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            transform: translateY(-4px);
+        }
+
+        .hero-visual {
+            position: relative;
+            animation: slideInRight 0.8s ease 0.4s backwards;
+        }
+
+        .dashboard-mockup {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .mockup-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 24px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mockup-content {
+            padding: 28px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        }
+
+        .mockup-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .mockup-stat:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 102, 51, 0.1);
+        }
+
+        .mockup-stat-label { 
+            font-size: 13px; 
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+        .mockup-stat-value { 
+            font-size: 26px; 
+            font-weight: 800; 
+            color: var(--primary);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* SECTIONS */
+        section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 90px 24px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 46px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--gray-500);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* CBC HIGHLIGHT */
+        .cbc-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 60px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 102, 51, 0.2);
+        }
+
+        .cbc-banner h3 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .cbc-banner p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        /* ABOUT SECTION */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        .about-text p {
+            font-size: 16px;
+            color: var(--gray-600);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 32px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 28px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 102, 51, 0.3);
+        }
+
+        .stat-card-number {
+            font-size: 40px;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .stat-card-label {
+            font-size: 14px;
+            opacity: 0.95;
+            margin-top: 8px;
+        }
+
+        /* CBC LEARNING AREAS */
+        .cbc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .cbc-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        .cbc-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(0, 102, 51, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .cbc-icon {
+            font-size: 52px;
+            margin-bottom: 20px;
+        }
+
+        .cbc-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .cbc-card p {
+            font-size: 15px;
+            color: var(--gray-500);
+            line-height: 1.7;
+        }
+
+        /* FEATURES */
+        .features-section {
+            background: linear-gradient(135deg, #f9fafb 0%, #ecf0f1 100%);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 36px;
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(0, 102, 51, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .feature-icon {
+            font-size: 52px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            font-size: 15px;
+            color: var(--gray-500);
+            line-height: 1.7;
+        }
+
+        /* ADMISSIONS */
+        .admissions-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .admissions-section .section-header h2,
+        .admissions-section .section-header p {
+            color: white;
+        }
+
+        .admissions-content {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: start;
+            margin-top: 48px;
+        }
+
+        .admissions-info h3 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .admissions-list {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .admissions-list li {
+            padding: 14px 0;
+            padding-left: 40px;
+            position: relative;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .admissions-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .fee-structure {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .fee-structure h4 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .fee-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .fee-item:last-child {
+            border-bottom: none;
+            padding-top: 16px;
+            margin-top: 8px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* EVENTS */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 102, 51, 0.15);
+        }
+
+        .event-date {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .event-month {
+            font-size: 13px;
+            text-transform: uppercase;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
+        .event-day {
+            font-size: 40px;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .event-content {
+            padding: 28px;
+        }
+
+        .event-content h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .event-content p {
+            font-size: 15px;
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        /* CONTACT */
+        .contact-section {
+            background: linear-gradient(135deg, #f9fafb 0%, #ecf0f1 100%);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 36px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: slideUp 0.6s ease;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 102, 51, 0.1);
+        }
+
+        .contact-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .contact-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .contact-card p {
+            font-size: 15px;
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 70px 24px 20px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            font-size: 14px;
+            color: #d1d5db;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            line-height: 2;
+            display: block;
+        }
+
+        .footer-section a:hover {
+            color: white;
+            padding-left: 6px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 28px;
+            text-align: center;
+            font-size: 14px;
+            color: #9ca3af;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 968px) {
+            .hero-content { grid-template-columns: 1fr; }
+            .admissions-content { grid-template-columns: 1fr; }
+            .about-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .header-content { padding: 12px 16px; }
+            nav {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                gap: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            nav.active { display: flex; }
+            .hamburger { display: flex; }
+            .hero { padding: 60px 16px; margin-top: 60px; min-height: auto; }
+            .hero-text h1 { font-size: 40px; }
+            .hero-buttons { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+            section { padding: 60px 16px; }
+            .section-header h2 { font-size: 36px; }
+            .hero-visual { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 { font-size: 32px; }
+            .section-header h2 { font-size: 28px; }
+            .logo-text { display: none; }
+        }
+
+        /* STAGGER ANIMATIONS */
+        .cbc-card:nth-child(2) { animation-delay: 0.1s; }
+        .cbc-card:nth-child(3) { animation-delay: 0.2s; }
+        .cbc-card:nth-child(4) { animation-delay: 0.3s; }
+        .cbc-card:nth-child(5) { animation-delay: 0.4s; }
+        .cbc-card:nth-child(6) { animation-delay: 0.5s; }
+        .feature-card:nth-child(2) { animation-delay: 0.1s; }
+        .feature-card:nth-child(3) { animation-delay: 0.2s; }
+        .feature-card:nth-child(4) { animation-delay: 0.3s; }
+        .event-card:nth-child(2) { animation-delay: 0.1s; }
+        .event-card:nth-child(3) { animation-delay: 0.2s; }
+        .event-card:nth-child(4) { animation-delay: 0.3s; }
+        .contact-card:nth-child(2) { animation-delay: 0.1s; }
+        .contact-card:nth-child(3) { animation-delay: 0.2s; }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="header-content">
+        <a href="#" class="logo">
+            <span class="logo-icon">🎓</span>
+            <div class="logo-text">
+                <div class="logo-main">Kanyadet School</div>
+                <div class="logo-sub">CBC Excellence • KCPE Success</div>
+            </div>
+        </a>
+        <nav id="navbar">
+            <a href="#about">About</a>
+            <a href="#cbc">CBC Program</a>
+            <a href="#features">Features</a>
+            <a href="#admissions">Admissions</a>
+            <a href="#events">Events</a>
+            <a href="#contact">Contact</a>
+            <a href="#" class="cta-btn">Portal Login</a>
+        </nav>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <div class="hero-tagline">🇰🇪 TSC Registered • NEMIS Compliant</div>
+            <h1>Excellence in CBC Education</h1>
+            <p>Nurturing competent learners through Kenya's Competency-Based Curriculum from Grade 1-8</p>
+            <div class="hero-benefits">
+                <div class="hero-benefit">100% CBC Implementation with Qualified Teachers</div>
+                <div class="hero-benefit">KCPE Excellence Track Record - 95% Pass Rate</div>
+                <div class="hero-benefit">State-of-the-Art Facilities in Nairobi</div>
+            </div>
+            <div class="hero-buttons">
+                <button class="btn btn-primary">Book School Tour</button>
+                <button class="btn btn-secondary">Download Prospectus</button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="dashboard-mockup">
+                <div class="mockup-header">🎯 School Excellence Dashboard</div>
+                <div class="mockup-content">
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">CBC Enrolled Students</span>
+                        <span class="mockup-stat-value">1,250+</span>
+                    </div>
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">KCPE Pass Rate 2024</span>
+                        <span class="mockup-stat-value">95%</span>
+                    </div>
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">TSC Teachers</span>
+                        <span class="mockup-stat-value">85+</span>
+                    </div>
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">Learning Areas</span>
+                        <span class="mockup-stat-value">12</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+    <div class="cbc-banner">
+        <h3>🏆 Fully Accredited CBC School</h3>
+        <p>TSC Registered • NEMIS Compliant • Ministry of Education Approved</p>
+    </div>
+    
+    <div class="section-header">
+        <h2>About Kanyadet School</h2>
+        <p>Leading the way in Competency-Based Curriculum education since 1974</p>
+    </div>
+    
+    <div class="about-grid">
+        <div class="about-text">
+            <h3>Our Mission</h3>
+            <p>To provide quality CBC education that develops competent, confident, and creative learners who are ready to excel in Kenya's education system and beyond.</p>
+            <p>We are fully aligned with Kenya's 2-6-3-3-3 education system, offering comprehensive education from Grade 1 through Grade 8, preparing our students for junior secondary school and future success.</p>
+            
+            <div class="about-stats">
+                <div class="stat-card">
+                    <div class="stat-card-number">50+</div>
+                    <div class="stat-card-label">Years of Excellence</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-number">95%</div>
+                    <div class="stat-card-label">KCPE Pass Rate</div>
+                </div>
+            </div>
+        </div>
+        <div class="about-text">
+            <h3>Our Vision</h3>
+            <p>To be Kenya's premier primary and junior school, recognized for academic excellence, character development, and full implementation of the CBC curriculum.</p>
+            <p>Our state-of-the-art facilities in Nairobi, experienced TSC-registered teachers, and commitment to CBC values ensure every learner develops the seven core competencies required by KICD.</p>
+            
+            <div class="about-stats">
+                <div class="stat-card">
+                    <div class="stat-card-number">85+</div>
+                    <div class="stat-card-label">TSC Teachers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-number">Grade 1-8</div>
+                    <div class="stat-card-label">CBC Grades</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CBC LEARNING AREAS -->
+<section id="cbc">
+    <div class="section-header">
+        <h2>CBC Learning Areas</h2>
+        <p>Complete implementation of Kenya's Competency-Based Curriculum</p>
+    </div>
+    <div class="cbc-grid">
+        <div class="cbc-card">
+            <div class="cbc-icon">📖</div>
+            <h3>Languages</h3>
+            <p>English, Kiswahili, and optional Indigenous Languages taught by qualified language teachers</p>
+        </div>
+        <div class="cbc-card">
+            <div class="cbc-icon">🔢</div>
+            <h3>Mathematics</h3>
+            <p>Numeracy development and mathematical thinking aligned with CBC standards</p>
+        </div>
+        <div class="cbc-card">
+            <div class="cbc-icon">🌍</div>
+            <h3>Environmental Activities</h3>
+            <p>Integrated Science & Social Studies promoting environmental stewardship</p>
+        </div>
+        <div class="cbc-card">
+            <div class="cbc-icon">🎨</div>
+            <h3>Creative Arts & Sports</h3>
+            <p>Music, Art & Craft, Physical Education developing creativity and talent</p>
+        </div>
+        <div class="cbc-card">
+            <div class="cbc-icon">💻</div>
+            <h3>Digital Literacy</h3>
+            <p>Computer studies and ICT integration as per CBC requirements</p>
+        </div>
+        <div class="cbc-card">
+            <div class="cbc-icon">🙏</div>
+            <h3>Religious Education</h3>
+            <p>CRE, IRE, and HRE taught with respect for all faiths</p>
+        </div>
+        <div class="cbc-card">
+            <div class="cbc-icon">🏡</div>
+            <h3>Home Science</h3>
+            <p>Practical life skills and home management for junior school learners</p>
+        </div>
+        <div class="cbc-card">
+            <div class="cbc-icon">🌾</div>
+            <h3>Agriculture</h3>
+            <p>Hands-on farming activities and agricultural education</p>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+    <div class="section-header">
+        <h2>Why Choose Kanyadet?</h2>
+        <p>Comprehensive facilities and programs for CBC excellence</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">👨‍🏫</div>
+            <h3>TSC Registered Teachers</h3>
+            <p>All our teachers are TSC-registered and trained in CBC implementation with regular KICD workshops</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Assessment Tools</h3>
+            <p>Comprehensive formative and summative assessments aligned with CBC rubrics and learning outcomes</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏫</div>
+            <h3>Modern Classrooms</h3>
+            <p>Spacious, well-ventilated classrooms with learning corners and adequate teaching-learning materials</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔬</div>
+            <h3>Science Laboratory</h3>
+            <p>Fully equipped science lab for hands-on experiments and discovery-based learning</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3>Library & Resources</h3>
+            <p>Extensive library with CBC-approved textbooks and supplementary materials</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🚌</div>
+            <h3>School Transport</h3>
+            <p>Safe and reliable school buses covering various Nairobi routes with qualified drivers</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🍽️</div>
+            <h3>Nutritious Meals</h3>
+            <p>Balanced meals prepared in our hygienic kitchen following Ministry of Health standards</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚕️</div>
+            <h3>Medical Care</h3>
+            <p>On-site nurse and partnerships with nearby health facilities for student wellbeing</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏆</div>
+            <h3>Co-Curricular Activities</h3>
+            <p>Music festivals, drama, athletics, and clubs aligned with CBC talent development</p>
+        </div>
+    </div>
+</section>
+
+<!-- ADMISSIONS -->
+<section class="admissions-section" id="admissions">
+    <div class="section-header">
+        <h2>Admissions Information</h2>
+        <p>Join Kenya's premier CBC school for Term 1, 2025</p>
+    </div>
+    <div class="admissions-content">
+        <div class="admissions-info">
+            <h3>Admission Requirements</h3>
+            <ul class="admissions-list">
+                <li>Duly filled admission form</li>
+                <li>Original birth certificate and 2 photocopies</li>
+                <li>Immunization card (for PP1 & PP2)</li>
+                <li>Previous school leaving certificate & report forms</li>
+                <li>Copy of parents'/guardians' ID cards</li>
+                <li>Two recent passport-size photos</li>
+                <li>Admission assessment for Grade 4 and above</li>
+                <li>Medical examination report from registered clinic</li>
+            </ul>
+            <button class="btn btn-primary">Apply Online</button>
+        </div>
+        
+        <div class="fee-structure">
+            <h4>2025 Fee Structure</h4>
+            <div class="fee-item">
+                <span>Term 1-3 Fees</span>
+                <span>KSh 45,000</span>
+            </div>
+            <div class="fee-item">
+                <span>Admission Fee (One-time)</span>
+                <span>KSh 15,000</span>
+            </div>
+            <div class="fee-item">
+                <span>Lunch Program (per term)</span>
+                <span>KSh 12,000</span>
+            </div>
+            <div class="fee-item">
+                <span>Transport (per term)</span>
+                <span>KSh 18,000</span>
+            </div>
+            <div class="fee-item">
+                <span>Total (Full Package)</span>
+                <span>KSh 90,000</span>
+            </div>
+            <p style="margin-top: 20px; font-size: 14px; opacity: 0.9;">*Fees payable via M-PESA or bank deposit. Flexible payment plans available.</p>
+        </div>
+    </div>
+</section>
+
+<!-- EVENTS -->
+<section id="events">
+    <div class="section-header">
+        <h2>School Calendar 2025</h2>
+        <p>Important dates and events</p>
+    </div>
+    <div class="events-grid">
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">January</div>
+                <div class="event-day">6</div>
+            </div>
+            <div class="event-content">
+                <h3>Term 1 Begins</h3>
+                <p>First day of Term 1, 2025. Welcome back students!</p>
+            </div>
+        </div>
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">March</div>
+                <div class="event-day">20</div>
+            </div>
+            <div class="event-content">
+                <h3>Science & Innovation Fair</h3>
+                <p>Students showcase CBC-aligned science projects and innovations</p>
+            </div>
+        </div>
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">March</div>
+                <div class="event-day">28</div>
+            </div>
+            <div class="event-content">
+                <h3>End of Term 1</h3>
+                <p>Term 1 closes for April holidays</p>
+            </div>
+        </div>
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">April</div>
+                <div class="event-day">29</div>
+            </div>
+            <div class="event-content">
+                <h3>Term 2 Opens</h3>
+                <p>Students return for the second term</p>
+            </div>
+        </div>
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">June</div>
+                <div class="event-day">20</div>
+            </div>
+            <div class="event-content">
+                <h3>Music & Drama Festival</h3>
+                <p>Inter-house competitions in music, drama, and poetry</p>
+            </div>
+        </div>
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">August</div>
+                <div class="event-day">1</div>
+            </div>
+            <div class="event-content">
+                <h3>Term 2 Closes</h3>
+                <p>August holiday begins - students rest and recharge</p>
+            </div>
+        </div>
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">September</div>
+                <div class="event-day">1</div>
+            </div>
+            <div class="event-content">
+                <h3>Term 3 Opens</h3>
+                <p>Final term begins with KCPE preparations for Grade 8</p>
+            </div>
+        </div>
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">October</div>
+                <div class="event-day">27-31</div>
+            </div>
+            <div class="event-content">
+                <h3>KCPE Examinations</h3>
+                <p>National examinations for Grade 8 students</p>
+            </div>
+        </div>
+        <div class="event-card">
+            <div class="event-date">
+                <div class="event-month">November</div>
+                <div class="event-day">21</div>
+            </div>
+            <div class="event-content">
+                <h3>Closing Day & Prize Giving</h3>
+                <p>Academic year ends with awards ceremony</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+    <div class="section-header">
+        <h2>Visit Us Today</h2>
+        <p>Located in the heart of Nairobi - schedule a school tour</p>
+    </div>
+    <div class="contact-grid">
+        <div class="contact-card">
+            <div class="contact-icon">📍</div>
+            <h3>Location</h3>
+            <p>Kanyadet Road, Off Ngong Road<br>Opposite Nairobi Hospital<br>Nairobi, Kenya</p>
+        </div>
+        <div class="contact-card">
+            <div class="contact-icon">📞</div>
+            <h3>Phone Numbers</h3>
+            <p>+254 (0)20 123 4567<br>+254 712 345 678<br>+254 733 456 789</p>
+        </div>
+        <div class="contact-card">
+            <div class="contact-icon">✉️</div>
+            <h3>Email</h3>
+            <p>info@kanyadet.ac.ke<br>admissions@kanyadet.ac.ke<br>principal@kanyadet.ac.ke</p>
+        </div>
+        <div class="contact-card">
+            <div class="contact-icon">⏰</div>
+            <h3>Office Hours</h3>
+            <p>Monday - Friday: 7:30 AM - 4:30 PM<br>Saturday: 9:00 AM - 1:00 PM<br>Sunday: Closed</p>
+        </div>
+        <div class="contact-card">
+            <div class="contact-icon">💳</div>
+            <h3>Payment Options</h3>
+            <p>M-PESA Paybill: 123456<br>Bank Transfer: Available<br>Cheques: Accepted</p>
+        </div>
+        <div class="contact-card">
+            <div class="contact-icon">🌐</div>
+            <h3>Online Services</h3>
+            <p>Parent Portal<br>Student Portal<br>CBC Resources</p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>🎓 Kanyadet Primary & Junior School</h4>
+            <p>Excellence in CBC Education since 1974. TSC Registered • NEMIS Compliant • Ministry of Education Approved. Nurturing competent learners from Grade 1-8 in accordance with Kenya's 2-6-3-3-3 education system.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="#about">About Us</a>
+            <a href="#cbc">CBC Program</a>
+            <a href="#features">School Features</a>
+            <a href="#admissions">Admissions</a>
+            <a href="#events">School Calendar</a>
+            <a href="#contact">Contact Us</a>
+        </div>
+        <div class="footer-section">
+            <h4>Resources</h4>
+            <a href="#">Parent Portal Login</a>
+            <a href="#">Student Portal Login</a>
+            <a href="#">CBC Curriculum Guide</a>
+            <a href="#">Fee Payment</a>
+            <a href="#">Download Prospectus</a>
+            <a href="#">Staff Directory</a>
+        </div>
+        <div class="footer-section">
+            <h4>Connect With Us</h4>
+            <a href="#">Facebook</a>
+            <a href="#">Twitter</a>
+            <a href="#">Instagram</a>
+            <a href="#">YouTube</a>
+            <a href="#">LinkedIn</a>
+            <p style="margin-top: 20px;"><strong>School Code:</strong> 123456789</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Kanyadet Primary & Junior School. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Complaints Procedure</a></p>
+        <p style="margin-top: 8px;">Registered with Ministry of Education • Member of Kenya Primary Schools Association</p>
+    </div>
+</footer>
+
+<script>
+    // Mobile Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const navbar = document.getElementById('navbar');
+
+    hamburger.addEventListener('click', () => {
+        navbar.classList.toggle('active');
+    });
+
+    navbar.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navbar.classList.remove('active');
+        });
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        if (window.scrollY > 10) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    // Smooth scroll for all anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

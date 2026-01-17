@@ -1,0 +1,194 @@
+{
+  "rules": {
+    "students": {
+      ".read": true,
+      ".write": "auth != null",
+      ".indexOn": ["Assessment No", "Grade"]
+    },
+    "teachers": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["name", "subject", "employeeId"]
+    },
+    "subjects": {
+      ".read": true,
+      ".write": "auth != null",
+      ".indexOn": ["name"]
+    },
+    "submissions": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["userId", "status", "subject", "grade", "timestamp", "submittedDate"]
+    },
+    "teacherSubmissions": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["userId", "status", "subject", "grade", "timestamp", "submittedDate"]
+    },
+    "books": {
+      ".read": true,
+      ".write": "auth != null",
+      ".indexOn": ["title", "author", "isbn"]
+    },
+    "issuance": {
+      ".read": true,
+      ".write": "auth != null",
+      ".indexOn": ["studentId", "bookId", "issueDate", "returnDate"]
+    },
+    "issuances": {
+      ".read": true,
+      ".write": "auth != null",
+      ".indexOn": ["studentId", "bookId", "issueDate", "returnDate"]
+    },
+    "lost_books": {
+      ".read": true,
+      ".write": "auth != null",
+      ".indexOn": ["studentId", "bookId", "lostDate"]
+    },
+    "activities": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["timestamp", "type", "userId"]
+    },
+    "messages": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["timestamp", "userId", "read"]
+    },
+    "message_threads": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["timestamp", "userId", "read"]
+    },
+   "artifacts": {
+      "$appId": {
+        "students": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          ".indexOn": ["Assessment No", "Grade"]
+        },
+        "teachers": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          ".indexOn": ["Email", "Status"]
+        },
+        "reports": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        },
+        "grades": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        },
+        "attendance": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        },
+        "messages": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    },
+    "Alumni": {
+      "$appId": {
+        "students": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          ".indexOn": ["Assessment No", "Grade"]
+        }
+      }
+    },
+    "Results": {
+      "$appId": {
+        "students": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          ".indexOn": ["Assessment No", "Grade"]
+        }
+      }
+    },
+    "JuniorSchoolResultsDatabase": {
+      "$appId": {
+        "students": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          ".indexOn": ["Assessment No", "Grade"]
+        }
+      }
+    },
+    "JuniorSchoolDeletedResults": {
+      "$appId": {
+        "artifacts": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    },
+    "DeletedResults": {
+      "$appId": {
+        "artifacts": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    },
+    "Deletedstudents": {
+      "$appId": {
+        "artifacts": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    },
+    "audit_logs": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["timestamp", "action", "userId", "entity", "entityId"],
+      "$logId": {
+        ".validate": "newData.hasChildren(['timestamp', 'action', 'entity', 'entityId', 'userId'])"
+      }
+    },
+    "user_logs": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["timestamp", "action", "userId"],
+      "$userId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": ["timestamp", "action"]
+      }
+    },
+    "notifications_queue": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["timestamp", "studentId", "status"]
+    },
+    "admin_users": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "Kpsea-adminPortal": {
+      "assessments": {
+        ".read": true,
+        ".write": true
+      }
+    },
+    "adminPortal": {
+      "modifiedStudents": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "assessments": {
+        ".read": true,
+        ".write": true
+      },
+      "activityFeed": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    ".read": false,
+    ".write": false
+  }
+}

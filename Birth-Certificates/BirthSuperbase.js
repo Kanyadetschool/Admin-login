@@ -16,6 +16,296 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // Initialize Supabase client
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Track previous student data to detect grade changes
+let previousStudentData = new Map();
+
+console.log('✓ Grade tracking initialized');
+
+
+
+
+
+
+
+// =============================================================================
+// SUPABASE HEARTBEAT SYSTEM - PREVENTS PROJECT PAUSING AFTER 7 DAYS
+// =============================================================================
+// =============================================================================
+// AUTOMATIC SUPABASE HEARTBEAT - PREVENTS PROJECT PAUSING (FULLY AUTOMATIC)
+// =============================================================================
+
+const HEARTBEAT_INTERVAL = 4 * 24 * 60 * 60 * 1000; // 4 days (safer than 5)
+const HEARTBEAT_CHECK_INTERVAL = 6 * 60 * 60 * 1000; // Check every 6 hours
+const HEARTBEAT_STORAGE_KEY = 'supabase_last_heartbeat';
+
+// Main heartbeat function
+async function performHeartbeat() {
+    try {
+        console.log('🫀 Automatic heartbeat running...');
+        
+        // Method 1: Storage list (fastest)
+        const { data, error } = await supabase.storage
+            .from(STORAGE_BUCKET)
+            .list('', { limit: 1 });
+        
+        if (error) {
+            // Try fallback
+            await performFallbackHeartbeat();
+        } else {
+            console.log('✅ Heartbeat successful');
+        }
+        
+        // Update timestamp
+        localStorage.setItem(HEARTBEAT_STORAGE_KEY, new Date().toISOString());
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Heartbeat failed:', error);
+        await performFallbackHeartbeat();
+        return false;
+    }
+}
+
+// Fallback method
+async function performFallbackHeartbeat() {
+    try {
+        const timestamp = Date.now();
+        const blob = new Blob([`heartbeat-${timestamp}`], { type: 'text/plain' });
+        
+        await supabase.storage
+            .from(STORAGE_BUCKET)
+            .upload(`_heartbeat/ping.txt`, blob, {
+                cacheControl: '3600',
+                upsert: true
+            });
+        
+        console.log('✅ Fallback heartbeat successful');
+        localStorage.setItem(HEARTBEAT_STORAGE_KEY, new Date().toISOString());
+        
+    } catch (error) {
+        console.error('❌ All heartbeat methods failed:', error);
+    }
+}
+
+// Check if heartbeat is needed
+function shouldPerformHeartbeat() {
+    const lastHeartbeat = localStorage.getItem(HEARTBEAT_STORAGE_KEY);
+    
+    if (!lastHeartbeat) {
+        return true; // Never run before
+    }
+    
+    const lastTime = new Date(lastHeartbeat).getTime();
+    const now = Date.now();
+    const timeSince = now - lastTime;
+    
+    // Return true if more than 4 days
+    return timeSince >= HEARTBEAT_INTERVAL;
+}
+
+// Initialize automatic heartbeat system
+function initializeAutoHeartbeat() {
+    console.log('🫀 Initializing automatic heartbeat system...');
+    
+    // Immediate check on startup (after 3 seconds)
+    setTimeout(() => {
+        if (shouldPerformHeartbeat()) {
+            console.log('🫀 Initial heartbeat check - running now');
+            performHeartbeat();
+        } else {
+            const lastHeartbeat = localStorage.getItem(HEARTBEAT_STORAGE_KEY);
+            if (lastHeartbeat) {
+                const daysAgo = Math.floor((Date.now() - new Date(lastHeartbeat)) / (24 * 60 * 60 * 1000));
+                console.log(`✅ Heartbeat OK - last run ${daysAgo} days ago`);
+            }
+        }
+    }, 3000);
+    
+    // Check every 6 hours if heartbeat is needed
+    setInterval(() => {
+        if (shouldPerformHeartbeat()) {
+            console.log('🫀 Scheduled check - heartbeat needed');
+            performHeartbeat();
+        }
+    }, HEARTBEAT_CHECK_INTERVAL);
+    
+    // Also check every time page becomes visible (user returns to tab)
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && shouldPerformHeartbeat()) {
+            console.log('🫀 Tab visibility check - heartbeat needed');
+            setTimeout(performHeartbeat, 2000);
+        }
+    });
+}
+
+// Update status display
+function updateHeartbeatStatus() {
+    const lastHeartbeat = localStorage.getItem(HEARTBEAT_STORAGE_KEY);
+    const statusEl = document.getElementById('heartbeat-status');
+    
+    if (!statusEl) return;
+    
+    if (!lastHeartbeat) {
+        statusEl.innerHTML = '<span class="text-gray-500 text-xs">Initializing...</span>';
+        return;
+    }
+    
+    const lastTime = new Date(lastHeartbeat);
+    const now = Date.now();
+    const diffMs = now - lastTime;
+    const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+    const diffHours = Math.floor(diffMs / (60 * 60 * 1000));
+    
+    let statusHTML = '';
+    let statusClass = '';
+    let icon = '🫀';
+    
+    if (diffHours < 1) {
+        icon = '✅';
+        statusClass = 'text-green-600 font-semibold';
+        statusHTML = 'Active now';
+    } else if (diffHours < 24) {
+        icon = '✅';
+        statusClass = 'text-green-600';
+        statusHTML = `${diffHours}h ago`;
+    } else if (diffDays === 1) {
+        icon = '✅';
+        statusClass = 'text-green-600';
+        statusHTML = 'Yesterday';
+    } else if (diffDays < 4) {
+        icon = '✅';
+        statusClass = 'text-green-500';
+        statusHTML = `${diffDays} days ago`;
+    } else if (diffDays < 6) {
+        icon = '⚠️';
+        statusClass = 'text-yellow-600 font-semibold';
+        statusHTML = `${diffDays} days ago`;
+    } else {
+        icon = '❌';
+        statusClass = 'text-red-600 font-bold';
+        statusHTML = `${diffDays} days ago`;
+    }
+    
+    statusEl.innerHTML = `<span class="${statusClass} text-xs">${icon} ${statusHTML}</span>`;
+}
+
+
+// Test heartbeat function
+async function testHeartbeat() {
+    console.log('🧪 Testing heartbeat system...');
+    showToast('Testing heartbeat...', 'info');
+    
+    // Show current status
+    const lastHeartbeat = localStorage.getItem(HEARTBEAT_STORAGE_KEY);
+    if (lastHeartbeat) {
+        const daysAgo = Math.floor((Date.now() - new Date(lastHeartbeat)) / (24 * 60 * 60 * 1000));
+        console.log(`📊 Last heartbeat: ${daysAgo} days ago`);
+    }
+    
+    // Perform heartbeat
+    const success = await performHeartbeat();
+    
+    if (success) {
+        console.log('✅ Heartbeat test PASSED');
+        showToast('✅ Heartbeat system is working!', 'success');
+        updateHeartbeatStatus();
+    } else {
+        console.error('❌ Heartbeat test FAILED');
+        showToast('❌ Heartbeat system needs attention', 'error');
+    }
+}
+
+// Export to window for debugging only
+window.performHeartbeat = performHeartbeat;
+window.updateHeartbeatStatus = updateHeartbeatStatus;
+window.testHeartbeat = testHeartbeat;
+
+
+console.log('✅ Automatic heartbeat system loaded');
+console.log('   → Checks every 6 hours');
+console.log('   → Runs automatically every 4 days');
+console.log('   → No manual intervention needed');
+
+// =============================================================================
+// END OF AUTOMATIC HEARTBEAT SYSTEM
+// =============================================================================
+
+// =============================================================================
+// END OF HEARTBEAT SYSTEM
+// =============================================================================
+
+
+
+
+
+
+// =============================================================================
+// ENHANCED AUTO-TRIGGERS (ADD AFTER HEARTBEAT SYSTEM)
+// =============================================================================
+
+// Trigger 1: On window focus (user returns to browser)
+window.addEventListener('focus', () => {
+    setTimeout(() => {
+        if (shouldPerformHeartbeat()) {
+            console.log('🫀 Window focus triggered heartbeat');
+            performHeartbeat();
+        }
+    }, 2000);
+});
+
+// Trigger 2: On network reconnection
+window.addEventListener('online', () => {
+    setTimeout(() => {
+        if (shouldPerformHeartbeat()) {
+            console.log('🫀 Network reconnection triggered heartbeat');
+            performHeartbeat();
+        }
+    }, 3000);
+});
+
+// Trigger 3: Before page unload (if needed)
+window.addEventListener('beforeunload', () => {
+    if (shouldPerformHeartbeat()) {
+        // Use synchronous storage update
+        const timestamp = new Date().toISOString();
+        localStorage.setItem(HEARTBEAT_STORAGE_KEY, timestamp);
+        
+        // Try to send heartbeat (non-blocking)
+        navigator.sendBeacon && navigator.sendBeacon('/heartbeat-ping');
+    }
+});
+
+// Trigger 4: When any major action happens (filter, search, etc.)
+function onUserActivity() {
+    // Check if it's been a while since last check
+    const lastCheck = localStorage.getItem('last_activity_check');
+    const now = Date.now();
+    
+    if (!lastCheck || (now - new Date(lastCheck)) > 60 * 60 * 1000) { // 1 hour
+        localStorage.setItem('last_activity_check', new Date().toISOString());
+        
+        if (shouldPerformHeartbeat()) {
+            console.log('🫀 User activity triggered heartbeat');
+            performHeartbeat();
+        }
+    }
+}
+
+// Attach to major UI interactions
+['click', 'keypress', 'scroll'].forEach(event => {
+    document.addEventListener(event, onUserActivity, { once: true, passive: true });
+});
+
+console.log('✅ Enhanced auto-triggers enabled');
+
+// =============================================================================
+// END OF ENHANCED AUTO-TRIGGERS
+// =============================================================================
+
+
+
+
+
 // Firebase Configuration
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
@@ -1259,6 +1549,415 @@ function applyFiltersAndRender() {
     renderStudents();
 }
 
+
+
+
+// ============================================================
+// ADD THIS FUNCTION: Detect Grade Changes
+// ============================================================
+
+/**
+ * STEP 1: Detect when a student's grade has changed in Firebase
+ * Called whenever student data updates
+ */
+function detectGradeChanges(newStudents) {
+    console.log('\n🔍 SCANNING FOR GRADE CHANGES...');
+    
+    const gradeChanges = [];
+    
+    // Loop through each new student record
+    newStudents.forEach(student => {
+        // Create unique identifier
+        const studentKey = `${student.assessmentNo}-${student.name}`;
+        
+        // Get previous data from Map
+        const previousData = previousStudentData.get(studentKey);
+        
+        // Check if grade changed
+        if (previousData && previousData.grade !== student.grade) {
+            // GRADE CHANGED! Store the change
+            gradeChanges.push({
+                assessmentNo: student.assessmentNo,
+                studentName: student.name,
+                oldGrade: previousData.grade,
+                newGrade: student.grade,
+                timestamp: new Date().toISOString()
+            });
+            
+            console.log(`\n⚠️  GRADE CHANGE DETECTED!`);
+            console.log(`    Student: ${student.name}`);
+            console.log(`    Assessment No: ${student.assessmentNo}`);
+            console.log(`    OLD Grade: ${previousData.grade}`);
+            console.log(`    NEW Grade: ${student.grade}`);
+            console.log(`    Changed at: ${new Date().toLocaleTimeString()}`);
+        }
+        
+        // Update the map with current data for next comparison
+        previousStudentData.set(studentKey, {
+            grade: student.grade,
+            hasPdf: student.hasPdf,
+            name: student.name
+        });
+    });
+    
+    // If grade changes detected, process them immediately
+    if (gradeChanges.length > 0) {
+        console.log(`\n✓ Found ${gradeChanges.length} grade change(s) - PROCESSING...`);
+        processGradeChanges(gradeChanges);
+    } else {
+        console.log('✓ No grade changes detected');
+    }
+}
+
+console.log('✓ detectGradeChanges function loaded');
+
+
+// ============================================================
+// STEP 2: Process All Grade Changes
+// ============================================================
+
+/**
+ * Main function to handle all grade changes
+ * Coordinates moving PDFs and updating everything
+ */
+async function processGradeChanges(gradeChanges) {
+    console.log('\n' + '='.repeat(60));
+    console.log('📁 PROCESSING GRADE CHANGES');
+    console.log('='.repeat(60));
+    console.log(`Total changes to process: ${gradeChanges.length}`);
+    
+    // Show notification to user
+    showToast(`📁 Updating folders for ${gradeChanges.length} student(s)...`, 'info');
+    
+    // Success and failure counters
+    let successCount = 0;
+    let failureCount = 0;
+    
+    // Process EACH grade change one by one
+    for (const change of gradeChanges) {
+        try {
+            console.log(`\n⏳ Processing: ${change.studentName}...`);
+            
+            // Call the function that actually moves the PDF
+            await handleSingleGradeChange(change);
+            
+            successCount++;
+            console.log(`✅ SUCCESS: ${change.studentName}`);
+            
+        } catch (error) {
+            failureCount++;
+            console.error(`❌ FAILED: ${change.studentName}`);
+            console.error(`   Error: ${error.message}`);
+            
+            // Show error to user
+            showToast(`❌ Error updating ${change.studentName}: ${error.message}`, 'error');
+        }
+    }
+    
+    console.log('\n' + '='.repeat(60));
+    console.log('📊 PROCESSING COMPLETE');
+    console.log(`   ✅ Successful: ${successCount}`);
+    console.log(`   ❌ Failed: ${failureCount}`);
+    console.log('='.repeat(60));
+    
+    // Clear the cache after all changes
+    console.log('\n🗑️  Clearing PDF cache...');
+    pdfExistenceCache.clear();
+    
+    // Refresh the UI after all processing is done
+    console.log('🔄 Refreshing display...');
+    setTimeout(() => {
+        renderStudents();
+        updateStatistics();
+        startBackgroundPdfCheck();
+        
+        // Show final success message
+        showToast(
+            `✅ All updates complete! ${successCount} folders updated, ${failureCount} failed.`,
+            'success'
+        );
+    }, 1000);
+}
+
+console.log('✓ processGradeChanges function loaded');
+
+
+
+
+// ============================================================
+// STEP 3: Handle Individual Grade Change (MAIN LOGIC)
+// ============================================================
+
+/**
+ * THIS IS THE CORE FUNCTION
+ * Moves a single student's PDF from old grade folder to new grade folder
+ * 
+ * Process:
+ * 1. Check if PDF exists in OLD folder
+ * 2. Download PDF from old location
+ * 3. Upload PDF to new location
+ * 4. Delete PDF from old location
+ * 5. Update cache
+ */
+async function handleSingleGradeChange(change) {
+    const { studentName, oldGrade, newGrade, assessmentNo } = change;
+    
+    console.log('\n' + '-'.repeat(60));
+    console.log('📄 MOVING PDF FOR SINGLE STUDENT');
+    console.log('-'.repeat(60));
+    console.log(`Student: ${studentName}`);
+    console.log(`Assessment No: ${assessmentNo}`);
+    console.log(`Old Grade: ${oldGrade}`);
+    console.log(`New Grade: ${newGrade}`);
+    
+    // =========================================================
+    // STEP 3.1: List files in OLD grade folder
+    // =========================================================
+    console.log(`\n[STEP 1/5] Checking OLD folder: "${oldGrade}"`);
+    
+    const { data: oldFolderFiles, error: listError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .list(oldGrade, { limit: 1000 });
+    
+    if (listError) {
+        console.error(`❌ Cannot read old folder: ${listError.message}`);
+        throw new Error(`Cannot access old folder "${oldGrade}": ${listError.message}`);
+    }
+    
+    console.log(`✓ Old folder contains ${oldFolderFiles?.length || 0} file(s)`);
+    
+    // =========================================================
+    // STEP 3.2: Find the PDF file for this student
+    // =========================================================
+    console.log(`\n[STEP 2/5] Looking for PDF file: "${studentName}.pdf"`);
+    
+    const pdfFile = oldFolderFiles?.find(file => 
+        file.name.toLowerCase() === `${studentName.toLowerCase()}.pdf`
+    );
+    
+    // If no PDF found, that's OK - student might not have one yet
+    if (!pdfFile) {
+        console.log(`ℹ️  No PDF found for this student in old folder`);
+        console.log(`    Skipping PDF move (student had no document)`);
+        return;
+    }
+    
+    console.log(`✓ Found PDF: ${pdfFile.name}`);
+    console.log(`   File size: ${pdfFile.metadata?.size || 'unknown'} bytes`);
+    
+    // =========================================================
+    // STEP 3.3: Download PDF from OLD location
+    // =========================================================
+    console.log(`\n[STEP 3/5] Downloading PDF from old location`);
+    
+    const oldPath = `${oldGrade}/${pdfFile.name}`;
+    console.log(`   Path: "${oldPath}"`);
+    
+    const { data: fileData, error: downloadError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .download(oldPath);
+    
+    if (downloadError) {
+        console.error(`❌ Download failed: ${downloadError.message}`);
+        throw new Error(`Cannot download PDF: ${downloadError.message}`);
+    }
+    
+    console.log(`✓ Downloaded: ${fileData.size} bytes`);
+    
+    // =========================================================
+    // STEP 3.4: Upload to NEW grade folder
+    // =========================================================
+    console.log(`\n[STEP 4/5] Uploading PDF to new location`);
+    
+    const newPath = `${newGrade}/${pdfFile.name}`;
+    console.log(`   New path: "${newPath}"`);
+    
+    const { data: uploadData, error: uploadError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .upload(newPath, fileData, {
+            cacheControl: '3600',
+            upsert: true  // Overwrite if exists
+        });
+    
+    if (uploadError) {
+        console.error(`❌ Upload failed: ${uploadError.message}`);
+        throw new Error(`Cannot upload to new folder: ${uploadError.message}`);
+    }
+    
+    console.log(`✓ Uploaded successfully to new location`);
+    
+    // =========================================================
+    // STEP 3.5: Delete PDF from OLD location
+    // =========================================================
+    console.log(`\n[STEP 5/5] Deleting PDF from old location`);
+    console.log(`   Old path: "${oldPath}"`);
+    
+    const { error: deleteError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .remove([oldPath]);
+    
+    if (deleteError) {
+        console.error(`⚠️  Delete warning: ${deleteError.message}`);
+        // Don't throw - file is already in new location
+        showToast(
+            `⚠️ PDF moved but cleanup failed for ${studentName}. Please delete manually: ${oldPath}`,
+            'warning'
+        );
+    } else {
+        console.log(`✓ Deleted from old location`);
+    }
+    
+    // =========================================================
+    // STEP 3.6: Update local cache
+    // =========================================================
+    console.log(`\n[CACHE] Updating local cache`);
+    
+    // Remove from old grade cache
+    pdfExistenceCache.delete(`${oldGrade}/${studentName}`);
+    console.log(`✓ Removed cache entry: "${oldGrade}/${studentName}"`);
+    
+    // Add to new grade cache
+    pdfExistenceCache.set(`${newGrade}/${studentName}`, true);
+    console.log(`✓ Added cache entry: "${newGrade}/${studentName}"`);
+    
+    // =========================================================
+    // COMPLETE!
+    // =========================================================
+    console.log('\n' + '-'.repeat(60));
+    console.log('✅ GRADE CHANGE COMPLETE FOR THIS STUDENT');
+    console.log('-'.repeat(60));
+    console.log(`SUMMARY:`);
+    console.log(`  Student: ${studentName}`);
+    console.log(`  From: ${oldGrade}/${pdfFile.name}`);
+    console.log(`  To: ${newGrade}/${pdfFile.name}`);
+    console.log(`  Status: ✅ SUCCESS`);
+    console.log('-'.repeat(60) + '\n');
+    
+    // Show success toast to user
+    showToast(
+        `✅ PDF updated for ${studentName}: ${oldGrade} → ${newGrade}`,
+        'success'
+    );
+    
+    // =========================================================
+    // BROADCAST to other connected users
+    // =========================================================
+    if (supabaseChannel) {
+        try {
+            await supabaseChannel.send({
+                type: 'broadcast',
+                event: 'grade-change',
+                payload: {
+                    action: 'grade-update',
+                    studentName: studentName,
+                    oldGrade: oldGrade,
+                    newGrade: newGrade,
+                    timestamp: new Date().toISOString()
+                }
+            });
+            console.log('📡 Broadcasted change to other users');
+        } catch (broadcastError) {
+            console.warn('⚠️  Could not broadcast (network issue):', broadcastError.message);
+        }
+    }
+}
+
+console.log('✓ handleSingleGradeChange function loaded');
+
+
+
+
+
+// ============================================================
+// OPTIONAL: Handle Bulk Grade Changes
+// ============================================================
+
+/**
+ * For end-of-year class promotions
+ * Example: handleBulkGradeChange("Grade 3", "Grade 4")
+ * Moves ALL PDFs from one grade to another
+ */
+async function handleBulkGradeChange(fromGrade, toGrade) {
+    console.log('\n' + '='.repeat(60));
+    console.log('📋 BULK GRADE CHANGE OPERATION');
+    console.log('='.repeat(60));
+    console.log(`From Grade: ${fromGrade}`);
+    console.log(`To Grade: ${toGrade}`);
+    
+    showToast(`Processing bulk change: ${fromGrade} → ${toGrade}...`, 'info');
+    
+    try {
+        // Get all PDFs in source grade
+        console.log(`\nFetching files from: ${fromGrade}`);
+        const { data: folderContents, error: listError } = await supabase.storage
+            .from(STORAGE_BUCKET)
+            .list(fromGrade, { limit: 1000 });
+        
+        if (listError) throw listError;
+        
+        if (!folderContents || folderContents.length === 0) {
+            showToast(`No files found in ${fromGrade}`, 'info');
+            return;
+        }
+        
+        console.log(`Found ${folderContents.length} files to move`);
+        
+        let successCount = 0;
+        let failCount = 0;
+        
+        // Move each file
+        for (const file of folderContents) {
+            const oldPath = `${fromGrade}/${file.name}`;
+            const newPath = `${toGrade}/${file.name}`;
+            
+            console.log(`\nMoving: ${file.name}`);
+            
+            try {
+                // Download
+                const { data: fileData } = await supabase.storage
+                    .from(STORAGE_BUCKET)
+                    .download(oldPath);
+                
+                // Upload
+                await supabase.storage
+                    .from(STORAGE_BUCKET)
+                    .upload(newPath, fileData, { upsert: true });
+                
+                // Delete
+                await supabase.storage
+                    .from(STORAGE_BUCKET)
+                    .remove([oldPath]);
+                
+                successCount++;
+                console.log(`✓ Moved: ${file.name}`);
+                
+            } catch (error) {
+                failCount++;
+                console.error(`✗ Failed: ${file.name}`, error);
+            }
+        }
+        
+        // Clear cache
+        pdfExistenceCache.clear();
+        
+        // Refresh UI
+        renderStudents();
+        updateStatistics();
+        startBackgroundPdfCheck();
+        
+        showToast(
+            `✅ Bulk update complete: ${successCount} success, ${failCount} failed`,
+            'success'
+        );
+        
+    } catch (error) {
+        console.error('Bulk grade change error:', error);
+        showToast(`Error: ${error.message}`, 'error');
+    }
+}
+
+console.log('✓ handleBulkGradeChange function loaded (optional)');
+
 // ============================================================================
 // FIREBASE REALTIME LISTENER
 // =============================================================================
@@ -1292,22 +1991,26 @@ function startRealtimeListener() {
             const studentEntries = Object.entries(studentsData);
 
             allStudents = studentEntries.map(([assessmentNo, student]) => ({
-                assessmentNo,
-                name: student['Official Student Name'] || 'Unknown',
-                upi: student.UPI || '',
-                grade: student.Grade || 'N/A',
-                gender: student.Gender || 'Unknown',
-                hasPdf: undefined
-            }));
+            assessmentNo,
+            name: student['Official Student Name'] || 'Unknown',
+            upi: student.UPI || '',
+            grade: student.Grade || 'N/A',
+            gender: student.Gender || 'Unknown',
+            hasPdf: undefined
+        }));
 
-            allStudents.sort((a, b) => {
-                const gradeA = a.grade || 'ZZZ';
-                const gradeB = b.grade || 'ZZZ';
-                if (gradeA !== gradeB) {
-                    return gradeA.localeCompare(gradeB);
-                }
-                return (a.name || '').localeCompare(b.name || '');
-            });
+        allStudents.sort((a, b) => {
+            const gradeA = a.grade || 'ZZZ';
+            const gradeB = b.grade || 'ZZZ';
+            if (gradeA !== gradeB) {
+                return gradeA.localeCompare(gradeB);
+            }
+            return (a.name || '').localeCompare(b.name || '');
+        });
+ // ✅ ADD THIS:
+        console.log('\n🔄 Firebase data updated - checking for grade changes...');
+        detectGradeChanges(allStudents);
+        
 
             if (allStudents.length === 0) {
                 studentTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-gray-500 py-8">No student records found in the database.</td></tr>`;
@@ -1462,6 +2165,15 @@ onAuthStateChanged(auth, (user) => {
     
     if (user) {
         userId = user.uid;
+
+// ✅ AUTO-CHECK: Heartbeat when user logs in
+        setTimeout(() => {
+            if (shouldPerformHeartbeat()) {
+                console.log('🫀 Login triggered auto-heartbeat');
+                performHeartbeat();
+            }
+            updateHeartbeatStatus();
+        }, 3000)
         
         const userDisplayNameEl = document.getElementById('user-display-name');
         const userAvatarEl = document.getElementById('user-avatar');
@@ -1599,6 +2311,40 @@ async function handleSignOut() {
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📚 Student Management App with Supabase Storage Initialized');
+
+ // ✅ AUTO-START: Initialize automatic heartbeat
+    initializeAutoHeartbeat();
+    
+    // Update status display every minute
+    setInterval(updateHeartbeatStatus, 60000);
+    
+    // Initial status update
+    setTimeout(updateHeartbeatStatus, 1000);
+
+
+    // Add this in your DOMContentLoaded section
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('https://kanyadet-school-admin.web.app/Birth-Certificates/heartbeat-worker.js')
+        .then(registration => {
+            console.log('✅ Heartbeat worker registered');
+            
+            // Register periodic sync (if supported)
+            if ('periodicSync' in registration) {
+                registration.periodicSync.register('supabase-heartbeat', {
+                    minInterval: 4 * 24 * 60 * 60 * 1000 // 4 days
+                });
+            }
+        })
+        .catch(err => console.warn('Heartbeat worker not available:', err));
+    
+    // Listen for worker messages
+    navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data.type === 'PERFORM_HEARTBEAT') {
+            performHeartbeat();
+        }
+    });
+}
+    
     
     // Auth form
     const authForm = document.getElementById('auth-form');
@@ -4692,3 +5438,18 @@ window.refreshData = refreshData;
 window.closePDFModal = closePDFModal;
 
 console.log('✅ Supabase Storage integration complete!');
+
+
+
+
+
+// ============================================================
+// Export Grade Change Functions to Window
+// ============================================================
+
+window.detectGradeChanges = detectGradeChanges;
+window.processGradeChanges = processGradeChanges;
+window.handleSingleGradeChange = handleSingleGradeChange;
+window.handleBulkGradeChange = handleBulkGradeChange;
+
+console.log('✅ Grade Change Functions exported to window');

@@ -1,0 +1,40 @@
+// Add this to your existing JavaScript code
+// This will ping Supabase whenever users visit your site
+
+// Ping Supabase Storage every time the app loads
+async function pingSupabaseOnLoad() {
+    try {
+        console.log('🔄 Pinging Supabase to keep project active...');
+        
+        // Simple storage bucket list call
+        const { data, error } = await supabase.storage.listBuckets();
+        
+        if (error) {
+            console.warn('Supabase ping failed:', error);
+        } else {
+            console.log('✅ Supabase project active');
+        }
+    } catch (err) {
+        console.warn('Could not ping Supabase:', err);
+    }
+}
+
+// Call this when your app initializes
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing initialization code...
+    
+    // Add ping functionality
+    pingSupabaseOnLoad();
+    
+    // Optional: Ping every 30 minutes while app is open
+    setInterval(pingSupabaseOnLoad, 30 * 60 * 1000);
+});
+
+// Alternative: Ping when user performs any action
+window.addEventListener('click', function() {
+    // Only ping once per session
+    if (!window.supabasePinged) {
+        pingSupabaseOnLoad();
+        window.supabasePinged = true;
+    }
+}, { once: true });

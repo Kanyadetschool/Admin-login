@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Hub - Your Academic Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🎓 StudentHub</div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#resources" class="nav-link">Resources</a></li>
+                <li><button class="nav-btn" onclick="openModal('contact')">Contact</button></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Your Academic Portal</h1>
+            <p>Manage assignments, track grades, and connect with resources all in one place</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="openModal('login')">Get Started</button>
+                <button class="btn btn-secondary" onclick="openModal('learn')">Learn More</button>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="floating-card">📚</div>
+            <div class="floating-card delay-1">💡</div>
+            <div class="floating-card delay-2">🎯</div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2>Why Choose StudentHub?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Grade Tracking</h3>
+                <p>Monitor your academic progress in real-time</p>
+                <button class="feature-btn" onclick="openModal('grades')">Explore →</button>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Assignment Hub</h3>
+                <p>Submit assignments and get feedback instantly</p>
+                <button class="feature-btn" onclick="openModal('assignments')">Explore →</button>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Peer Network</h3>
+                <p>Connect with classmates and study groups</p>
+                <button class="feature-btn" onclick="openModal('network')">Explore →</button>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>Learning Materials</h3>
+                <p>Access notes, textbooks, and study guides</p>
+                <button class="feature-btn" onclick="openModal('materials')">Explore →</button>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <h3>Tutoring Services</h3>
+                <p>Book sessions with experienced tutors</p>
+                <button class="feature-btn" onclick="openModal('tutoring')">Explore →</button>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>Calendar & Schedule</h3>
+                <p>Organize your academic calendar seamlessly</p>
+                <button class="feature-btn" onclick="openModal('calendar')">Explore →</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links Section -->
+    <section class="quick-links">
+        <h2>Quick Access</h2>
+        <div class="links-container">
+            <a href="javascript:void(0)" onclick="openModal('portal')" class="quick-link-card">
+                <span class="link-icon">🔗</span>
+                <span class="link-text">Student Portal</span>
+            </a>
+            <a href="javascript:void(0)" onclick="openModal('library')" class="quick-link-card">
+                <span class="link-icon">📖</span>
+                <span class="link-text">Digital Library</span>
+            </a>
+            <a href="javascript:void(0)" onclick="openModal('support')" class="quick-link-card">
+                <span class="link-icon">💬</span>
+                <span class="link-text">Support Chat</span>
+            </a>
+            <a href="javascript:void(0)" onclick="openModal('forum')" class="quick-link-card">
+                <span class="link-icon">💭</span>
+                <span class="link-text">Community Forum</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="resources" id="resources">
+        <h2>Popular Resources</h2>
+        <div class="resources-grid">
+            <div class="resource-item">
+                <h4>📖 Study Guides</h4>
+                <button onclick="openModal('study')">Access</button>
+            </div>
+            <div class="resource-item">
+                <h4>🎬 Video Lectures</h4>
+                <button onclick="openModal('videos')">Watch</button>
+            </div>
+            <div class="resource-item">
+                <h4>💻 Coding Resources</h4>
+                <button onclick="openModal('coding')">Learn</button>
+            </div>
+            <div class="resource-item">
+                <h4>📱 Mobile App</h4>
+                <button onclick="openModal('app')">Download</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About</h4>
+                <a href="javascript:void(0)" onclick="openModal('about')">About Us</a>
+                <a href="javascript:void(0)" onclick="openModal('privacy')">Privacy</a>
+                <a href="javascript:void(0)" onclick="openModal('terms')">Terms</a>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <a href="javascript:void(0)" onclick="openModal('faq')">FAQ</a>
+                <a href="javascript:void(0)" onclick="openModal('help')">Help Center</a>
+                <a href="javascript:void(0)" onclick="openModal('contact')">Contact Us</a>
+            </div>
+            <div class="footer-section">
+                <h4>Social</h4>
+                <a href="javascript:void(0)" onclick="openModal('twitter')">Twitter</a>
+                <a href="javascript:void(0)" onclick="openModal('instagram')">Instagram</a>
+                <a href="javascript:void(0)" onclick="openModal('facebook')">Facebook</a>
+            </div>
+        </div>
+        <p class="footer-bottom">&copy; 2025 StudentHub. All rights reserved.</p>
+    </footer>
+
+    <!-- Modal Template -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Modal Title</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

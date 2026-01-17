@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudPortal - Student Data Management Reimagined</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="new.css">
+        <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<!-- PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<!-- Firebase Imports Setup -->
+ <script>
+    window.firebaseImports = {
+    initializeApp: function(config) {
+        return firebase.initializeApp(config);
+    },
+    getDatabase: function(app) {
+        return firebase.database(app);
+    },
+    getAuth: function(app) {
+        return firebase.auth(app);
+    },
+    onAuthStateChanged: function(auth, callback) {
+        return auth.onAuthStateChanged(callback);
+    },
+    GoogleAuthProvider: firebase.auth.GoogleAuthProvider,
+    signInWithPopup: function(auth, provider) {
+        return auth.signInWithPopup(provider);
+    },
+    signOut: function(auth) {
+        return auth.signOut();
+    },
+    ref: function(db, path) {
+        return firebase.database().ref(path);
+    },
+    onValue: function(ref, callback, errorCallback) {
+        return ref.on('value', callback, errorCallback);
+    }
+};
+ </script>
+<!-- Firebase Imports Setup -->
+   
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="header-content">
+        <a href="#" class="logo">
+            <span class="logo-icon">📚</span>
+            StudPortal
+        </a>
+        <nav id="navbar">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+            <a href="#" class="cta-btn" id="signInBtn">Sign In</a>
+        </nav>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>Student Data Management Reimagined</h1>
+            <p>Real-time insights, bank-grade security, and instant reporting for your school</p>
+            <div class="hero-benefit">Join 50+ schools managing 10,000+ students</div>
+            <div class="hero-buttons">
+                <button class="btn btn-primary">Launch Dashboard</button>
+                <button class="btn btn-secondary">Watch Demo</button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="dashboard-mockup">
+                <div class="mockup-header">Student Dashboard</div>
+                <div class="mockup-content">
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">Total Students</span>
+                        <span class="mockup-stat-value">1,250</span>
+                    </div>
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">Data Complete</span>
+                        <span class="mockup-stat-value">98.5%</span>
+                    </div>
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">Active Grades</span>
+                        <span class="mockup-stat-value">12</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+    <div class="section-header">
+        <h2>Powerful Features</h2>
+        <p>Everything you need to manage student data efficiently</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-number">1</div>
+            <h3>Real-time Dashboard</h3>
+            <p>Track student information and analytics in real-time with beautiful, interactive visualizations</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-number">2</div>
+            <h3>Bank-grade Security</h3>
+            <p>256-bit encryption, daily backups, and compliance with international data protection standards</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-number">3</div>
+            <h3>Lightning Fast</h3>
+            <p>Optimized performance with instant data loading and smooth interactions</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-number">4</div>
+            <h3>One-Click Export</h3>
+            <p>Export data to PDF, Excel, or CSV formats instantly. You own your data</p>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works" id="how-it-works">
+    <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Get started in 4 simple steps</p>
+    </div>
+    <div class="steps-grid">
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>Sign Up</h3>
+            <p>Create your account with Google Sign-in in seconds</p>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>Import Data</h3>
+            <p>Upload your student data via CSV or Excel files</p>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>Manage & Analyze</h3>
+            <p>Use our powerful tools to organize and gain insights</p>
+        </div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <h3>Export Reports</h3>
+            <p>Generate and share professional reports instantly</p>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+    <div class="section-header">
+        <h2>Trusted by Schools</h2>
+        <p>Real numbers from real schools using StudPortal</p>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Schools Using</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">10,000+</div>
+            <div class="stat-label">Students Managed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">99.9%</div>
+            <div class="stat-label">Uptime Guarantee</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Data Accuracy</div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+    <div class="section-header">
+        <h2>What Schools Say</h2>
+        <p>Real feedback from school administrators</p>
+    </div>
+    <div class="testimonials-grid">
+        <div class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"StudPortal has transformed how we manage student data. It's intuitive, secure, and saved us countless hours of administrative work."</p>
+            <p class="testimonial-author">James Kipchoge</p>
+            <p class="testimonial-role">Principal, Nairobi Academy</p>
+        </div>
+        <div class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"The analytics features give us insights we never had before. We can now make data-driven decisions about student support programs."</p>
+            <p class="testimonial-author">Patricia Mwangi</p>
+            <p class="testimonial-role">Academic Director, Westlands School</p>
+        </div>
+        <div class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"Exceptional customer support. Every question was answered promptly, and the onboarding process was smooth and hassle-free."</p>
+            <p class="testimonial-author">David Ochieng</p>
+            <p class="testimonial-role">IT Manager, Riverside Primary</p>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+    <div class="section-header">
+        <h2>Simple Pricing</h2>
+        <p>Choose the perfect plan for your school</p>
+    </div>
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <h3>🎓 Starter</h3>
+            <div class="price-tag">KES 5,000</div>
+            <p class="price-subtitle">Per Month</p>
+            <ul class="features-list">
+                <li>Up to 500 Students</li>
+                <li>Basic Analytics</li>
+                <li>Email Support</li>
+                <li>Monthly Reports</li>
+                <li>Mobile Access</li>
+            </ul>
+            <button class="btn btn-primary" style="width: 100%;">Get Started</button>
+        </div>
+        <div class="pricing-card featured">
+            <h3>🏆 Professional</h3>
+            <div class="price-tag">KES 15,000</div>
+            <p class="price-subtitle">Per Month</p>
+            <ul class="features-list">
+                <li>Up to 2,000 Students</li>
+                <li>Advanced Analytics</li>
+                <li>Priority Support</li>
+                <li>Real-time Reports</li>
+                <li>API Access</li>
+                <li>Custom Filters</li>
+            </ul>
+            <button class="btn btn-primary" style="width: 100%;">Get Started</button>
+        </div>
+        <div class="pricing-card">
+            <h3>🚀 Enterprise</h3>
+            <div class="price-tag">Custom</div>
+            <p class="price-subtitle">Contact Us</p>
+            <ul class="features-list">
+                <li>Unlimited Students</li>
+                <li>Custom Analytics</li>
+                <li>24/7 Support</li>
+                <li>Advanced Reporting</li>
+                <li>Full API Access</li>
+                <li>Dedicated Manager</li>
+            </ul>
+            <button class="btn btn-primary" style="width: 100%;">Contact Sales</button>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+    <div class="section-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Find answers to common questions</p>
+    </div>
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Is my student data secure?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>Absolutely! We use 256-bit SSL encryption, regular security audits, and comply with international data protection regulations. Your data is backed up daily and stored in secure data centers.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Can I export my data anytime?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>Yes! You can export student data to PDF, Excel, or CSV formats at any time. You completely own your data and can leave whenever you want.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>How long does it take to set up?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>You can be up and running in minutes! Sign up, import your data, and start using StudPortal. Our team can help with bulk imports if needed.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>What support do you offer?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>We offer email support for all plans, priority support for Professional plans, and 24/7 support for Enterprise customers. We also provide video tutorials and comprehensive documentation.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Is there a free trial?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>Yes! We offer a 14-day free trial for the Professional plan. No credit card required. Test all features risk-free and see if StudPortal is right for you.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section style="padding-bottom: 0;">
+    <div class="cta-section">
+        <h2>Ready to Transform Student Management?</h2>
+        <p>Join 50+ schools using StudPortal. Start your free 14-day trial today with no credit card required.</p>
+        <button class="btn btn-primary" style="font-size: 18px; padding: 16px 40px;">Start Free Trial</button>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>🎓 About StudPortal</h4>
+            <p>Advanced student biodata management system designed for educational institutions. We help schools streamline their data management with cutting-edge technology and security.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+        </div>
+        <div class="footer-section">
+            <h4>Resources</h4>
+            <a href="#">API Documentation</a>
+            <a href="#">User Guide</a>
+            <a href="#">Blog</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="footer-section">
+            <h4>Legal</h4>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Security</a>
+            <a href="#">Support</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 StudPortal. All rights reserved.</p>
+    </div>
+</footer>
+<script>
+
+    
+
+    // Mobile Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const navbar = document.getElementById('navbar');
+
+    hamburger.addEventListener('click', () => {
+        navbar.classList.toggle('active');
+    });
+
+    // Close menu when clicking on a link
+    navbar.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navbar.classList.remove('active');
+        });
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        if (window.scrollY > 10) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    // FAQ Toggle
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        item.querySelector('.faq-question').addEventListener('click', () => {
+            item.classList.toggle('active');
+        });
+    });
+</script>
+
+</body>
+</html>

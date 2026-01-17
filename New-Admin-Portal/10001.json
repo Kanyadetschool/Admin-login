@@ -1,0 +1,92 @@
+{
+  "grades": {
+    "100001": {
+      "English": {
+        "term1": 88,
+        "term2": 91,
+        "term3": 89,
+        "average": 89.3,
+        "grade": "A"
+      },
+      "Mathematics": {
+        "term1": 92,
+        "term2": 94,
+        "term3": 91,
+        "average": 92.3,
+        "grade": "A"
+      },
+      "Science": {
+        "term1": 85,
+        "term2": 87,
+        "term3": 86,
+        "average": 86,
+        "grade": "B+"
+      },
+      "Kiswahili": {
+        "term1": 79,
+        "term2": 81,
+        "term3": 82,
+        "average": 80.7,
+        "grade": "B"
+      }
+    }
+  },
+  "assignments": {
+    "100001": {
+      "assignment1": {
+        "title": "English Composition",
+        "subject": "English",
+        "description": "Write a story about your family",
+        "status": "pending",
+        "dueDate": "January 25, 2026",
+        "score": "Not Graded"
+      },
+      "assignment2": {
+        "title": "Math Exercise 5",
+        "subject": "Mathematics",
+        "description": "Complete multiplication tables 1-10",
+        "status": "submitted",
+        "dueDate": "January 20, 2026",
+        "score": "Pending"
+      },
+      "assignment3": {
+        "title": "Science Drawing",
+        "subject": "Science",
+        "description": "Draw the water cycle",
+        "status": "graded",
+        "dueDate": "January 15, 2026",
+        "score": "92/100"
+      }
+    }
+  },
+  "attendance": {
+    "100001": {
+      "overall": "94%",
+      "present": "45",
+      "absent": "2",
+      "late": "1"
+    }
+  },
+  "messages": {
+    "100001": {
+      "message1": {
+        "from": "Mrs. Jane Wambui - Class Teacher",
+        "date": "Today",
+        "message": "Bravin is doing well in class. Keep encouraging him!",
+        "type": "success"
+      },
+      "message2": {
+        "from": "Mr. Peter Ochieng - Mathematics",
+        "date": "Yesterday",
+        "message": "Please complete the math homework by Friday.",
+        "type": "reminder"
+      },
+      "message3": {
+        "from": "Ms. Mary Akinyi - Science",
+        "date": "Jan 8",
+        "message": "Excellent work on the science project! Score: 92/100",
+        "type": "graded"
+      }
+    }
+  }
+}

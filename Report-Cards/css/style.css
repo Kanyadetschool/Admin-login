@@ -18,6 +18,7 @@
         }
 
         .container {
+            width: 100%;
             max-width: 1400px;
             margin: 0 auto;
             background: white;
@@ -26,7 +27,7 @@
             overflow: hidden;
         }
         .logo {
-            height: 60px;
+            height: 80px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
@@ -45,6 +46,7 @@
             text-align: center;
             display: flex;
             flex-direction: column;
+            flex-wrap: wrap;
         }
 
         .header h1 {
@@ -61,6 +63,7 @@
             padding: 20px 30px;
             background: #ecf0f1;
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #bdc3c7;

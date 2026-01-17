@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudPortal - Student Data Management Reimagined</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<!-- PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<!-- Firebase Imports Setup -->
+ <script>
+    window.firebaseImports = {
+    initializeApp: function(config) {
+        return firebase.initializeApp(config);
+    },
+    getDatabase: function(app) {
+        return firebase.database(app);
+    },
+    getAuth: function(app) {
+        return firebase.auth(app);
+    },
+    onAuthStateChanged: function(auth, callback) {
+        return auth.onAuthStateChanged(callback);
+    },
+    GoogleAuthProvider: firebase.auth.GoogleAuthProvider,
+    signInWithPopup: function(auth, provider) {
+        return auth.signInWithPopup(provider);
+    },
+    signOut: function(auth) {
+        return auth.signOut();
+    },
+    ref: function(db, path) {
+        return firebase.database().ref(path);
+    },
+    onValue: function(ref, callback, errorCallback) {
+        return ref.on('value', callback, errorCallback);
+    }
+};
+ </script>
+<!-- Firebase Imports Setup -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --accent: #27ae60;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray-500: #7f8c8d;
+            --gray-600: #5d6d7b;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & NAVIGATION */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .logo-icon { font-size: 28px; }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        nav a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover { color: var(--primary); }
+
+        .cta-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--dark);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            margin-top: 70px;
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 80px 24px;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(52, 152, 219, 0.15);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            animation: blob 8s infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(44, 62, 80, 0.1);
+            border-radius: 50%;
+            bottom: -50px;
+            left: -50px;
+            animation: blob 10s infinite reverse;
+        }
+
+        @keyframes blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -20px) scale(1.1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInLeft 0.8s ease;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            color: var(--gray-600);
+            margin-bottom: 24px;
+            animation: slideInLeft 0.8s ease 0.1s backwards;
+        }
+
+        .hero-benefit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 32px;
+            animation: slideInLeft 0.8s ease 0.2s backwards;
+        }
+
+        .hero-benefit::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border-radius: 50%;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            animation: slideInLeft 0.8s ease 0.3s backwards;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            transform: translateY(-4px);
+        }
+
+        .hero-visual {
+            position: relative;
+            animation: slideInRight 0.8s ease 0.4s backwards;
+        }
+
+        .dashboard-mockup {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .mockup-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 20px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .mockup-content {
+            padding: 24px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        }
+
+        .mockup-stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .mockup-stat-label { font-size: 13px; color: var(--gray-500); }
+        .mockup-stat-value { font-size: 24px; font-weight: 700; color: var(--primary); }
+
+        /* SECTIONS */
+        section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 44px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--gray-500);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* FEATURES */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .feature-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            font-size: 15px;
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+
+        /* HOW IT WORKS */
+        .how-it-works {
+            background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .step {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        .step:hover {
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 auto 16px;
+        }
+
+        .step h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .step p {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        /* STATS */
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .stats-section .section-header h2,
+        .stats-section .section-header p {
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .stat-item { text-align: center; animation: slideUp 0.6s ease; }
+        .stat-number { font-size: 48px; font-weight: 800; margin-bottom: 8px; font-family: 'Poppins', sans-serif; }
+        .stat-label { font-size: 16px; font-weight: 500; opacity: 0.9; }
+
+        /* TESTIMONIALS */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        .testimonial-card:hover {
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .stars { color: #fbbf24; font-size: 16px; margin-bottom: 12px; }
+        .testimonial-text { font-size: 15px; color: var(--gray-600); line-height: 1.6; margin-bottom: 20px; font-style: italic; }
+        .testimonial-author { font-weight: 700; color: var(--dark); font-size: 15px; margin-bottom: 4px; }
+        .testimonial-role { font-size: 13px; color: var(--gray-500); }
+
+        /* PRICING */
+        .pricing-section {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 32px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-12px);
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.2);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .pricing-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--dark);
+        }
+
+        .price-tag { font-size: 48px; font-weight: 800; color: var(--primary); margin-bottom: 4px; font-family: 'Poppins', sans-serif; }
+        .price-subtitle { color: var(--gray-500); font-size: 14px; margin-bottom: 24px; }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .features-list li {
+            padding: 12px 0;
+            padding-left: 28px;
+            position: relative;
+            color: var(--gray-600);
+            font-size: 14px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* FAQ */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 16px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        .faq-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .faq-question {
+            padding: 20px 24px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--dark);
+            user-select: none;
+        }
+
+        .faq-toggle {
+            transition: transform 0.3s ease;
+            font-size: 20px;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 20px 24px;
+            max-height: 500px;
+        }
+
+        .faq-answer p {
+            color: var(--gray-600);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* CTA */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            text-align: center;
+            border-radius: 16px;
+            padding: 64px 40px;
+            margin-top: 80px;
+        }
+
+        .cta-section h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 44px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-section .btn {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .cta-section .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 24px 20px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            font-size: 14px;
+            color: #d1d5db;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            line-height: 1.8;
+        }
+
+        .footer-section a:hover {
+            color: white;
+            margin-left: 4px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header-content { padding: 12px 16px; }
+            nav {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                gap: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            nav.active { display: flex; }
+            .hamburger { display: flex; }
+            .hero { padding: 60px 16px; margin-top: 60px; min-height: auto; }
+            .hero-content { grid-template-columns: 1fr; gap: 40px; }
+            .hero-text h1 { font-size: 36px; }
+            .hero-buttons { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+            section { padding: 60px 16px; }
+            .section-header h2 { font-size: 32px; }
+            .features-grid, .stats-grid, .testimonials-grid, .pricing-grid { gap: 24px; }
+            .pricing-card.featured { transform: scale(1); }
+            .hero-visual { display: none; }
+            .cta-section { padding: 40px 24px; }
+            .cta-section h2 { font-size: 32px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 { font-size: 28px; }
+            .hero-text p { font-size: 16px; }
+            .section-header h2 { font-size: 24px; }
+            .stat-number { font-size: 36px; }
+            .price-tag { font-size: 36px; }
+        }
+
+        /* STAGGER ANIMATIONS */
+        .feature-card:nth-child(2) { animation-delay: 0.1s; }
+        .feature-card:nth-child(3) { animation-delay: 0.2s; }
+        .step:nth-child(2) { animation-delay: 0.1s; }
+        .step:nth-child(3) { animation-delay: 0.2s; }
+        .testimonial-card:nth-child(2) { animation-delay: 0.1s; }
+        .testimonial-card:nth-child(3) { animation-delay: 0.2s; }
+        .pricing-card:nth-child(2) { animation-delay: 0.1s; }
+        .pricing-card:nth-child(3) { animation-delay: 0.2s; }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="header-content">
+        <a href="#" class="logo">
+            <span class="logo-icon">📚</span>
+            StudPortal
+        </a>
+        <nav id="navbar">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+            <a href="#" class="cta-btn" id="signInBtn">Sign In</a>
+        </nav>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>Student Data Management Reimagined</h1>
+            <p>Real-time insights, bank-grade security, and instant reporting for your school</p>
+            <div class="hero-benefit">Join 50+ schools managing 10,000+ students</div>
+            <div class="hero-buttons">
+                <button class="btn btn-primary">Launch Dashboard</button>
+                <button class="btn btn-secondary">Watch Demo</button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="dashboard-mockup">
+                <div class="mockup-header">Student Dashboard</div>
+                <div class="mockup-content">
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">Total Students</span>
+                        <span class="mockup-stat-value">1,250</span>
+                    </div>
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">Data Complete</span>
+                        <span class="mockup-stat-value">98.5%</span>
+                    </div>
+                    <div class="mockup-stat">
+                        <span class="mockup-stat-label">Active Grades</span>
+                        <span class="mockup-stat-value">12</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+    <div class="section-header">
+        <h2>Powerful Features</h2>
+        <p>Everything you need to manage student data efficiently</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-number">1</div>
+            <h3>Real-time Dashboard</h3>
+            <p>Track student information and analytics in real-time with beautiful, interactive visualizations</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-number">2</div>
+            <h3>Bank-grade Security</h3>
+            <p>256-bit encryption, daily backups, and compliance with international data protection standards</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-number">3</div>
+            <h3>Lightning Fast</h3>
+            <p>Optimized performance with instant data loading and smooth interactions</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-number">4</div>
+            <h3>One-Click Export</h3>
+            <p>Export data to PDF, Excel, or CSV formats instantly. You own your data</p>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works" id="how-it-works">
+    <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Get started in 4 simple steps</p>
+    </div>
+    <div class="steps-grid">
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>Sign Up</h3>
+            <p>Create your account with Google Sign-in in seconds</p>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>Import Data</h3>
+            <p>Upload your student data via CSV or Excel files</p>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>Manage & Analyze</h3>
+            <p>Use our powerful tools to organize and gain insights</p>
+        </div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <h3>Export Reports</h3>
+            <p>Generate and share professional reports instantly</p>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+    <div class="section-header">
+        <h2>Trusted by Schools</h2>
+        <p>Real numbers from real schools using StudPortal</p>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Schools Using</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">10,000+</div>
+            <div class="stat-label">Students Managed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">99.9%</div>
+            <div class="stat-label">Uptime Guarantee</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Data Accuracy</div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+    <div class="section-header">
+        <h2>What Schools Say</h2>
+        <p>Real feedback from school administrators</p>
+    </div>
+    <div class="testimonials-grid">
+        <div class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"StudPortal has transformed how we manage student data. It's intuitive, secure, and saved us countless hours of administrative work."</p>
+            <p class="testimonial-author">James Kipchoge</p>
+            <p class="testimonial-role">Principal, Nairobi Academy</p>
+        </div>
+        <div class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"The analytics features give us insights we never had before. We can now make data-driven decisions about student support programs."</p>
+            <p class="testimonial-author">Patricia Mwangi</p>
+            <p class="testimonial-role">Academic Director, Westlands School</p>
+        </div>
+        <div class="testimonial-card">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"Exceptional customer support. Every question was answered promptly, and the onboarding process was smooth and hassle-free."</p>
+            <p class="testimonial-author">David Ochieng</p>
+            <p class="testimonial-role">IT Manager, Riverside Primary</p>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+    <div class="section-header">
+        <h2>Simple Pricing</h2>
+        <p>Choose the perfect plan for your school</p>
+    </div>
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <h3>🎓 Starter</h3>
+            <div class="price-tag">KES 5,000</div>
+            <p class="price-subtitle">Per Month</p>
+            <ul class="features-list">
+                <li>Up to 500 Students</li>
+                <li>Basic Analytics</li>
+                <li>Email Support</li>
+                <li>Monthly Reports</li>
+                <li>Mobile Access</li>
+            </ul>
+            <button class="btn btn-primary" style="width: 100%;">Get Started</button>
+        </div>
+        <div class="pricing-card featured">
+            <h3>🏆 Professional</h3>
+            <div class="price-tag">KES 15,000</div>
+            <p class="price-subtitle">Per Month</p>
+            <ul class="features-list">
+                <li>Up to 2,000 Students</li>
+                <li>Advanced Analytics</li>
+                <li>Priority Support</li>
+                <li>Real-time Reports</li>
+                <li>API Access</li>
+                <li>Custom Filters</li>
+            </ul>
+            <button class="btn btn-primary" style="width: 100%;">Get Started</button>
+        </div>
+        <div class="pricing-card">
+            <h3>🚀 Enterprise</h3>
+            <div class="price-tag">Custom</div>
+            <p class="price-subtitle">Contact Us</p>
+            <ul class="features-list">
+                <li>Unlimited Students</li>
+                <li>Custom Analytics</li>
+                <li>24/7 Support</li>
+                <li>Advanced Reporting</li>
+                <li>Full API Access</li>
+                <li>Dedicated Manager</li>
+            </ul>
+            <button class="btn btn-primary" style="width: 100%;">Contact Sales</button>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+    <div class="section-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Find answers to common questions</p>
+    </div>
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Is my student data secure?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>Absolutely! We use 256-bit SSL encryption, regular security audits, and comply with international data protection regulations. Your data is backed up daily and stored in secure data centers.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Can I export my data anytime?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>Yes! You can export student data to PDF, Excel, or CSV formats at any time. You completely own your data and can leave whenever you want.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>How long does it take to set up?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>You can be up and running in minutes! Sign up, import your data, and start using StudPortal. Our team can help with bulk imports if needed.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>What support do you offer?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>We offer email support for all plans, priority support for Professional plans, and 24/7 support for Enterprise customers. We also provide video tutorials and comprehensive documentation.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Is there a free trial?</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <p>Yes! We offer a 14-day free trial for the Professional plan. No credit card required. Test all features risk-free and see if StudPortal is right for you.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section style="padding-bottom: 0;">
+    <div class="cta-section">
+        <h2>Ready to Transform Student Management?</h2>
+        <p>Join 50+ schools using StudPortal. Start your free 14-day trial today with no credit card required.</p>
+        <button class="btn btn-primary" style="font-size: 18px; padding: 16px 40px;">Start Free Trial</button>
+    </div>
+</section>
+
+<!-- DASHBOARD SECTION -->
+<section class="dashboard-section" id="dashboard-view">
+    <div class="dashboard-header">
+        <h2>Student Dashboard</h2>
+        <button class="btn btn-primary" id="exportBtn" style="display: none;">Export to PDF</button>
+    </div>
+
+    <div class="user-info-box" id="user-info">Please sign in to view student data</div>
+    <button id="sign-out-btn" class="btn" style="display: none; margin-bottom: 20px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white;">Sign Out</button>
+
+    <div id="report-summary" style="display: none;">Loading student data...</div>
+
+    <div class="dashboard-stats">
+        <div class="stat-box">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Total Students</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Active Grades</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Complete Records</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">System Uptime</div>
+        </div>
+    </div>
+
+    <div class="filter-section controls">
+        <div class="filter-group">
+            <label>Search:</label>
+            <input type="text" id="search-input" placeholder="Name, UPI, or Phone...">
+        </div>
+        <div class="filter-group">
+            <label>Grade:</label>
+            <select id="grade-filter">
+                <option value="">All Grades</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Additional Fields:</label>
+            <select id="field-filter">
+                <option value="">Select Field...</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Items per page:</label>
+            <select id="items-per-page">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="selected-fields-container" style="margin-bottom: 20px; display: none;">
+        <div style="font-weight: 600; margin-bottom: 10px; color: #2c3e50;">Selected Additional Fields:</div>
+        <div id="selected-fields-tags" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+    </div>
+
+    <div class="table-preview">
+        <table id="studentTable">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Grade</th>
+                    <th>Student Name</th>
+                    <th>Assessment No</th>
+                    <th>UPI</th>
+                    <th>Home Phone</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <div id="pagination-info" style="font-weight: 600; color: #2c3e50;"></div>
+            <div id="pagination-controls" style="display: flex; gap: 5px; flex-wrap: wrap;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- LOADER -->
+<div class="loader" id="loader" style="display: none;">
+    <div class="spinner"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>🎓 About StudPortal</h4>
+            <p>Advanced student biodata management system designed for educational institutions. We help schools streamline their data management with cutting-edge technology and security.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+        </div>
+        <div class="footer-section">
+            <h4>Resources</h4>
+            <a href="#">API Documentation</a>
+            <a href="#">User Guide</a>
+            <a href="#">Blog</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="footer-section">
+            <h4>Legal</h4>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Security</a>
+            <a href="#">Support</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 StudPortal. All rights reserved.</p>
+    </div>
+</footer>
+<SCript src="new.js"></SCript>
+
+<script>
+    // Mobile Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const navbar = document.getElementById('navbar');
+
+    hamburger.addEventListener('click', () => {
+        navbar.classList.toggle('active');
+    });
+
+    // Close menu when clicking on a link
+    navbar.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navbar.classList.remove('active');
+        });
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        if (window.scrollY > 10) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    // FAQ Toggle
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        item.querySelector('.faq-question').addEventListener('click', () => {
+            item.classList.toggle('active');
+        });
+    });
+
+    // Show/Hide Dashboard on Sign In
+    const originalSignInBtn = document.getElementById('signInBtn');
+    const dashboardView = document.getElementById('dashboard-view');
+    const landingContent = document.querySelectorAll('section:not(.dashboard-section):not(footer)');
+
+    function showDashboard() {
+        landingContent.forEach(section => {
+            section.style.display = 'none';
+        });
+        dashboardView.classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function showLanding() {
+        dashboardView.classList.remove('active');
+        landingContent.forEach(section => {
+            section.style.display = 'block';
+        });
+    }
+
+    // Listen for auth state changes to toggle views
+    document.addEventListener('userSignedIn', showDashboard);
+    document.addEventListener('userSignedOut', showLanding);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1445 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Teachers_Timetable>
+  <Teacher name="Mr. Oduor">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="48"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="19"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="47"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="91"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="53"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="44"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="93"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="52"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="18"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="55"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="45"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="90"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="20"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="46"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="21"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="92"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="54"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Mr. Owuor">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="36"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="72"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="73"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="38"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="17"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="35"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="71"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="16"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="39"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="70"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="69"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="37"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="15"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Mr. Vincent">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="63"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="9"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="75"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="41"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="99"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="102"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="56"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="68"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="76"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="40"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="6"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="101"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="42"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="100"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="7"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="66"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="65"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="59"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="8"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="74"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="67"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="97"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="58"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="43"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="77"></Activity>
+        <Subject name="KISW"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="64"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="98"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="57"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Mr. Aggrey">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="30"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="245"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="28"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="94"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="27"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="32"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="86"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="247"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="33"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="88"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="95"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="96"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="31"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="26"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="246"></Activity>
+        <Subject name="SST"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="87"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="29"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="34"></Activity>
+        <Subject name="C / A"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="89"></Activity>
+        <Subject name="SCI"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="MR Stephen">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="82"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="79"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="81"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="80"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="78"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Md Janet">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="83"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="50"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="84"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="51"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="85"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 6 "></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="49"></Activity>
+        <Subject name="CRE"></Subject>
+        <Students name="GRADE 5"></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Md Beryl">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="11"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="23"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="14"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+        <Activity id="22"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="13"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+        <Activity id="25"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+        <Activity id="12"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+        <Activity id="24"></Activity>
+        <Subject name="AGRI"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="10"></Activity>
+        <Subject name="MATH"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+  </Teacher>
+  <Teacher name="Md Eunice">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="4"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="2"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+        <Activity id="1"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+        <Activity id="3"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="10:25am 11:00am">
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 08:55am">
+      </Hour>
+      <Hour name="08:55am 09:30am">
+      </Hour>
+      <Hour name="09:30am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:25am">
+      </Hour>
+      <Hour name="10:25am 11:00am">
+        <Activity id="5"></Activity>
+        <Subject name="ENG"></Subject>
+        <Students name="GRADE 4"></Students>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:05pm">
+      </Hour>
+      <Hour name="12:05pm 12:40pm">
+      </Hour>
+      <Hour name="12:40pm 2:00pm">
+      </Hour>
+      <Hour name="02:00pm 02:35pm">
+      </Hour>
+      <Hour name="02:35pm 03:10pm">
+      </Hour>
+      <Hour name="03:10pm 04:00pm">
+      </Hour>
+    </Day>
+  </Teacher>
+</Teachers_Timetable>

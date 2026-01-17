@@ -40,7 +40,7 @@ function checkAuthAndLoadData() {
         if (user) {
             loadActiveStudentsFromFirebase();
             loadTransferredStudentsFromFirebase();
-             checkDataQuality(); 
+            //  checkDataQuality(); 
         } else {
             Swal.fire({
                 title: 'Authentication Required',
@@ -794,6 +794,21 @@ let exportData = [];
 
 // Function to check data quality with search and filtering
 function checkDataQuality() {
+
+// Show "checking..." spinner immediately
+    Swal.fire({
+        title: 'Checking Data Quality...',
+        html: '<div style="font-size: 48px;">🔍</div>',
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Use setTimeout to allow UI to update
+    setTimeout(() => {
+
     const studentIssues = {};
     
     activeStudents.forEach(student => {
@@ -868,21 +883,22 @@ function checkDataQuality() {
         }
     });
 
-    const issuesList = Object.values(studentIssues);
-    
-    // Generate analytics data
-    generateDataQualityAnalytics(issuesList, activeStudents.length);
-    
-    if (issuesList.length > 0) {
-        showDataQualityModal(issuesList);
-    } else {
-        Swal.fire({
-            title: 'Data Quality Check',
-            text: 'No data quality issues found!',
-            icon: 'success',
-            confirmButtonText: 'Great!'
-        });
-    }
+   const issuesList = Object.values(studentIssues);
+        
+        // Generate analytics data
+        generateDataQualityAnalytics(issuesList, activeStudents.length);
+        
+        if (issuesList.length > 0) {
+            showDataQualityModal(issuesList);  // Now shows instantly after processing
+        } else {
+            Swal.fire({
+                title: 'Data Quality Check',
+                text: 'No data quality issues found!',
+                icon: 'success',
+                confirmButtonText: 'Great!'
+            });
+        }
+    }, 3000);  // Small delay to let loading indicator show
 }
 
 
@@ -890,7 +906,7 @@ function checkDataQuality() {
 
 function showDataQualityModal(allIssues) {
     // Store issues globally so other modals can return to them
-    window.currentDataQualityIssues = allIssues;  // ADD THIS LINE
+    window.currentDataQualityIssues = allIssues;
     
     let filteredIssues = [...allIssues];
     exportData = [...allIssues];
@@ -927,15 +943,14 @@ function showDataQualityModal(allIssues) {
                     <option value="Female" ${actualValue === 'Female' ? 'selected' : ''}>Female</option>
                 </select>`;
             case 'DOB':
-                        return `<input type="date" onchange="updateFieldInline('${studentKey}', '${field}', this.value)" 
+                return `<input type="date" onchange="updateFieldInline('${studentKey}', '${field}', this.value)" 
                         value="${actualValue && actualValue !== '---' ? actualValue : ''}"
                         style="width: 100%; padding: 4px; font-size: 12px; border: 1px solid #ddd; border-radius: 3px;">`;
             case 'Birth Entry':
                 return `<input type="text" onchange="updateFieldInline('${studentKey}', '${field}', this.value)" 
                         value="${actualValue && actualValue !== '---' ? actualValue : ''}" placeholder="Birth cert No"
                         style="width: 100%; padding: 4px; font-size: 12px; border: 1px solid #ddd; border-radius: 3px;">`;
-           
-             case 'Status':
+            case 'Status':
                 return `<select onchange="updateFieldInline('${studentKey}', '${field}', this.value)" 
                         style="width: 100%; padding: 4px; font-size: 12px; border: 1px solid #ddd; border-radius: 3px;">
                     <option value="">Select...</option>
@@ -962,8 +977,6 @@ function showDataQualityModal(allIssues) {
     
     const modalHTML = `
         <div style="text-align: left;">
-           
-            
             <div style="background: transparent; box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px; color: white;">
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
                     <button id="showAnalytics" class="advanced-btn" style="background: linear-gradient(45deg, #2e374b, #ff1cac); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.3s;">
@@ -983,10 +996,10 @@ function showDataQualityModal(allIssues) {
                     </button>
                 </div>
             </div>
-            
 
-            <div id="quickStats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;"></div>
-
+            <div id="quickStats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                <div class="loading-placeholder">Loading statistics...</div>
+            </div>
 
             <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                 <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px;">
@@ -1021,21 +1034,14 @@ function showDataQualityModal(allIssues) {
                     <button id="fastEditButton" style="padding: 6px 12px;user-select: none; background: linear-gradient(135deg, #1f148fff 0%, #0a1745ff 100%); color: white; border: none; border-radius: 4px; cursor: pointer;">
                         ✏️ Switch to Quick Edit Mode
                     </button>
-                    <button id="saveInlineChanges" style="padding:  6px 12px;opacity: 0.5;  pointer-events: none;background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);color: white; border: none; border-radius: 4px; cursor: pointer; disabled">
+                    <button id="saveInlineChanges" style="padding:  6px 12px;opacity: 0.5;  pointer-events: none;background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);color: white; border: none; border-radius: 4px; cursor: pointer;" disabled>
                       💾 Save All Changes (<span id="inlineChangeCount">0</span>)
                     </button>
                     <button id="saveFilters" style="padding: 6px 12px; background: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer;">
                         💾 Save View
                     </button>
 
-
-                     <div style="margin-bottom: 15px; text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-            
-               
-            </div>
-
                     <span id="resultsCount" style="font-weight: bold; color: #495057;"></span>
-
 
                     <div style="margin-left: auto;">
                         <label style="margin-right: 10px;">
@@ -1051,13 +1057,27 @@ function showDataQualityModal(allIssues) {
                 </div>
             </div>
             
-            
             <div style="max-height: 400px; overflow-y: auto;">
-                <ul id="issuesList" style="list-style: none; padding: 0; margin: 0;"></ul>
+                <ul id="issuesList" style="list-style: none; padding: 0; margin: 0;">
+                    <li class="loading-placeholder">Loading student data...</li>
+                </ul>
             </div>
         </div>
         
         <style>
+            .loading-placeholder {
+                padding: 20px;
+                text-align: center;
+                color: #666;
+                font-style: italic;
+                animation: pulse 1.5s ease-in-out infinite;
+            }
+            
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.5; }
+            }
+            
             .advanced-btn:hover {
                 background: rgba(1, 1, 6, 1) !important;
                 transform: translateY(-2px);
@@ -1072,6 +1092,12 @@ function showDataQualityModal(allIssues) {
                 background: transparent;
                 transition: all 0.3s ease;
                 position: relative;
+                animation: fadeIn 0.3s ease-in;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
             }
             
             .student-card:hover {
@@ -1115,24 +1141,16 @@ function showDataQualityModal(allIssues) {
         confirmButtonText: 'Close',
         width: '900px',
         didOpen: () => {
-            const fastEditBtn = document.getElementById('fastEditButton');
-            if (fastEditBtn) {
-                fastEditBtn.addEventListener('click', () => {
-                    const issuesList = allIssues || exportData || [];
-                    
-                    if (issuesList.length > 0) {
-                        Swal.close();
-                        showFastEditModal(issuesList);
-                    } else {
-                        Swal.fire({
-                            title: 'Data Quality Check',
-                            text: 'No data quality issues found!',
-                            icon: 'success',
-                            confirmButtonText: 'Great!'
-                        });
-                    }
-                });
-            }
+            // Render content progressively after modal opens
+            requestAnimationFrame(() => {
+                // First, render quick stats
+                renderQuickStats();
+                
+                // Then render results after a brief delay
+                setTimeout(() => {
+                    applyFilters();
+                }, 50);
+            });
 
             const searchInput = document.getElementById('studentSearch');
             const gradeFilter = document.getElementById('gradeFilter');
@@ -1146,6 +1164,7 @@ function showDataQualityModal(allIssues) {
             const issuesList = document.getElementById('issuesList');
             const quickStats = document.getElementById('quickStats');
             const saveInlineBtn = document.getElementById('saveInlineChanges');
+            const fastEditBtn = document.getElementById('fastEditButton');
 
             const analyticsBtn = document.getElementById('showAnalytics');
             const exportBtn = document.getElementById('exportData');
@@ -1250,9 +1269,7 @@ function showDataQualityModal(allIssues) {
                 }
             }
 
-
-
-          function renderQuickStats() {
+            function renderQuickStats() {
                 const totalStudents = filteredIssues.length;
                 const criticalCount = filteredIssues.filter(s => s.issues.length >= 5).length;
                 const highCount = filteredIssues.filter(s => s.issues.length >= 3 && s.issues.length < 5).length;
@@ -1350,821 +1367,6 @@ function showDataQualityModal(allIssues) {
                     });
                 });
             }
-
-            function showSeverityDrilldown() {
-                const criticalStudents = filteredIssues.filter(s => s.issues.length >= 5);
-                const highStudents = filteredIssues.filter(s => s.issues.length >= 3 && s.issues.length < 5);
-                const mediumStudents = filteredIssues.filter(s => s.issues.length === 2);
-                const lowStudents = filteredIssues.filter(s => s.issues.length === 1);
-
-                const html = `
-                    <div style="text-align: left;">
-                        <h3 style="margin-bottom: 20px;">Severity Breakdown - Click to Filter</h3>
-                        <div style="display: grid; gap: 12px;">
-                            <div class="severity-drill-card" data-severity="critical" style="background: linear-gradient(to right, #ff6b6b, #ee5a6f); color: white; padding: 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <div style="font-size: 24px; font-weight: bold;">🚨 Critical (5+ issues)</div>
-                                        <div style="font-size: 14px; opacity: 0.9; margin-top: 4px;">${criticalStudents.length} students need immediate attention</div>
-                                    </div>
-                                    <div style="font-size: 36px; font-weight: bold;">${criticalStudents.length}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="severity-drill-card" data-severity="high" style="background: linear-gradient(to right, #ffa726, #fb8c00); color: white; padding: 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <div style="font-size: 24px; font-weight: bold;">⚠️ High Priority (3-4 issues)</div>
-                                        <div style="font-size: 14px; opacity: 0.9; margin-top: 4px;">${highStudents.length} students require attention soon</div>
-                                    </div>
-                                    <div style="font-size: 36px; font-weight: bold;">${highStudents.length}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="severity-drill-card" data-severity="medium" style="background: linear-gradient(to right, #ffeb3b, #fdd835); color: #333; padding: 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <div style="font-size: 24px; font-weight: bold;">📋 Medium (2 issues)</div>
-                                        <div style="font-size: 14px; opacity: 0.8; margin-top: 4px;">${mediumStudents.length} students with moderate gaps</div>
-                                    </div>
-                                    <div style="font-size: 36px; font-weight: bold;">${mediumStudents.length}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="severity-drill-card" data-severity="low" style="background: linear-gradient(to right, #66bb6a, #43a047); color: white; padding: 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <div style="font-size: 24px; font-weight: bold;">✅ Low (1 issue)</div>
-                                        <div style="font-size: 14px; opacity: 0.9; margin-top: 4px;">${lowStudents.length} students - quick fixes possible</div>
-                                    </div>
-                                    <div style="font-size: 36px; font-weight: bold;">${lowStudents.length}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                Swal.fire({
-                    title: 'Data Completion Analysis',
-                    html: html,
-                   width: '700px',
-        showCancelButton: true,
-        confirmButtonText: '← Back',  // CHANGE THIS
-        cancelButtonText: 'Close',                     // ADD THIS
-        reverseButtons: true,
-                }).then((result) => {  // ADD THIS ENTIRE .then() BLOCK
-        if (result.isConfirmed) {
-            showDataQualityModal(window.currentDataQualityIssues || exportData);
-        }
-    });
-
-            }
-
-            function showQuickFixSuggestions(issueFrequency) {
-                const sortedIssues = Object.entries(issueFrequency).sort((a, b) => b[1] - a[1]);
-                
-                const suggestions = {
-                    'Gender': {
-                        icon: '👤',
-                        priority: 'HIGH',
-                        fix: 'Use student names and records to infer gender',
-                        action: 'Auto-suggest from names',
-                        time: '~2 mins'
-                    },
-                    'DOB': {
-                        icon: '🎂',
-                        priority: 'CRITICAL',
-                        fix: 'Cross-reference with admission records',
-                        action: 'Import from admission data',
-                        time: '~5 mins'
-                    },
-                    'Birth Entry': {
-                        icon: '📅',
-                        priority: 'MEDIUM',
-                        fix: 'Calculate from DOB if available',
-                        action: 'Auto-calculate missing entries',
-                        time: '~1 min'
-                    },
-                    'Home phone': {
-                        icon: '📞',
-                        priority: 'HIGH',
-                        fix: 'Send bulk SMS requesting parents to update',
-                        action: 'Send mass notification',
-                        time: '~10 mins'
-                    },
-                    'Email': {
-                        icon: '📧',
-                        priority: 'MEDIUM',
-                        fix: 'Generate institutional emails or request from parents',
-                        action: 'Bulk email collection campaign',
-                        time: '~15 mins'
-                    },
-                    'Status': {
-                        icon: '✅',
-                        priority: 'LOW',
-                        fix: 'Default to "Pending" for all unverified',
-                        action: 'Set default status',
-                        time: '~30 secs'
-                    },
-                    'Father': {
-                        icon: '👨',
-                        priority: 'MEDIUM',
-                        fix: 'Contact parents for missing guardian info',
-                        action: 'Send parent data forms',
-                        time: '~20 mins'
-                    },
-                    'Mother': {
-                        icon: '👩',
-                        priority: 'MEDIUM',
-                        fix: 'Contact parents for missing guardian info',
-                        action: 'Send parent data forms',
-                        time: '~20 mins'
-                    },
-                    'UPI': {
-                        icon: '🔢',
-                        priority: 'CRITICAL',
-                        fix: 'Generate unique IDs systematically',
-                        action: 'Auto-generate UPIs',
-                        time: '~1 min'
-                    },
-                    'IDNO': {
-                        icon: '🆔',
-                        priority: 'HIGH',
-                        fix: 'Request from parents or use student cards',
-                        action: 'Collection campaign',
-                        time: '~30 mins'
-                    },
-                    'Assessment No': {
-                        icon: '📝',
-                        priority: 'MEDIUM',
-                        fix: 'Generate sequential assessment numbers',
-                        action: 'Auto-assign numbers',
-                        time: '~2 mins'
-                    }
-                };
-
-                const html = `
-                    <div style="text-align: left; max-height: 500px; overflow-y: auto;">
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                            <div style="font-size: 48px; margin-bottom: 10px;">🎯</div>
-                            <div style="font-size: 20px; font-weight: bold;">AI-Powered Quick Fix Suggestions</div>
-                            <div style="font-size: 13px; opacity: 0.9; margin-top: 5px;">Smart recommendations to resolve data issues efficiently</div>
-                        </div>
-                        
-                        ${sortedIssues.slice(0, 5).map((issue, idx) => {
-                            const suggestion = suggestions[issue[0]] || {
-                                icon: '❓',
-                                priority: 'LOW',
-                                fix: 'Manual data entry required',
-                                action: 'Update manually',
-                                time: '~varies'
-                            };
-                            
-                            const priorityColors = {
-                                'CRITICAL': '#dc3545',
-                                'HIGH': '#fd7e14',
-                                'MEDIUM': '#ffc107',
-                                'LOW': '#28a745'
-                            };
-                            
-                            return `
-                                <div class="suggestion-card" data-issue="${issue[0]}" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border: 2px solid #e9ecef; border-radius: 10px; padding: 18px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;">
-                                    <div style="position: absolute; top: 0; right: 0; background: ${priorityColors[suggestion.priority]}; color: white; padding: 4px 12px; border-bottom-left-radius: 8px; font-size: 10px; font-weight: bold;">
-                                        ${suggestion.priority}
-                                    </div>
-                                    
-                                    <div style="display: flex; align-items: start; gap: 15px;">
-                                        <div style="font-size: 48px; flex-shrink: 0;">${suggestion.icon}</div>
-                                        <div style="flex: 1;">
-                                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                                                <div style="font-size: 18px; font-weight: bold; color: #333;">${issue[0]}</div>
-                                                <div style="background: #e9ecef; color: #495057; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">
-                                                    ${issue[1]} affected
-                                                </div>
-                                            </div>
-                                            
-                                            <div style="color: #666; font-size: 13px; margin-bottom: 10px; line-height: 1.5;">
-                                                💡 <strong>Suggestion:</strong> ${suggestion.fix}
-                                            </div>
-                                            
-                                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                                <button class="quick-action-btn" data-action="${suggestion.action}" data-issue="${issue[0]}" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s;">
-                                                    ⚡ ${suggestion.action}
-                                                </button>
-                                                <span style="font-size: 11px; color: #999;">⏱️ Est. time: ${suggestion.time}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                        
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
-                            <div style="font-size: 14px; color: #666; margin-bottom: 10px;">
-                                <strong>Pro Tip:</strong> Tackle high-priority issues first for maximum impact!
-                            </div>
-                            <button id="applyAllSuggestions" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s;">
-                                🚀 Apply All Suggested Fixes
-                            </button>
-                        </div>
-                    </div>
-                `;
-
-                Swal.fire({
-                    title: 'Smart Fix Suggestions',
-                    html: html,
-                    width: '750px',
-                    showConfirmButton: true,
-                    showCloseButton: true,
-                    width: '700px',
-                    showCancelButton: true,
-                    confirmButtonText: '← Back',
-                    cancelButtonText: 'Close',
-                    reverseButtons: true,
-                    didOpen: () => {
-                        document.querySelectorAll('.suggestion-card').forEach(card => {
-                            card.addEventListener('mouseenter', function() {
-                                this.style.transform = 'translateY(-4px)';
-                                this.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
-                                this.style.borderColor = '#667eea';
-                            });
-                            
-                            card.addEventListener('mouseleave', function() {
-                                this.style.transform = 'translateY(0)';
-                                this.style.boxShadow = 'none';
-                                this.style.borderColor = '#e9ecef';
-                            });
-                        });
-                        
-                        document.querySelectorAll('.quick-action-btn').forEach(btn => {
-                            btn.addEventListener('click', function(e) {
-                                e.stopPropagation();
-                                const action = this.dataset.action;
-                                const issue = this.dataset.issue;
-                                executeQuickFix(action, issue);
-                            });
-                            
-                            btn.addEventListener('mouseenter', function() {
-                                this.style.transform = 'scale(1.05)';
-                                this.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
-                            });
-                            
-                            btn.addEventListener('mouseleave', function() {
-                                this.style.transform = 'scale(1)';
-                                this.style.boxShadow = 'none';
-                            });
-                        });
-                        
-                        const applyAllBtn = document.getElementById('applyAllSuggestions');
-                        if (applyAllBtn) {
-                            applyAllBtn.addEventListener('click', function() {
-                                Swal.fire({
-                                    title: 'Apply All Fixes?',
-                                    html: `
-                                        <div style="text-align: left; padding: 20px;">
-                                            <div style="font-size: 16px; margin-bottom: 15px;">This will automatically:</div>
-                                            <ul style="line-height: 2;">
-                                                <li>✅ Set default statuses for unverified records</li>
-                                                <li>🔢 Generate missing UPIs and Assessment Numbers</li>
-                                                <li>📅 Calculate Birth Entries from DOB where possible</li>
-                                                <li>📧 Initiate data collection campaigns for contacts</li>
-                                            </ul>
-                                            <div style="background: #fff3cd; padding: 12px; border-radius: 6px; border-left: 4px solid #ffc107; margin-top: 15px;">
-                                                <strong>⚠️ Note:</strong> Some fixes require manual verification. Review changes before finalizing.
-                                            </div>
-                                        </div>
-                                    `,
-                                    icon: 'question',
-                                    showCancelButton: true,
-                                    confirmButtonText: '🚀 Yes, Apply All!',
-                                    cancelButtonText: 'Cancel',
-                                    confirmButtonColor: '#667eea',
-                                    cancelButtonColor: '#6c757d'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        executeAllQuickFixes();
-                                    }
-                                });
-                            });
-                            
-                            applyAllBtn.addEventListener('mouseenter', function() {
-                                this.style.transform = 'scale(1.05)';
-                                this.style.boxShadow = '0 6px 16px rgba(240, 147, 251, 0.4)';
-                            });
-                            
-                            applyAllBtn.addEventListener('mouseleave', function() {
-                                this.style.transform = 'scale(1)';
-                                this.style.boxShadow = 'none';
-                            });
-                        }
-                    }
-                }).then((result) => {  // ADD THIS ENTIRE .then() BLOCK
-        if (result.isConfirmed) {
-            showDataQualityModal(window.currentDataQualityIssues || exportData);
-        }
-    });
-
-            }
-
-            function executeQuickFix(action, issue) {
-                Swal.fire({
-                    title: 'Applying Fix...',
-                    html: `
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="font-size: 48px; margin-bottom: 15px;">⚙️</div>
-                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">${action}</div>
-                            <div style="font-size: 14px; color: #666;">Processing ${issue} field...</div>
-                        </div>
-                    `,
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        setTimeout(() => {
-                            const studentsAffected = filteredIssues.filter(s => s.issues.includes(issue)).length;
-                            
-                            Swal.fire({
-                                title: 'Fix Applied!',
-                                html: `
-                                    <div style="text-align: center;">
-                                        <div style="font-size: 64px; margin-bottom: 15px;">✅</div>
-                                        <div style="font-size: 18px; margin-bottom: 10px;">
-                                            <strong>${studentsAffected}</strong> records updated successfully!
-                                        </div>
-                                        <div style="font-size: 14px; color: #666;">
-                                            ${issue} field has been processed for all affected students.
-                                        </div>
-                                    </div>
-                                `,
-                                icon: 'success',
-                                confirmButtonText: 'Great!',
-                                confirmButtonColor: '#28a745'
-                            }).then(() => {
-                                // Filter out the fixed issue
-                                issueFilter.value = issue;
-                                applyFilters();
-                            });
-                        }, 2000);
-                    }
-                });
-            }
-
-            function executeAllQuickFixes() {
-                let progress = 0;
-                const totalSteps = 5;
-                
-                Swal.fire({
-                    title: 'Applying All Fixes',
-                    html: `
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
-                            <div id="fixProgress" style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">Initializing...</div>
-                            <div style="background: #e9ecef; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 10px;">
-                                <div id="progressBar" style="background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.5s;"></div>
-                            </div>
-                            <div id="fixStatus" style="font-size: 13px; color: #666;"></div>
-                        </div>
-                    `,
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        const steps = [
-                            { text: 'Setting default statuses...', time: 1000 },
-                            { text: 'Generating UPIs...', time: 1500 },
-                            { text: 'Calculating Birth Entries...', time: 1200 },
-                            { text: 'Creating Assessment Numbers...', time: 1000 },
-                            { text: 'Finalizing changes...', time: 1500 }
-                        ];
-                        
-                        let currentStep = 0;
-                        
-                        function executeStep() {
-                            if (currentStep < steps.length) {
-                                const step = steps[currentStep];
-                                document.getElementById('fixProgress').textContent = step.text;
-                                document.getElementById('fixStatus').textContent = `Step ${currentStep + 1} of ${totalSteps}`;
-                                document.getElementById('progressBar').style.width = `${((currentStep + 1) / totalSteps) * 100}%`;
-                                
-                                setTimeout(() => {
-                                    currentStep++;
-                                    executeStep();
-                                }, step.time);
-                            } else {
-                                const totalFixed = filteredIssues.reduce((sum, s) => sum + s.issues.length, 0);
-                                
-                                Swal.fire({
-                                    title: 'All Fixes Applied!',
-                                    html: `
-                                        <div style="text-align: center;">
-                                            <div style="font-size: 72px; margin-bottom: 20px;">🎉</div>
-                                            <div style="font-size: 24px; font-weight: bold; color: #28a745; margin-bottom: 15px;">
-                                                Success!
-                                            </div>
-                                            <div style="font-size: 16px; margin-bottom: 20px;">
-                                                <strong>${totalFixed}</strong> data issues have been automatically resolved!
-                                            </div>
-                                            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; text-align: left;">
-                                                <div style="font-weight: bold; margin-bottom: 8px;">✅ Completed Actions:</div>
-                                                <ul style="line-height: 2; font-size: 14px;">
-                                                    <li>Default statuses assigned</li>
-                                                    <li>Unique identifiers generated</li>
-                                                    <li>Date calculations completed</li>
-                                                    <li>Sequential numbers assigned</li>
-                                                </ul>
-                                            </div>
-                                            <div style="margin-top: 15px; font-size: 13px; color: #666;">
-                                                💡 Remember to review and verify the changes before final submission.
-                                            </div>
-                                        </div>
-                                    `,
-                                    icon: 'success',
-                                    confirmButtonText: '🎯 Review Changes',
-                                    confirmButtonColor: '#667eea'
-                                }).then(() => {
-                                    applyFilters();
-                                });
-                            }
-                        }
-                        
-                        executeStep();
-                    }
-                });
-            } 
-            
-       
-
-            function showTopIssuesBreakdown(topIssues) {
-                const issueColors = {
-                    'Gender': '#dc3545', 'UPI': '#fd7e14', 'DOB': '#20c997',
-                    'Birth Entry': '#6610f2', 'Home phone': '#0dcaf0', 'Status': '#198754',
-                    'Father': '#d63384', 'Mother': '#6f42c1', 'Email': '#ffc107', 'IDNO': '#0d6efd',
-                    'Assessment No': '#17a2b8'
-                };
-
-                const html = `
-                    <div style="text-align: left;">
-                        <h3 style="margin-bottom: 20px;">Top Missing Fields - Click to Filter</h3>
-                        <div style="display: grid; gap: 10px;">
-                            ${topIssues.map((issue, idx) => `
-                                <div class="issue-card" data-issue="${issue[0]}" style="background: ${issueColors[issue[0]] || '#6c757d'}15; border-left: 4px solid ${issueColors[issue[0]] || '#6c757d'}; padding: 14px; border-radius: 6px; cursor: pointer; transition: all 0.3s;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <div style="font-size: 18px; font-weight: bold; color: ${issueColors[issue[0]] || '#6c757d'};">
-                                                ${idx + 1}. ${issue[0]}
-                                            </div>
-                                            <div style="font-size: 13px; color: #666; margin-top: 4px;">
-                                                ${issue[1]} students missing this field (${(issue[1] / filteredIssues.length * 100).toFixed(1)}%)
-                                            </div>
-                                        </div>
-                                        <div style="font-size: 32px; font-weight: bold; color: ${issueColors[issue[0]] || '#6c757d'};">${issue[1]}</div>
-                                    </div>
-                                    <div style="background: ${issueColors[issue[0]] || '#6c757d'}; height: 6px; border-radius: 3px; margin-top: 8px; width: ${issue[1] / filteredIssues.length * 100}%;"></div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-
-                Swal.fire({
-                    title: 'Issue Frequency Analysis',
-                    html: html,
-                     width: '700px',
-        showCancelButton: true,
-        confirmButtonText: '← Back',  // CHANGE THIS
-        cancelButtonText: 'Close',                     // ADD THIS
-        reverseButtons: true,
-                    didOpen: () => {
-                        document.querySelectorAll('.issue-card').forEach(card => {
-                            card.addEventListener('click', function() {
-                                const issue = this.dataset.issue;
-                                Swal.close();
-                                issueFilter.value = issue;
-                                applyFilters();
-                                showToast(`Filtered to: ${issue}`, 'info');
-                            });
-                            
-                            card.addEventListener('mouseenter', function() {
-                                this.style.transform = 'scale(1.03)';
-                                this.style.boxShadow = '0 6px 12px rgba(0,0,0,0.15)';
-                            });
-                            
-                            card.addEventListener('mouseleave', function() {
-                                this.style.transform = 'scale(1)';
-                                this.style.boxShadow = 'none';
-                            });
-                        });
-                    }
-                }).then((result) => {  // ADD THIS ENTIRE .then() BLOCK
-        if (result.isConfirmed) {
-            showDataQualityModal(window.currentDataQualityIssues || exportData);
-        }
-    });
-
-            }
-
-            function showGradeBreakdown(gradeDistribution) {
-                const sortedGrades = Object.entries(gradeDistribution).sort((a, b) => b[1] - a[1]);
-                const maxCount = sortedGrades[0][1];
-
-                const html = `
-                    <div style="text-align: left;">
-                        <h3 style="margin-bottom: 20px;">Grade-wise Issue Distribution</h3>
-                        <div style="display: grid; gap: 8px;">
-                            ${sortedGrades.map(([grade, count]) => `
-                                <div class="grade-card" data-grade="${grade}" style="background: #f8f9fa; border-radius: 6px; padding: 12px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;">
-                                    <div style="background: linear-gradient(to right, #667eea, #764ba2); height: 100%; width: ${count/maxCount*100}%; position: absolute; left: 0; top: 0; opacity: 0.1; transition: width 0.5s;"></div>
-                                    <div style="position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <div style="font-size: 18px; font-weight: bold; color: #333;">${grade}</div>
-                                            <div style="font-size: 12px; color: #666; margin-top: 2px;">${count} students (${(count / filteredIssues.length * 100).toFixed(1)}%)</div>
-                                        </div>
-                                        <div style="font-size: 28px; font-weight: bold; color: #667eea;">${count}</div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-
-                Swal.fire({
-                    title: 'Grade Analysis',
-                    html: html,
-                    width: '700px',
-        showCancelButton: true,
-        confirmButtonText: '← Back',  // CHANGE THIS
-        cancelButtonText: 'Close',                     // ADD THIS
-        reverseButtons: true,
-                    didOpen: () => {
-                        document.querySelectorAll('.grade-card').forEach(card => {
-                            card.addEventListener('click', function() {
-                                const grade = this.dataset.grade;
-                                Swal.close();
-                                gradeFilter.value = grade;
-                                applyFilters();
-                                showToast(`Filtered to: ${grade}`, 'info');
-                            });
-                            
-                            card.addEventListener('mouseenter', function() {
-                                this.style.transform = 'translateX(8px)';
-                                this.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
-                            });
-                            
-                            card.addEventListener('mouseleave', function() {
-                                this.style.transform = 'translateX(0)';
-                                this.style.boxShadow = 'none';
-                            });
-                        });
-                    }
-                }).then((result) => {  // ADD THIS ENTIRE .then() BLOCK
-        if (result.isConfirmed) {
-            showDataQualityModal(window.currentDataQualityIssues || exportData);
-        }
-    });
-
-
-            }
-
-        function showCompletionAnalysis(completionRate, avgIssues) {
-    const totalFields = allIssues.length * 11; // Assuming 11 trackable fields
-    const missingFields = filteredIssues.reduce((sum, s) => sum + s.issues.length, 0);
-    const completeFields = totalFields - missingFields;
-
-    const html = `
-        <div style="text-align: center;">
-            <div style="font-size: 64px; font-weight: bold; color: ${completionRate > 80 ? '#28a745' : completionRate > 60 ? '#ffc107' : '#dc3545'}; margin: 20px 0;">
-                ${completionRate}%
-            </div>
-            <div style="font-size: 18px; color: #666; margin-bottom: 30px;">Data Completion Rate</div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; text-align: left;">
-                <div id="completeFieldsCard" class="clickable-card" style="background: #e8f5e9; padding: 20px; border-radius: 8px; cursor: pointer !important; transition: transform 0.2s, box-shadow 0.2s; user-select: none;">
-                    <div style="font-size: 32px; font-weight: bold; color: #2e7d32; pointer-events: none;">${completeFields}</div>
-                    <div style="font-size: 14px; color: #666; pointer-events: none;">Complete Fields</div>
-                    <div style="font-size: 12px; color: #4caf50; margin-top: 5px; pointer-events: none;">👆 Click to view details</div>
-                </div>
-                <div id="missingFieldsCard" class="clickable-card" style="background: #ffebee; padding: 20px; border-radius: 8px; cursor: pointer !important; transition: transform 0.2s, box-shadow 0.2s; user-select: none;">
-                    <div style="font-size: 32px; font-weight: bold; color: #c62828; pointer-events: none;">${missingFields}</div>
-                    <div style="font-size: 14px; color: #666; pointer-events: none;">Missing Fields</div>
-                    <div style="font-size: 12px; color: #f44336; margin-top: 5px; pointer-events: none;">👆 Click to view issues</div>
-                </div>
-                <div id="avgIssuesCard" class="clickable-card" style="background: #e3f2fd; padding: 20px; border-radius: 8px; cursor: pointer !important; transition: transform 0.2s, box-shadow 0.2s; user-select: none;">
-                    <div style="font-size: 32px; font-weight: bold; color: #1565c0; pointer-events: none;">${avgIssues}</div>
-                    <div style="font-size: 14px; color: #666; pointer-events: none;">Avg Issues/Student</div>
-                    <div style="font-size: 12px; color: #2196f3; margin-top: 5px; pointer-events: none;">👆 Click for breakdown</div>
-                </div>
-                <div id="totalStudentsCard" class="clickable-card" style="background: #f3e5f5; padding: 20px; border-radius: 8px; cursor: pointer !important; transition: transform 0.2s, box-shadow 0.2s; user-select: none;">
-                    <div style="font-size: 32px; font-weight: bold; color: #6a1b9a; pointer-events: none;">${allIssues.length}</div>
-                    <div style="font-size: 14px; color: #666; pointer-events: none;">Total Students</div>
-                    <div style="font-size: 12px; color: #9c27b0; margin-top: 5px; pointer-events: none;">👆 Click to view list</div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 30px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ff6b00;">
-                <div style="font-weight: bold; margin-bottom: 5px;">💡 Insight:</div>
-                <div style="font-size: 14px;">
-                    ${completionRate > 80 ? 'Great job! Your data quality is excellent.' : 
-                      completionRate > 60 ? 'Good progress, but there\'s room for improvement.' : 
-                      'Significant data gaps detected. Prioritize critical fields first.'}
-                </div>
-            </div>
-        </div>
-    `;
-
-    Swal.fire({
-        title: 'Data Completion Analysis',
-        html: html,
-        showCloseButton: true,
-        focusConfirm: false,
-        width: '700px',
-        showCancelButton: true,
-        confirmButtonText: '← Back',
-        cancelButtonText: 'Close',
-        reverseButtons: true,
-        didOpen: () => {
-            // Add CSS for hover effects
-            const style = document.createElement('style');
-            style.textContent = `
-                .clickable-card:hover {
-                    transform: translateY(-5px) !important;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-                    cursor: pointer !important;
-                }
-                .clickable-card {
-                    cursor: pointer !important;
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Add click handlers after modal opens
-            const completeCard = document.getElementById('completeFieldsCard');
-            const missingCard = document.getElementById('missingFieldsCard');
-            const avgCard = document.getElementById('avgIssuesCard');
-            const totalCard = document.getElementById('totalStudentsCard');
-            
-            if (completeCard) {
-                completeCard.onclick = () => handleCompleteFieldsClick(completeFields, totalFields);
-            }
-            
-            if (missingCard) {
-                missingCard.onclick = () => handleMissingFieldsClick(missingFields, filteredIssues);
-            }
-            
-            if (avgCard) {
-                avgCard.onclick = () => handleAvgIssuesClick(avgIssues, filteredIssues);
-            }
-            
-            if (totalCard) {
-                totalCard.onclick = () => handleTotalStudentsClick(allIssues);
-            }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            showDataQualityModal(window.currentDataQualityIssues || exportData);
-        }
-    });
-}
-
-// Handler for Complete Fields card
-function handleCompleteFieldsClick(completeFields, totalFields) {
-    const percentage = ((completeFields / totalFields) * 100).toFixed(1);
-    Swal.fire({
-        title: '✅ Complete Fields Details',
-        html: `
-            <div style="text-align: left; padding: 20px;">
-                <p style="font-size: 16px; margin-bottom: 15px;">
-                    <strong>${completeFields}</strong> out of <strong>${totalFields}</strong> fields are complete.
-                </p>
-                <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                    <div style="font-size: 18px; color: #2e7d32; font-weight: bold;">${percentage}% Completion Rate</div>
-                </div>
-                <p style="color: #666; font-size: 14px;">
-                    This represents all fields that have valid data across all students in the current filter.
-                </p>
-            </div>
-        `,
-        confirmButtonText: 'Got it',
-        icon: 'success'
-    });
-}
-
-// Handler for Missing Fields card
-function handleMissingFieldsClick(missingFields, filteredIssues) {
-    const issueBreakdown = {};
-    filteredIssues.forEach(student => {
-        student.issues.forEach(issue => {
-            issueBreakdown[issue] = (issueBreakdown[issue] || 0) + 1;
-        });
-    });
-    
-    const sortedIssues = Object.entries(issueBreakdown)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10);
-    
-    const issueList = sortedIssues
-        .map(([issue, count]) => `<li style="margin: 8px 0;"><strong>${issue}:</strong> ${count} students</li>`)
-        .join('');
-    
-    Swal.fire({
-        title: '⚠️ Missing Fields Breakdown',
-        html: `
-            <div style="text-align: left; padding: 20px;">
-                <p style="font-size: 16px; margin-bottom: 15px;">
-                    <strong>${missingFields}</strong> total missing fields detected.
-                </p>
-                <div style="background: #ffebee; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                    <h4 style="color: #c62828; margin-top: 0;">Top Issues:</h4>
-                    <ul style="margin: 10px 0; padding-left: 20px;">
-                        ${issueList}
-                    </ul>
-                </div>
-            </div>
-        `,
-        confirmButtonText: 'View Full Report',
-        showCancelButton: true,
-        cancelButtonText: 'Close',
-        icon: 'warning'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            showDataQualityModal(window.currentDataQualityIssues || exportData);
-        }
-    });
-}
-
-// Handler for Average Issues card
-function handleAvgIssuesClick(avgIssues, filteredIssues) {
-    const issueDistribution = {};
-    filteredIssues.forEach(student => {
-        const count = student.issues.length;
-        issueDistribution[count] = (issueDistribution[count] || 0) + 1;
-    });
-    
-    const distributionList = Object.entries(issueDistribution)
-        .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
-        .map(([issues, students]) => 
-            `<div style="display: flex; justify-content: space-between; margin: 8px 0; padding: 8px; background: #f5f5f5; border-radius: 4px;">
-                <span>${issues} issue${issues > 1 ? 's' : ''}</span>
-                <strong>${students} student${students > 1 ? 's' : ''}</strong>
-            </div>`
-        )
-        .join('');
-    
-    Swal.fire({
-        title: '📊 Issues Per Student Distribution',
-        html: `
-            <div style="text-align: left; padding: 20px;">
-                <p style="font-size: 16px; margin-bottom: 15px;">
-                    Average: <strong>${avgIssues}</strong> issues per student
-                </p>
-                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
-                    <h4 style="color: #1565c0; margin-top: 0;">Distribution:</h4>
-                    ${distributionList}
-                </div>
-            </div>
-        `,
-        confirmButtonText: 'Close',
-        icon: 'info'
-    });
-}
-
-// Handler for Total Students card
-function handleTotalStudentsClick(allIssues) {
-    const studentsList = allIssues
-        .slice(0, 20)
-        .map(student => 
-            `<div style="display: flex; justify-content: space-between; margin: 8px 0; padding: 10px; background: #f5f5f5; border-radius: 4px;">
-                <span><strong>${student.grade}</strong> - ${student.name}</span>
-                <span style="color: ${student.issues.length > 3 ? '#c62828' : '#666'};">
-                    ${student.issues.length} issue${student.issues.length > 1 ? 's' : ''}
-                </span>
-            </div>`
-        )
-        .join('');
-    
-    const moreStudents = allIssues.length > 20 ? 
-        `<p style="text-align: center; color: #666; margin-top: 15px;">... and ${allIssues.length - 20} more students</p>` : '';
-    
-    Swal.fire({
-        title: '👥 Students with Issues',
-        html: `
-            <div style="text-align: left; padding: 20px; max-height: 400px; overflow-y: auto;">
-                <p style="font-size: 16px; margin-bottom: 15px;">
-                    Total: <strong>${allIssues.length}</strong> students
-                </p>
-                ${studentsList}
-                ${moreStudents}
-            </div>
-        `,
-        confirmButtonText: 'View Full Report',
-        showCancelButton: true,
-        cancelButtonText: 'Close',
-        width: '600px',
-        icon: 'info'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            showDataQualityModal(window.currentDataQualityIssues || exportData);
-        }
-    });
-}
-
             
             function getSeverity(issuesCount) {
                 if (issuesCount >= 5) return { class: 'severity-critical', level: 'CRITICAL', priority: 4 };
@@ -2177,7 +1379,6 @@ function handleTotalStudentsClick(allIssues) {
                 if (filteredIssues.length === 0) {
                     issuesList.innerHTML = '<li style="text-align: center; color: #6c757d; padding: 20px;">No students match the current filters.</li>';
                     resultsCount.textContent = 'No results found';
-                    quickStats.innerHTML = '';
                     return;
                 }
 
@@ -2197,224 +1398,269 @@ function handleTotalStudentsClick(allIssues) {
                     }
                 });
 
-             const htmlContent = filteredIssues.map((student, index) => {
-    const issueColors = {
-        'Gender': '#dc3545',
-        'UPI': '#fd7e14',
-        'DOB': '#ff0800',
-        'Birth Entry': '#6610f2',
-        'Home phone': '#0dcaf0',
-        'Status': '#198754',
-        'Father': '#d63384',
-        'Mother': '#6f42c1',
-        'Email': '#ffc107'
-    };
-    
-    const issueGradients = {
-        'Gender': 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-        'UPI': 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffd140 100%)',
-        'DOB': 'linear-gradient(135deg, rgb(250, 112, 154) 0%, rgb(254, 225, 64) 100%);',
-        'Birth Entry': 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
-        'Home phone': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-        'Status': 'linear-gradient(135deg, #52c234 0%, #061700 100%)',
-        'Father': 'linear-gradient(135deg, #ff9a56 0%, #ff6a88 50%, #ff99ac 100%)',
-        'Mother': 'linear-gradient(135deg, #f77062 0%, #fe5196 100%)',
-        'Email': 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'
-    };
-    
-    const severity = getSeverity(student.issues.length);
-    const studentKey = `${student.grade}-${student.name}`;
-    
-    const editableFields = student.issues.map(issue => {
-        const currentValue = student.student[issue] || '';
-        const baseColor = issueColors[issue] || '#dc3545';
-        const gradient = issueGradients[issue] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        
-        return `
-            <div style="display: inline-block; margin: 4px; padding: 8px; 
-                 background: ${gradient}; 
-               
-                 border-radius: 8px; min-width: 150px; vertical-align: top;
-                 box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
-                 position: relative;
-                 overflow: hidden;">
-                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
-                     background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%); 
-                     pointer-events: none;"></div>
-                <strong style="font-size: 11px; color: white; display: block; margin-bottom: 4px; 
-                     text-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; z-index: 1;
-                     font-weight: 600; letter-spacing: 0.5px;">${issue}:</strong>
-                <div style="position: relative; z-index: 1;">
-                    ${createEditableInput(student, issue, currentValue)}
-                </div>
-            </div>
-        `;
-    }).join('');
-    
-    const priorityIcon = severity.level === 'CRITICAL' ? '🚨' : 
-                       severity.level === 'HIGH' ? '⚠️' : 
-                       severity.level === 'MEDIUM' ? '📋' : '✅';
-    
-    return `
-        <li class="student-card ${severity.class}" data-student-id="${studentKey}">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                        <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                             color: white; padding: 3px 10px; border-radius: 15px; font-size: 12px; 
-                             margin-right: 10px; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);">
-                            ${student.grade}
-                        </span>
-                        <strong style="font-size: 16px;">${student.name}</strong>
-                        <span style="margin-left: 10px; font-size: 20px;">${priorityIcon}</span>
-                    </div>
-                    <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
-                        <strong>${severity.level}</strong> - ${student.issues.length} issue${student.issues.length > 1 ? 's' : ''}
-                    </div>
-                </div>
-                <div style="text-align: right;">
-                    <button class="mark-resolved" data-student="${studentKey}" 
-                            style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
-                            color: white; border: none; padding: 4px 8px; border-radius: 4px; 
-                            cursor: pointer; font-size: 11px; margin-bottom: 5px;
-                            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
-                            transition: transform 0.2s;">
-                        ✓ Mark Resolved
-                    </button>
-                    <div style="font-size: 11px; color: #999;">Number: ${index + 1} of ${exportData.length}</div>
-                </div>
-            </div>
-            <div style="margin-top: 10px;">
-                <strong style="font-size: 13px; color: #333; display: block; margin-bottom: 8px;">Edit Missing Data:</strong>
-                <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-                    ${editableFields}
-                </div>
-                <button class="student-save-btn" data-save-student="${studentKey}" onclick="saveStudent('${studentKey}')">
-                    💾 Save
-                </button>
-            </div>
-        </li>
-    `;
-}).join('');
-                issuesList.innerHTML = htmlContent;
-                resultsCount.textContent = `Showing ${filteredIssues.length} of ${allIssues.length} students`;
+                // Clear the list
+                issuesList.innerHTML = '';
                 
-                renderQuickStats();
+                // Render in batches to avoid blocking
+                const BATCH_SIZE = 20;
+                let currentIndex = 0;
                 
-                document.querySelectorAll('.mark-resolved').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const studentId = this.dataset.student;
-                        markStudentResolved(studentId);
-                    });
-                });
-            }
-
-            function applyFilters() {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-                const selectedGrade = gradeFilter.value;
-                const selectedIssue = issueFilter.value;
-                const selectedSeverity = severityFilter.value;
-
-                filteredIssues = allIssues.filter(student => {
-                    const matchesSearch = !searchTerm || 
-                        student.name.toLowerCase().includes(searchTerm) ||
-                        student.grade.toLowerCase().includes(searchTerm) ||
-                        student.issues.some(issue => issue.toLowerCase().includes(searchTerm));
+                function renderBatch() {
+                    const endIndex = Math.min(currentIndex + BATCH_SIZE, filteredIssues.length);
+                    const fragment = document.createDocumentFragment();
                     
-                    const matchesGrade = !selectedGrade || student.grade === selectedGrade;
-                    const matchesIssue = !selectedIssue || student.issues.includes(selectedIssue);
+                    for (let i = currentIndex; i < endIndex; i++) {
+                        const student = filteredIssues[i];
+                        const li = createStudentCard(student, i);
+                        fragment.appendChild(li);
+                    }
                     
-                    const matchesSeverity = !selectedSeverity || 
-                        (selectedSeverity === 'critical' && student.issues.length >= 5) ||
-                        (selectedSeverity === 'high' && student.issues.length >= 3 && student.issues.length < 5) ||
-                        (selectedSeverity === 'medium' && student.issues.length === 2) ||
-                        (selectedSeverity === 'low' && student.issues.length === 1);
+                    issuesList.appendChild(fragment);
+                    currentIndex = endIndex;
                     
-                    return matchesSearch && matchesGrade && matchesIssue && matchesSeverity;
-                });
-
-                renderResults();
-            }
-
-            function markStudentResolved(studentId) {
-                if (!window.resolvedStudents) window.resolvedStudents = new Set();
-                window.resolvedStudents.add(studentId);
-                
-                const card = document.querySelector(`[data-student-id="${studentId}"]`);
-                if (card) {
-                    card.style.transition = 'all 0.5s ease';
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateX(100px)';
-                    setTimeout(() => {
-                        if (!showResolved.checked) {
-                            filteredIssues = filteredIssues.filter(s => `${s.grade}-${s.name}` !== studentId);
-                            renderResults();
-                        }
-                    }, 500);
+                    if (currentIndex < filteredIssues.length) {
+                        requestAnimationFrame(renderBatch);
+                    } else {
+                        // Update count after rendering complete
+                        resultsCount.textContent = `Showing ${filteredIssues.length} of ${allIssues.length} students`;
+                    }
                 }
                 
-                showToast('✅ Student marked as resolved!', 'success');
+                renderBatch();
             }
-
-            searchInput.addEventListener('input', applyFilters);
-            gradeFilter.addEventListener('change', applyFilters);
-            issueFilter.addEventListener('change', applyFilters);
-            severityFilter.addEventListener('change', applyFilters);
-            sortBy.addEventListener('change', applyFilters);
-            showResolved.addEventListener('change', applyFilters);
             
-            clearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                gradeFilter.value = '';
-                issueFilter.value = '';
-                severityFilter.value = '';
-                sortBy.value = 'severity';
-                showResolved.checked = false;
-                applyFilters();
-                showToast('🗑️ Filters cleared!', 'info');
+            function createStudentCard(student,index) {
+const issueColors = {
+'Gender': '#dc3545',
+'UPI': '#fd7e14',
+'DOB': '#ff0800',
+'Birth Entry': '#6610f2',
+'Home phone': '#0dcaf0',
+'Status': '#198754',
+'Father': '#d63384',
+'Mother': '#6f42c1',
+'Email': '#ffc107'
+};
+            const issueGradients = {
+                'Gender': 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+                'UPI': 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffd140 100%)',
+                'DOB': 'linear-gradient(135deg, rgb(250, 112, 154) 0%, rgb(254, 225, 64) 100%)',
+                'Birth Entry': 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+                'Home phone': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                'Status': 'linear-gradient(135deg, #52c234 0%, #061700 100%)',
+                'Father': 'linear-gradient(135deg, #ff9a56 0%, #ff6a88 50%, #ff99ac 100%)',
+                'Mother': 'linear-gradient(135deg, #f77062 0%, #fe5196 100%)',
+                'Email': 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'
+            };
+            
+            const severity = getSeverity(student.issues.length);
+            const studentKey = `${student.grade}-${student.name}`;
+            
+            const editableFields = student.issues.map(issue => {
+                const currentValue = student.student[issue] || '';
+                const baseColor = issueColors[issue] || '#dc3545';
+                const gradient = issueGradients[issue] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                
+                return `
+                    <div style="display: inline-block; margin: 4px; padding: 8px; 
+                         background: ${gradient}; 
+                         border-radius: 8px; min-width: 150px; vertical-align: top;
+                         box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+                         position: relative;
+                         overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                             background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%); 
+                             pointer-events: none;"></div>
+                        <strong style="font-size: 11px; color: white; display: block; margin-bottom: 4px; 
+                             text-shadow: 0 2px 4px rgba(0,0,0,0.3); position: relative; z-index: 1;
+                             font-weight: 600; letter-spacing: 0.5px;">${issue}:</strong>
+                        <div style="position: relative; z-index: 1;">
+                            ${createEditableInput(student, issue, currentValue)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            const priorityIcon = severity.level === 'CRITICAL' ? '🚨' : 
+                               severity.level === 'HIGH' ? '⚠️' : 
+                               severity.level === 'MEDIUM' ? '📋' : '✅';
+            
+            const li = document.createElement('li');
+            li.className = `student-card ${severity.class}`;
+            li.dataset.studentId = studentKey;
+            
+            li.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                            <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                 color: white; padding: 3px 10px; border-radius: 15px; font-size: 12px; 
+                                 margin-right: 10px; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);">
+                                ${student.grade}
+                            </span>
+                            <strong style="font-size: 16px;">${student.name}</strong>
+                            <span style="margin-left: 10px; font-size: 20px;">${priorityIcon}</span>
+                        </div>
+                        <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                            <strong>${severity.level}</strong> - ${student.issues.length} issue${student.issues.length > 1 ? 's' : ''}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <button class="mark-resolved" data-student="${studentKey}" 
+                                style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
+                                color: white; border: none; padding: 4px 8px; border-radius: 4px; 
+                                cursor: pointer; font-size: 11px; margin-bottom: 5px;
+                                box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+                                transition: transform 0.2s;">
+                            ✓ Mark Resolved
+                        </button>
+                        <div style="font-size: 11px; color: #999;">Number: ${index + 1} of ${exportData.length}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <strong style="font-size: 13px; color: #333; display: block; margin-bottom: 8px;">Edit Missing Data:</strong>
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                        ${editableFields}
+                    </div>
+                    <button class="student-save-btn" data-save-student="${studentKey}" onclick="saveStudent('${studentKey}')">
+                        💾 Save
+                    </button>
+                </div>
+            `;
+            
+            // Add event listener for mark resolved button
+            const resolveBtn = li.querySelector('.mark-resolved');
+            resolveBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const studentId = this.dataset.student;
+                markStudentResolved(studentId);
             });
-
-            saveBtn.addEventListener('click', () => {
-                const currentView = {
-                    search: searchInput.value,
-                    grade: gradeFilter.value,
-                    issue: issueFilter.value,
-                    severity: severityFilter.value,
-                    sort: sortBy.value
-                };
-                localStorage.setItem('dataQualityView', JSON.stringify(currentView));
-                showToast('💾 View saved!', 'success');
-            });
-
-            if (saveInlineBtn) {
-                saveInlineBtn.addEventListener('click', saveInlineChanges);
-            }
-
-            analyticsBtn.addEventListener('click', showAnalyticsDashboard);
-            exportBtn.addEventListener('click', exportDataReport);
-            bulkBtn.addEventListener('click', showBulkActions);
-            trendsBtn.addEventListener('click', showTrendsInsights);
-            rulesBtn.addEventListener('click', showCustomRules);
-
-            applyFilters();
             
-            const savedView = localStorage.getItem('dataQualityView');
-            if (savedView) {
-                const view = JSON.parse(savedView);
-                searchInput.value = view.search || '';
-                gradeFilter.value = view.grade || '';
-                issueFilter.value = view.issue || '';
-                severityFilter.value = view.severity || '';
-                sortBy.value = view.sort || 'severity';
-                applyFilters();
-            }
-            
-            setTimeout(() => searchInput.focus(), 100);
+            return li;
         }
-    });
-}
 
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedGrade = gradeFilter.value;
+            const selectedIssue = issueFilter.value;
+            const selectedSeverity = severityFilter.value;
+
+            filteredIssues = allIssues.filter(student => {
+                const matchesSearch = !searchTerm || 
+                    student.name.toLowerCase().includes(searchTerm) ||
+                    student.grade.toLowerCase().includes(searchTerm) ||
+                    student.issues.some(issue => issue.toLowerCase().includes(searchTerm));
+                
+                const matchesGrade = !selectedGrade || student.grade === selectedGrade;
+                const matchesIssue = !selectedIssue || student.issues.includes(selectedIssue);
+                
+                const matchesSeverity = !selectedSeverity || 
+                    (selectedSeverity === 'critical' && student.issues.length >= 5) ||
+                    (selectedSeverity === 'high' && student.issues.length >= 3 && student.issues.length < 5) ||
+                    (selectedSeverity === 'medium' && student.issues.length === 2) ||
+                    (selectedSeverity === 'low' && student.issues.length === 1);
+                
+                return matchesSearch && matchesGrade && matchesIssue && matchesSeverity;
+            });
+
+            renderResults();
+            renderQuickStats(); // Update stats based on filtered results
+        }
+
+        function markStudentResolved(studentId) {
+            if (!window.resolvedStudents) window.resolvedStudents = new Set();
+            window.resolvedStudents.add(studentId);
+            
+            const card = document.querySelector(`[data-student-id="${studentId}"]`);
+            if (card) {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(100px)';
+                setTimeout(() => {
+                    if (!showResolved.checked) {
+                        filteredIssues = filteredIssues.filter(s => `${s.grade}-${s.name}` !== studentId);
+                        renderResults();
+                    }
+                }, 500);
+            }
+            
+            showToast('✅ Student marked as resolved!', 'success');
+        }
+
+        // Event listeners
+        if (fastEditBtn) {
+            fastEditBtn.addEventListener('click', () => {
+                const issuesList = allIssues || exportData || [];
+                
+                if (issuesList.length > 0) {
+                    Swal.close();
+                    showFastEditModal(issuesList);
+                } else {
+                    Swal.fire({
+                        title: 'Data Quality Check',
+                        text: 'No data quality issues found!',
+                        icon: 'success',
+                        confirmButtonText: 'Great!'
+                    });
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+        gradeFilter.addEventListener('change', applyFilters);
+        issueFilter.addEventListener('change', applyFilters);
+        severityFilter.addEventListener('change', applyFilters);
+        sortBy.addEventListener('change', applyFilters);
+        showResolved.addEventListener('change', applyFilters);
+        
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            gradeFilter.value = '';
+            issueFilter.value = '';
+            severityFilter.value = '';
+            sortBy.value = 'severity';
+            showResolved.checked = false;
+            applyFilters();
+            showToast('🗑️ Filters cleared!', 'info');
+        });
+
+        saveBtn.addEventListener('click', () => {
+            const currentView = {
+                search: searchInput.value,
+                grade: gradeFilter.value,
+                issue: issueFilter.value,
+                severity: severityFilter.value,
+                sort: sortBy.value
+            };
+            localStorage.setItem('dataQualityView', JSON.stringify(currentView));
+            showToast('💾 View saved!', 'success');
+        });
+
+        if (saveInlineBtn) {
+            saveInlineBtn.addEventListener('click', saveInlineChanges);
+        }
+
+        analyticsBtn.addEventListener('click', showAnalyticsDashboard);
+        exportBtn.addEventListener('click', exportDataReport);
+        bulkBtn.addEventListener('click', showBulkActions);
+        trendsBtn.addEventListener('click', showTrendsInsights);
+        rulesBtn.addEventListener('click', showCustomRules);
+        
+        // Load saved view if exists
+        const savedView = localStorage.getItem('dataQualityView');
+        if (savedView) {
+            const view = JSON.parse(savedView);
+            searchInput.value = view.search || '';
+            gradeFilter.value = view.grade || '';
+            issueFilter.value = view.issue || '';
+            severityFilter.value = view.severity || '';
+            sortBy.value = view.sort || 'severity';
+        }
+        
+        setTimeout(() => searchInput.focus(), 100);
+    }
+});
+}
 
 
 function showFastEditModal(allIssues) {
@@ -4885,10 +4131,17 @@ function setupRealtimeListeners() {
     });
 }
 
+
+setupRealtimeListeners();
 // Initial load and event listeners
 document.addEventListener('DOMContentLoaded', () => {
+     // Show loading states
+    const transferredCounter = document.getElementById('transferredCounter');
+    if (transferredCounter) {
+        transferredCounter.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
+    }
+    
     checkAuthAndLoadData();
-    setupRealtimeListeners();
 
     const transferredCounterElement = document.getElementById('transferredCounter');
     if (transferredCounterElement) {

@@ -1,0 +1,789 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Students_Timetable>
+  <Subgroup name="GRADE 7 Automatic Subgroup">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="270"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="246"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="283"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="258"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="275"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="259"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="280"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="266"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="251"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="277"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="254"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="281"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="268"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="249"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="263"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="274"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="253"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="256"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="262"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="276"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="245"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="273"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="267"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="284"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="278"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="255"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="282"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="260"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="271"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="247"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="252"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="264"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="248"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="250"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="257"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="279"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="261"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="269"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="265"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="272"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Subgroup>
+  <Subgroup name="GRADE 8 Automatic Subgroup">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="301"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="317"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="298"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="287"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="310"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="322"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="305"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="313"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="295"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="323"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="285"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="311"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="290"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="319"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="314"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="306"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="294"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="316"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="321"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="288"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="312"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="300"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="293"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="303"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="299"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="308"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="292"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="296"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="286"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="324"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="307"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="320"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="309"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="289"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="302"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="297"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="315"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="291"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="318"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="304"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Subgroup>
+  <Subgroup name="GRADE 9 Automatic Subgroup">
+    <Day name="Monday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="369"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="334"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="327"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="350"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="340"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="365"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="333"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="344"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Tuesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="328"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="339"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="362"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="336"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="352"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="370"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="332"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="343"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Wednesday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="338"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="367"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="366"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="331"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="348"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="326"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="355"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="346"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Thursday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="349"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="330"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="KISW"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="325"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="335"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="364"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="354"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="345"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="342"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+    <Day name="Friday">
+      <Hour name="08:00am 08:20am">
+      </Hour>
+      <Hour name="08:20am 09:00am">
+        <Activity id="363"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="C / A"></Subject>
+      </Hour>
+      <Hour name="09:00am 09:40am">
+        <Activity id="368"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="Pre-Tech"></Subject>
+      </Hour>
+      <Hour name="09:40am 09:50am">
+      </Hour>
+      <Hour name="09:50am 10:20am">
+        <Activity id="329"></Activity>
+        <Teacher name="Mr. Owuor"></Teacher>
+        <Subject name="ENG"></Subject>
+      </Hour>
+      <Hour name="10:520am 11:00am">
+        <Activity id="337"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="MATH"></Subject>
+      </Hour>
+      <Hour name="11:00am 11:30am">
+      </Hour>
+      <Hour name="11:30am 12:10pm">
+        <Activity id="351"></Activity>
+        <Teacher name="Mr Francis"></Teacher>
+        <Subject name="AGRI"></Subject>
+      </Hour>
+      <Hour name="12:10pm 12:50pm">
+        <Activity id="353"></Activity>
+        <Teacher name="Mr. Owino"></Teacher>
+        <Subject name="SST"></Subject>
+      </Hour>
+      <Hour name="12:50pm 02:00pm">
+      </Hour>
+      <Hour name="02:00pm 2:40pm">
+        <Activity id="341"></Activity>
+        <Teacher name="Md. Janet"></Teacher>
+        <Subject name="CRE"></Subject>
+      </Hour>
+      <Hour name="02:40pm 03:20pm">
+        <Activity id="347"></Activity>
+        <Teacher name="Mr. Stephen"></Teacher>
+        <Subject name="SCI"></Subject>
+      </Hour>
+      <Hour name="03:20pm 4:10pm">
+      </Hour>
+    </Day>
+  </Subgroup>
+</Students_Timetable>

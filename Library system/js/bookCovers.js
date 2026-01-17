@@ -8,6 +8,7 @@ const bookCovers = {
     'BK006': 'covers/sci 4.jpg', // Social Studies grade 4
     'BK007': 'covers/BK007.png', // Science grade 4
     'BK008': 'covers/kisw.jpg', // Kiswahili grade 4
+    'Maths5Trs': 'covers/Maths5Trs.jpg', // Kiswahili grade 4
     // Add more book covers as needed
 };
 

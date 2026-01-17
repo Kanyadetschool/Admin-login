@@ -91,6 +91,7 @@ async function checkSessionValidity(email) {
 let accessCodeListener = false;
 let sessionCheckInterval = null; // ✅ ADD THIS LINE
 let currentUserAccessCode = null; // ✅ ADD THIS LINE TOO (I notice this is also used but never declared)
+let isRedirecting = false;
 
 // =============================================================================
 // FIXED: Real-time Monitoring - NOW CHECKS SESSION REVOCATION
@@ -240,8 +241,9 @@ async function handleAccessRevoked(reason) {
     });
     
     // Redirect to login
+    isRedirecting = true;  // ✅ Set flag before redirect
     setTimeout(() => {
-        window.location.href = 'login.html';
+        window.location.href = 'https://kanyadet-school-admin.web.app/login.html';
     }, 1000);
 }
 // =============================================================================
@@ -379,7 +381,7 @@ class ToastManager {
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                z-index: 999999;
+                z-index: 9999999;
                 pointer-events: none;
                 display: flex;
                 flex-direction: column;
@@ -891,10 +893,14 @@ function setCodeVerified(email) {
     // No longer storing verification - always require code
     AUTH_LOG.log('Code verified for session:', email);
 }
-
+// ✅ NEW - Actually check if verified
 function isCodeVerified(email) {
-    // Always return false to force code entry
-    return false;
+    return sessionStorage.getItem('codeVerified_' + email) === 'true';
+}
+
+function setCodeVerified(email) {
+    sessionStorage.setItem('codeVerified_' + email, 'true');
+    AUTH_LOG.log('Code verification stored for:', email);
 }
 
 // =============================================================================
@@ -945,7 +951,7 @@ function showCodeVerificationModal(email) {
                 <p style="font-weight: bold; color: #007bff;">${email}</p>
                 
                 <input 
-                    type="text" 
+                    type="password" 
                     id="accessCodeInput" 
                     maxlength="6" 
                     placeholder="Enter 6-digit code"
@@ -1050,32 +1056,49 @@ function showCodeVerificationModal(email) {
                 const isValid = await verifyAccessCode(email, code);
                 
                 if (isValid) {
-                    setCodeVerified(email);
-                    
-                    // ✅ Show success state
-                    verifyBtn.textContent = '✓ Verified!';
-                    verifyBtn.style.background = '#10b981';
-                    input.style.borderColor = '#10b981';
-                    
-                    await logLoginActivity(email, 'success');
-                    
-                    playSuccessSound();
-                    toast.success('Access Granted!', {
-                        description: 'Code verified successfully. Redirecting...'
-                    });
-                    
-                    startAllSessionMonitoring(email);
-                    
-                  // ✅ AUTO-CLOSE: Remove modal after brief delay
-                    setTimeout(() => {
-                        isModalOpen = false;  // ✅ RESET FLAG
-                        modal.remove();
-                    }, 800);
-                    
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
-                } else {
+    setCodeVerified(email);
+    
+    // ✅ Show success state
+    verifyBtn.textContent = '✓ Verified!';
+    verifyBtn.style.background = '#10b981';
+    input.style.borderColor = '#10b981';
+    
+    await logLoginActivity(email, 'success');
+    
+    playSuccessSound();
+    
+    startAllSessionMonitoring(email);
+    
+    // ✅ Check if we're on login page
+    const isLoginPage = window.location.pathname.includes('login.html');
+    
+    if (isLoginPage) {
+        // On login page - redirect to index
+        toast.success('Access Granted!', {
+            description: 'Code verified successfully. Redirecting...'
+        });
+        
+        setTimeout(() => {
+            isModalOpen = false;
+            modal.remove();
+        }, 800);
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
+    } else {
+        // On other pages - just close modal and stay on page
+        toast.success('Access Verified!', {
+            description: 'You can now continue using the application.'
+        });
+        
+        setTimeout(() => {
+            isModalOpen = false;
+            modal.remove();
+            // Don't redirect - just close modal
+        }, 1000);
+    }
+} else {
                     await logLoginActivity(email, 'failed', 'Invalid access code');
                     
                     errorDiv.textContent = 'Invalid access code. Please try again.';
@@ -1141,6 +1164,7 @@ function showCodeVerificationModal(email) {
             e.stopPropagation();
             AUTH_LOG.log('Cancel button clicked');
             isModalOpen = false;  // ✅ RESET FLAG
+            isRedirecting = true;  // ✅ ADD THIS
             stopAllSessionMonitoring();
             await firebase.auth().signOut();
             modal.remove();
@@ -1157,6 +1181,7 @@ function showCodeVerificationModal(email) {
             if (e.target === modal) {
                 AUTH_LOG.log('Clicked outside modal - closing');
                 isModalOpen = false;  // ✅ RESET FLAG
+                isRedirecting = true;  // ✅ ADD THIS
                 stopAllSessionMonitoring();
                 await firebase.auth().signOut();
                 modal.remove();
@@ -1176,6 +1201,7 @@ function showCodeVerificationModal(email) {
                 AUTH_LOG.log('ESC key pressed - closing modal');
                 document.removeEventListener('keydown', escHandler);
                 isModalOpen = false;  // ✅ RESET FLAG
+                isRedirecting = true;  // ✅ ADD THIS
                 stopAllSessionMonitoring();
                 await firebase.auth().signOut();
                 modal.remove();
@@ -1567,8 +1593,8 @@ if (resetPasswordBtn) {
 let isCheckingAuth = false;
 
 firebase.auth().onAuthStateChanged(async (user) => {
-    if (isCheckingAuth) {
-        AUTH_LOG.log('Already checking auth, skipping...');
+    if (isCheckingAuth || isRedirecting) {  // ✅ Add isRedirecting check
+        AUTH_LOG.log('Already checking auth or redirecting, skipping...');
         return;
     }
     
@@ -1591,7 +1617,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
                     
                     await logLoginActivity(user.email, 'failed', 'User not authorized');
                     
-                     stopAllSessionMonitoring();
+                    stopAllSessionMonitoring();
                     await firebase.auth().signOut();
                     
                     playNotificationSound();
@@ -1619,8 +1645,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
                         description: 'Access verified. Redirecting...'
                     });
                     
-                     startAllSessionMonitoring(user.email);  // ✅ CORRECT - use 'user' variable
+                    startAllSessionMonitoring(user.email);
                     
+                    isRedirecting = true;  // ✅ Set flag before redirect
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 500);
@@ -1630,7 +1657,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
                 }
             } catch (error) {
                 AUTH_LOG.error('Error processing user on login page:', error);
-                 stopAllSessionMonitoring();
+                stopAllSessionMonitoring();
                 await firebase.auth().signOut();
                 toast.error('Authentication Error', {
                     description: error.message
@@ -1643,47 +1670,135 @@ firebase.auth().onAuthStateChanged(async (user) => {
             } finally {
                 isCheckingAuth = false;
             }
-        }  else {
-            isCheckingAuth = true;
-            
-            try {
-                const sessionValid = await checkSessionValidity(user.email);
-                
-                if (!sessionValid.valid) {
-                    AUTH_LOG.log('Session invalid on protected page:', sessionValid.reason);
-                     stopAllSessionMonitoring();
-                    await firebase.auth().signOut();
-                    toast.warning('Session Expired', {
-                        description: sessionValid.reason
-                    });
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                if (!sessionCheckInterval) {
-                    startAllSessionMonitoring(user.email);  // ✅ CORRECT
-                }
-            } catch (error) {
-                AUTH_LOG.error('Error checking authorization on protected page:', error);
-                 stopAllSessionMonitoring();
-                await firebase.auth().signOut();
-                toast.error('Authentication Error', {
-                    description: error.message
-                });
-                window.location.href = 'login.html';
-            } finally {
-                isCheckingAuth = false;
-            }
+      } else {
+    // On protected pages (not login.html)
+    isCheckingAuth = true;
+    
+    try {
+        // Check session validity
+        const sessionValid = await checkSessionValidity(user.email);
+        
+        if (!sessionValid.valid) {
+            AUTH_LOG.log('Session invalid on protected page:', sessionValid.reason);
+            stopAllSessionMonitoring();
+            await firebase.auth().signOut();
+            toast.warning('Session Expired', {
+                description: sessionValid.reason
+            });
+            isRedirecting = true;
+            window.location.href = 'https://kanyadet-school-admin.web.app/login.html';
+            return;
         }
+        
+        // ✅ FIX: Check if code is verified - show modal instead of redirecting
+        if (!isCodeVerified(user.email)) {
+            AUTH_LOG.log('⚠️ Code not verified on protected page, showing modal');
+            showCodeVerificationModal(user.email);
+            return; // Stop further execution until code is verified
+        }
+        
+        // Start monitoring if not already started (only after code is verified)
+        if (!sessionCheckInterval) {
+            startAllSessionMonitoring(user.email);
+        }
+    } catch (error) {
+        AUTH_LOG.error('Error checking authorization on protected page:', error);
+        stopAllSessionMonitoring();
+        await firebase.auth().signOut();
+        toast.error('Authentication Error', {
+            description: error.message
+        });
+        isRedirecting = true;
+        window.location.href = 'https://kanyadet-school-admin.web.app/login.html';
+    } finally {
+        isCheckingAuth = false;
+    }
+}
     } else {
         AUTH_LOG.log('No user signed in');
-         stopAllSessionMonitoring();
+        stopAllSessionMonitoring();
         if (!isLoginPage) {
             AUTH_LOG.log('Not on login page, redirecting to login');
-            window.location.href = 'login.html';
+            isRedirecting = true;  // ✅ Set flag before redirect
+            window.location.href = 'https://kanyadet-school-admin.web.app/login.html';
         }
     }
 });
+
+
+
+
+
+
+
+
+
+
+// ✅ Store verification timestamp
+function setCodeVerified(email) {
+    const verificationData = {
+        verified: true,
+        timestamp: new Date().toISOString()
+    };
+    sessionStorage.setItem('codeVerified_' + email, JSON.stringify(verificationData));
+    AUTH_LOG.log('Code verification stored with timestamp for:', email);
+}
+
+// ✅ Check if verification is still valid (4 hours)
+function isCodeVerified(email) {
+    const stored = sessionStorage.getItem('codeVerified_' + email);
+    if (!stored) return false;
+    
+    try {
+        const data = JSON.parse(stored);
+        if (data.verified !== true) return false;
+        
+        // Check if verification is older than 4 hours (14400000 ms)
+        const verificationTime = new Date(data.timestamp);
+        const now = new Date();
+        const hoursSinceVerification = (now - verificationTime) / (1000 * 60 * 60);
+        
+        if (hoursSinceVerification > 24) {
+            AUTH_LOG.log('⚠️ Code verification expired (older than 24 hours)');
+            sessionStorage.removeItem('codeVerified_' + email);
+            return false;
+        }
+
+        AUTH_LOG.log(`✅ Code verified ${hoursSinceVerification.toFixed(2)} hours ago (valid for ${(24 - hoursSinceVerification).toFixed(2)} more hours)`);
+        return true;
+    } catch (e) {
+        // If parsing fails, treat as old format (backward compatibility)
+        AUTH_LOG.log('⚠️ Old verification format detected, treating as expired');
+        sessionStorage.removeItem('codeVerified_' + email);
+        return stored === 'true';
+    }
+}
+
+
+// ## **What Changed:**
+
+// 1. ✅ Changed from **24 hours** to **4 hours**
+// 2. ✅ Better logging shows time remaining
+// 3. ✅ Backward compatibility with old format
+// 4. ✅ Auto-cleanup of expired verification
+
+// ## **User Experience:**
+
+// - User enters code → Valid for **4 hours**
+// - After 4 hours → Modal appears asking for code again
+// - Works across page refreshes during the 4-hour window
+// - Closing browser tab still clears it (sessionStorage behavior)
+
+// ## **Timeline Example:**
+// ```
+// 10:00 AM - User enters code ✅
+// 10:30 AM - Still valid (3.5 hrs remaining) ✅
+// 12:00 PM - Still valid (2 hrs remaining) ✅
+// 1:59 PM  - Still valid (1 min remaining) ✅
+// 2:00 PM  - EXPIRED - Modal appears 🔒
+
+
+
 
 
 

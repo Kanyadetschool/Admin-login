@@ -88,8 +88,8 @@ const statusFilter = document.getElementById('statusFilter');
 // Predefined Categories
 const bookCategories = [
     'Grade 4 Textbooks',
-    'Reference Book',
-    'Study Guide',
+    'Grade 5 Textbooks',
+    'Grade 6 Textbooks',
     'Workbook',
     'Lab Manual',
     'Research Material',
@@ -887,9 +887,10 @@ class StudentManager {
             const snapshot = await this.studentsRef.child(studentId).once('value');
             const studentData = snapshot.val();
             if (studentData) {
-                document.getElementById('studentName').value = studentData.name || '';
+                document.getElementById('studentName').value = studentData.fullName || studentData.name || '';
                 document.getElementById('assessmentNo').value = studentData.assessmentNo || '';
                 document.getElementById('upi').value = studentData.upi || '';
+                document.getElementById('phoneNumber').value = studentData.phoneNumber || '';
                 document.getElementById('grade').value = studentData.grade || '';
                 this.studentForm.setAttribute('data-edit-id', studentId);
             }
@@ -903,9 +904,11 @@ class StudentManager {
     async handleStudentSubmit(e) {
         e.preventDefault();
         const studentData = {
+            fullName: document.getElementById('studentName').value,
             name: document.getElementById('studentName').value,
             assessmentNo: document.getElementById('assessmentNo').value,
             upi: document.getElementById('upi').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
             grade: document.getElementById('grade').value,
             timestamp: Date.now()
         };
@@ -961,9 +964,10 @@ class StudentManager {
         <div class="student-info">
                 <div class="student-image-container"></div>
 
-            <h3>👨‍⚕️${student.name}</h3>
+            <h3>👨‍⚕️${student.fullName || student.name || 'Unknown'}</h3>
             <p>Assessment No: ${student.assessmentNo || 'Not assigned'}</p>
             <p>Entry no: ${student.EntryNo|| 'Not assigned'}</p>
+            <p>Phone: ${student.phoneNumber || student.FathersPhoneNumber || 'Not assigned'}</p>
             <p>Home contact: ${student.FathersPhoneNumber|| 'Not assigned'}</p>
             <p>UPI No: ${student.upi || 'Not assigned'}</p>
             <p>Status: <span class="badge ${student.hasActiveBooks ? 'bg-primary' : 'bg-secondary'}">
@@ -1860,6 +1864,534 @@ class IssuanceManager {
     }
 }
 
+// =============================================================================
+// ENHANCED EXPORT FUNCTIONALITY - PDF, WORD, EXCEL
+// =============================================================================
+// Required libraries:
+// - jsPDF: https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js
+// - jsPDF-AutoTable: https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js
+// - SheetJS (XLSX): https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
+
+// =============================================================================
+// ENHANCED EXPORT TO PDF WITH PREMIUM STYLING
+// =============================================================================
+
+// Helper function to determine optimal column widths
+const getColumnStyles = (headers) => {
+    // Return empty object to let autoTable distribute columns evenly across full width
+    return {};
+};
+
+const exportToPdfEnhanced = async (reportData, reportTitle) => {
+    if (!window.jspdf) {
+        Swal.fire('Error', 'PDF library not loaded. Please refresh the page.', 'error');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('landscape');
+
+    const title = reportTitle || 'Library Report';
+    const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    
+    // Extract headers and body from reportData
+    const headers = reportData.headers || [];
+    const body = reportData.body || [];
+    
+    // Premium Header Function
+    const addHeader = (data) => {
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+        
+        // Header background
+        doc.setFillColor(41, 128, 185);
+        doc.rect(0, 0, pageWidth, 20, 'F');
+        
+        // School name
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'bold');
+        doc.text('KANYADET PRI & JUNIOR SCHOOL', 14, 10);
+        
+        // Report title
+        doc.setFontSize(12);
+        doc.text(title, 14, 16);
+        
+        // Date and info (right aligned)
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'normal');
+        const dateText = `Date: ${currentDate}`;
+        doc.text(dateText, pageWidth - 14, 8, { align: 'right' });
+        doc.text(`Total Records: ${body.length}`, pageWidth - 14, 13, { align: 'right' });
+        
+        // Decorative line
+        doc.setDrawColor(41, 128, 185);
+        doc.setLineWidth(0.5);
+        doc.line(0, 20, pageWidth, 20);
+    };
+
+    // Premium Footer Function
+    const addFooter = (data, totalPages) => {
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+        const footerY = pageHeight - 15;
+        
+        // Footer background
+        doc.setFillColor(245, 245, 245);
+        doc.rect(0, footerY - 5, pageWidth, 20, 'F');
+        
+        // Top border
+        doc.setDrawColor(41, 128, 185);
+        doc.setLineWidth(0.3);
+        doc.line(0, footerY - 5, pageWidth, footerY - 5);
+        
+        doc.setTextColor(60, 60, 60);
+        doc.setFontSize(8);
+        
+        // Left section
+        doc.setFont(undefined, 'bold');
+        doc.text('Prepared by:', 14, footerY);
+        doc.setFont(undefined, 'normal');
+        doc.text('_________________', 14, footerY + 4);
+        doc.setFontSize(7);
+        doc.text('Signature & Date', 14, footerY + 8);
+        
+        // Center - Page number
+        doc.setFontSize(9);
+        const pageText = `Page ${data.pageNumber} of ${totalPages}`;
+        doc.text(pageText, pageWidth / 2, footerY + 2, { align: 'center' });
+        
+        // Right section
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'bold');
+        doc.text('Verified by:', pageWidth - 14, footerY, { align: 'right' });
+        doc.setFont(undefined, 'normal');
+        doc.text('_________________', pageWidth - 14, footerY + 4, { align: 'right' });
+        doc.setFontSize(7);
+        doc.text('Signature & Stamp', pageWidth - 14, footerY + 8, { align: 'right' });
+    };
+
+    // Generate table
+    doc.autoTable({
+        head: [headers],
+        body: body,
+        startY: 25,
+        styles: { 
+            fontSize: 9,
+            cellPadding: 3,
+            overflow: 'linebreak',
+            font: 'helvetica'
+        },
+        columnStyles: getColumnStyles(headers),
+        headStyles: { 
+            fillColor: [41, 128, 185], 
+            textColor: [255, 255, 255],
+            fontStyle: 'bold'
+        },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { top: 25, right: 5, bottom: 20, left: 5 },
+        tableWidth: 'auto',
+        didDrawPage: function(data) {
+            addHeader(data);
+        }
+    });
+
+    // Add footers with correct page count
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        addFooter({ pageNumber: i }, totalPages);
+    }
+
+    const filename = `${reportTitle.toLowerCase().replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+    doc.save(filename);
+};
+
+// =============================================================================
+// EXPORT TO EXCEL WITH PREMIUM STYLING
+// =============================================================================
+const exportToExcelEnhanced = async (reportData, reportTitle) => {
+    const XLSX = window.XLSX;
+    if (!XLSX) {
+        Swal.fire('Error', 'Excel export library not loaded. Please refresh the page.', 'error');
+        return;
+    }
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    
+    // Extract headers and body from reportData
+    const headers = reportData.headers || [];
+    const body = reportData.body || [];
+    const statsInfo = reportData.statsInfo || {};
+
+    // Create header rows
+    const headerData = [
+        ['KANYADET PRI & JUNIOR SCHOOL'],
+        [reportTitle],
+        [`Date: ${new Date().toLocaleDateString()}`, '', '', `Total Records: ${body.length}`],
+        []
+    ];
+
+    // Add statistics if available
+    if (Object.keys(statsInfo).length > 0) {
+        const statsRow = [];
+        for (const [key, value] of Object.entries(statsInfo)) {
+            statsRow.push(`${key}: ${value}`);
+        }
+        headerData.push(statsRow);
+        headerData.push([]);
+    }
+
+    // Add column headers
+    headerData.push(headers);
+
+    // Combine all data
+    const wsData = [...headerData, ...body];
+
+    // Create worksheet
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Set column widths
+    ws['!cols'] = headers.map(() => ({ wch: 18 }));
+
+    // Merge cells for headers
+    const merges = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } },
+        { s: { r: 1, c: 0 }, e: { r: 1, c: headers.length - 1 } }
+    ];
+    ws['!merges'] = merges;
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Report');
+
+    // Save file
+    const filename = `${reportTitle.toLowerCase().replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, filename);
+};
+
+// =============================================================================
+// EXPORT TO WORD WITH PREMIUM STYLING
+// =============================================================================
+const exportToWordEnhanced = async (reportData, reportTitle) => {
+    // Extract headers and body from reportData
+    const headers = reportData.headers || [];
+    const body = reportData.body || [];
+    const statsInfo = reportData.statsInfo || {};
+
+    // Create table rows HTML
+    let tableRowsHtml = '';
+    body.forEach(row => {
+        tableRowsHtml += '<tr>' + 
+            row.map(cell => `<td>${cell || '-'}</td>`).join('') + 
+            '</tr>';
+    });
+
+    // Create stats section if available
+    let statsHtml = '';
+    if (Object.keys(statsInfo).length > 0) {
+        statsHtml = '<div style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-left: 4px solid #2980B9;">';
+        for (const [key, value] of Object.entries(statsInfo)) {
+            statsHtml += `<div style="margin: 5px 0;"><strong>${key}:</strong> ${value}</div>`;
+        }
+        statsHtml += '</div>';
+    }
+
+    // Create HTML content with premium styling
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0.5in;
+        }
+        body {
+            font-family: 'Calibri', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #2980B9 0%, #3498DB 100%);
+            color: white;
+            padding: 20px;
+            margin: -20px -20px 20px -20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .header h2 {
+            margin: 10px 0 0 0;
+            font-size: 18px;
+            font-weight: normal;
+        }
+        .header-info {
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th {
+            background-color: #2980B9;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #2471A3;
+        }
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #2980B9;
+            display: flex;
+            justify-content: space-between;
+        }
+        .footer-section {
+            flex: 1;
+        }
+        .signature-line {
+            border-top: 1px solid #333;
+            margin-top: 40px;
+            padding-top: 5px;
+            font-size: 11px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>KANYADET PRI & JUNIOR SCHOOL</h1>
+        <h2>${reportTitle}</h2>
+        <div class="header-info">
+            <div>Date: ${new Date().toLocaleDateString()}</div>
+            <div>Total Records: ${body.length}</div>
+        </div>
+    </div>
+    
+    ${statsHtml}
+    
+    <table>
+        <thead>
+            <tr>
+                ${headers.map(h => `<th>${h}</th>`).join('')}
+            </tr>
+        </thead>
+        <tbody>
+            ${tableRowsHtml}
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        <div class="footer-section">
+            <strong>Prepared by:</strong>
+            <div class="signature-line">Signature & Date</div>
+        </div>
+        <div class="footer-section" style="text-align: right;">
+            <strong>Verified by:</strong>
+            <div class="signature-line">Signature & Date</div>
+        </div>
+    </div>
+</body>
+</html>
+    `;
+
+    // Convert HTML to blob and download
+    const blob = new Blob(['\ufeff', htmlContent], {
+        type: 'application/msword'
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${reportTitle.toLowerCase().replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.doc`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+
+// =============================================================================
+// UNIFIED EXPORT FUNCTION
+// =============================================================================
+const handleExportEnhanced = async (reportData, reportTitle) => {
+    const exportOptions = [
+        { label: 'Export to PDF (Premium Format)', value: 'pdf', icon: '📄' },
+        { label: 'Export to Excel (Premium Format)', value: 'excel', icon: '📊' },
+        { label: 'Export to Word (Premium Format)', value: 'word', icon: '📝' },
+        { label: 'Export as CSV', value: 'csv', icon: '📋' }
+    ];
+
+    // Create HTML with onclick handlers that call executeExport
+    let optionsHtml = '<div style="display: grid; gap: 10px;">';
+    exportOptions.forEach(option => {
+        optionsHtml += `
+            <button class="export-option-btn" onclick="window.executeExport('${option.value}')" 
+                    style="padding: 14px 16px; text-align: left; background:transparent; 
+                           border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-size: 14px; color: #333; 
+                           font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                <span style="font-size: 24px;">${option.icon}</span>
+                <span>${option.label}</span>
+            </button>
+        `;
+    });
+    optionsHtml += '</div>';
+
+    try {
+        await Swal.fire({
+            title: 'Export Report',
+            html: optionsHtml,
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cancel',
+            allowOutsideClick: true,
+            didOpen: (modal) => {
+                // Add hover effects to buttons
+                const buttons = modal.querySelectorAll('.export-option-btn');
+                buttons.forEach(btn => {
+                    btn.addEventListener('mouseenter', function() {
+                        this.style.background = 'linear-gradient(135deg, #e8f4f8 0%, #f0f8ff 100%)';
+                        this.style.borderColor = '#2980B9';
+                        this.style.transform = 'translateX(4px)';
+                        this.style.boxShadow = '0 4px 12px rgba(41, 128, 185, 0.2)';
+                    });
+                    btn.addEventListener('mouseleave', function() {
+                        this.style.background = 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)';
+                        this.style.borderColor = '#ddd';
+                        this.style.transform = 'translateX(0)';
+                        this.style.boxShadow = 'none';
+                    });
+                });
+            }
+        });
+    } catch (error) {
+        console.error('Modal error:', error);
+    }
+};
+
+// Global export execution function
+window.executeExport = async function(exportType) {
+    // Close the modal
+    Swal.close();
+    
+    // Get the report data from the current ReportManager instance
+    if (!window.reportManager) {
+        Swal.fire('Error', 'Report manager not initialized', 'error');
+        return;
+    }
+
+    // Get table and stats
+    const table = window.reportManager.reportTable.querySelector('table');
+    if (!table) {
+        Swal.fire('Error', 'No report data available', 'error');
+        return;
+    }
+
+    // Extract headers
+    const thead = table.querySelector('thead tr');
+    const headers = Array.from(thead.cells).map(cell => cell.textContent.trim()).filter(h => h && h !== 'Action');
+
+    // Extract body rows
+    let tbody = table.querySelector('tbody');
+    let rows = Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('totals-row') && !row.classList.contains('averages-row'));
+
+    // Extract body data
+    const body = rows.map(row => 
+        Array.from(row.cells).map(cell => cell.textContent.trim()).filter((_, idx) => idx < headers.length)
+    );
+
+    // Extract stats
+    const statsCards = window.reportManager.reportStats.querySelectorAll('.stat-card');
+    const statsInfo = {};
+    statsCards.forEach(card => {
+        const title = card.querySelector('h3')?.textContent.trim();
+        const value = card.querySelector('p')?.textContent.trim();
+        if (title && value) {
+            statsInfo[title] = value;
+        }
+    });
+
+    // Get report title
+    const reportTitle = window.reportManager.reportType.options[window.reportManager.reportType.selectedIndex].text;
+
+    const reportData = {
+        headers: headers,
+        body: body,
+        statsInfo: statsInfo
+    };
+
+    try {
+        switch(exportType) {
+            case 'pdf':
+                Swal.fire({
+                    title: 'Exporting to PDF...',
+                    html: 'Please wait while your PDF is being generated.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: async () => {
+                        Swal.showLoading();
+                        await exportToPdfEnhanced(reportData, reportTitle);
+                        Swal.fire('Success!', 'PDF exported successfully!', 'success');
+                    }
+                });
+                break;
+            case 'excel':
+                Swal.fire({
+                    title: 'Exporting to Excel...',
+                    html: 'Please wait while your Excel file is being generated.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: async () => {
+                        Swal.showLoading();
+                        await exportToExcelEnhanced(reportData, reportTitle);
+                        Swal.fire('Success!', 'Excel file exported successfully!', 'success');
+                    }
+                });
+                break;
+            case 'word':
+                Swal.fire({
+                    title: 'Exporting to Word...',
+                    html: 'Please wait while your Word document is being generated.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: async () => {
+                        Swal.showLoading();
+                        await exportToWordEnhanced(reportData, reportTitle);
+                        Swal.fire('Success!', 'Word document exported successfully!', 'success');
+                    }
+                });
+                break;
+            case 'csv':
+                // Use existing CSV export method from ReportManager
+                window.reportManager.exportToCSV();
+                Swal.fire('Success!', 'CSV exported successfully!', 'success');
+                break;
+            default:
+                Swal.fire('Error', 'Unknown export type', 'error');
+        }
+    } catch (error) {
+        console.error('Export error:', error);
+        Swal.fire('Error', 'Failed to export data. Please try again. ' + error.message, 'error');
+    }
+};
+
 // Reports Management
 class ReportManager {
     constructor() {
@@ -1928,7 +2460,7 @@ getStartDateFromDatabase() {
 
     setupListeners() {
         this.generateReportBtn.addEventListener('click', () => this.generateReport());
-        this.exportReportBtn.addEventListener('click', () => this.exportToCSV());
+        this.exportReportBtn.addEventListener('click', () => this.printReport());
         this.reportType.addEventListener('change', () => this.generateReport());
         this.reportTable.addEventListener('input', (e) => {
             if (e.target.classList.contains('search-input')) {
@@ -2118,293 +2650,15 @@ getStartDateFromDatabase() {
 
     printReport(selectedGrade = null) {
         const reportTitle = this.reportType.options[this.reportType.selectedIndex].text;
-        const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        let tableContent = this.reportTable.querySelector('table').cloneNode(true);
-        let statsContent = this.reportStats.innerHTML;
-
-        if (selectedGrade && selectedGrade !== 'all') {
-            const gradeColIndex = Array.from(tableContent.querySelector('thead tr').children)
-                .findIndex(th => th.textContent.trim() === 'Grade');
-            
-            if (gradeColIndex !== -1) {
-                // Filter table rows
-                const tbody = tableContent.querySelector('tbody');
-                const rows = Array.from(tbody.querySelectorAll('tr'));
-                const filteredRows = rows.filter(row => 
-                    row.cells[gradeColIndex].textContent.trim() === selectedGrade
-                );
-
-                // Reassign sequential numbers for filtered rows
-                filteredRows.forEach((row, index) => {
-                    const numberCell = row.cells[0];
-                    if (numberCell && numberCell.classList.contains('number-cell')) {
-                        numberCell.textContent = index + 1;
-                    }
-                });
-
-                tbody.innerHTML = '';
-                filteredRows.forEach(row => tbody.appendChild(row));
-
-                // Recalculate totals and averages for filtered data
-                const tfoot = tableContent.querySelector('tfoot');
-                if (tfoot) {
-                    const totalsRow = tfoot.querySelector('.totals-row');
-                    const averagesRow = tfoot.querySelector('.averages-row');
-                    if (this.reportType.value === 'studentActivity') {
-                        let totalBooks = 0, totalActive = 0, totalReturned = 0, totalLost = 0;
-                        filteredRows.forEach(row => {
-                            totalBooks += parseInt(row.cells[3].textContent) || 0;
-                            totalActive += parseInt(row.cells[4].textContent) || 0;
-                            totalReturned += parseInt(row.cells[5].textContent) || 0;
-                            totalLost += parseInt(row.cells[6].textContent) || 0;
-                        });
-                        const rowCount = filteredRows.length;
-                        totalsRow.innerHTML = `
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>${totalBooks}</td>
-                            <td>${totalActive}</td>
-                            <td>${totalReturned}</td>
-                            <td>${totalLost}</td>
-                            <td>N/A</td>
-                        `;
-                        averagesRow.innerHTML = `
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>${rowCount ? (totalBooks / rowCount).toFixed(2) : 0}</td>
-                            <td>${rowCount ? (totalActive / rowCount).toFixed(2) : 0}</td>
-                            <td>${rowCount ? (totalReturned / rowCount).toFixed(2) : 0}</td>
-                            <td>${rowCount ? (totalLost / rowCount).toFixed(2) : 0}</td>
-                            <td>N/A</td>
-                        `;
-                    } else if (this.reportType.value === 'overdueBooks') {
-                        let totalDaysOverdue = 0;
-                        filteredRows.forEach(row => {
-                            totalDaysOverdue += parseInt(row.cells[7].textContent) || 0;
-                        });
-                        const rowCount = filteredRows.length;
-                        totalsRow.innerHTML = `
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>${totalDaysOverdue} days</td>
-                            <td>N/A</td>
-                        `;
-                        averagesRow.innerHTML = `
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>${rowCount ? (totalDaysOverdue / rowCount).toFixed(2) : 0} days</td>
-                            <td>N/A</td>
-                        `;
-                    } else if (this.reportType.value === 'issuanceHistory') {
-                        const rowCount = filteredRows.length;
-                        totalsRow.innerHTML = `
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>${rowCount} issuances</td>
-                            <td>N/A</td>
-                        `;
-                        averagesRow.innerHTML = `
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                        `;
-                    } else if (this.reportType.value === 'lostBooks') {
-                        totalsRow.innerHTML = `
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                        `;
-                        averagesRow.innerHTML = `
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                            <td>N/A</td>
-                        `;
-                    }
-                }
-
-                // Update stats for selected grade
-                if (this.reportType.value === 'studentActivity') {
-                    const totalStudents = filteredRows.length;
-                    const totalIssuances = filteredRows.reduce((sum, row) => sum + (parseInt(row.cells[3].textContent) || 0), 0);
-                    const totalLost = filteredRows.reduce((sum, row) => sum + (parseInt(row.cells[6].textContent) || 0), 0);
-                    statsContent = `
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Active Students</h3>
-                                <p>${totalStudents}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Total Issuances</h3>
-                                <p>${totalIssuances}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info warning">
-                                <h3>Total Lost</h3>
-                                <p>${totalLost}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Average Books per Student</h3>
-                                <p>${totalStudents ? (totalIssuances / totalStudents).toFixed(2) : 0}</p>
-                            </div>
-                        </div>
-                    `;
-                } else if (this.reportType.value === 'overdueBooks') {
-                    const totalOverdue = filteredRows.length;
-                    const totalDaysOverdue = filteredRows.reduce((sum, row) => sum + (parseInt(row.cells[7].textContent) || 0), 0);
-                    statsContent = `
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Total Overdue</h3>
-                                <p>${totalOverdue}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Total Days Overdue</h3>
-                                <p>${totalDaysOverdue}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Average Days Overdue</h3>
-                                <p>${totalOverdue ? (totalDaysOverdue / totalOverdue).toFixed(2) : 0}</p>
-                            </div>
-                        </div>
-                    `;
-                } else if (this.reportType.value === 'issuanceHistory') {
-                    const totalIssuances = filteredRows.length;
-                    const activeIssuances = filteredRows.filter(row => row.cells[7].textContent.trim() === 'active').length;
-                    const returnedIssuances = filteredRows.filter(row => row.cells[7].textContent.trim() === 'returned').length;
-                    const lostIssuances = filteredRows.filter(row => row.cells[7].textContent.trim() === 'lost').length;
-                    statsContent = `
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Total Issuances</h3>
-                                <p>${totalIssuances}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Active</h3>
-                                <p>${activeIssuances}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Returned</h3>
-                                <p>${returnedIssuances}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info warning">
-                                <h3>Lost</h3>
-                                <p>${lostIssuances}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Average Issuances per Student</h3>
-                                <p>${totalIssuances ? (totalIssuances / [...new Set(filteredRows.map(row => row.cells[1].textContent.trim()))].length).toFixed(2) : 0}</p>
-                            </div>
-                        </div>
-                    `;
-                } else if (this.reportType.value === 'lostBooks') {
-                    const totalLost = filteredRows.length;
-                    statsContent = `
-                        <div class="stat-card">
-                            <div class="stat-info warning">
-                                <h3>Total Lost Books</h3>
-                                <p>${totalLost}</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Average Lost Books per Student</h3>
-                                <p>${totalLost ? (totalLost / [...new Set(filteredRows.map(row => row.cells[1].textContent.trim()))].length).toFixed(2) : 0}</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
+        const table = this.reportTable.querySelector('table');
+        
+        if (!table) {
+            Swal.fire('Error', 'No report data to print', 'error');
+            return;
         }
 
-        const printContent = `
-            <div class="header">
-                <img src="../images/logo.png" alt="Kanyadet Logo" class="logo">
-                <h1>Kanyadet Primary and Junior Secondary</h1>
-                <h2>${reportTitle}${selectedGrade && selectedGrade !== 'all' ? ` - ${selectedGrade}` : ''}</h2>
-                <p>Date: ${currentDate}</p>
-            </div>
-            <div>${statsContent}</div>
-            <div>${tableContent.outerHTML}</div>
-        `;
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Library Report</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
-                        .header { margin-bottom: 30px; }
-                        .logo { width: 100px; height: 100px; margin-bottom: 10px; }
-                        h1 { font-size: 24px; margin: 10px 0; }
-                        h2 { font-size: 20px; margin: 10px 0; }
-                        p { font-size: 16px; margin: 5px 0; }
-                        table { border-collapse: collapse; width: 100%; }
-                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                        th { background-color: #f2f2f2; }
-                        .stat-card { display: inline-block; margin: 10px; padding: 10px; border: 1px solid #ddd; }
-                        .warning { color: #ff4444; }
-                        .search-input, .delete-btn, .sort-select, .grade-filter, .status-filter, .return-btn { display: none; }
-                        tfoot td { font-weight: bold; }
-                        .totals-row { background-color: #e8f4f8; }
-                        .averages-row { background-color: #f0f8e8; }
-                        .number-cell { text-align: center; }
-                    </style>
-                </head>
-                <body>${printContent}</body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
+        // Call the enhanced export handler - it will extract data from reportManager
+        handleExportEnhanced(null, reportTitle + (selectedGrade && selectedGrade !== 'all' ? ` - ${selectedGrade}` : ''));
     }
 
     async generateReport() {
@@ -3359,6 +3613,7 @@ class LostBooksManager {
             if (!snapshot.exists()) {
                 this.lostBooksTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No lost books found.</td></tr>';
                 this.updateTotalCount();
+                this.addLostBooksModalButtons();
                 return;
             }
 
@@ -3391,6 +3646,7 @@ class LostBooksManager {
             if (this.allLostBooks.length === 0) {
                 this.lostBooksTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No valid lost book records found.</td></tr>';
                 this.updateTotalCount();
+                this.addLostBooksModalButtons();
                 return;
             }
 
@@ -3398,11 +3654,15 @@ class LostBooksManager {
             this.filteredBooks = [...this.allLostBooks];
             this.updateTotalCount();
             this.renderLostBooksTable(this.filteredBooks);
+            
+            // Add buttons AFTER data is loaded
+            this.addLostBooksModalButtons();
 
         } catch (error) {
             console.error('Error loading lost books:', error);
             this.lostBooksTableBody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error loading lost books. Please try again.</td></tr>';
             this.updateTotalCount();
+            this.addLostBooksModalButtons();
         }
     }
 
@@ -3467,6 +3727,303 @@ class LostBooksManager {
                 this.style.backgroundColor = '';
             });
         });
+    }
+
+    addLostBooksModalButtons() {
+        const modalHeader = this.lostBooksModal.querySelector('.modal-header');
+        if (!modalHeader) return;
+
+        // Remove existing action buttons if any
+        const existingButtonGroup = modalHeader.querySelector('.lost-books-actions');
+        if (existingButtonGroup) existingButtonGroup.remove();
+
+        // Create button group
+        const buttonGroup = document.createElement('div');
+        buttonGroup.className = 'lost-books-actions d-flex gap-2';
+        buttonGroup.innerHTML = `
+            <button id="printLostBooksBtn" class="btn btn-primary btn-sm">
+                <i class="bi bi-printer"></i> Print
+            </button>
+            <button id="exportLostBooksBtn" class="btn btn-info btn-sm">
+                <i class="bi bi-download"></i> Export
+            </button>
+            <button id="addLostBookBtn" class="btn btn-success btn-sm">
+                <i class="bi bi-plus-circle"></i> Add Lost Book
+            </button>
+        `;
+        modalHeader.appendChild(buttonGroup);
+
+        // Add event listeners
+        document.getElementById('printLostBooksBtn').addEventListener('click', () => this.printLostBooks());
+        document.getElementById('exportLostBooksBtn').addEventListener('click', () => this.handleLostBooksExport());
+        document.getElementById('addLostBookBtn').addEventListener('click', () => this.showAddLostBookModal());
+    }
+
+    async printLostBooks() {
+        const reportData = {
+            headers: ['No.', 'Grade', 'Student Name', 'Assessment No.', 'Book Title', 'ISBN', 'Issue Date', 'Lost Date', 'Status'],
+            body: this.filteredBooks.map((item, index) => [
+                index + 1,
+                item.student?.grade || 'N/A',
+                item.student?.name || 'Unknown',
+                item.student?.assessmentNo || 'N/A',
+                item.book?.title || 'Unknown',
+                item.issuance.isbn || 'N/A',
+                item.issuance.issueDate || 'N/A',
+                new Date(item.issuance.lostDate || item.issuance.timestamp).toLocaleDateString(),
+                item.issuance.recoveryStatus ? `Recovered (${item.issuance.recoveryMethod})` : 'Pending'
+            ]),
+            statsInfo: {
+                'Total Lost Books': this.filteredBooks.length,
+                'Recovered': this.filteredBooks.filter(b => b.issuance.recoveryStatus).length,
+                'Pending Recovery': this.filteredBooks.filter(b => !b.issuance.recoveryStatus).length
+            }
+        };
+
+        await exportToPdfEnhanced(reportData, 'Lost Books Report');
+    }
+
+    async handleLostBooksExport() {
+        const exportOptions = [
+            { label: 'Export to PDF (Premium Format)', value: 'pdf', icon: '📄' },
+            { label: 'Export to Excel (Premium Format)', value: 'excel', icon: '📊' },
+            { label: 'Export to Word (Premium Format)', value: 'word', icon: '📝' },
+            { label: 'Export as CSV', value: 'csv', icon: '📋' }
+        ];
+
+        let optionsHtml = '<div style="display: grid; gap: 10px;">';
+        exportOptions.forEach(option => {
+            optionsHtml += `
+                <button class="export-btn" data-export-type="${option.value}" 
+                        style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: all 0.3s;" 
+                        onmouseover="this.style.backgroundColor='#e9ecef'; this.style.transform='translateX(5px)';" 
+                        onmouseout="this.style.backgroundColor=''; this.style.transform='translateX(0)'">
+                    ${option.icon} ${option.label}
+                </button>
+            `;
+        });
+        optionsHtml += '</div>';
+
+        try {
+            await Swal.fire({
+                title: 'Export Lost Books',
+                html: optionsHtml,
+                icon: 'info',
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: 'Close',
+                didOpen: () => {
+                    // Add click handlers to buttons after they're created
+                    const buttons = document.querySelectorAll('.export-btn');
+                    buttons.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const exportType = e.target.closest('.export-btn').getAttribute('data-export-type');
+                            this.executeLostBooksExport(exportType);
+                        });
+                    });
+                }
+            });
+        } catch (error) {
+            console.error('Export modal error:', error);
+        }
+    }
+
+    async executeLostBooksExport(exportType) {
+        try {
+            // Debug: Check if filteredBooks has data
+            console.log('FilteredBooks length:', this.filteredBooks.length);
+            console.log('FilteredBooks data:', this.filteredBooks);
+
+            // Build the report data BEFORE closing modal
+            const reportData = {
+                headers: ['No.', 'Grade', 'Student Name', 'Assessment No.', 'Book Title', 'ISBN', 'Issue Date', 'Lost Date', 'Status'],
+                body: this.filteredBooks.map((item, index) => [
+                    String(index + 1),
+                    item.student?.grade || 'N/A',
+                    item.student?.name || 'Unknown',
+                    item.student?.assessmentNo || 'N/A',
+                    item.book?.title || 'Unknown',
+                    item.issuance.isbn || 'N/A',
+                    item.issuance.issueDate || 'N/A',
+                    new Date(item.issuance.lostDate || item.issuance.timestamp).toLocaleDateString(),
+                    item.issuance.recoveryStatus ? `Recovered (${item.issuance.recoveryMethod})` : 'Pending'
+                ]),
+                statsInfo: {
+                    'Total Lost Books': this.filteredBooks.length,
+                    'Recovered': this.filteredBooks.filter(b => b.issuance.recoveryStatus).length,
+                    'Pending Recovery': this.filteredBooks.filter(b => !b.issuance.recoveryStatus).length
+                }
+            };
+
+            console.log('Report Data Body:', reportData.body);
+            console.log('Report Data Body Length:', reportData.body.length);
+
+            // Now close the modal
+            Swal.close();
+
+            // Execute the appropriate export
+            switch(exportType) {
+                case 'pdf':
+                    await exportToPdfEnhanced(reportData, 'Lost Books Report');
+                    break;
+                case 'excel':
+                    await exportToExcelEnhanced(reportData, 'Lost Books Report');
+                    break;
+                case 'word':
+                    await exportToWordEnhanced(reportData, 'Lost Books Report');
+                    break;
+                case 'csv':
+                    this.exportLostBooksToCSV(reportData);
+                    break;
+            }
+            
+            await Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: `Lost books exported to ${exportType.toUpperCase()}`,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } catch (error) {
+            console.error('Export error:', error);
+            console.log('Filtered Books:', this.filteredBooks);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Export Failed',
+                text: 'Failed to export lost books: ' + error.message
+            });
+        }
+    }
+
+    exportLostBooksToCSV(reportData) {
+        let csv = reportData.headers.join(',') + '\n';
+        reportData.body.forEach(row => {
+            csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `lost_books_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    async showAddLostBookModal() {
+        try {
+            const modal = new bootstrap.Modal(document.getElementById('addLostBookModal'));
+            const form = document.getElementById('addLostBookForm');
+            const studentSelect = document.getElementById('lostBookStudentSelect');
+            const bookSelect = document.getElementById('lostBookBookSelect');
+            const submitBtn = document.getElementById('submitLostBookBtn');
+
+            // Clear form
+            form.reset();
+
+            // Populate students
+            const studentsSnapshot = await db.ref('students').once('value');
+            studentSelect.innerHTML = '<option value="">Select Student</option>';
+            if (studentsSnapshot.exists()) {
+                studentsSnapshot.forEach(childSnapshot => {
+                    const student = childSnapshot.val();
+                    const studentId = childSnapshot.key;
+                    const studentName = student.fullName || student.name || 'Unknown';
+                    const grade = student.grade || 'N/A';
+                    const assessmentNo = student.assessmentNo || '';
+                    studentSelect.innerHTML += `<option value="${studentId}" data-grade="${grade}" data-assessment="${assessmentNo}">${grade} - ${studentName} (${assessmentNo})</option>`;
+                });
+            }
+
+            // Populate books
+            const booksSnapshot = await db.ref('books').once('value');
+            bookSelect.innerHTML = '<option value="">Select Book</option>';
+            if (booksSnapshot.exists()) {
+                booksSnapshot.forEach(childSnapshot => {
+                    const book = childSnapshot.val();
+                    const bookId = childSnapshot.key;
+                    const bookTitle = book.title || 'Unknown';
+                    const isbn = book.isbn || 'N/A';
+                    bookSelect.innerHTML += `<option value="${bookId}" data-isbn="${isbn}">${bookTitle} (${isbn})</option>`;
+                });
+            }
+
+            // Update ISBN when book is selected
+            bookSelect.addEventListener('change', (e) => {
+                const selectedOption = e.target.options[e.target.selectedIndex];
+                const isbn = selectedOption.getAttribute('data-isbn');
+                document.getElementById('lostBookISBN').value = isbn || '';
+            });
+
+            // Handle form submission
+            submitBtn.onclick = async () => {
+                const studentId = studentSelect.value;
+                const bookId = bookSelect.value;
+                const lostDate = document.getElementById('lostBookDate').value;
+                const notes = document.getElementById('lostBookNotes').value;
+
+                if (!studentId || !bookId || !lostDate) {
+                    await Swal.fire('Validation Error', 'Please fill in all required fields', 'warning');
+                    return;
+                }
+
+                try {
+                    // Create new lost book record
+                    const newIssuanceId = db.ref('issuance').push().key;
+                    
+                    const lostBookRecord = {
+                        studentId: studentId,
+                        bookId: bookId,
+                        status: 'lost',
+                        lostDate: lostDate,
+                        notes: notes,
+                        recoveryStatus: false,
+                        timestamp: new Date().getTime(),
+                        issueDate: document.getElementById('lostBookIssueDate').value || new Date().toISOString().split('T')[0]
+                    };
+
+                    await db.ref(`issuance/${newIssuanceId}`).set(lostBookRecord);
+
+                    await Swal.fire('Success', 'Lost book record created successfully', 'success');
+                    modal.hide();
+                    
+                    // Refresh the lost books list
+                    await this.showLostBooksModal();
+                } catch (error) {
+                    console.error('Error creating lost book record:', error);
+                    await Swal.fire('Error', 'Failed to create lost book record: ' + error.message, 'error');
+                }
+            };
+
+            modal.show();
+        } catch (error) {
+            console.error('Error showing add lost book modal:', error);
+            await Swal.fire('Error', 'Failed to load add lost book form: ' + error.message, 'error');
+        }
+    }
+
+    async deleteLostBook(issuanceId, bookId) {
+        const confirm = await Swal.fire({
+            icon: 'question',
+            title: 'Delete Lost Book Record',
+            text: 'Are you sure you want to delete this lost book record?',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (!confirm.isConfirmed) return;
+
+        try {
+            await db.ref(`issuance/${issuanceId}`).remove();
+            await Swal.fire('Success', 'Lost book record deleted successfully', 'success');
+            await this.showLostBooksModal();
+        } catch (error) {
+            console.error('Error deleting lost book:', error);
+            await Swal.fire('Error', 'Failed to delete lost book record: ' + error.message, 'error');
+        }
     }
 
     async showRecoveryNotes(issuanceId) {

@@ -20,6 +20,7 @@
 	<!-- Add Firebase SDK -->
 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.js"></script>
 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.js"></script>
 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.js"></script>
 	 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.js"></script>
 	 <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
@@ -36,19 +37,19 @@
 
 	   <!-- Add Firebase SDK -->
 
-
 	<!-- My CSS -->
 	<link rel="stylesheet" href="./css/dashboard style.css">
-	<link rel="stylesheet" href="./css/mainToggle.css">
 	<link rel="stylesheet" href="./css/swalOnly.css">
+	<link rel="stylesheet" href="./css/mainToggle.css">
+	<link rel="stylesheet" href="./css/downloads.css">
 	
-	<!-- <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/dashboard style.css">
+  <!-- <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/dashboard style.css"> -->
     <link rel="stylesheet" href="https://kanyadet-school-admin.web.app/css/swalOnly.css">  -->
 	<title>Admins-Kanyadet-School</title>
 	
 </head>
 
-<body>
+<body class="gradient-mesh min-h-screen">
 	<div class="container">
 
 
@@ -58,8 +59,8 @@
 	<section id="sidebar">
 		<a href="#" class="br/and">
 			
-			<li><i class='bx bx-menu' ></i></li>
 			
+			<li><i class='bx bx-menu' ></i></li>
 		</a>
 		<ul class="side-menu top">
   <li class="active">
@@ -75,87 +76,28 @@
       <span class="text">Cyber Security</span>
     </a>
   </li>
-  <li>
-    <a href="./Report-Cards/All-Report-cards.html" target="_blank">
-      <i class='bx bxs-user-detail'></i>
-      <span class="text">All-levels-Report-Cards</span>
-    </a>
-  </li>
-  <li>
-    <a href="./New-Students-Database/Active-Students-Database.html" target="_blank">
-      <i class='bx bxs-user-detail'></i>
-      <span class="text">Active Students..</span>
-    </a>
-  </li>
-   <li>
-    <a href="./New-Students-Database/All-Deleted-Students-Database.html" target="_blank">
-      <i class='bx bxs-user-x'></i>
-      <span class="text">Deleted Students</span>
-    </a>
-  </li>
-  <li>
-    <a href="./Knec-Uploading/BirthSuperbase.html" target="_blank">
-      <i class='bx bxs-user-detail'></i>
-            <span class="text">Birth Certificates</span>
 
+ <li id="StudentsToggleBtn" class="toggle-btn">
+    <a href="#">
+      <i class='bx bxs-graduation'></i>
+      <span class="text">Active Students</span>
     </a>
   </li>
-  <li>
-    <a href="./New-Students-Database/Missing-Fields/Specific-missing-fields/index.html" target="_blank">
+
+  <li id="Alumni-ToggleBtn" class="toggle-btn">
+    <a href="#">
+    <!-- <a href="./New-Students-Database/Alumni-Biodata.html" target="_blank">, -->
       <i class='bx bxs-user-detail'></i>
-      <span class="text">Students Missing Records.</span>
+      <span class="text">Alumni Students</span>
     </a>
   </li>
-  <li>
-    <a href="./Report-Cards/Results.html" target="_blank">
-      <i class='bx bxs-school'></i>
-      <span class="text">Students Results</span>
-    </a>
-  </li>
-  <li id="toggleBtn" class="toggle-btn">
+   <li id="toggleBtn" class="toggle-btn">
     <a href="#">
       <i class='bx bxs-school'></i>
-      <span class="text">Report Cards</span>
+      <span class="text">Academics</span>
     </a>
   </li>
-	  <!-- <button id="toggleBtn" class="toggle-btn">	
-    <a href="./Report-Cards/" target="_blank">
-      <i class='bx bxs-school'></i>
-      <span class="text">Report Cards</span>
-    </a>
-  </li>
-  </button> -->
 
-
-<!-- Toggle Button -->
-<!-- <button id="toggleBtn" class="toggle-btn"> 
-      <i class='bx bxs-file'></i>
-	<span class="text">Report Cards</span>
-    </button> -->
-
-
-
- 
-<!-- 
-  <li>
-    <a href="./New-Students-Database/Birth-certificates.html" target="_blank">
-      <i class='bx bxs-file'></i>
-      <span class="text">Birth Certificates</span>
-    </a>
-  </li> -->
-
-  <li>
-    <a href="./Clearance-Forms/clearance.html" target="_blank">
-      <i class='bx bxs-graduation'></i>
-      <span class="text">Clearance Form</span>
-    </a>
-  </li>
-  <li>
-    <a href="./Knec-Uploading/KnecUploads.html" target="_blank">
-      <i class='bx bxs-graduation'></i>
-      <span class="text">Knec Uploads</span>
-    </a>
-  </li>
 
   <li>
     <a href="./Trs-biodata/TeachersBiodata.html" target="_blank">
@@ -167,13 +109,6 @@
     <a href="https://kanyadet-school-portal.web.app" target="_blank">
       <i class='bx bxs-chalkboard'></i>
       <span class="text">Teachers Portal</span>
-    </a>
-  </li>
-
-  <li>
-    <a href="./inventories/Inventory.html" target="_blank">
-      <i class='bx bxs-box'></i>
-      <span class="text">School Inventory</span>
     </a>
   </li>
 
@@ -213,10 +148,10 @@
 		<!-- NAVBAR -->
 		<nav>
 			<a href="#" class="nav-link">Categories</a>
-			<form action="#">
+			<form action="#" id="universalSearchForm">
 				<div class="form-input">
-					<input type="search" placeholder="Search...">
-					<button type="submit" class="search-btn"><i class='bx bx-search' ></i></button>
+					<input type="search" id="universalSearchInput" placeholder="Search students, database, anything... (Ctrl+K)" autocomplete="off">
+					<button type="button" class="search-btn" id="universalSearchBtn"><i class='bx bx-search' ></i></button>
 				</div>
 			</form>
 			<input type="checkbox" id="switch-mode" hidden>
@@ -238,7 +173,7 @@
 				
 				<div class="left">
 					
-					<h1><img src="./img/logo.png" alt=""class="logo" > Dashboard..</h1>
+					<h1><img src="./img/logo.png" alt=""class="logo" >👨‍⚕️Dashboard..</h1>
 					<ul class="breadcrumb">
 						<li>
 							<a href="#">Dashboard</a>
@@ -249,10 +184,181 @@
 						</li>
 					</ul>
 				</div>
-				<a href="#" class="btn-download">
-					<i class='bx bxs-cloud-download' ></i>
-					<span class="text">Welcome</span>
-				</a>
+
+
+
+
+        
+<!-- Progress Overlay -->
+    <div class="progress-overlay" id="progressOverlay" style="display: none;">
+        <div class="progress-container">
+            <i class='bx bx-loader-circle progress-icon'></i>
+            <div class="progress-text">Scanning Downloads Folder</div>
+            <div class="progress-percent" id="progressPercent">0%</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+            <div class="progress-status" id="progressStatus">Initializing scan...</div>
+        </div>
+    </div>
+
+    <a href="#" class="btn-download" id="downloadBtn">
+        <i class='bx bxs-cloud-download'></i>
+        <span class="text">Downloads</span>
+    </a>
+
+
+
+
+    <div id="pageLoader" class="page-loader">
+    <div class="page-loader-line"></div>
+</div>
+    <div class="modal-overlaydownload" id="modalOverlaydownload">
+        <div class="download-modal">
+            <div class="modal-header">
+                <div>
+                    <h2>
+                        <i class='bx bxs-download'></i>
+                        Download Manager fix 
+                    </h2>
+                    <div class="modal-header-stats">
+                        <span><i class='bx bx-file'></i> <strong id="headerTotalFiles">0</strong> Files</span>
+                        <span><i class='bx bx-data'></i> <strong id="headerTotalSize">0 MB</strong></span>
+                    </div>
+                </div>
+                <button class="close-btn" id="closeBtn">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+
+            <div class="modal-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInputdownload" placeholder="Search files...">
+                    <i class='bx bx-search'></i>
+                </div>
+                
+                <select class="filter-select" id="filterSelect">
+                    <option value="all">All Types</option>
+                    <option value="document">📄 Documents</option>
+                    <option value="image">🖼️ Images</option>
+                    <option value="video">🎬 Videos</option>
+                    <option value="audio">🎵 Audio</option>
+                    <option value="archive">📦 Archives</option>
+                </select>
+
+                <select class="sort-select" id="sortSelect">
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="size-asc">Size (Small)</option>
+                    <option value="size-desc">Size (Large)</option>
+                    <option value="date-asc">Date (Old)</option>
+                    <option value="date-desc">Date (New)</option>
+                </select>
+
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="list" title="List View">
+                        <i class='bx bx-list-ul'></i>
+                    </button>
+                    <button class="view-btn" data-view="grid" title="Grid View">
+                        <i class='bx bx-grid-alt'></i>
+                    </button>
+                </div>
+
+                <button class="action-btn refresh-btn" id="refreshBtn">
+                    <i class='bx bx-refresh'></i>
+                    Refresh
+                </button>
+
+                <button class="action-btn select-all-btn" id="selectAllBtn">
+                    <i class='bx bx-check-square'></i>
+                    Select All
+                </button>
+
+                <button class="action-btn download-selected-btn" id="downloadSelectedBtn" disabled>
+                    <i class='bx bxs-download'></i>
+                    Download (<span id="selectedCountBtn">0</span>)
+                </button>
+
+                <button class="action-btn export-btn" id="exportBtn">
+                    <i class='bx bx-export'></i>
+                    Export
+                </button>
+            </div>
+
+            <div class="modal-body" id="modalBody">
+                <div class="loading-state">
+                    <i class='bx bx-loader-alt'></i>
+                    <p>Initializing...</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="download-stats">
+                    <strong id="selectedCount">0</strong> of <strong id="totalCount">0</strong> files selected
+                </div>
+                <div class="footer-info">
+                    <span><i class='bx bx-folder'></i> ./downloads</span>
+                    <span id="lastUpdated"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-header">
+            <div class="preview-title">
+                <i class='bx bx-show'></i>
+                <span id="previewFileName">File Preview</span>
+            </div>
+            <div class="preview-controls">
+                <button class="preview-btn" id="downloadPreviewBtn">
+                    <i class='bx bxs-download'></i>
+                    Download
+                </button>
+                <button class="preview-btn" id="closePreviewBtn">
+                    <i class='bx bx-x'></i>
+                    Close
+                </button>
+            </div>
+        </div>
+        <div class="preview-content" id="previewContent">
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" data-action="preview">
+            <i class='bx bx-show'></i>
+            <span>Preview</span>
+        </div>
+        <div class="context-menu-item" data-action="download">
+            <i class='bx bxs-download'></i>
+            <span>Download</span>
+        </div>
+        <div class="context-menu-item" data-action="info">
+            <i class='bx bx-info-circle'></i>
+            <span>File Info</span>
+        </div>
+        <div class="context-menu-item" data-action="select">
+            <i class='bx bx-checkbox-checked'></i>
+            <span>Select</span>
+        </div>
+    </div>
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
 			</div>
 
 			<ul class="box-info">
@@ -268,13 +374,20 @@
 					  
 						<a href="./New-Students-Database/Active-Students-Database.html" target="_blank"  >
 
-						<div id="studentCounter"></div>
+					<!-- Wrap your stats in a container with loading class by default -->
+<div id="studentCounter" class="stat-card loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading Stats...</div>
+    <div class="stat-content">
+        <!-- Your existing stats HTML -->
+    </div>
+</div>
 					 </a>
 					  
 		<li style="cursor: pointer;">
   <div>  <i class='bx bxs-user'></i></div>
     <span class="text">
-        <h3 id="transferredCounter">0</h3>
+        <h2 id="transferredCounter">0</h2>
         <p>Transferred Students</p>  
     </span>
 </li>
@@ -282,6 +395,7 @@
 
 
     <div class="summary-box">
+        <h1>Student Analytics Dashboard</h1>
         <h3>Gender Distribution</h3>
         <canvas id="genderChart" style="box-sizing: border-box; display: block; height: 287px; width: 574px;"></canvas>
     </div>
@@ -293,7 +407,7 @@
         <h3>Disability Statistics</h3>
         <canvas id="disabilityChart" style="box-sizing: border-box; display: block; height: 287px; width: 574px;"></canvas>
     </div>
-    <div class="summary-box">
+ <div class="summary-box">
         <h3>Admission Trends</h3>
        <canvas id="admissionChart" style="box-sizing: border-box; display: block; height: 287px; width: 574px;"></canvas>
     </div>
@@ -302,108 +416,186 @@
 	</ul>
 	<div id="viewGradeTable" class="summary-box">View Students by Grade</div>
 	<div id="generateReportBtn" class="summary-box">Generate PDF Report</div>
-				
+			
+	
+
+
+	
 			
 
 
 			<div class="table-data">
 				<div class="order">
 					<div class="head">
-						<h3>Recent Admissions</h3>
+						<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								<h3 style="margin: 0;">📋 Recent Admissions</h3>
+								<span id="admissionCount" style="background: #3498db; color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600;">0</span>
+							</div>
+							<div style="display: flex; align-items: center; gap: 5px;">
+								<input type="text" id="admissionSearchBox" placeholder="🔍 Search globally..." style="padding: 10px 15px; border: 2px solid #ddd; border-radius: 5px; font-size: 13px; width: 250px; transition: border-color 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+								<button id="clearSearchBtn" type="button" style="padding: 8px 15px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600; display: none; transition: all 0.3s;" title="Clear search">✕</button>
+							</div>
+						</div>
 					</div>
 					<table>
 						<thead>
 							<tr>
-								<th>Name</th>
-								<th>Date of Admission</th>
-								<th>Grade</th>
+								<th>👤 Student Name</th>
+								<th>📅 Admission Date</th>
+								<th>✅ Status</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01-10-2021</td>
-								<td><span class="status completed">Completed</span></td>
-							</tr>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01-10-2021</td>
-								<td><span class="status pending">Pending</span></td>
-							</tr>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01-10-2021</td>
-								<td><span class="status process">Process</span></td>
-							</tr>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01-10-2021</td>
-								<td><span class="status pending">Pending</span></td>
-							</tr>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01-10-2021</td>
-								<td><span class="status completed">Completed</span></td>
-							</tr>
+						<tbody id="admissionsTableBody">
+							<!-- Data will be loaded from Firebase -->
 						</tbody>
 					</table>
 				</div>
-				<div class="todo">
+				
+				<div class="todo"  style="max-height: 480px;height: auto; ">
 					<div class="head">
-						<h3>Calendar of Activities </h3>
-						<i class='bx bx-plus' ></i>
-						<i class='bx bx-filter' ></i>
+						<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								<h3 style="margin: 0;">🔴 Live Modified Students</h3>
+								<span id="modifiedCount" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600;">0</span>
+								<i class='bx bx-pulse' style="animation: pulse 2s infinite; color: #27ae60; font-size: 16px;"></i>
+							</div>
+						</div>
 					</div>
-					<ul class="todo-list">
-						<li class="completed">
-							<p>Mary Achieng <b>Grade 3</b></p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-						<li class="completed">
-							<p>John Alan <b>Grade 6</b></p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-						<li class="not-completed">
-							<p>Peter Oloo</p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-						<li class="completed">
-							<p>Gearoge Alan</p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-						<li class="not-completed">
-							<p>Paul Onyango</p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
+					<ul class="todo-list" id="modifiedStudentsList">
+						<li style="padding: 15px; text-align: center; color: #999;">Waiting for live updates...</li>
 					</ul>
 				</div>
 			</div>
+
+
+			
+			<!-- Real-time Activity Feed -->
+			<div class="table-data">
+				<div class="order" style="grid-column: 1 / -1;">
+					<div class="head">
+						<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+							<div style="display: flex; align-items: center; gap: 10px;">
+								<h3 style="margin: 0;">📡 Real-Time Activity Feed</h3>
+								<span style="font-size: 11px; background: #27ae60; color: white; padding: 3px 10px; border-radius: 20px; font-weight: 600;">🔴 LIVE</span>
+							</div>
+
+							
+							<button id="clearActivityFeed" style="padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600;">Clear</button>
+						</div>
+					</div>
+					<div id="activityFeed" style="max-height: 400px; overflow-y: auto; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+						<p style="text-align: center; color: #999; padding: 20px;">⏳ Waiting for updates... Any changes in student records will appear here instantly</p>
+					</div>
+				</div>
+			</div>
+
+			
+			<!-- Summary Statistics -->
+			<div class="table-data">
+				<div class="order" style="grid-column: 1 / -1;">
+					<div class="head">
+						<h3>📊 Dashboard Summary</h3>
+					</div>
+					<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 20px;">
+						<div style="padding: 15px; background: #ecf0f1; border-radius: 8px; border-left: 4px solid #3498db;">
+							<div style="font-size: 12px; color: #7f8c8d; font-weight: 600;">Total Recent Admissions</div>
+							<div style="font-size: 28px; font-weight: 700; color: #3498db; margin-top: 8px;" id="totalAdmissions">0</div>
+						</div>
+						<div style="padding: 15px; background: #ecf0f1; border-radius: 8px; border-left: 4px solid #27ae60;">
+							<div style="font-size: 12px; color: #7f8c8d; font-weight: 600;">Verified Students</div>
+							<div style="font-size: 28px; font-weight: 700; color: #27ae60; margin-top: 8px;" id="verifiedCount">0</div>
+						</div>
+						<div style="padding: 15px; background: #ecf0f1; border-radius: 8px; border-left: 4px solid #f39c12;">
+							<div style="font-size: 12px; color: #7f8c8d; font-weight: 600;">Pending Status</div>
+							<div style="font-size: 28px; font-weight: 700; color: #f39c12; margin-top: 8px;" id="pendingCount">0</div>
+						</div>
+						<div style="padding: 15px; background: #ecf0f1; border-radius: 8px; border-left: 4px solid #e74c3c;">
+							<div style="font-size: 12px; color: #7f8c8d; font-weight: 600;">Recent Modifications</div>
+							<div style="font-size: 28px; font-weight: 700; color: #e74c3c; margin-top: 8px;" id="recentModCount">0</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+      <!-- STATISTICS CARDS (Optional - add these to your dashboard stats section) -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0;">
+    
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="font-size: 32px; margin-bottom: 10px;">🎂</div>
+        <div style="font-size: 28px; font-weight: 600;" id="totalUpcomingBirthdays">0</div>
+        <div style="font-size: 14px; opacity: 0.9;">Upcoming Birthdays (30 days)</div>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="font-size: 32px; margin-bottom: 10px;">🎉</div>
+        <div style="font-size: 28px; font-weight: 600;" id="todayBirthdaysCount">0</div>
+        <div style="font-size: 14px; opacity: 0.9;">Birthdays Today</div>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="font-size: 32px; margin-bottom: 10px;">📅</div>
+        <div style="font-size: 28px; font-weight: 600;" id="thisWeekBirthdaysCount">0</div>
+        <div style="font-size: 14px; opacity: 0.9;">This Week</div>
+    </div>
+</div>
+
+<!-- ADD THIS SECTION TO YOUR DASHBOARD HTML -->
+<!-- Replace the "Recent Admissions" section or add as new section -->
+
+<div class="birthday-section">
+    <div class="section-header">
+        <h3 class="section-title">
+            🎂 Upcoming Birthdays
+            <span class="birthday-count" id="birthdayCountHeader">0</span>
+        </h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span style="font-size: 12px; color: #7f8c8d;">
+                📅 Showing next <span id="upcomingBirthdaysCount">0</span> birthdays
+            </span>
+            <button onclick="loadBirthdayStudents()" 
+                style="padding: 8px 15px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: all 0.2s;"
+                onmouseover="this.style.background='#2980b9'" 
+                onmouseout="this.style.background='#3498db'">
+                🔄 Refresh
+            </button>
+        </div>
+    </div>
+    
+    <table class="birthday-table">
+        <thead>
+            <tr>
+                <th style="width: 30%;">👤 Student Name</th>
+                <th style="width: 20%;">🎂 Birthday</th>
+                <th style="width: 20%;">⏰ Days Until</th>
+                <th style="width: 30%;">⚡ Actions</th>
+            </tr>
+        </thead>
+        <tbody id="birthdayTableBody">
+            <tr>
+                <td colspan="4" style="text-align: center; color: #999; padding: 30px;">
+                    ⏳ Loading birthdays...
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+			
 		</main>
 		
 		<!-- MAIN -->
 	</section>
 	<!-- CONTENT -->
 <!-- Toggle Button -->
-    <!-- <button id="toggleBtn" class="toggle-btn">
+    <button id="toggleBtn" class="toggle-btn">
         <svg xmlns="http://www.w3.org/2000/svg" class="menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
-    </button> -->
+    </button> 
 
     <!-- Modal wrapper -->
     <div id="linkModal" class="modal-overlay hidden">
@@ -413,22 +605,27 @@
     </div>
 
 
-    <script type="module" src="./js/Counter ADVANCE QUALITY CHECK.js"></script>
+    <script type="module" src="./js/Counter ADVANCE QUALITY CHECK Active.js"></script>
+    <script src="./js/GoogleAuthfireBase.js"></script>    
     <script  src="./js/dashboard script.js"></script> 
-	<script src="./js/GoogleAuthfireBase.js"></script>    `
-    <script src="./js/GoogleAuthmain.js"></script> -->
-    <script src="./js/intergratedAuthLoginTracker copy.js"></script>
+    <script src="./js/GoogleAuthmain.js"></script> 
+    <script src="./js/loadDashboardData.js"></script>
+    <script src="./js/universalSearch.js"></script>
+    <script src="./js/downloads.js" ></script>
+    <!-- <script src="./js/intergratedAuthLoginTracker copy.js"></script>  -->
+    
+    <script src="./Toggles/Academic-Toggle.js" ></script>
+    <script src="./Toggles/Active-Students-Toggle.js" ></script>
+    <script src="./Toggles/Alumni-ToggleBtn.js" ></script>
 
-
-    <!-- <script  src="https://kanyadet-school-admin.web.app/js/dashboard script.js"></script>
-    <script type="module" src="https://kanyadet-school-admin.web.app/js/Counter ADVANCE QUALITY CHECK.js"></script>
+    <script  src="https://kanyadet-school-admin.web.app/js/dashboard script.js"></script>
+    <script type="module" src="https://kanyadet-school-admin.web.app/js/Counter ADVANCE QUALITY CHECK Active.js"></script>
 	<script src="https://kanyadet-school-admin.web.app/js/GoogleAuthfireBase.js"></script>
-    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script>  -->
+    <script src="https://kanyadet-school-admin.web.app/js/GoogleAuthmain.js"></script> 
 
 
-   <script src="./js/mainToggle.js" ></script>
 
-
+  
 
 </div>
 </body>

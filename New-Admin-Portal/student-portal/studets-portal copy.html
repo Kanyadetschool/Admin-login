@@ -1,0 +1,937 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanyadet Student Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="studets-portal.css">
+    <!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebase-js/9.6.1/firebase-database.js"></script>
+
+<!-- Your Firebase Integration Script -->
+<script src="path/to/firebase-integration.js"></script>
+</head>
+<body>
+
+<!-- LOGIN SECTION -->
+<div id="loginSection" class="login-container">
+    <div class="login-left">
+        <div class="login-logo">🎓</div>
+        <h1>Kanyadet School</h1>
+        <p>Student Portal - Excellence in Education, Character & Innovation</p>
+    </div>
+    <div class="login-right">
+        <div class="login-form">
+            <h2>Student Login</h2>
+            <p>Access your academic portal</p>
+            <div class="form-group">
+                <label>Student ID / Email</label>
+                <input type="email" id="emailInput" placeholder="your.email@kanyadet.ac.ke" value="student@kanyadet.ac.ke">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="passwordInput" placeholder="Enter your password" value="password123">
+            </div>
+            <button class="login-btn" onclick="login()">Sign In</button>
+            <div class="demo-login">
+                <strong>Demo Login:</strong><br>
+                Email: student@kanyadet.ac.ke<br>
+                Password: password123
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PORTAL SECTION -->
+<div id="portalSection" class="portal-hidden">
+    <div class="portal-container"style="grid-template-columns: 250px 1fr;">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <span style="font-size: 24px;">🎓</span>
+                <span>Kanyadet</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a class="menu-item active" onclick="showSection('dashboard')"><span class="sidebar-menu-icon">📊</span> Dashboard</a></li>
+                <li><a class="menu-item" onclick="showSection('grades')"><span class="sidebar-menu-icon">📈</span> Grades</a></li>
+                <li><a class="menu-item" onclick="showSection('assignments')"><span class="sidebar-menu-icon">📝</span> Assignments</a></li>
+                <li><a class="menu-item" onclick="showSection('attendance')"><span class="sidebar-menu-icon">✓</span> Attendance</a></li>
+                <li><a class="menu-item" onclick="showSection('schedule')"><span class="sidebar-menu-icon">📅</span> Schedule</a></li>
+                <li><a class="menu-item" onclick="showSection('messages')"><span class="sidebar-menu-icon">💬</span> Messages</a></li>
+                <li><a class="menu-item" onclick="showSection('profile')"><span class="sidebar-menu-icon">👤</span> Profile</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <div class="welcome-text">
+                    <h1 id="studentName">Welcome, Student</h1>
+                    <p id="currentDate">Today is a great day to learn</p>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar" id="studentInitials">ST</div>
+                    <div class="profile-info">
+                        <p id="studentNameSmall">Student Name</p>
+                        <p>Grade 7A</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="section active">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">GPA</div>
+                        <div class="stat-value">3.85</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--accent);">
+                        <div class="stat-label">Attendance</div>
+                        <div class="stat-value" style="color: var(--accent);">94%</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--warning);">
+                        <div class="stat-label">Assignments</div>
+                        <div class="stat-value" style="color: var(--warning);">12</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--danger);">
+                        <div class="stat-label">Pending</div>
+                        <div class="stat-value" style="color: var(--danger);">2</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 18px; margin-bottom: 16px; margin-top: 32px;">Recent Updates</h3>
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>English Literature</h3>
+                            <div class="card-icon">📚</div>
+                        </div>
+                        <p>New assignment: Essay on Shakespeare</p>
+                        <p style="font-size: 12px; color: var(--gray-500);">Due: March 20, 2024</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Mathematics</h3>
+                            <div class="card-icon">🔢</div>
+                        </div>
+                        <p>Quiz scores available - 92/100</p>
+                        <p style="font-size: 12px; color: var(--gray-500);">Completed: March 15, 2024</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Science Lab</h3>
+                            <div class="card-icon">🔬</div>
+                        </div>
+                        <p>Practical session next week</p>
+                        <p style="font-size: 12px; color: var(--gray-500);">Scheduled: March 22, 2024</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GRADES -->
+            <section id="grades" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Academic Grades</h2>
+                <div class="grades-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Term 1</th>
+                                <th>Term 2</th>
+                                <th>Term 3</th>
+                                <th>Average</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>English Literature</strong></td>
+                                <td>88</td>
+                                <td>91</td>
+                                <td>89</td>
+                                <td>89.3</td>
+                                <td><span class="grade-badge grade-a">A</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mathematics</strong></td>
+                                <td>92</td>
+                                <td>94</td>
+                                <td>91</td>
+                                <td>92.3</td>
+                                <td><span class="grade-badge grade-a">A</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Science</strong></td>
+                                <td>85</td>
+                                <td>87</td>
+                                <td>86</td>
+                                <td>86</td>
+                                <td><span class="grade-badge grade-b">B+</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Social Studies</strong></td>
+                                <td>83</td>
+                                <td>85</td>
+                                <td>84</td>
+                                <td>84</td>
+                                <td><span class="grade-badge grade-b">B</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kiswahili</strong></td>
+                                <td>79</td>
+                                <td>81</td>
+                                <td>82</td>
+                                <td>80.7</td>
+                                <td><span class="grade-badge grade-b">B</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>French</strong></td>
+                                <td>81</td>
+                                <td>83</td>
+                                <td>85</td>
+                                <td>83</td>
+                                <td><span class="grade-badge grade-b">B</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Physical Education</strong></td>
+                                <td>90</td>
+                                <td>92</td>
+                                <td>91</td>
+                                <td>91</td>
+                                <td><span class="grade-badge grade-a">A</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ASSIGNMENTS -->
+            <section id="assignments" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">My Assignments</h2>
+                <ul class="assignment-list">
+                    <li class="assignment-item">
+                        <div class="assignment-header">
+                            <h4>Essay on Shakespeare's Hamlet</h4>
+                            <div class="assignment-status status-pending">Pending</div>
+                        </div>
+                        <p>Write a 1500-word analysis of the major themes in Shakespeare's Hamlet</p>
+                        <div class="assignment-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Subject:</span> English Literature
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Due:</span> March 20, 2024
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Grade:</span> Not Graded
+                            </div>
+                        </div>
+                    </li>
+                    <li class="assignment-item">
+                        <div class="assignment-header">
+                            <h4>Algebra Problem Set 5</h4>
+                            <div class="assignment-status status-submitted">Submitted</div>
+                        </div>
+                        <p>Complete exercises 1-20 on quadratic equations and functions</p>
+                        <div class="assignment-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Subject:</span> Mathematics
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Due:</span> March 18, 2024
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Submitted:</span> March 17, 2024
+                            </div>
+                        </div>
+                    </li>
+                    <li class="assignment-item">
+                        <div class="assignment-header">
+                            <h4>Photosynthesis Lab Report</h4>
+                            <div class="assignment-status status-graded">Graded: 88/100</div>
+                        </div>
+                        <p>Document your photosynthesis experiment with data analysis and conclusions</p>
+                        <div class="assignment-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Subject:</span> Science
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Due:</span> March 15, 2024
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Score:</span> 88/100 (A)
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- ATTENDANCE -->
+        <!-- ATTENDANCE -->
+<section id="attendance" class="section">
+    <h2 style="font-size: 24px; margin-bottom: 24px;">Attendance Records</h2>
+    
+    <!-- Stats Summary -->
+    <div class="attendance-summary">
+        <div class="attendance-stat">
+            <div class="attendance-percent" id="overallPercent">0%</div>
+            <div class="attendance-label">Overall</div>
+        </div>
+        <div class="attendance-stat">
+            <div class="attendance-percent" id="daysPresent">0</div>
+            <div class="attendance-label">Days Present</div>
+        </div>
+        <div class="attendance-stat">
+            <div class="attendance-percent" id="daysAbsent">0</div>
+            <div class="attendance-label">Days Absent</div>
+        </div>
+        <div class="attendance-stat">
+            <div class="attendance-percent" id="daysLate">0</div>
+            <div class="attendance-label">Days Late</div>
+        </div>
+    </div>
+    
+    <!-- Calendar Container -->
+    <div class="calendar-container">
+        <h3 id="calendarMonth">Current Month</h3>
+        <div class="calendar-grid">
+            <!-- JavaScript generates calendar here -->
+        </div>
+        
+        <!-- Legend (Optional but recommended) -->
+        <div class="calendar-legend">
+            <div class="legend-item">
+                <div class="legend-color present"></div>
+                <span>Present</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color absent"></div>
+                <span>Absent</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color late"></div>
+                <span>Late</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color weekend"></div>
+                <span>Weekend</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+            <!-- SCHEDULE -->
+            <section id="schedule" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Class Schedule</h2>
+                <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>08:00-08:45</strong></td>
+                                <td>Mathematics</td>
+                                <td>English</td>
+                                <td>Science</td>
+                                <td>Social Studies</td>
+                                <td>French</td>
+                            </tr>
+                            <tr>
+                                <td><strong>08:45-09:30</strong></td>
+                                <td>Mathematics</td>
+                                <td>English</td>
+                                <td>Science</td>
+                                <td>Social Studies</td>
+                                <td>French</td>
+                            </tr>
+                            <tr>
+                                <td><strong>09:30-09:45</strong></td>
+                                <td colspan="5" style="text-align: center; background: var(--light);">Tea Break</td>
+                            </tr>
+                            <tr>
+                                <td><strong>09:45-10:30</strong></td>
+                                <td>English</td>
+                                <td>Mathematics</td>
+                                <td>Kiswahili</td>
+                                <td>Science</td>
+                                <td>PE</td>
+                            </tr>
+                            <tr>
+                                <td><strong>10:30-11:15</strong></td>
+                                <td>English</td>
+                                <td>Mathematics</td>
+                                <td>Kiswahili</td>
+                                <td>Science</td>
+                                <td>PE</td>
+                            </tr>
+                            <tr>
+                                <td><strong>11:15-12:00</strong></td>
+                                <td>Science</td>
+                                <td>Social Studies</td>
+                                <td>Mathematics</td>
+                                <td>English</td>
+                                <td>Art & Design</td>
+                            </tr>
+                            <tr>
+                                <td><strong>12:00-01:00</strong></td>
+                                <td colspan="5" style="text-align: center; background: var(--light);">Lunch Break</td>
+                            </tr>
+                            <tr>
+                                <td><strong>01:00-01:45</strong></td>
+                                <td>Computer Lab</td>
+                                <td>Music</td>
+                                <td>Geography</td>
+                                <td>Drama</td>
+                                <td>Computer Lab</td>
+                            </tr>
+                            <tr>
+                                <td><strong>01:45-02:30</strong></td>
+                                <td>PE</td>
+                                <td>Art & Design</td>
+                                <td>History</td>
+                                <td>Music</td>
+                                <td>Assembly</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MESSAGES -->
+            <section id="messages" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Messages</h2>
+                <ul class="assignment-list">
+                    <li class="assignment-item">
+                        <div class="assignment-header">
+                            <h4>Mr. James K. - Mathematics Teacher</h4>
+                            <div class="assignment-status status-submitted">Today</div>
+                        </div>
+                        <p>Hi Sarah, Great work on the last algebra test! You scored 92/100. Keep up the excellent progress!</p>
+                    </li>
+                    <li class="assignment-item">
+                        <div class="assignment-header">
+                            <h4>Ms. Patricia M. - English Teacher</h4>
+                            <div class="assignment-status status-pending">Yesterday</div>
+                        </div>
+                        <p>Don't forget your essay is due on March 20. Remember to include at least 5 academic sources in your analysis.</p>
+                    </li>
+                    <li class="assignment-item">
+                        <div class="assignment-header">
+                            <h4>Dr. David O. - Science Teacher</h4>
+                            <div class="assignment-status status-graded">Mar 15</div>
+                        </div>
+                        <p>Your lab report on photosynthesis was excellent! The experimental design was clear and your data analysis was thorough. 88/100</p>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- PROFILE -->
+            <section id="profile" class="section">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">My Profile</h2>
+                <div class="cards-grid" style="grid-template-columns: 1fr;">
+                    <div class="card">
+                        <h3 style="margin-bottom: 24px;">Personal Information</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Full Name</p>
+                                <p style="font-weight: 600;">Sarah Johnson</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Student ID</p>
+                                <p style="font-weight: 600;">KPS-2024-001245</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Grade</p>
+                                <p style="font-weight: 600;">Grade 7A</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Date of Birth</p>
+                                <p style="font-weight: 600;">January 15, 2011</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Email</p>
+                                <p style="font-weight: 600;">sarah.johnson@kanyadet.ac.ke</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Phone</p>
+                                <p style="font-weight: 600;">+254 712 345 678</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom: 24px;">Guardian Information</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Guardian Name</p>
+                                <p style="font-weight: 600;">Mr. Robert Johnson</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Relationship</p>
+                                <p style="font-weight: 600;">Father</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Phone</p>
+                                <p style="font-weight: 600;">+254 20 456 7890</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Email</p>
+                                <p style="font-weight: 600;">robert.johnson@email.com</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Occupation</p>
+                                <p style="font-weight: 600;">Software Engineer</p>
+                            </div>
+                            <div>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 4px;">Address</p>
+                                <p style="font-weight: 600;">Nairobi, Kenya</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function login() {
+        const email = document.getElementById('emailInput').value;
+        const password = document.getElementById('passwordInput').value;
+        
+        if (email === 'student@kanyadet.ac.ke' && password === 'password123') {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('portalSection').classList.remove('portal-hidden');
+            initializePortal();
+        } else {
+            alert('Invalid credentials. Use demo credentials provided.');
+        }
+    }
+
+    function logout() {
+        document.getElementById('loginSection').style.display = 'flex';
+        document.getElementById('portalSection').classList.add('portal-hidden');
+        document.getElementById('emailInput').value = 'student@kanyadet.ac.ke';
+        document.getElementById('passwordInput').value = 'password123';
+    }
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    function initializePortal() {
+        const date = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', options);
+        document.getElementById('studentName').textContent = 'Welcome, Sarah!';
+        document.getElementById('studentNameSmall').textContent = 'Sarah Johnson';
+        document.getElementById('studentInitials').textContent = 'SJ';
+    }
+
+// Import Firebase (modern SDK with modules)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, query, orderByChild, equalTo, get, set, off, on } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+// Firebase Configuration
+const customFirebaseConfig = {
+    apiKey: "AIzaSyA_41WpdMjHJOU5s3gQ9aieIayZRvUoRLE",
+    authDomain: "kanyadet-school-admin.firebaseapp.com",
+    projectId: "kanyadet-school-admin",
+    databaseURL: "https://kanyadet-school-admin-default-rtdb.firebaseio.com",
+    storageBucket: "kanyadet-school-admin.firebasestorage.app",
+    messagingSenderId: "409708360032",
+    appId: "1:409708360032:web:a21d63e8cb5fa1ecabee05",
+    measurementId: "G-Y4C0ZRRL52"
+};
+
+// Initialize Firebase
+const app = initializeApp(customFirebaseConfig);
+const database = getDatabase(app);
+
+
+// ============================================
+// ADD THIS LINE - Define sanitizedAppId
+// ============================================
+const sanitizedAppId = 'default-app-id'; // Or extract from your config/environment
+
+
+
+// Store logged-in student data
+let currentStudent = null;
+
+// Login with student from database
+async function loginWithFirebase() {
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+    
+    try {
+        // Reference to students
+         const studentsRef = ref(database, `artifacts/${sanitizedAppId}/students`);
+        const snapshot = await get(studentsRef);
+        
+        if (snapshot.exists()) {
+            const allStudents = snapshot.val();
+            let foundStudent = null;
+            let studentKey = null;
+            
+            // Search for student by email
+            for (const key in allStudents) {
+                const student = allStudents[key];
+                if (student.Email === email) {
+                    foundStudent = student;
+                    studentKey = key;
+                    break;
+                }
+            }
+            
+            if (foundStudent) {
+                // Simple password check (for demo - use Firebase Auth in production)
+                if (password === 'password123') {
+                    currentStudent = {
+                        id: studentKey,
+                        ...foundStudent
+                    };
+                    
+                    // Show portal and populate data
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('portalSection').classList.remove('portal-hidden');
+                    initializePortalWithStudent(currentStudent);
+                    
+                    console.log('Login successful:', currentStudent);
+                } else {
+                    alert('Invalid password');
+                }
+            } else {
+                alert('Student email not found');
+            }
+        } else {
+            alert('No students found in database');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Error during login: ' + error.message);
+    }
+}
+
+// Initialize portal with student data from Firebase
+function initializePortalWithStudent(student) {
+    const date = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    
+    // Update header with student info
+    document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', options);
+    document.getElementById('studentName').textContent = `Welcome, ${student['Official Student Name']}!`;
+    document.getElementById('studentNameSmall').textContent = student['Official Student Name'];
+    
+    // Get initials from student name
+    const nameParts = student['Official Student Name'].split(' ');
+    const initials = nameParts.map(n => n[0]).join('').substring(0, 2);
+    document.getElementById('studentInitials').textContent = initials;
+    
+    // Update student grade info if available
+    if (student.Grade) {
+        const gradeElements = document.querySelectorAll('.profile-info p:nth-child(2)');
+        gradeElements.forEach(el => el.textContent = student.Grade);
+    }
+    
+    // Load student data
+    loadStudentGrades(student.Grade);
+    loadStudentAssignments();
+    loadAttendanceData(student.Grade);
+    loadStudentProfile(student);
+    
+    // Set up real-time listener
+    listenToStudentUpdates(student.id);
+}
+
+// Fetch and load grades (from hardcoded or Firebase)
+async function loadStudentGrades(grade) {
+    try {
+        const gradesRef = ref(database, `artifacts/${sanitizedAppId}/grades`);
+        const snapshot = await get(gradesRef);
+        
+        if (snapshot.exists()) {
+            const gradesData = snapshot.val();
+            populateGradesTable(gradesData);
+        } else {
+            // Load default grades if none in database
+            loadDefaultGrades();
+        }
+    } catch (error) {
+        console.error('Error loading grades:', error);
+        loadDefaultGrades();
+    }
+}
+
+// Default grades for demo
+function loadDefaultGrades() {
+    const defaultGrades = {
+        'English Literature': { term1: 88, term2: 91, term3: 89, average: 89.3, grade: 'A' },
+        'Mathematics': { term1: 92, term2: 94, term3: 91, average: 92.3, grade: 'A' },
+        'Science': { term1: 85, term2: 87, term3: 86, average: 86, grade: 'B+' },
+        'Social Studies': { term1: 83, term2: 85, term3: 84, average: 84, grade: 'B' },
+        'Kiswahili': { term1: 79, term2: 81, term3: 82, average: 80.7, grade: 'B' },
+        'French': { term1: 81, term2: 83, term3: 85, average: 83, grade: 'B' },
+        'Physical Education': { term1: 90, term2: 92, term3: 91, average: 91, grade: 'A' }
+    };
+    populateGradesTable(defaultGrades);
+}
+
+// Populate grades in the UI
+function populateGradesTable(gradesData) {
+    const tbody = document.querySelector('.grades-table tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    Object.keys(gradesData).forEach(subject => {
+        const subjectData = gradesData[subject];
+        const row = document.createElement('tr');
+        
+        const term1 = subjectData.term1 || '-';
+        const term2 = subjectData.term2 || '-';
+        const term3 = subjectData.term3 || '-';
+        const average = subjectData.average || '-';
+        const letterGrade = subjectData.grade || '-';
+        
+        row.innerHTML = `
+            <td><strong>${subject}</strong></td>
+            <td>${term1}</td>
+            <td>${term2}</td>
+            <td>${term3}</td>
+            <td>${average}</td>
+            <td><span class="grade-badge">${letterGrade}</span></td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Load student assignments from Firebase
+async function loadStudentAssignments() {
+    try {
+        const assignmentsRef = ref(database, `artifacts/${sanitizedAppId}/assignments`);
+        const snapshot = await get(assignmentsRef);
+        
+        if (snapshot.exists()) {
+            const assignmentsData = snapshot.val();
+            populateAssignments(assignmentsData);
+        } else {
+            loadDefaultAssignments();
+        }
+    } catch (error) {
+        console.error('Error loading assignments:', error);
+        loadDefaultAssignments();
+    }
+}
+
+// Default assignments for demo
+function loadDefaultAssignments() {
+    const defaultAssignments = {
+        assignment1: {
+            title: 'Essay on Shakespeare\'s Hamlet',
+            subject: 'English Literature',
+            description: 'Write a 1500-word analysis of the major themes in Shakespeare\'s Hamlet',
+            status: 'pending',
+            dueDate: 'March 20, 2024',
+            score: 'Not Graded'
+        },
+        assignment2: {
+            title: 'Algebra Problem Set 5',
+            subject: 'Mathematics',
+            description: 'Complete exercises 1-20 on quadratic equations and functions',
+            status: 'submitted',
+            dueDate: 'March 18, 2024',
+            score: 'Submitted'
+        },
+        assignment3: {
+            title: 'Photosynthesis Lab Report',
+            subject: 'Science',
+            description: 'Document your photosynthesis experiment with data analysis',
+            status: 'graded',
+            dueDate: 'March 15, 2024',
+            score: '88/100'
+        }
+    };
+    populateAssignments(defaultAssignments);
+}
+
+// Populate assignments in UI
+function populateAssignments(assignmentsData) {
+    const list = document.querySelector('.assignment-list');
+    if (!list) return;
+    
+    list.innerHTML = '';
+    
+    Object.keys(assignmentsData).forEach(key => {
+        const assignment = assignmentsData[key];
+        const li = document.createElement('li');
+        li.className = 'assignment-item';
+        
+        const statusClass = assignment.status === 'pending' ? 'status-pending' : 
+                           assignment.status === 'submitted' ? 'status-submitted' : 
+                           'status-graded';
+        
+        li.innerHTML = `
+            <div class="assignment-header">
+                <h4>${assignment.title}</h4>
+                <div class="assignment-status ${statusClass}">${assignment.status}</div>
+            </div>
+            <p>${assignment.description}</p>
+            <div class="assignment-details">
+                <div class="detail-item">
+                    <span class="detail-label">Subject:</span> ${assignment.subject}
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Due:</span> ${assignment.dueDate}
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Score:</span> ${assignment.score || 'Not graded'}
+                </div>
+            </div>
+        `;
+        
+        list.appendChild(li);
+    });
+}
+
+// Load attendance data
+async function loadAttendanceData(grade) {
+    try {
+        const attendanceRef = ref(database, `artifacts/${sanitizedAppId}/attendance`);
+        const snapshot = await get(attendanceRef);
+        
+        if (snapshot.exists()) {
+            const attendanceData = snapshot.val();
+            populateAttendance(attendanceData);
+        } else {
+            loadDefaultAttendance();
+        }
+    } catch (error) {
+        console.error('Error loading attendance:', error);
+        loadDefaultAttendance();
+    }
+}
+
+// Default attendance for demo
+function loadDefaultAttendance() {
+    const defaultAttendance = {
+        overall: '94%',
+        present: '45',
+        absent: '2',
+        late: '1'
+    };
+    populateAttendance(defaultAttendance);
+}
+
+// Populate attendance statistics
+function populateAttendance(attendanceData) {
+    const percentElements = document.querySelectorAll('.attendance-percent');
+    const labelElements = document.querySelectorAll('.attendance-label');
+    
+    if (percentElements.length > 0) {
+        percentElements[0].textContent = attendanceData.overall || '94%';
+        percentElements[1].textContent = attendanceData.present || '45';
+        percentElements[2].textContent = attendanceData.absent || '2';
+        percentElements[3].textContent = attendanceData.late || '1';
+    }
+}
+
+// Load student profile data
+function loadStudentProfile(student) {
+    // Update profile section with student data
+    const profileInfos = document.querySelectorAll('.card');
+    
+    profileInfos.forEach(card => {
+        if (card.querySelector('h3')?.textContent.includes('Personal')) {
+            // This is the personal info card
+            const divs = card.querySelectorAll('div > div');
+            if (divs.length >= 6) {
+                divs[0].querySelector('p:last-child').textContent = student['Official Student Name'] || 'N/A';
+                divs[2].querySelector('p:last-child').textContent = student['Grade'] || 'N/A';
+                divs[4].querySelector('p:last-child').textContent = student['Email'] || 'N/A';
+            }
+        }
+    });
+}
+
+// Save student data updates to Firebase
+async function updateStudentData(field, value) {
+    if (!currentStudent) return;
+    
+    try {
+        const updateRef = ref(database, `artifacts/${sanitizedAppId}/students/${currentStudent.id}/${field}`);
+        await set(updateRef, value);
+        console.log('Data updated successfully');
+    } catch (error) {
+        console.error('Error updating data:', error);
+    }
+}
+
+// Real-time listener for student updates
+function listenToStudentUpdates(studentId) {
+    const studentRef = ref(database, `artifacts/${sanitizedAppId}/students/${studentId}`);
+    on(studentRef, 'value', (snapshot) => {
+        if (snapshot.exists()) {
+            currentStudent = {
+                id: studentId,
+                ...snapshot.val()
+            };
+            console.log('Student data updated:', currentStudent);
+        }
+    });
+}
+
+// Remove listener when logging out
+function stopListeners() {
+    if (currentStudent) {
+        const studentRef = ref(database, `artifacts/${sanitizedAppId}/students/${currentStudent.id}`);
+        off(studentRef);
+    }
+}
+
+// Updated logout function
+function logout() {
+    stopListeners();
+    currentStudent = null;
+    document.getElementById('loginSection').style.display = 'flex';
+    document.getElementById('portalSection').classList.add('portal-hidden');
+    document.getElementById('emailInput').value = 'student@kanyadet.ac.ke';
+    document.getElementById('passwordInput').value = 'password123';
+}
+
+// Updated login button handler
+function login() {
+    loginWithFirebase();
+}
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

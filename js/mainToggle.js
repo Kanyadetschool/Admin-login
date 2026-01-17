@@ -6,10 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalContent = document.getElementById('modalContent');
 
     const links = [
-        { text: 'Students Results', url: 'https://kanyadet-school-admin.web.app/Report-Cards/Results.html' },
+        { text: '👨‍⚕️Kjsea & Kpsea Results', url: 'https://kanyadet-school-admin.web.app/Kjsea-Kpsea/Teachers-Kjsea-Results.html' },
+        { text: '👨‍⚕️Upload Results', url: 'https://kanyadet-school-admin.web.app/Report-Cards/Results.html' },
         { text: '🧑‍⚕️Junior School', url: '../Report-Cards/Reports-Cards-Junior-School.html' },
         { text: '🧑‍⚕️upper Primary School', url: '../Report-Cards/Reports-Cards-Upper-Primary.html' },
-        { text: 'lower Primary School', url: '../Report-Cards/Reports-Cards-lower-Primary.html' },
+        { text: '👶lower Primary School', url: '../Report-Cards/Reports-Cards-lower-Primary.html' },
+        { text: '🔍All in One Report Cards', url: '../Report-Cards/All-Report-cards.html' },
        
     ];
 
@@ -18,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="modal-header">
       <i class='bx bxs-book'></i>
 
-                <h2>Performance Report Cards</h2>
+                <h2>Performance Report</h2>
                 <button id="closeModalBtn" class="close-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -28,10 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div id="linksContainer" class="links-container"></div>
 
-            <div id="summarySection" class="summary-section">
-                <p class="summary-title">Summary ✨</p>
-                <p class="summary-text">Click a link to view its content and resources.</p>
-            </div> 
+                  <div class="modal-header2">
+
+                <h2>  </h2>
+              
+            </div>
+           
         `;
 
         // Populate links
